@@ -1,0 +1,4 @@
+component StunData
+{
+    int stun;
+}

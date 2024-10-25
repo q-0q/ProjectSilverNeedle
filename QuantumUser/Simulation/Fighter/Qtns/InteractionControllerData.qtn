@@ -1,0 +1,13 @@
+component InteractionControllerData
+{
+    
+    int player0InputType;
+    int player0CommandDirection;
+    int player0Frame;
+    
+    int player1InputType;
+    int player1CommandDirection;
+    int player1Frame;
+
+    bool enabled;
+}

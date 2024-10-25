@@ -1,0 +1,12 @@
+component CpuControllerData
+{
+    bool cpuEnabled;
+    
+    bool forceCounter; 
+    bool doAction;
+    bool doJump;
+    bool block;
+    bool dash;
+    int inputType;
+    int commandDirection;
+}

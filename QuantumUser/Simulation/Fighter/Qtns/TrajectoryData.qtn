@@ -1,0 +1,23 @@
+component TrajectoryData
+{
+    int jumpsRemaining;
+    int framesInTrajectory;
+    FP virtualTimeInTrajectory;
+    FP xVelocity;
+    FP startingTrajectoryHeight;
+    FP trajectoryHeight;
+    int timeToTrajectoryHeight;
+    FP fallSpeed;
+    int timeToFallSpeed;
+    bool hardKnockdown;
+    
+    bool groundBounce;
+    bool wallBounce;
+    TrajectoryDashType dashType;
+}
+
+enum TrajectoryDashType {
+    None,
+    Forward,
+    Backward
+}

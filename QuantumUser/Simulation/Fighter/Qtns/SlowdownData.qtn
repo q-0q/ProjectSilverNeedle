@@ -1,0 +1,5 @@
+component SlowdownData
+{
+    int slowdownRemaining;
+    FP multiplier;
+}

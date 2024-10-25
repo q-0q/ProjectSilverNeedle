@@ -1,0 +1,5 @@
+component FrameMeterData
+{
+    list<int> types;
+    list<int> frames;
+}

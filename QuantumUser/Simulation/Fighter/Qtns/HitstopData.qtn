@@ -1,0 +1,5 @@
+component HitstopData
+{
+    int hitstopRemaining;
+    bool queued;
+}

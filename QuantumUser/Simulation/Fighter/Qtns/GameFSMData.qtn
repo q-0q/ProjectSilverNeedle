@@ -1,0 +1,5 @@
+component GameFSMData
+{
+    int currentState;
+    int framesInState;
+}

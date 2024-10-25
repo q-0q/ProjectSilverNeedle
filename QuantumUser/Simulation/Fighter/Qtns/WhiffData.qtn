@@ -1,0 +1,4 @@
+component WhiffData
+{
+    bool whiffed;
+}

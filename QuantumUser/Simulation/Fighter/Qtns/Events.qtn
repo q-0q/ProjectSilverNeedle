@@ -1,0 +1,24 @@
+event EntityVibrate
+{
+    entity_ref entityRef;
+    FP strength;
+    FP duration;
+    int vibrato;
+}
+
+enum GameEventType {
+    Counter,
+    Punish,
+    Knockdown
+}
+
+event GameEvent
+{
+    entity_ref entityRef;
+    GameEventType type;
+}
+
+event ResetUnityView
+{
+    
+}

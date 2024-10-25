@@ -1,0 +1,6 @@
+component PushbackData
+{
+    FP virtualTimeInPushback;
+    int framesInPushback;
+    FP pushbackAmount;
+}

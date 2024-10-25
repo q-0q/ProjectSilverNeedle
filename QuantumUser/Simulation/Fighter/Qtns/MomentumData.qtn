@@ -1,0 +1,6 @@
+component MomentumData
+{
+    FP virtualTimeInMomentum;
+    int framesInMomentum;
+    FP momentumAmount;
+}

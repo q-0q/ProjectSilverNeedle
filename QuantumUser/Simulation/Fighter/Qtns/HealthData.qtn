@@ -1,0 +1,4 @@
+component HealthData
+{
+    FP health;
+}

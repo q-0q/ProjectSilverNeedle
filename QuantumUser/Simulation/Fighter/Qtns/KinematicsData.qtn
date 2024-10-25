@@ -1,0 +1,4 @@
+component KinematicsData
+{
+    FPVector2 attachPosition;
+}

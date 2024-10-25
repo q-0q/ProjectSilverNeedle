@@ -1,0 +1,25 @@
+component CollisionBoxData
+{
+    entity_ref source;
+    int type;
+    int subtype;
+    FP width;
+    FP height;
+    
+    int level;
+    int bonusHitStun;
+    int bonusBlockStun;
+    FP blockPushback;
+    FP hitPushback;
+    
+    FP visualAngle;
+    FP trajectoryHeight;
+    FP trajectoryXVelocity;
+    FP gravityScaling;
+    FP damageScaling;
+    FP damage;
+    bool launches;
+    bool hardKnockdown;
+    bool groundBounce;
+    bool wallBounce;
+}

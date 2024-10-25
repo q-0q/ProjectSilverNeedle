@@ -1,0 +1,6 @@
+component ComboData
+{
+    int length;
+    FP gravityScaling;
+    FP damageScaling;
+}

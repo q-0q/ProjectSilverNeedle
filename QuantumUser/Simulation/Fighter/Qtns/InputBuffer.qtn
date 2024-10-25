@@ -1,0 +1,6 @@
+component InputBuffer
+{
+    int length;
+    int type;
+    int direction;
+}

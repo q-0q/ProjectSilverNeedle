@@ -1,0 +1,15 @@
+component AnimationEntityData
+{
+    int type;
+    int framesAlive;
+    int spriteId;
+    bool flip;
+    FP angle;
+    AELayer layer;
+}
+
+enum AELayer {
+    Back,
+    Middle,
+    Front
+}

@@ -1,0 +1,12 @@
+input
+{
+    button P;
+    button K;
+    button S;
+    button H;
+    button D;
+    button Jump;
+    button Dash;
+    button Backdash;
+    int UnflippedNumpadDirection;
+}
