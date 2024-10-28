@@ -57,7 +57,7 @@ public class HealthBarController : MonoBehaviour
 
         if (health < (playerId == 0 ? prev0Hp : prev1Hp))
         {
-            Vibrate(playerId, 10f, 0.5f, 20);
+            Vibrate(playerId, 15f, 0.4f, 20);
         }
 
         if (playerId == 0) prev0Hp = health;

@@ -6,10 +6,10 @@ using Quantum;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Input = UnityEngine.Input;
 
 public class CollisionBox : QuantumEntityViewComponent
 {
-    private Transform plane;
     private SpriteRenderer _spriteRenderer;
     private static float _alpha = 0f;
     private static Color _hurtboxColor = new(0, 0f, 255f, _alpha);
@@ -20,13 +20,13 @@ public class CollisionBox : QuantumEntityViewComponent
     
     public override void OnInitialize()
     {
-        plane = GetComponentInChildren<MeshRenderer>().transform;
         _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Start()
     {
-        // Material material = plane.GetComponent<Renderer>().material;
+        Debug.Log(FrameMeterReporter.CollisionBoxViewEnabled);
+        _alpha = FrameMeterReporter.CollisionBoxViewEnabled ? 0.3f : 0;
         _spriteRenderer.color = GetColor();
     }
     
@@ -63,5 +63,6 @@ public class CollisionBox : QuantumEntityViewComponent
         color.a = _alpha;
         return color;
     }
+    
     
 }

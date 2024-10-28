@@ -10,6 +10,8 @@ using UnityEngine;
 
 public class ComboCounter : QuantumEntityViewComponent
 {
+    private Transform _ejected;
+    
     private TextMeshProUGUI _mainTmp;
     private TextMeshProUGUI _gravityScalingTmp;
     private TextMeshProUGUI _damageScalingTmp;
@@ -29,12 +31,18 @@ public class ComboCounter : QuantumEntityViewComponent
 
     private void Awake()
     {
-        _mainTmp = transform.Find("Main").GetComponent<TextMeshProUGUI>();
-        _gravityScalingTmp = transform.Find("GravityScaling").GetComponent<TextMeshProUGUI>();
-        _damageScalingTmp = transform.Find("DamageScaling").GetComponent<TextMeshProUGUI>();
+        _ejected = transform.Find("EjectedComboCanvas");
+        _mainTmp = _ejected.Find("Main").GetComponent<TextMeshProUGUI>();
+        _gravityScalingTmp = _ejected.Find("GravityScaling").GetComponent<TextMeshProUGUI>();
+        _damageScalingTmp = _ejected.Find("DamageScaling").GetComponent<TextMeshProUGUI>();
         _mainFontSize = _mainTmp.fontSize;
     }
-    
+
+    private void Start()
+    {
+        // _ejected.SetParent(null, true);
+    }
+
     public override void OnUpdateView()
     {
         if (!PredictedFrame.Has<ComboData>(EntityRef)) return;
@@ -81,7 +89,7 @@ public class ComboCounter : QuantumEntityViewComponent
         if (entityRef != EntityRef) return;
         transform.localPosition = _defaultLocalPosition;
         UpdateFlip();
-        transform.DOShakePosition(duration.AsFloat, strength.AsFloat, vibrato, 90f, false, true, ShakeRandomnessMode.Full);
+        transform.DOShakePosition(duration.AsFloat, strength.AsFloat * 0.5f, vibrato, 90f, false, true, ShakeRandomnessMode.Full);
     }
 
     private string Truncate(string s)

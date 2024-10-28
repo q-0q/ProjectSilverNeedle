@@ -12,7 +12,9 @@ namespace Quantum
         public enum CharacterEnum
         {
             Stick,
-            StickTwo
+            StickTwo,
+            Victor,
+            
             // add characters here
         }
 
@@ -20,6 +22,8 @@ namespace Quantum
         {
             { CharacterEnum.Stick, new Stick() },
             { CharacterEnum.StickTwo, new StickTwo() },
+            { CharacterEnum.Victor, new Victor() },
+            
             // add characters here
         };
 

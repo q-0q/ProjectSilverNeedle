@@ -15,11 +15,12 @@ namespace Quantum.Types
         {
             f.Unsafe.TryGetPointer<TrajectoryData>(fsm.EntityRef, out var trajectoryData);
             FP output = 0;
+            int frames = Util.FramesFromVirtualTime(trajectoryData->virtualTimeInTrajectory);
             switch (type)
             {
                 case TrajectoryType.Rise:
                 {
-                    output = (FP)trajectoryData->framesInTrajectory / (FP)trajectoryData->timeToTrajectoryHeight;
+                    output = (FP)frames / (FP)trajectoryData->timeToTrajectoryHeight;
                     break;
                 }
                 case TrajectoryType.Fall:
@@ -29,7 +30,7 @@ namespace Quantum.Types
                         output = 1;
                         break;
                     }
-                    output = (FP)(trajectoryData->framesInTrajectory - trajectoryData->timeToTrajectoryHeight) / (FP)trajectoryData->timeToTrajectoryHeight;
+                    output = (FP)(frames - trajectoryData->timeToTrajectoryHeight) / (FP)trajectoryData->timeToTrajectoryHeight;
                     break;
                 }
                 default:
@@ -38,7 +39,7 @@ namespace Quantum.Types
                     break;
                 }
             }
-
+            
             return Util.Clamp(output, 0, FP._1);
         }
     }

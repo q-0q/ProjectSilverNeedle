@@ -1538,8 +1538,8 @@ namespace Quantum
                                 new(4, 4),
                                 new(5, 5), // hit
                                 new(4, 6),
-                                new(4, 7),
-                                new(4, 9),
+                                new(5, 7),
+                                new(5, 9),
                             }
                         }
                     },
@@ -1688,7 +1688,7 @@ namespace Quantum
                     Level = 4,
                     TrajectoryHeight = 5,
                     TrajectoryXVelocity = 18,
-                    HitPushback = 3,
+                    HitPushback = 8,
                     GroundBounce = true,
                     HardKnockdown = true,
                     Damage = crazyDamage,
@@ -1706,7 +1706,7 @@ namespace Quantum
                                     {
                                         GrowHeight = true,
                                         GrowWidth = true,
-                                        Height = 5,
+                                        Height = FP.FromString("3.25"),
                                         Width = FP.FromString("5.5"),
                                         PosX = 0,
                                         PosY = 0

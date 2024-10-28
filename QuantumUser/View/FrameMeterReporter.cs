@@ -12,12 +12,13 @@ using Input = UnityEngine.Input;
 
 public class FrameMeterReporter : QuantumEntityViewComponent
 {
-    private bool frameMeterEnabled = true;
+    private bool _frameMeterEnabled = false;
 
     // object pooling for Frame prefabs
     public List<GameObject> pooledObjects;
     public GameObject FrameMeterFramePrefab;
     public int poolSize = 50;
+    public static bool CollisionBoxViewEnabled;
 
 
     private void Start()
@@ -40,9 +41,9 @@ public class FrameMeterReporter : QuantumEntityViewComponent
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            frameMeterEnabled = !frameMeterEnabled;
+            _frameMeterEnabled = !_frameMeterEnabled;
 
-            if (!frameMeterEnabled)
+            if (!_frameMeterEnabled)
             {
                 for (int i = 0; i < transform.childCount; i++)
                 {
@@ -51,12 +52,18 @@ public class FrameMeterReporter : QuantumEntityViewComponent
             }
             
         }
+        
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+        {
+            Debug.Log("toggle");
+            CollisionBoxViewEnabled = !CollisionBoxViewEnabled;
+        }
     }
 
     public override void OnUpdateView()
     {
         
-        if (!frameMeterEnabled) return;
+        if (!_frameMeterEnabled) return;
         
         if (!PredictedFrame.Has<FrameMeterData>(EntityRef)) return;
         
