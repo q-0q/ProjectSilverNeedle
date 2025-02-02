@@ -14,6 +14,7 @@ namespace Quantum
             Stick,
             StickTwo,
             Victor,
+            Blenderman
             
             // add characters here
         }
@@ -23,6 +24,7 @@ namespace Quantum
             { CharacterEnum.Stick, new Stick() },
             { CharacterEnum.StickTwo, new StickTwo() },
             { CharacterEnum.Victor, new Victor() },
+            { CharacterEnum.Blenderman, new Blenderman() },
             
             // add characters here
         };

@@ -17,7 +17,7 @@ namespace Quantum
         private static readonly FP UniversalGroundBounceSpikeVelocity = -40; // this should be negative lol
         private static readonly FP GroundBounceGravityScaling = FP.FromString("1.05");
 
-        private static readonly FP GlobalGravityScalingMod = FP.FromString("0.9");
+        private static readonly FP GlobalGravityScalingMod = FP.FromString("1.05");
 
         private static readonly int ExtraFramesUntilMaxFallSpeedAfterAirdash = 20;
         
@@ -185,7 +185,7 @@ namespace Quantum
             var fallSpeed = UniversalJuggleFallSpeed * gravityScaling;
             var timeToTrajectoryHeight = ((FP)GetJuggleTimeToHeight(trajectoryHeight) / gravityScaling).AsInt;
             
-            StartNewTrajectory(f, height, timeToTrajectoryHeight, 
+            StartNewTrajectory(f, height, timeToTrajectoryHeight + 6, 
                 xVelocity, fallSpeed, UniversalJuggleTimeToFallSpeed, groundBounces, wallBounces);
         }
 

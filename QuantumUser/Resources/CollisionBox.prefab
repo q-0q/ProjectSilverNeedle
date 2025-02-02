@@ -328,6 +328,8 @@ MonoBehaviour:
       Value: 0
     groundBounce:
       Value: 0
+    wallBounce:
+      Value: 0
 --- !u!114 &611006295541037383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -521,7 +523,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8616346166594606639}
   m_Enabled: 0
-  m_Alpha: 0.1
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

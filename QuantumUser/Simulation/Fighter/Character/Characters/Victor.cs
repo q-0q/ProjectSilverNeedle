@@ -453,8 +453,7 @@ namespace Quantum
                     Sections = new List<Tuple<int, int>>()
                     {
                         new(5, 0),
-                        new(10, 1),
-                        new(6, 17),
+                        new(16, 1),
                     }
                 }
             };

@@ -25,8 +25,8 @@ public class CollisionBox : QuantumEntityViewComponent
 
     private void Start()
     {
-        Debug.Log(FrameMeterReporter.CollisionBoxViewEnabled);
-        _alpha = FrameMeterReporter.CollisionBoxViewEnabled ? 0.3f : 0;
+        // Debug.Log(FrameMeterReporter.CollisionBoxViewEnabled);
+        // _alpha = FrameMeterReporter.CollisionBoxViewEnabled ? 0.3f : 0;
         _spriteRenderer.color = GetColor();
     }
     
