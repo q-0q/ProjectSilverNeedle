@@ -12,6 +12,7 @@ namespace Quantum
     {
         // Metadata
         public string Name;
+        public Type StateType;
         
         // Animations
         public FighterAnimation StandAnimation;

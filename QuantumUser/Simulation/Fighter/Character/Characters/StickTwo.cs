@@ -3,16 +3,52 @@ using System.Collections.Generic;
 using Photon.Deterministic;
 using Quantum.Types;
 using Quantum.Types.Collision;
+using UnityEngine;
 
 namespace Quantum
 {
     public class StickTwo : Character
     {
+        // { PlayerFSM.State.Action1 , _5L},
+        // { PlayerFSM.State.Action2 , _2L},
+        // { PlayerFSM.State.Action3 , _5M},
+        // { PlayerFSM.State.Action4 , _2M},
+        // { StickTwoState._2H , _2H},
+        // { StickTwoState._5H , _5H},
+        // { StickTwoState._5S1 , _5S1},
+        // { StickTwoState._5S2 , _5S2},
+        // { StickTwoState._5S3 , _5S3},
+        // { StickTwoState._6S3 , _6S3},
+        // { StickTwoState._2S_ground , _2S},
+        // { StickTwoState._2S_air , _2S},
+        // { StickTwoState._JL , _JL},
+        // { StickTwoState._JM , _JM},
+        // { StickTwoState._JH , _JH},
+        // { StickTwoState._JS , _JS},
+        public class StickTwoState : PlayerFSM.State
+        {
+            public static int _5L;
+            public static int _2L;
+            public static int _5M;
+            public static int _2M;
+            public static int _5H;
+            public static int _2H;
+            public static int _5S1;
+            public static int _5S2;
+            public static int _5S3;
+            public static int _6S3;
+            public static int _2S_ground;
+            public static int _2S_air;
+            public static int _JL;
+            public static int _JM;
+            public static int _JH;
+            public static int _JS;
+        }
+        
         public StickTwo()
         {
-            // InheritableEnum.InheritableEnum.Initialize();
-
             Name = "StickTwo";
+            StateType = typeof(StickTwoState);
             
             WalkForwardSpeed = FP.FromString("12");
             WalkBackwardSpeed = FP.FromString("9");
@@ -2384,22 +2420,22 @@ namespace Quantum
             
             ActionDict = new Dictionary<int, FighterAction>
             {
-                { PlayerFSM.State.Action1 , _5L},
-                { PlayerFSM.State.Action2 , _2L},
-                { PlayerFSM.State.Action3 , _5M},
-                { PlayerFSM.State.Action4 , _2M},
-                { PlayerFSM.State.Action5 , _2H},
-                { PlayerFSM.State.Action6 , _5H},
-                { PlayerFSM.State.Action7 , _5S1},
-                { PlayerFSM.State.Action8 , _5S2},
-                { PlayerFSM.State.Action9 , _5S3},
-                { PlayerFSM.State.Action10 , _6S3},
-                { PlayerFSM.State.Action11 , _2S},
-                { PlayerFSM.State.Action12 , _2S},
-                { PlayerFSM.State.Action13 , _JL},
-                { PlayerFSM.State.Action14 , _JM},
-                { PlayerFSM.State.Action15 , _JH},
-                { PlayerFSM.State.Action16 , _JS},
+                { StickTwoState._5L , _5L},
+                { StickTwoState._2L , _2L},
+                { StickTwoState._5M , _5M},
+                { StickTwoState._2M , _2M},
+                { StickTwoState._2H , _2H},
+                { StickTwoState._5H , _5H},
+                { StickTwoState._5S1 , _5S1},
+                { StickTwoState._5S2 , _5S2},
+                { StickTwoState._5S3 , _5S3},
+                { StickTwoState._6S3 , _6S3},
+                { StickTwoState._2S_ground , _2S},
+                { StickTwoState._2S_air , _2S},
+                { StickTwoState._JL , _JL},
+                { StickTwoState._JM , _JM},
+                { StickTwoState._JH , _JH},
+                { StickTwoState._JS , _JS},
             };
 
             InvulnerableBefore = new Dictionary<int, int>()
@@ -2411,68 +2447,69 @@ namespace Quantum
 
         public override void ConfigureCharacterFsm(PlayerFSM playerFsm)
         {
-            var fsm = playerFsm.Fsm;
+            
+            Debug.Log("ConfigureCharacterFSM");
             
             // 5L
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action1);
+            ConfigureGroundAction(playerFsm, StickTwoState._5L);
             
             // 2L
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action2, false, true, 1);
+            ConfigureGroundAction(playerFsm, StickTwoState._2L, false, true, 1);
             
             // 5M
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action3);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action3, PlayerFSM.State.Action4);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action3, PlayerFSM.State.Action5);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action3, PlayerFSM.State.Action7);
+            ConfigureGroundAction(playerFsm, StickTwoState._5M);
+            MakeActionCancellable(playerFsm, StickTwoState._5M, StickTwoState._2M);
+            MakeActionCancellable(playerFsm, StickTwoState._5M, StickTwoState._2H);
+            MakeActionCancellable(playerFsm, StickTwoState._5M, StickTwoState._5S1);
             
             // 2M
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action4, false, true, 1);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action4, PlayerFSM.State.Action5);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action4, PlayerFSM.State.Action7);
+            ConfigureGroundAction(playerFsm, StickTwoState._2M, false, true, 1);
+            MakeActionCancellable(playerFsm, StickTwoState._2M, StickTwoState._2H);
+            MakeActionCancellable(playerFsm, StickTwoState._2M, StickTwoState._5S1);
             
             // 2H
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action5, false, true, 1);
+            ConfigureGroundAction(playerFsm, StickTwoState._2H, false, true, 1);
             
             // 5H
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action6, true);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action6, PlayerFSM.State.Action5);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action6, PlayerFSM.State.Action7);
+            ConfigureGroundAction(playerFsm, StickTwoState._5H, true);
+            MakeActionCancellable(playerFsm, StickTwoState._5H, StickTwoState._2H);
+            MakeActionCancellable(playerFsm, StickTwoState._5H, StickTwoState._5S1);
             
             // 5S1
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action7);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action7, PlayerFSM.State.Action8);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action7, PlayerFSM.State.Action9, 1);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action7, PlayerFSM.State.Action10, 1);
+            ConfigureGroundAction(playerFsm, StickTwoState._5S1);
+            MakeActionCancellable(playerFsm, StickTwoState._5S1, StickTwoState._5S2);
+            MakeActionCancellable(playerFsm, StickTwoState._5S1, StickTwoState._5S3, 1);
+            MakeActionCancellable(playerFsm, StickTwoState._5S1, StickTwoState._6S3, 1);
             
             // 5S2
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action8, false, true, 0, false);
+            ConfigureGroundAction(playerFsm, StickTwoState._5S2, false, true, 0, false);
             
             // 4S3
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action9, false, false, 0, false);
+            ConfigureGroundAction(playerFsm, StickTwoState._5S3, false, false, 0, false);
             
             // 6S3
-            ConfigureGroundAction(playerFsm, PlayerFSM.State.Action10, false, true, 0, false);
+            ConfigureGroundAction(playerFsm, StickTwoState._6S3, false, true, 0, false);
             
             // 2S - grounded
-            ConfigureGroundToAirAction(playerFsm, PlayerFSM.State.Action11, false, 1, true);
+            ConfigureGroundToAirAction(playerFsm, StickTwoState._2S_ground, false, 1, true);
             
             // 2S - air
-            ConfigureAirAction(playerFsm, PlayerFSM.State.Action12, false, 1);
+            ConfigureAirAction(playerFsm, StickTwoState._2S_air, false, 1);
             
             // JL
-            ConfigureAirAction(playerFsm, PlayerFSM.State.Action13);
+            ConfigureAirAction(playerFsm, StickTwoState._JL);
             
             // JM
-            ConfigureAirAction(playerFsm, PlayerFSM.State.Action14);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action14, PlayerFSM.State.Action15, 1);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action14, PlayerFSM.State.Action16, 1);
+            ConfigureAirAction(playerFsm, StickTwoState._JM);
+            MakeActionCancellable(playerFsm, StickTwoState._JM, StickTwoState._JH, 1);
+            MakeActionCancellable(playerFsm, StickTwoState._JM, StickTwoState._JS, 1);
             
             // JH
-            ConfigureAirAction(playerFsm, PlayerFSM.State.Action15);
-            MakeActionCancellable(playerFsm, PlayerFSM.State.Action15, PlayerFSM.State.Action16, 1);
+            ConfigureAirAction(playerFsm, StickTwoState._JH);
+            MakeActionCancellable(playerFsm, StickTwoState._JH, StickTwoState._JS, 1);
             
             // JS
-            ConfigureAirAction(playerFsm, PlayerFSM.State.Action16);
+            ConfigureAirAction(playerFsm, StickTwoState._JS);
         }
         
     }
