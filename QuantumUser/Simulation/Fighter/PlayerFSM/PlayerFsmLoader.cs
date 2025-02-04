@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Quantum
 {
@@ -8,6 +9,11 @@ namespace Quantum
 
         public static void InitializePlayerFsms(Frame f)
         {
+            
+            // Force static initialization of InheritableEnum class
+            Debug.Log("Trying to initialize...");
+            var _ = PlayerFSM.State.GroundActionable;
+            
             var p0 = new PlayerFSM();
             var p0Character = Characters.GetPlayerCharacter(f, Util.GetPlayer(f, 0));
             p0Character.ConfigureCharacterFsm(p0);

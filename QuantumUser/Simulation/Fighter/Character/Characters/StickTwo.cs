@@ -10,6 +10,8 @@ namespace Quantum
     {
         public StickTwo()
         {
+            // InheritableEnum.InheritableEnum.Initialize();
+
             Name = "StickTwo";
             
             WalkForwardSpeed = FP.FromString("12");
@@ -2380,7 +2382,7 @@ namespace Quantum
             
             
             
-            ActionDict = new Dictionary<PlayerFSM.State, FighterAction>
+            ActionDict = new Dictionary<int, FighterAction>
             {
                 { PlayerFSM.State.Action1 , _5L},
                 { PlayerFSM.State.Action2 , _2L},
@@ -2400,7 +2402,7 @@ namespace Quantum
                 { PlayerFSM.State.Action16 , _JS},
             };
 
-            InvulnerableBefore = new Dictionary<PlayerFSM.State, int>()
+            InvulnerableBefore = new Dictionary<int, int>()
             {
                 [PlayerFSM.State.Backdash] = 10
             };

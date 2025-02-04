@@ -2,17 +2,25 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Quantum.InheritableEnum
 {
+    using System;
+    using System.Linq;
+    using System.Reflection;
+    using System.Collections.Generic;
+
     public abstract class InheritableEnum
     {
-        // Static dictionary to track the "next value" for each hierarchy
-        private static readonly Dictionary<Type, int> hierarchyCounters = new();
+        // Static dictionary to track the next available value for the entire hierarchy
+        private static int currentValue = 0; // Tracks the overall count for all states in the hierarchy
 
         static InheritableEnum()
         {
-            // Get all subclasses of BaseState (excluding abstract classes)
+            Debug.Log("Hello from InheritableEnum ctor");
+            
+            // Get all subclasses of InheritableEnum (excluding abstract classes)
             var subclasses = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(InheritableEnum)) && !t.IsAbstract)
@@ -23,39 +31,48 @@ namespace Quantum.InheritableEnum
 
             foreach (var subclass in subclasses)
             {
-                // Find the root type (the highest class in the hierarchy chain)
-                var rootType = FindRootType(subclass);
+                // Find the fields (states) in the current subclass
+                var fields = subclass.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                    .Where(f => f.FieldType == typeof(int))
+                    .ToList();
 
-                // Get the current "counter" for this hierarchy, or initialize it if it doesn't exist
-                if (!hierarchyCounters.ContainsKey(rootType))
+                foreach (var field in fields)
                 {
-                    hierarchyCounters[rootType] = 0;
-                }
-
-                // Set the integer value for this class (based on the hierarchy)
-                var field = subclass.GetField("Value", BindingFlags.Public | BindingFlags.Static);
-                if (field != null)
-                {
-                    field.SetValue(null, hierarchyCounters[rootType]);
-                    hierarchyCounters[rootType]++;  // Increment for the next subclass in this hierarchy
+                    // Assign the current value to each state field and increment the global counter
+                    field.SetValue(null, currentValue);
+                    Debug.Log(field.Name + ": " + field);
+                    currentValue++;
                 }
             }
         }
-
-        // Static field instead of a property
-        public static int Value;
-    
-        // Find the root class of the hierarchy (i.e., the class that isn't a subclass of anything else)
-        private static Type FindRootType(Type subclass)
+        
+        // Static method to ensure initialization is triggered
+        public static void Initialize()
         {
-            var baseType = subclass.BaseType;
-            while (baseType != null && baseType != typeof(InheritableEnum))
+            // This will force the static constructor of BaseState to run
+            var _ = PlayerFSM.State.GroundActionable;  // Trigger initialization by accessing a static member
+        }
+        
+        public static string GetFieldNameByValue(int value, Type subclassType)
+        {
+            // Get all the fields of the given subclass type
+            var fields = subclassType.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .Where(f => f.FieldType == typeof(int))
+                .ToList();
+
+            // Search through fields to find the one that matches the value
+            foreach (var field in fields)
             {
-                subclass = baseType;
-                baseType = subclass.BaseType;
+                int fieldValue = (int)field.GetValue(null);
+                if (fieldValue == value)
+                {
+                    return field.Name;
+                }
             }
-            return subclass; // The root type of the hierarchy
+
+            return null;  // Return null if no field matches the value
         }
     }
+
 
 }

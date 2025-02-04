@@ -126,6 +126,8 @@ namespace Quantum
 
         private static void InitializePlayerComponents(Frame f, EntityRef entityRef)
         {
+            InheritableEnum.InheritableEnum.Initialize();
+            
             f.Add(entityRef, new HealthData());
             f.Add(entityRef, new PlayerDirection());
             f.Add(entityRef, new TrajectoryData());

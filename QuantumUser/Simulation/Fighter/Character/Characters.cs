@@ -21,10 +21,8 @@ namespace Quantum
 
         private static Dictionary<CharacterEnum, Character> _dictionary = new()
         {
-            { CharacterEnum.Stick, new Stick() },
+            
             { CharacterEnum.StickTwo, new StickTwo() },
-            { CharacterEnum.Victor, new Victor() },
-            { CharacterEnum.Blenderman, new Blenderman() },
             
             // add characters here
         };
@@ -39,6 +37,11 @@ namespace Quantum
             f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
             var e = (CharacterEnum)playerLink->characterId;
             return Get(e);
+        }
+
+        static Characters()
+        {
+            
         }
     }
     

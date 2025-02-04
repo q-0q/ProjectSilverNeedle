@@ -132,7 +132,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
 
             
-            fsm.Fsm.Assume((PlayerFSM.State)playerFsmData->currentState);
+            fsm.Fsm.Assume(playerFsmData->currentState);
             fsm.EntityRef = entityRef;
             
            

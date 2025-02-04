@@ -50,7 +50,7 @@ namespace Quantum
         public FPVector2 KinematicAttachPointOffset;
 
         // Actions
-        public Dictionary<PlayerFSM.State, FighterAction> ActionDict;
+        public Dictionary<int, FighterAction> ActionDict;
         
         // Universal movement parameters
         public FP WalkForwardSpeed;
@@ -73,7 +73,7 @@ namespace Quantum
         public CollisionBoxCollection StandHurtboxesCollection;
         public CollisionBoxCollection CrouchHurtboxCollection;
         public CollisionBoxCollection AirHitHurtboxCollection;
-        public Dictionary<PlayerFSM.State, int> InvulnerableBefore;
+        public Dictionary<int, int> InvulnerableBefore;
         
         // Pushbox
         public CollisionBox StandPushbox;
@@ -88,8 +88,8 @@ namespace Quantum
         
         
         // FSM helper functions
-        protected void MakeActionCancellable(PlayerFSM fsm, PlayerFSM.State source,
-            PlayerFSM.State destination,int weight = 0)
+        protected void MakeActionCancellable(PlayerFSM fsm, int source,
+            int destination,int weight = 0)
         {
             fsm.Fsm.Configure(source)
                 .PermitIf(PlayerFSM.Trigger.Action, destination, param =>
@@ -101,7 +101,7 @@ namespace Quantum
                 }, weight);
         }
         
-        protected void ConfigureGroundAction(PlayerFSM fsm, PlayerFSM.State actionState, 
+        protected void ConfigureGroundAction(PlayerFSM fsm, int actionState, 
             bool jumpCancellable = false, bool crouch = false, int weight = 0, bool usableRaw = true)
         {
             if (usableRaw) {
@@ -137,7 +137,7 @@ namespace Quantum
             //     });
         }
 
-        protected void ConfigureAirAction(PlayerFSM fsm, PlayerFSM.State actionState,
+        protected void ConfigureAirAction(PlayerFSM fsm, int actionState,
             bool jumpCancellable = false,
             int weight = 0)
         {
@@ -172,7 +172,7 @@ namespace Quantum
         }
         
         protected void ConfigureGroundToAirAction(PlayerFSM fsm,
-            PlayerFSM.State actionState,
+            int actionState,
             bool jumpCancellable = false, int weight = 0, bool usableRaw = true)
         {
             if (usableRaw) {

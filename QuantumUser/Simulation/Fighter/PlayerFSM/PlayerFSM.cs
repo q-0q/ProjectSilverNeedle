@@ -10,84 +10,84 @@ namespace Quantum
     public unsafe partial class PlayerFSM
     {
         
-        public enum State
+        public class State : InheritableEnum.InheritableEnum
         {
             
             // Ground
-            StandActionable,
-            CrouchActionable,
-            WalkForward,
-            WalkBackward,
-            Dash,
-            Backdash,
-            GroundAction,
-            GroundActionable,
-            StandHitHigh,
-            StandHitLow,
-            CrouchHit,
-            StandBlock,
-            CrouchBlock,
-            GroundBlock,
-            HardKnockdown,
-            SoftKnockdown,
-            Landsquat,
-            ThrowStartup,
-            ThrowFrontStartup,
-            ThrowBackStartup,
-            ThrowConnect,
-            FrontThrowConnect,
-            BackThrowConnect,
-            ThrowWhiff,
-            ThrowTech,
-            DeadFromAir,
-            DeadFromGround,
+            public static int StandActionable;
+            public static int CrouchActionable;
+            public static int WalkForward;
+            public static int WalkBackward;
+            public static int Dash;
+            public static int Backdash;
+            public static int GroundAction;
+            public static int GroundActionable;
+            public static int StandHitHigh;
+            public static int StandHitLow;
+            public static int CrouchHit;
+            public static int StandBlock;
+            public static int CrouchBlock;
+            public static int GroundBlock;
+            public static int HardKnockdown;
+            public static int SoftKnockdown;
+            public static int Landsquat;
+            public static int ThrowStartup;
+            public static int ThrowFrontStartup;
+            public static int ThrowBackStartup;
+            public static int ThrowConnect;
+            public static int FrontThrowConnect;
+            public static int BackThrowConnect;
+            public static int ThrowWhiff;
+            public static int ThrowTech;
+            public static int DeadFromAir;
+            public static int DeadFromGround;
             
             
             // Air
-            AirDash,
-            AirBackdash,
-            AirAction,
-            AirActionable,
-            AirHit,
-            AirBlock,
-            AirHitPostGroundBounce,
-            AirHitPostWallBounce,
+            public static int AirDash;
+            public static int AirBackdash;
+            public static int AirAction;
+            public static int AirActionable;
+            public static int AirHit;
+            public static int AirBlock;
+            public static int AirHitPostGroundBounce;
+            public static int AirHitPostWallBounce;
             
             
             // General
-            Hit,
-            Ground,
-            Air,
-            Any,
-            Action,
-            Stand,
-            Crouch,
-            Block,
-            KinematicSource,
-            KinematicReceiver,
-            TechableKinematicReceiver,
+            public static int Hit;
+            public static int Ground;
+            public static int Air;
+            public static int Any;
+            public static int Action;
+            public static int Stand;
+            public static int Crouch;
+            public static int Block;
+            public static int KinematicSource;
+            public static int KinematicReceiver;
+            public static int TechableKinematicReceiver;
             
             // Char-specific
-            Action1,
-            Action2,
-            Action3,
-            Action4,
-            Action5,
-            Action6,
-            Action7,
-            Action8,
-            Action9,
-            Action10,
-            Action11,
-            Action12,
-            Action13,
-            Action14,
-            Action15,
-            Action16,
-            Action17,
-            Action18,
-            Action19,
-            Action20,
+            public static int Action1;
+            public static int Action2;
+            public static int Action3;
+            public static int Action4;
+            public static int Action5;
+            public static int Action6;
+            public static int Action7;
+            public static int Action8;
+            public static int Action9;
+            public static int Action10;
+            public static int Action11;
+            public static int Action12;
+            public static int Action13;
+            public static int Action14;
+            public static int Action15;
+            public static int Action16;
+            public static int Action17;
+            public static int Action18;
+            public static int Action19;
+            public static int Action20;
         }
         
         // When adding a new trigger
@@ -120,18 +120,19 @@ namespace Quantum
         }
 
         public EntityRef EntityRef;
-        public Machine<State, Trigger> Fsm;
+        public Machine<int, Trigger> Fsm;
         
         
         public PlayerFSM()
         {
-            State currentState = State.StandActionable;
-            Fsm = new Machine<State, Trigger>(currentState);
+            Debug.Log("PlayerFSM ctor");
+            int currentState = State.StandActionable;
+            Fsm = new Machine<int, Trigger>(currentState);
             ConfigureBaseFsm(Fsm);
         }
 
         
-        public void ConfigureBaseFsm(Machine<State, Trigger> machine)
+        public void ConfigureBaseFsm(Machine<int, Trigger> machine)
         {
             machine.OnTransitionCompleted(OnStateChanged);
             
@@ -452,12 +453,6 @@ namespace Quantum
                 .PermitIf(Trigger.FrontThrow, State.ThrowTech, CanTechThrow)
                 .PermitIf(Trigger.BackThrow, State.ThrowTech, CanTechThrow)
                 .SubstateOf(State.KinematicReceiver);
-
-
-            // return;
-            
-            // Character-specific
-
             
         }
         

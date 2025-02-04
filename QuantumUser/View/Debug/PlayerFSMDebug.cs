@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Quantum;
+using Quantum.InheritableEnum;
 using TMPro;
 using UnityEngine;
 
@@ -23,6 +24,6 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
 
 
         var state = PlayerFsmLoader.GetPlayerFsm(PredictedFrame, EntityRef).Fsm.State();
-        _tmp.text = state.ToString();// + "\n" + numFrames;
+        _tmp.text = InheritableEnum.GetFieldNameByValue(state, typeof(PlayerFSM.State));// + "\n" + numFrames;
     }
 }
