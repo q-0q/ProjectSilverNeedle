@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using Photon.Deterministic;
 using Quantum.Types;
@@ -42,7 +43,6 @@ namespace Quantum
             public static int DeadFromAir;
             public static int DeadFromGround;
             
-            
             // Air
             public static int AirDash;
             public static int AirBackdash;
@@ -67,27 +67,6 @@ namespace Quantum
             public static int KinematicReceiver;
             public static int TechableKinematicReceiver;
             
-            // Char-specific
-            public static int Action1;
-            public static int Action2;
-            public static int Action3;
-            public static int Action4;
-            public static int Action5;
-            public static int Action6;
-            public static int Action7;
-            public static int Action8;
-            public static int Action9;
-            public static int Action10;
-            public static int Action11;
-            public static int Action12;
-            public static int Action13;
-            public static int Action14;
-            public static int Action15;
-            public static int Action16;
-            public static int Action17;
-            public static int Action18;
-            public static int Action19;
-            public static int Action20;
         }
         
         // When adding a new trigger
@@ -125,7 +104,6 @@ namespace Quantum
         
         public PlayerFSM()
         {
-            Debug.Log("PlayerFSM ctor");
             int currentState = State.StandActionable;
             Fsm = new Machine<int, Trigger>(currentState);
             ConfigureBaseFsm(Fsm);
@@ -135,6 +113,7 @@ namespace Quantum
         public void ConfigureBaseFsm(Machine<int, Trigger> machine)
         {
             machine.OnTransitionCompleted(OnStateChanged);
+            machine.OnTransitioned(OnTransitioned);
             
             // Ground
             machine.Configure(State.Ground)
@@ -170,7 +149,9 @@ namespace Quantum
                 .OnEntry(EndSlowdown)
                 .OnEntry(ResetCombo)
                 .SubstateOf(State.Ground);
-
+            
+            Debug.Log("GroundActionable configured");
+            
             machine.Configure(State.StandActionable) 
                 .SubstateOf(State.GroundActionable)
                 .SubstateOf(State.Stand);
@@ -208,6 +189,7 @@ namespace Quantum
                 .Permit(Trigger.JumpCancel, State.AirActionable)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
+                .SubstateOf(State.Action)
                 .SubstateOf(State.Ground);
 
             machine.Configure(State.ThrowStartup)
@@ -360,6 +342,7 @@ namespace Quantum
                 .Permit(Trigger.JumpCancel, State.AirActionable)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
+                .SubstateOf(State.Action)
                 .SubstateOf(State.Air);
             
             machine.Configure(State.AirBlock)
@@ -396,48 +379,6 @@ namespace Quantum
             machine.Configure(State.AirHitPostWallBounce)
                 .OnEntry(OnWallBounce)
                 .SubstateOf(State.AirHit);
-            
-            // Action
-            machine.Configure(State.Action1)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action2)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action3)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action4)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action5)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action6)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action7)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action8)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action9)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action10)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action11)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action12)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action13)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action14)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action15)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action16)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action17)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action18)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action19)
-                .SubstateOf(State.Action);
-            machine.Configure(State.Action20)
-                .SubstateOf(State.Action);
             
             // General
             machine.Configure(State.Hit);
@@ -485,6 +426,11 @@ namespace Quantum
             PlayerDirectionSystem.ForceUpdatePlayerDirection(param.f, EntityRef);
             
             Util.WritebackFsm(param.f, EntityRef);
+        }
+
+        private void OnTransitioned(TriggerParams? triggerParams)
+        {
+            Debug.Log("Transition");
         }
 
         private void DoImpactVibrate(TriggerParams? triggerParams)
