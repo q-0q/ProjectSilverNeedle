@@ -25,6 +25,7 @@ namespace Quantum
         // { StickTwoState._JM , _JM},
         // { StickTwoState._JH , _JH},
         // { StickTwoState._JS , _JS},
+        
         public class StickTwoState : PlayerFSM.State
         {
             public static int _5L;
@@ -49,6 +50,8 @@ namespace Quantum
         {
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
+            
+            Debug.Log("StandActionable: " + PlayerFSM.State.StandActionable);
             
             WalkForwardSpeed = FP.FromString("12");
             WalkBackwardSpeed = FP.FromString("9");
@@ -2444,11 +2447,9 @@ namespace Quantum
             };
             
         }
-
+        
         public override void ConfigureCharacterFsm(PlayerFSM playerFsm)
         {
-            
-            Debug.Log("ConfigureCharacterFSM");
             
             // 5L
             ConfigureGroundAction(playerFsm, StickTwoState._5L);

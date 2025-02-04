@@ -24,7 +24,7 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
 
         Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)PredictedFrame.Get<PlayerLink>(EntityRef).characterId;
         var state = PlayerFsmLoader.GetPlayerFsm(PredictedFrame, EntityRef).Fsm.State();
-        // _tmp.text = InheritableEnum.GetFieldNameByValue(state, Characters.Get(characterEnum).StateType);// + "\n" + numFrames;
-        _tmp.text = state.ToString();
+        _tmp.text = InheritableEnum.GetFieldNameByValue(state, Characters.Get(characterEnum).StateType);// + "\n" + numFrames;
+        // _tmp.text = state.ToString();
     }
 }
