@@ -64,7 +64,7 @@ namespace Quantum
                         PosX = 0,
                         PosY = 0,
                         Height = 6,
-                        Width = 3,
+                        Width = 3, 
                     },
                     
                 }

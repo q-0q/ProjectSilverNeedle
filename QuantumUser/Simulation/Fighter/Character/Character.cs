@@ -19,6 +19,7 @@ namespace Quantum
         
         // State maps
         public StateMap<FighterAnimation> FighterAnimation;
+        public StateMap<int> Duration;
         public StateMap<SectionGroup<CollisionBoxCollection>> HurtboxCollectionSectionGroup;
         public StateMap<SectionGroup<PlayerFSM.HurtType>> HurtTypeSectionGroup;
         public StateMap<SectionGroup<Hit>> HitSectionGroup;
