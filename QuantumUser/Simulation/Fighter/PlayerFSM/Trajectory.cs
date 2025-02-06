@@ -36,8 +36,8 @@ namespace Quantum
             CheckForActionTrajectory(f);
             CheckForHitWall(f);
             
-            CheckToEndDashTrajectory(f);
-            if (IsInDashTrajectory(f)) return;
+            // CheckToEndDashTrajectory(f);
+            // if (IsInDashTrajectory(f)) return;
             
             FPVector2 movementThisFrame = ComputeTrajectoryMovementThisFrame(f);
             ApplyFlippedMovement(f, movementThisFrame, EntityRef);
@@ -155,11 +155,11 @@ namespace Quantum
         {
             if (triggerParams is null) return;
             var param = (JumpParam)triggerParams;
-            var xVelocity = GetFlippedXVelocityFromJumpType(param.f, param.Type);
+            var trajectory = GetFlippedTrajectoryFromJumpType(param.f, param.Type);
             var character = Characters.GetPlayerCharacter(param.f, EntityRef);
             
-            StartNewTrajectory(param.f, character.JumpHeight, character.JumpTimeToHeight, 
-                xVelocity, character.FallSpeed, character.FallTimeToSpeed, false);
+            StartNewTrajectory(param.f, trajectory.TrajectoryHeight, trajectory.TimeToTrajectoryHeight, 
+                trajectory.TrajectoryXVelocity, character.FallSpeed, character.FallTimeToSpeed, false);
 
             param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             trajectoryData->jumpsRemaining--;
@@ -250,27 +250,31 @@ namespace Quantum
             transform3D->Position.Y = Util.GroundHeight;
         }
 
-        private FP GetFlippedXVelocityFromJumpType(Frame f, JumpType type)
+        private Trajectory GetFlippedTrajectoryFromJumpType(Frame f, JumpType type)
         {
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            
-            FP xMoveAmount = 0;
+
+            Trajectory trajectory = new Trajectory();
             
             if (type == JumpType.Forward)
             {
-                xMoveAmount = character.JumpForwardSpeed * Util.FrameLengthInSeconds;
+                trajectory.TrajectoryXVelocity = character.ForwardJumpTrajectory.TrajectoryXVelocity;
+                trajectory.TrajectoryHeight = character.ForwardJumpTrajectory.TrajectoryHeight;
+                trajectory.TimeToTrajectoryHeight = character.ForwardJumpTrajectory.TimeToTrajectoryHeight;
             }
             else if (type == JumpType.Backward)
             {
-                xMoveAmount = character.JumpBackwardSpeed * Util.FrameLengthInSeconds * FP.Minus_1;
+                trajectory.TrajectoryXVelocity = character.BackwardJumpTrajectory.TrajectoryXVelocity;
+                trajectory.TrajectoryHeight = character.BackwardJumpTrajectory.TrajectoryHeight;
+                trajectory.TimeToTrajectoryHeight = character.BackwardJumpTrajectory.TimeToTrajectoryHeight;
             }
             
             if (!PlayerDirectionSystem.IsFacingRight(f, EntityRef))
             {
-                xMoveAmount *= FP.Minus_1;
+                trajectory.TrajectoryXVelocity *= FP.Minus_1;
             }
 
-            return xMoveAmount;
+            return trajectory;
         }
 
         public int GetFramesInTrajectory(Frame f)
@@ -295,7 +299,7 @@ namespace Quantum
             if (!Fsm.IsInState(State.Action)) return;
 
             var character = Characters.GetPlayerCharacter(f, EntityRef);
-            var trajectorySectionGroup = character.ActionDict?[Fsm.State()].TrajectorySectionGroup;
+            var trajectorySectionGroup = character.TrajectorySectionGroup.Get(this);
             if (trajectorySectionGroup is null) return;
             if (!trajectorySectionGroup.IsOnFirstFrameOfSection(f, this)) return;
             var trajectory = trajectorySectionGroup.GetCurrentItem(f, this);
@@ -356,19 +360,19 @@ namespace Quantum
 
         private void CheckToEndDashTrajectory(Frame f)
         {
-            var length = 0;
-            f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
-            var character = Characters.GetPlayerCharacter(f, EntityRef);
-            if (trajectoryData->dashType == TrajectoryDashType.Forward)
-            {
-                length = character.DashMovementSectionGroup.Duration();
-            }
-            else if (trajectoryData->dashType == TrajectoryDashType.Backward)
-            {
-                length = character.BackdashMovementSectionGroup.Duration();
-            }
-
-            if (FramesInCurrentState(f) >= length) trajectoryData->dashType = TrajectoryDashType.None;
+            // var length = 0;
+            // f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
+            // var character = Characters.GetPlayerCharacter(f, EntityRef);
+            // if (trajectoryData->dashType == TrajectoryDashType.Forward)
+            // {
+            //     length = character.DashMovementSectionGroup.Duration();
+            // }
+            // else if (trajectoryData->dashType == TrajectoryDashType.Backward)
+            // {
+            //     length = character.BackdashMovementSectionGroup.Duration();
+            // }
+            //
+            // if (FramesInCurrentState(f) >= length) trajectoryData->dashType = TrajectoryDashType.None;
 
         }
     }

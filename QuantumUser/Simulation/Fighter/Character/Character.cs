@@ -14,10 +14,14 @@ namespace Quantum
         public string Name;
         public Type StateType;
         public FPVector2 KinematicAttachPointOffset;
-        public int JumpCount;
 
         public FP FallSpeed;
         public int FallTimeToSpeed;
+        public int JumpCount;
+        
+        public Trajectory UpwardJumpTrajectory;
+        public Trajectory ForwardJumpTrajectory;
+        public Trajectory BackwardJumpTrajectory;
         
         
         // State maps
