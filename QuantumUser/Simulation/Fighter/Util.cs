@@ -187,6 +187,15 @@ namespace Quantum
                 character.WhiffCancellable.Get(fsm));
         }
         
+        public static bool DoesInputMatch(Frame f, EntityRef entityRef, int commandDirection, InputSystem.InputType type)
+         {
+             Character character = Characters.GetPlayerCharacter(f, entityRef);
+             PlayerFSM fsm = GetPlayerFSM(f, entityRef);
+             
+             return (character.InputTypes.Get(fsm) == type &&
+                     InputSystem.NumpadMatchesNumpad(commandDirection, character.CommandDirection.Get(fsm)));
+         }
+        
     }
     
     

@@ -43,8 +43,9 @@ namespace Quantum
                 {
                     if (param is null) return false;
                     var actionParam = (ActionParam)param;
-                    return (ActionDict[source].CanCancelNow(actionParam.f, fsm) &&
-                            ActionDict[destination].DoesInputMatch(param));
+                    return (Util.CanCancelNow(actionParam.f, actionParam.EntityRef) &&
+                            Util.DoesInputMatch(actionParam.f, actionParam.EntityRef, actionParam.CommandDirection,
+                                actionParam.Type));
                 }, weight);
         }
         
