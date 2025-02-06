@@ -83,7 +83,6 @@ namespace Quantum
             {
                 if (AreCollisionBoxesNextToEachOther(f, opponentPushboxEntityRef, pushboxEntityRef, out FP deltaX))
                 {
-                    // if (!Util.EntityIsCpu(f, entityRef)) Debug.Log(deltaX + " --- " + v.X);
                     v.X = !PlayerDirectionSystem.IsOnLeft(f, entityRef) ? Util.Max(v.X, deltaX + _crossupThreshhold) : Util.Min(v.X, deltaX - _crossupThreshhold);
                 }
             }

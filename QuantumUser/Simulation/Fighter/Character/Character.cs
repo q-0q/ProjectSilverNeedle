@@ -15,6 +15,9 @@ namespace Quantum
         public Type StateType;
         public FPVector2 KinematicAttachPointOffset;
         public int JumpCount;
+
+        public FP FallSpeed;
+        public int FallTimeToSpeed;
         
         
         // State maps
