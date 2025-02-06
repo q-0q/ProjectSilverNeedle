@@ -50,47 +50,10 @@ namespace Quantum
         
         private FPVector2 ComputeMovementThisFrame(Frame f)
         {
-            FP xMoveAmount = 0;
-            FP yMoveAmount = 0;
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-
-            if (Fsm.IsInState(State.WalkForward))
-            {
-                xMoveAmount = character.WalkForwardSpeed * Util.FrameLengthInSeconds;
-            }
-            else if (Fsm.IsInState(State.WalkBackward))
-            {
-                xMoveAmount = character.WalkBackwardSpeed * Util.FrameLengthInSeconds * FP.Minus_1;
-            }
-            else if (Fsm.IsInState(State.Dash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.DashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.Backdash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.BackdashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.AirDash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.DashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.AirBackdash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.BackdashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.SoftKnockdown))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, SoftKnockdownMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.Action))
-            {
-                if (character.ActionDict[Fsm.State()].MovementSectionGroup is not null)
-                {
-                    xMoveAmount = GetXMovementFromMovementSectionGroup(f ,character.ActionDict[Fsm.State()].MovementSectionGroup);
-                }
-            }
+            FP xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.MovementSectionGroup.Get(this));
             
-            return new FPVector2(xMoveAmount, yMoveAmount);
+            return new FPVector2(xMoveAmount, 0);
         }
 
         private FP GetXMovementFromMovementSectionGroup(Frame f, SectionGroup<FP> sectionGroup)

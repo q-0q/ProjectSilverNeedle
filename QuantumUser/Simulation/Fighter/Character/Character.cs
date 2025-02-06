@@ -24,7 +24,7 @@ namespace Quantum
         public StateMap<SectionGroup<PlayerFSM.HurtType>> HurtTypeSectionGroup;
         public StateMap<SectionGroup<Hit>> HitSectionGroup;
         public StateMap<CollisionBox> Pushbox;
-        public StateMap<SectionGroup<int>> MovementSectionGroup;
+        public StateMap<SectionGroup<FP>> MovementSectionGroup;
         public StateMap<SectionGroup<bool>> AllowCrossupSectionGroup;
         public StateMap<SectionGroup<Trajectory>> TrajectorySectionGroup;
         public StateMap<InputSystem.InputType> InputTypes;
