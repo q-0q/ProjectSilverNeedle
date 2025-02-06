@@ -661,6 +661,7 @@ namespace Quantum
         
         public override void ConfigureCharacterFsm(PlayerFSM playerFsm)
         {
+            return;
             
             // 5L
             ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5L);
