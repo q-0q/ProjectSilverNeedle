@@ -58,6 +58,7 @@ namespace Quantum
 
         private FP GetXMovementFromMovementSectionGroup(Frame f, SectionGroup<FP> sectionGroup)
         {
+            if (sectionGroup is null) return 0;
             FP sectionDistance = sectionGroup.GetCurrentItem(f, this);
             FP sectionDuration = sectionGroup.GetCurrentItemDuration(f, this);
             return sectionDistance / sectionDuration;

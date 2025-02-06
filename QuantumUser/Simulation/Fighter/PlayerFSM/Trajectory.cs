@@ -156,6 +156,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var param = (JumpParam)triggerParams;
             var trajectory = GetFlippedTrajectoryFromJumpType(param.f, param.Type);
+            if (trajectory is null) return;
             var character = Characters.GetPlayerCharacter(param.f, EntityRef);
             
             StartNewTrajectory(param.f, trajectory.TrajectoryHeight, trajectory.TimeToTrajectoryHeight, 
@@ -255,20 +256,19 @@ namespace Quantum
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
 
             Trajectory trajectory = new Trajectory();
-            
-            if (type == JumpType.Forward)
+            Trajectory template = type switch
             {
-                trajectory.TrajectoryXVelocity = character.ForwardJumpTrajectory.TrajectoryXVelocity;
-                trajectory.TrajectoryHeight = character.ForwardJumpTrajectory.TrajectoryHeight;
-                trajectory.TimeToTrajectoryHeight = character.ForwardJumpTrajectory.TimeToTrajectoryHeight;
-            }
-            else if (type == JumpType.Backward)
-            {
-                trajectory.TrajectoryXVelocity = character.BackwardJumpTrajectory.TrajectoryXVelocity;
-                trajectory.TrajectoryHeight = character.BackwardJumpTrajectory.TrajectoryHeight;
-                trajectory.TimeToTrajectoryHeight = character.BackwardJumpTrajectory.TimeToTrajectoryHeight;
-            }
+                JumpType.Forward => character.ForwardJumpTrajectory,
+                JumpType.Backward => character.BackwardJumpTrajectory,
+                _ => character.UpwardJumpTrajectory
+            };
+
+            if (template is null) return null;
             
+            trajectory.TrajectoryXVelocity = template.TrajectoryXVelocity;
+            trajectory.TrajectoryHeight = template.TrajectoryHeight;
+            trajectory.TimeToTrajectoryHeight = template.TimeToTrajectoryHeight;
+
             if (!PlayerDirectionSystem.IsFacingRight(f, EntityRef))
             {
                 trajectory.TrajectoryXVelocity *= FP.Minus_1;

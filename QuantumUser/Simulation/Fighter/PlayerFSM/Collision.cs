@@ -79,7 +79,8 @@ namespace Quantum
             }
             
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            return character.HurtTypeSectionGroup.Get(this).GetCurrentItem(f, this);
+            var hurtTypeSectionGroup = character.HurtTypeSectionGroup.Get(this);
+            return hurtTypeSectionGroup?.GetCurrentItem(f, this) ?? HurtType.Regular;
         }
 
         public void Hitbox(Frame f)
@@ -152,10 +153,14 @@ namespace Quantum
             if (Fsm.Fsm.IsInState(State.KinematicReceiver)) return;
 
             Character character = Characters.GetPlayerCharacter(f, entityRef);
+
+            var section = character.AllowCrossupSectionGroup.Get(Fsm);
             
-            if (character.AllowCrossupSectionGroup.Get(Fsm).GetCurrentItem(f, Fsm)) return;
+            // if (section is not null && section.GetCurrentItem(f, Fsm)) return;
 
             CollisionBox pushbox = character.Pushbox.Get(Fsm);
+            
+            if (pushbox is null) return;
 
             CollisionBoxCollection pushboxCollection = new CollisionBoxCollection()
                 { CollisionBoxes = new List<CollisionBox>() { pushbox } };

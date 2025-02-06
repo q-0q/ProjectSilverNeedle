@@ -15,7 +15,9 @@ namespace Quantum
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            FPVector2 attachPosOffset = character.AttachPositionSectionGroup.Get(this).GetCurrentItem(f, this);
+            var attachPositionSectionGroup = character.AttachPositionSectionGroup.Get(this);
+            
+            FPVector2 attachPosOffset = attachPositionSectionGroup?.GetCurrentItem(f, this) ?? FPVector2.Zero;
             
             if (!PlayerDirectionSystem.IsFacingRight(f, EntityRef))
             {

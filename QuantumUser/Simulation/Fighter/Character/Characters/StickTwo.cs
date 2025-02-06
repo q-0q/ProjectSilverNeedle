@@ -53,6 +53,30 @@ namespace Quantum
             FP mediumDamage = 20;
             FP highDamage = 35;
             FP crazyDamage = 45;
+            
+            FighterAnimation = new StateMap<FighterAnimation>();
+            Duration = new StateMap<int>();
+            Duration.DefaultValue = 0;
+            HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
+            HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
+            HitSectionGroup = new StateMap<SectionGroup<Hit>>();
+            Pushbox = new StateMap<CollisionBox>();
+            MovementSectionGroup = new StateMap<SectionGroup<FP>>();
+            AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
+            TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
+            InputTypes = new StateMap<InputSystem.InputType>();
+            InputTypes.DefaultValue = InputSystem.InputType.P;
+            CommandDirection = new StateMap<int>();
+            CommandDirection.DefaultValue = 5;
+            CancellableAfter = new StateMap<int>();
+            CancellableAfter.DefaultValue = 0;
+            WhiffCancellable = new StateMap<bool>();
+            WhiffCancellable.DefaultValue = false;
+            FireReceiverFinishAfter = new StateMap<int>();
+            FireReceiverFinishAfter.DefaultValue = 10;
+            AttachPositionSectionGroup = new StateMap<SectionGroup<FPVector2>>();
+            InvulnerableBefore = new StateMap<int>();
+            InvulnerableBefore.DefaultValue = 0;
 
             var StandHurtboxesCollection = new CollisionBoxCollection()
             {
