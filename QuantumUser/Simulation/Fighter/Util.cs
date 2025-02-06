@@ -123,9 +123,6 @@ namespace Quantum
             f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
             var player = (int)playerLink->Player;
             
-            
-            // var fsm = Characters.GetPlayerCharacter(f, entityRef).PlayerFsms[player];
-
             var fsm = PlayerFsmLoader.GetPlayerFsm(f, entityRef);
 
             
@@ -178,6 +175,8 @@ namespace Quantum
             f.Unsafe.TryGetPointer<ScoreData>(entityRef, out var scoreData);
             scoreData->score++;
         }
+        
+        // Old Action functions that have been migrated
         
         public static bool CanCancelNow(Frame f, EntityRef entityRef)
         {

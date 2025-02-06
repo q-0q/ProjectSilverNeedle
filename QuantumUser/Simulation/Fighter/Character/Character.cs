@@ -54,12 +54,25 @@ namespace Quantum
         {
             if (usableRaw) {
                 fsm.Fsm.Configure(PlayerFSM.State.GroundActionable)
-                    .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                        ActionDict[actionState].DoesInputMatch, weight);
+                    .PermitIf(PlayerFSM.Trigger.Action, actionState, param =>
+                        {
+                            if (param is null) return false;
+                            var actionParam = (ActionParam)param;
+                            return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
+                                actionParam.CommandDirection,
+                                actionParam.Type);
+                        }, weight);
 
                 fsm.Fsm.Configure(PlayerFSM.State.Dash)
                     .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                        ActionDict[actionState].DoesInputMatch, weight);
+                        param =>
+                        {
+                            if (param is null) return false;
+                            var actionParam = (ActionParam)param;
+                            return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
+                                actionParam.CommandDirection,
+                                actionParam.Type);
+                        }, weight);
             }
 
             fsm.Fsm.Configure(actionState)
@@ -73,7 +86,7 @@ namespace Quantum
                 {
                     if (param is null) return false;
                     var jumpParam = (JumpParam)param;
-                    return ActionDict[actionState].CanCancelNow(jumpParam.f, fsm);
+                    return Util.CanCancelNow(jumpParam.f, jumpParam.EntityRef);
                 });
             
             // fsm.Fsm.Configure(actionState)
@@ -91,14 +104,28 @@ namespace Quantum
         {
             fsm.Fsm.Configure(PlayerFSM.State.AirActionable)
                 .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                    ActionDict[actionState].DoesInputMatch, weight);
+                    param =>
+                    {
+                        if (param is null) return false;
+                        var actionParam = (ActionParam)param;
+                        return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
+                            actionParam.CommandDirection,
+                            actionParam.Type);
+                    }, weight);
 
             fsm.Fsm.Configure(actionState)
                 .SubstateOf(PlayerFSM.State.AirAction);
             
             fsm.Fsm.Configure(PlayerFSM.State.AirDash)
                 .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                    ActionDict[actionState].DoesInputMatch, weight);
+                    param =>
+                    {
+                        if (param is null) return false;
+                        var actionParam = (ActionParam)param;
+                        return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
+                            actionParam.CommandDirection,
+                            actionParam.Type);
+                    }, weight);
             
             if (!jumpCancellable) return;
             
@@ -107,7 +134,7 @@ namespace Quantum
                 {
                     if (param is null) return false;
                     var jumpParam = (JumpParam)param;
-                    return ActionDict[actionState].CanCancelNow(jumpParam.f, fsm);
+                    return Util.CanCancelNow(jumpParam.f, jumpParam.EntityRef);
                 });
             
             // fsm.Fsm.Configure(actionState)
@@ -126,11 +153,25 @@ namespace Quantum
             if (usableRaw) {
                 fsm.Fsm.Configure(PlayerFSM.State.GroundActionable)
                     .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                        ActionDict[actionState].DoesInputMatch, weight);
+                        param =>
+                        {
+                            if (param is null) return false;
+                            var actionParam = (ActionParam)param;
+                            return (Util.CanCancelNow(actionParam.f, actionParam.EntityRef) &&
+                                    Util.DoesInputMatch(actionParam.f, actionParam.EntityRef, actionParam.CommandDirection,
+                                        actionParam.Type));
+                        }, weight);
 
                 fsm.Fsm.Configure(PlayerFSM.State.Dash)
                     .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                        ActionDict[actionState].DoesInputMatch, weight);
+                        param =>
+                        {
+                            if (param is null) return false;
+                            var actionParam = (ActionParam)param;
+                            return (Util.CanCancelNow(actionParam.f, actionParam.EntityRef) &&
+                                    Util.DoesInputMatch(actionParam.f, actionParam.EntityRef, actionParam.CommandDirection,
+                                        actionParam.Type));
+                        }, weight);
             }
 
             fsm.Fsm.Configure(actionState)
@@ -143,7 +184,7 @@ namespace Quantum
                 {
                     if (param is null) return false;
                     var jumpParam = (JumpParam)param;
-                    return ActionDict[actionState].CanCancelNow(jumpParam.f, fsm);
+                    return Util.CanCancelNow(jumpParam.f, jumpParam.EntityRef);
                 });
             
             // fsm.Fsm.Configure(actionState)
