@@ -58,34 +58,18 @@ namespace Quantum
         {
             ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Hurtbox, EntityRef);
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            if (character.InvulnerableBefore.ContainsKey(Fsm.State()))
-            {
-                if (character.InvulnerableBefore[Fsm.State()] > FramesInCurrentState(f))
-                    return;
-            }
             
-            CollisionBoxCollection hurtboxCollection;
+            
+            // if (character.InvulnerableBefore.ContainsKey(Fsm.State()))
+            // {
+            //     if (character.InvulnerableBefore[Fsm.State()] > FramesInCurrentState(f))
+            //         return;
+            // }
 
+
+            CollisionBoxCollection hurtboxCollection =
+                character.HurtboxCollectionSectionGroup.Get(this)?.GetCurrentItem(f, this);
             HurtType hurtType = GetHurtType(f);
-
-            if (Fsm.IsInState(State.Action))
-            {
-                var hurtboxCollectionSectionGroup = character.ActionDict?[Fsm.State()].HurtboxCollectionSectionGroup;
-                hurtboxCollection = hurtboxCollectionSectionGroup?.GetCurrentItem(f, this);
-            }
-            else if (Fsm.IsInState(State.AirHit))
-                hurtboxCollection = character.AirHitHurtboxCollection;
-            else if (Fsm.IsInState(State.HardKnockdown))
-                hurtboxCollection = null;
-            else if (Fsm.IsInState(State.SoftKnockdown))
-                hurtboxCollection = null;
-            else if (Fsm.IsInState(State.Crouch))
-                hurtboxCollection = character.CrouchHurtboxCollection;
-            else if (Fsm.IsInState(State.Stand))
-                hurtboxCollection = character.StandHurtboxesCollection;
-            else
-                hurtboxCollection = character.StandHurtboxesCollection;
-
             RenderCollisionBoxCollection(f, hurtboxCollection, CollisionBox.CollisionBoxType.Hurtbox, EntityRef, 
                 (int)hurtType, 0,0,0, 0, 0, 0 ,
                 0, 0);
@@ -101,11 +85,7 @@ namespace Quantum
             }
             
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            if (Fsm.IsInState(State.ThrowStartup)) return HurtType.Counter;
-            if (Fsm.IsInState(State.ThrowWhiff)) return HurtType.Counter;
-            if (!Fsm.IsInState(State.Action)) return HurtType.Regular;
-            var hurtTypeSectionGroup = character.ActionDict?[Fsm.State()].HurtTypeSectionGroup;
-            return hurtTypeSectionGroup?.GetCurrentItem(f, this) ?? HurtType.Counter;
+            return character.HurtTypeSectionGroup.Get(this).GetCurrentItem(f, this);
         }
 
         public void Hitbox(Frame f)
@@ -120,20 +100,7 @@ namespace Quantum
             if (!Fsm.IsInState(State.Action) && !Fsm.IsInState(State.KinematicSource)) return;
             
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-
-            SectionGroup<Hit> hitSectionGroup;
-            if (Fsm.State() == State.FrontThrowConnect)
-            {
-                hitSectionGroup = character.FrontThrowKinematics.HitSectionGroup;
-            }
-            else if (Fsm.State() == State.BackThrowConnect)
-            {
-                hitSectionGroup = character.BackThrowKinematics.HitSectionGroup;
-            }
-            else
-            {
-                hitSectionGroup = character.ActionDict?[Fsm.State()].HitSectionGroup;
-            }
+            SectionGroup<Hit> hitSectionGroup = character.HitSectionGroup.Get(this);
             
             var hit = hitSectionGroup?.GetCurrentItem(f, this);
             if (hit is null) return;
@@ -192,26 +159,9 @@ namespace Quantum
 
             Character character = Characters.GetPlayerCharacter(f, entityRef);
             
-            if (Fsm.Fsm.IsInState(State.Action))
-            {
-                if (character.ActionDict[Fsm.Fsm.State()].AllowCrossupSectionGroup is not null)
-                {
-                    if (character.ActionDict[Fsm.Fsm.State()].AllowCrossupSectionGroup.GetCurrentItem(f, entityRef)) return;
-                }
-            }
-            
-            CollisionBox pushbox;
-            
-            if (Fsm.Fsm.IsInState(State.Crouch) || Fsm.Fsm.IsInState(State.HardKnockdown))
-                pushbox = character.CrouchPushbox;
-            else if (Fsm.Fsm.IsInState(State.Stand))
-                pushbox = character.StandPushbox;
-            else if (Fsm.Fsm.IsInState(State.AirHitPostWallBounce))
-                pushbox = character.TallPushbox;
-            else if (Fsm.Fsm.IsInState(State.Air))
-                pushbox = character.AirPushbox;
-            else
-                pushbox = character.StandPushbox;
+            if (character.AllowCrossupSectionGroup.Get(Fsm).GetCurrentItem(f, Fsm)) return;
+
+            CollisionBox pushbox = character.Pushbox.Get(Fsm);
 
             CollisionBoxCollection pushboxCollection = new CollisionBoxCollection()
                 { CollisionBoxes = new List<CollisionBox>() { pushbox } };
@@ -337,24 +287,7 @@ namespace Quantum
         private SectionGroup<Hit> GetCurrentHitSectionGroup(Frame f)
         {
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            SectionGroup<Hit> hitSectionGroup;
-            if (Fsm.IsInState(State.FrontThrowConnect))
-            {
-                hitSectionGroup = character.FrontThrowKinematics.HitSectionGroup;
-            }
-            else if (Fsm.IsInState(State.BackThrowConnect))
-            {
-                hitSectionGroup = character.BackThrowKinematics.HitSectionGroup;
-            }
-            else if (Fsm.IsInState(State.Action))
-            {
-                hitSectionGroup = character.ActionDict?[Fsm.State()].HitSectionGroup;
-            }
-            else
-            {
-                hitSectionGroup = null;
-            }
-
+            SectionGroup<Hit> hitSectionGroup = character.HitSectionGroup.Get(this);
             return hitSectionGroup;
         }
 
