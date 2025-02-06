@@ -59,14 +59,8 @@ namespace Quantum
             ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Hurtbox, EntityRef);
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
             
+            if (character.InvulnerableBefore.Get(this) >= FramesInCurrentState(f)) return;
             
-            // if (character.InvulnerableBefore.ContainsKey(Fsm.State()))
-            // {
-            //     if (character.InvulnerableBefore[Fsm.State()] > FramesInCurrentState(f))
-            //         return;
-            // }
-
-
             CollisionBoxCollection hurtboxCollection =
                 character.HurtboxCollectionSectionGroup.Get(this)?.GetCurrentItem(f, this);
             HurtType hurtType = GetHurtType(f);
