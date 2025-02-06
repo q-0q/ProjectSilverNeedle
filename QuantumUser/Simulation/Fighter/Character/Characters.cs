@@ -22,7 +22,7 @@ namespace Quantum
         private static Dictionary<CharacterEnum, Character> _dictionary = new()
         {
             
-            { CharacterEnum.StickTwo, new StickTwo() },
+            // { CharacterEnum.StickTwo, new StickTwo() },
             
             // add characters here
         };

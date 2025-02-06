@@ -13,77 +13,23 @@ namespace Quantum
         // Metadata
         public string Name;
         public Type StateType;
-        
-        // Animations
-        public FighterAnimation StandAnimation;
-        public FighterAnimation CrouchAnimation;
-        public FighterAnimation WalkForwardAnimation;
-        public FighterAnimation WalkBackwardAnimation;
-        public RisingTrajectoryAnimation AirActionableRisingAnimation;
-        public FallingTrajectoryAnimation AirActionableFallingAnimation;
-        public RisingTrajectoryAnimation AirHitRisingAnimation;
-        public FallingTrajectoryAnimation AirHitFallingAnimation;
-        public RisingTrajectoryAnimation AirHitPostGroundBounceRisingAnimation;
-        public FallingTrajectoryAnimation AirPostHitGroundBounceFallingAnimation;
-        public FighterAnimation DashAnimation;
-        public FighterAnimation BackdashAnimation;
-        public FighterAnimation AirdashAnimation;
-        public FighterAnimation AirBackdashAnimation;
-        public FighterAnimation StandHitHighAnimation;
-        public FighterAnimation StandHitLowAnimation;
-        public FighterAnimation CrouchHitAnimation;
-        public FighterAnimation StandBlockAnimation;
-        public FighterAnimation CrouchBlockAnimation;
-        public FighterAnimation AirBlockAnimation;
-        public FighterAnimation LandsquatAnimation;
-        public FighterAnimation HardKnockdownAnimation;
-        public FighterAnimation SoftKnockdownAnimation;
-        public FighterAnimation DeadFromAirAnimation;
-        public FighterAnimation DeadFromGroundAnimation;
-        public FighterAnimation KinematicReceiverAnimation;
-        public FighterAnimation ThrowTechAnimation;
-        
-        public FighterAnimation ThrowStartupAnimation;
-        public FighterAnimation ThrowWhiffAnimation;
-        public Kinematics FrontThrowKinematics;
-        public Kinematics BackThrowKinematics;
-
         public FPVector2 KinematicAttachPointOffset;
-
-        // Actions
-        public Dictionary<int, FighterAction> ActionDict;
-        
-        // Universal movement parameters
-        public FP WalkForwardSpeed;
-        public FP WalkBackwardSpeed;
-        
-        public FP JumpHeight;
-        public int JumpTimeToHeight;
-        public FP JumpForwardSpeed;
-        public FP JumpBackwardSpeed;
-        public int JumpCount;
-        
-        public FP FallSpeed;
-        public int FallTimeToSpeed;
-
-        public SectionGroup<FP> DashMovementSectionGroup;
-        public SectionGroup<FP> BackdashMovementSectionGroup;
         
         
-        // Hurtboxes
-        public CollisionBoxCollection StandHurtboxesCollection;
-        public CollisionBoxCollection CrouchHurtboxCollection;
-        public CollisionBoxCollection AirHitHurtboxCollection;
-        public Dictionary<int, int> InvulnerableBefore;
-        
-        // Pushbox
-        public CollisionBox StandPushbox;
-        public CollisionBox CrouchPushbox;
-        public CollisionBox AirPushbox;
-        public CollisionBox TallPushbox;
-
-
-        // public PlayerFSM PlayerFsmTemplate;
+        // State maps
+        public StateMap<FighterAnimation> FighterAnimation;
+        public StateMap<SectionGroup<CollisionBoxCollection>> HurtboxCollectionSectionGroup;
+        public StateMap<SectionGroup<Hit>> HitSectionGroup;
+        public StateMap<SectionGroup<int>> MovementSectionGroup;
+        public StateMap<SectionGroup<bool>> AllowCrossupSectionGroup;
+        public StateMap<SectionGroup<Trajectory>> TrajectorySectionGroup;
+        public StateMap<InputSystem.InputType> InputTypes;
+        public StateMap<int> CommandDirection;
+        public StateMap<int> CancellableAfter;
+        public StateMap<bool> WhiffCancellable;
+        public StateMap<int> FireReceiverFinishAfter;
+        public StateMap<SectionGroup<FPVector2>> AttachPositionSectionGroup;
+        public StateMap<int> InvulnerableBefore;
         
         public abstract void ConfigureCharacterFsm(PlayerFSM playerFsm);
         

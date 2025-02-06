@@ -179,6 +179,14 @@ namespace Quantum
             scoreData->score++;
         }
         
+        public static bool CanCancelNow(Frame f, EntityRef entityRef)
+        {
+            Character character = Characters.GetPlayerCharacter(f, entityRef);
+            PlayerFSM fsm = GetPlayerFSM(f, entityRef);
+            return (fsm.FramesInCurrentState(f) >= character.CancellableAfter.Get(fsm)) && (!fsm.IsWhiffed(f) || 
+                character.WhiffCancellable.Get(fsm));
+        }
+        
     }
     
     

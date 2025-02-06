@@ -9,23 +9,6 @@ namespace Quantum
 {
     public class StickTwo : Character
     {
-        // { PlayerFSM.State.Action1 , _5L},
-        // { PlayerFSM.State.Action2 , _2L},
-        // { PlayerFSM.State.Action3 , _5M},
-        // { PlayerFSM.State.Action4 , _2M},
-        // { StickTwoState._2H , _2H},
-        // { StickTwoState._5H , _5H},
-        // { StickTwoState._5S1 , _5S1},
-        // { StickTwoState._5S2 , _5S2},
-        // { StickTwoState._5S3 , _5S3},
-        // { StickTwoState._6S3 , _6S3},
-        // { StickTwoState._2S_ground , _2S},
-        // { StickTwoState._2S_air , _2S},
-        // { StickTwoState._JL , _JL},
-        // { StickTwoState._JM , _JM},
-        // { StickTwoState._JH , _JH},
-        // { StickTwoState._JS , _JS},
-        
         public class StickTwoState : PlayerFSM.State
         {
             public static int _5L;
@@ -50,8 +33,6 @@ namespace Quantum
         {
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
-            
-            Debug.Log("StandActionable: " + PlayerFSM.State.StandActionable);
             
             WalkForwardSpeed = FP.FromString("12");
             WalkBackwardSpeed = FP.FromString("9");
@@ -1855,17 +1836,17 @@ namespace Quantum
                             }
                         }
                     },
-                    TrajectorySectionGroup = new SectionGroup<ActionTrajectory>()
+                    TrajectorySectionGroup = new SectionGroup<Trajectory>()
                     {
-                        Sections = new List<Tuple<int, ActionTrajectory>>()
+                        Sections = new List<Tuple<int, Trajectory>>()
                         {
-                            new(5, new ActionTrajectory()
+                            new(5, new Trajectory()
                             {
                                 TrajectoryHeight = FP.FromString("0.5"),
                                 TrajectoryXVelocity = 1,
                                 TimeToTrajectoryHeight = 5,
                             }),
-                            new(10, new ActionTrajectory()
+                            new(10, new Trajectory()
                             {
                                 TrajectoryHeight = 4,
                                 TrajectoryXVelocity = 5,
@@ -2372,11 +2353,11 @@ namespace Quantum
                     },
                     
                     
-                    TrajectorySectionGroup = new SectionGroup<ActionTrajectory>()
+                    TrajectorySectionGroup = new SectionGroup<Trajectory>()
                     {
-                        Sections = new List<Tuple<int, ActionTrajectory>>()
+                        Sections = new List<Tuple<int, Trajectory>>()
                         {
-                            new(startup, new ActionTrajectory()
+                            new(startup, new Trajectory()
                             {
                                 TrajectoryHeight = FP.FromString("2"),
                                 TimeToTrajectoryHeight = 9
