@@ -30,6 +30,13 @@ namespace Quantum
             public static int _JS;
         }
 
+        public enum StickTwoAnimationPath
+        {
+            Stand,
+            Crouch,
+            Walk,
+        } 
+
         public StickTwo()
         {
             Name = "StickTwo";
@@ -91,7 +98,6 @@ namespace Quantum
                         Height = 6,
                         Width = 3,
                     },
-
                 }
             };
 

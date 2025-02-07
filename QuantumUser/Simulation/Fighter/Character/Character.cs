@@ -13,6 +13,7 @@ namespace Quantum
         // Metadata
         public string Name;
         public Type StateType;
+        public Type AnimationPathsEnum;
         public FPVector2 KinematicAttachPointOffset;
 
         public FP FallSpeed;

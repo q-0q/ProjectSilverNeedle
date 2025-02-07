@@ -53,6 +53,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.AnimationData))]
   public unsafe partial class AnimationDataPrototype : ComponentPrototype<Quantum.AnimationData> {
     public Int32 frame;
+    public Int32 path;
     partial void MaterializeUser(Frame frame, ref Quantum.AnimationData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.AnimationData component = default;
@@ -61,6 +62,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.AnimationData result, in PrototypeMaterializationContext context = default) {
         result.frame = this.frame;
+        result.path = this.path;
         MaterializeUser(frame, ref result, in context);
     }
   }

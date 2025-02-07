@@ -571,20 +571,24 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct AnimationData : Quantum.IComponent {
-    public const Int32 SIZE = 4;
+    public const Int32 SIZE = 8;
     public const Int32 ALIGNMENT = 4;
     [FieldOffset(0)]
     public Int32 frame;
+    [FieldOffset(4)]
+    public Int32 path;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 103;
         hash = hash * 31 + frame.GetHashCode();
+        hash = hash * 31 + path.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (AnimationData*)ptr;
         serializer.Stream.Serialize(&p->frame);
+        serializer.Stream.Serialize(&p->path);
     }
   }
   [StructLayout(LayoutKind.Explicit)]

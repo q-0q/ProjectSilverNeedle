@@ -4,6 +4,7 @@ namespace Quantum.Types
     {
         public SectionGroup<int> SectionGroup;
         public int SpriteSheetOffset;
+        public string Path;
 
         public virtual void SetSpriteForFsm(Frame f, PlayerFSM fsm)
         {
