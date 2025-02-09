@@ -181,7 +181,7 @@ namespace Quantum
             playerFsmData->framesInState = 0;
 
             f.Unsafe.TryGetPointer<AnimationData>(entityRef, out var animationData);
-            animationData->frame = 0;
+            animationData->path = 0;
 
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(entityRef, out var hitEntitiesTracker);
             f.ResolveList(hitEntitiesTracker->HitEntities).Clear();

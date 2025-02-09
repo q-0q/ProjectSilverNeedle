@@ -12,7 +12,7 @@ namespace Quantum
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
             FighterAnimation currentAnimation = character.FighterAnimation.Get(this);
             if (currentAnimation is null) return;
-            currentAnimation.SetSpriteForFsm(f, this);
+            currentAnimation.SetAnimationPathForFsm(f, this);
         }
     }
 }

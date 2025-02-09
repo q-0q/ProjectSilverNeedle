@@ -32,15 +32,17 @@ namespace Quantum
 
         public enum StickTwoAnimationPath
         {
-            Stand,
-            Crouch,
-            Walk,
+            StandActionable,
+            WalkForward,
+            WalkBackward,
+            CrouchActionable,
         } 
 
         public StickTwo()
         {
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
+            AnimationPathsEnum = typeof(StickTwoAnimationPath);
 
             var WalkForwardSpeed = FP.FromString("12");
             var WalkBackwardSpeed = FP.FromString("9");
@@ -175,20 +177,43 @@ namespace Quantum
 
             var StandAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 0,
+                Path = (int)StickTwoAnimationPath.StandActionable,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
+                    LengthScalar = 2,
                     Sections = new List<Tuple<int, int>>()
                     {
-                        new(1, 0)
+                        new(1, 0),
+                        new(1, 1),
+                        new(1, 2),
+                        new(1, 3),
+                        new(1, 4),
+                        new(1, 5),
+                        new(1, 6),
+                        new(1, 7),
+                        new(1, 8),
+                        new(1, 9),
+                        new(1, 10),
+                        new(1, 11),
+                        new(1, 12),
+                        new(1, 13),
+                        new(1, 14),
+                        new(1, 15),
+                        new(1, 16),
+                        new(1, 17),
+                        new(1, 18),
+                        new(1, 19),
+                        new(1, 20)
                     }
                 }
             };
+
+            FighterAnimation.Dictionary[PlayerFSM.State.StandActionable] = StandAnimation;
 
             var CrouchAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 1,
+                Path = (int)StickTwoAnimationPath.CrouchActionable,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
@@ -198,14 +223,16 @@ namespace Quantum
                     }
                 }
             };
+            
+            FighterAnimation.Dictionary[PlayerFSM.State.CrouchActionable] = CrouchAnimation;
 
             var WalkForwardAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 12,
+                Path = (int)StickTwoAnimationPath.WalkForward,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 9,
+                    LengthScalar = 2,
                     Sections = new List<Tuple<int, int>>()
                     {
                         new(1, 0),
@@ -214,32 +241,73 @@ namespace Quantum
                         new(1, 3),
                         new(1, 4),
                         new(1, 5),
+                        new(1, 6),
+                        new(1, 7),
+                        new(1, 8),
+                        new(1, 9),
+                        new(1, 10),
+                        new(1, 11),
+                        new(1, 12),
+                        new(1, 13),
+                        new(1, 14),
+                        new(1, 15),
+                        new(1, 16),
+                        new(1, 17),
+                        new(1, 18),
+                        new(1, 19),
+                        new(1, 20),
+                        new(1, 21),
+                        new(1, 22),
+                        new(1, 23),
                     }
                 }
             };
+            
+            FighterAnimation.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardAnimation;
+            
+            
 
             var WalkBackwardAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 12,
+                Path = (int)StickTwoAnimationPath.WalkBackward,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 14,
+                    LengthScalar = 2,
                     Sections = new List<Tuple<int, int>>()
                     {
-                        new(1, 5),
-                        new(1, 4),
-                        new(1, 3),
-                        new(1, 2),
-                        new(1, 1),
                         new(1, 0),
+                        new(1, 1),
+                        new(1, 2),
+                        new(1, 3),
+                        new(1, 4),
+                        new(1, 5),
+                        new(1, 6),
+                        new(1, 7),
+                        new(1, 8),
+                        new(1, 9),
+                        new(1, 10),
+                        new(1, 11),
+                        new(1, 12),
+                        new(1, 13),
+                        new(1, 14),
+                        new(1, 15),
+                        new(1, 16),
+                        new(1, 17),
+                        new(1, 18),
+                        new(1, 19),
+                        new(1, 20),
+                        new(1, 21),
+                        new(1, 22),
+                        new(1, 23),
                     }
                 }
             };
+            
+            FighterAnimation.Dictionary[PlayerFSM.State.WalkBackward] = WalkBackwardAnimation;
 
             var AirActionableRisingAnimation = new RisingTrajectoryAnimation()
             {
-                SpriteSheetOffset = 18,
                 SectionGroup = new SectionGroup<int>()
                 {
                     LengthScalar = 5,
@@ -253,7 +321,6 @@ namespace Quantum
 
             var AirActionableFallingAnimation = new FallingTrajectoryAnimation()
             {
-                SpriteSheetOffset = 19,
                 SectionGroup = new SectionGroup<int>()
                 {
                     LengthScalar = 5,
@@ -267,7 +334,6 @@ namespace Quantum
 
             var AirHitPostGroundBounceRisingAnimation = new RisingTrajectoryAnimation()
             {
-                SpriteSheetOffset = 28,
                 SectionGroup = new SectionGroup<int>()
                 {
                     LengthScalar = 5,
@@ -281,7 +347,6 @@ namespace Quantum
 
             var AirPostHitGroundBounceFallingAnimation = new FallingTrajectoryAnimation()
             {
-                SpriteSheetOffset = 28,
                 SectionGroup = new SectionGroup<int>()
                 {
                     LengthScalar = 5,
@@ -295,7 +360,6 @@ namespace Quantum
 
             var StandHitHighAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 6,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -308,7 +372,6 @@ namespace Quantum
 
             var StandHitLowAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 8,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -321,7 +384,6 @@ namespace Quantum
 
             var CrouchHitAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 10,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -334,7 +396,6 @@ namespace Quantum
 
             var AirHitRisingAnimation = new RisingTrajectoryAnimation()
             {
-                SpriteSheetOffset = 24,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -347,7 +408,6 @@ namespace Quantum
 
             var AirHitFallingAnimation = new FallingTrajectoryAnimation()
             {
-                SpriteSheetOffset = 24,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -361,7 +421,6 @@ namespace Quantum
 
             var KinematicReceiverAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 24,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -373,7 +432,6 @@ namespace Quantum
 
             var StandBlockAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 2,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -387,7 +445,6 @@ namespace Quantum
 
             var CrouchBlockAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 4,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -400,7 +457,6 @@ namespace Quantum
 
             var AirBlockAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 22,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -413,7 +469,6 @@ namespace Quantum
 
             var HardKnockdownAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 30,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -430,7 +485,6 @@ namespace Quantum
 
             var DeadFromAirAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 30,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -443,7 +497,6 @@ namespace Quantum
 
             var DeadFromGroundAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 59,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -460,7 +513,6 @@ namespace Quantum
 
             var SoftKnockdownAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 54,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -475,7 +527,6 @@ namespace Quantum
 
             var LandsquatAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 1,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -487,7 +538,6 @@ namespace Quantum
 
             var DashAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 36,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -511,7 +561,6 @@ namespace Quantum
 
             var BackdashAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 50,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -538,7 +587,6 @@ namespace Quantum
 
             var ThrowStartupAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 38,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()
@@ -553,7 +601,6 @@ namespace Quantum
                 FireReceiverFinishAfter = 40,
                 Animation = new FighterAnimation()
                 {
-                    SpriteSheetOffset = 39,
                     SectionGroup = new SectionGroup<int>()
                     {
                         Sections = new List<Tuple<int, int>>()
@@ -597,7 +644,6 @@ namespace Quantum
                 FireReceiverFinishAfter = 37,
                 Animation = new FighterAnimation()
                 {
-                    SpriteSheetOffset = 45,
                     SectionGroup = new SectionGroup<int>()
                     {
                         Sections = new List<Tuple<int, int>>()
@@ -639,7 +685,6 @@ namespace Quantum
 
             var ThrowWhiffAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 43,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Sections = new List<Tuple<int, int>>()

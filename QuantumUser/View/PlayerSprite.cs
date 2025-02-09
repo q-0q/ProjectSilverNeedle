@@ -31,9 +31,14 @@ public class PlayerSprite : QuantumEntityViewComponent
         
         Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)PredictedFrame.Get<PlayerLink>(EntityRef).characterId;
         string characterName = Characters.Get(characterEnum).Name;
-        string path = "Sprites/Characters/" + characterName + "/Frames/" + characterName;
         int frame = PredictedFrame.Get<AnimationData>(EntityRef).frame + 1;
-        Sprite sprite = Resources.Load<Sprite>(path + frame);
+        int path = PredictedFrame.Get<AnimationData>(EntityRef).path;
+        var pathEnum = Characters.Get(characterEnum).AnimationPathsEnum;
+        string stringPath = Enum.ToObject(pathEnum, path).ToString();
+        // Debug.Log(stringPath);
+        string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/" + stringPath + "_" + frame;
+        Debug.Log(fullPath);
+        Sprite sprite = Resources.Load<Sprite>(fullPath);
 
         
         // offense / defense sorting
