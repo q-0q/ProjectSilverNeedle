@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using Photon.Deterministic;
+using Quantum.Types;
 using UnityEngine.SocialPlatforms.Impl;
 using Wasp;
 using Debug = UnityEngine.Debug;
@@ -174,6 +177,31 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<ScoreData>(entityRef, out var scoreData);
             scoreData->score++;
+        }
+
+        public static int GetAnimationPathLength(Character character, int path)
+        {
+            var pathEnum = character.AnimationPathsEnum;
+            var characterName = character.Name;
+            string stringPath = Enum.ToObject(pathEnum, path).ToString();
+            // Debug.Log(stringPath);
+            string fullPath = "Assets/Resources/Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/";
+            string[] pngFiles = Directory.GetFiles(fullPath, "*.png", SearchOption.TopDirectoryOnly);
+            return pngFiles.Length;
+        }
+        
+        public static void AutoSetupFromAnimationPath(FighterAnimation animation, Character character)
+        {
+            var sectionGroup = animation.SectionGroup;
+            var path = animation.Path;
+            if (!sectionGroup.AutoFromAnimationPath) return;
+            sectionGroup.Sections = new List<Tuple<int, int>>();
+            int length = Util.GetAnimationPathLength(character, path);
+            sectionGroup.Sections.Capacity = length;
+            for (int i = 0; i < length; i++)
+            {
+                sectionGroup.Sections.Add(new Tuple<int, int>(1, i));
+            }
         }
         
         // Old Action functions that have been migrated

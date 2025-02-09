@@ -182,33 +182,11 @@ namespace Quantum
                 {
                     Loop = true,
                     LengthScalar = 2,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                        new(1, 2),
-                        new(1, 3),
-                        new(1, 4),
-                        new(1, 5),
-                        new(1, 6),
-                        new(1, 7),
-                        new(1, 8),
-                        new(1, 9),
-                        new(1, 10),
-                        new(1, 11),
-                        new(1, 12),
-                        new(1, 13),
-                        new(1, 14),
-                        new(1, 15),
-                        new(1, 16),
-                        new(1, 17),
-                        new(1, 18),
-                        new(1, 19),
-                        new(1, 20)
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
-
+            
+            Util.AutoSetupFromAnimationPath(StandAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandActionable] = StandAnimation;
 
             var CrouchAnimation = new FighterAnimation()
@@ -217,13 +195,11 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0)
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
+            Util.AutoSetupFromAnimationPath(CrouchAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.CrouchActionable] = CrouchAnimation;
 
             var WalkForwardAnimation = new FighterAnimation()
@@ -233,36 +209,11 @@ namespace Quantum
                 {
                     Loop = true,
                     LengthScalar = 2,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                        new(1, 2),
-                        new(1, 3),
-                        new(1, 4),
-                        new(1, 5),
-                        new(1, 6),
-                        new(1, 7),
-                        new(1, 8),
-                        new(1, 9),
-                        new(1, 10),
-                        new(1, 11),
-                        new(1, 12),
-                        new(1, 13),
-                        new(1, 14),
-                        new(1, 15),
-                        new(1, 16),
-                        new(1, 17),
-                        new(1, 18),
-                        new(1, 19),
-                        new(1, 20),
-                        new(1, 21),
-                        new(1, 22),
-                        new(1, 23),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
+            Util.AutoSetupFromAnimationPath(WalkForwardAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardAnimation;
             
             
@@ -274,36 +225,11 @@ namespace Quantum
                 {
                     Loop = true,
                     LengthScalar = 2,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                        new(1, 2),
-                        new(1, 3),
-                        new(1, 4),
-                        new(1, 5),
-                        new(1, 6),
-                        new(1, 7),
-                        new(1, 8),
-                        new(1, 9),
-                        new(1, 10),
-                        new(1, 11),
-                        new(1, 12),
-                        new(1, 13),
-                        new(1, 14),
-                        new(1, 15),
-                        new(1, 16),
-                        new(1, 17),
-                        new(1, 18),
-                        new(1, 19),
-                        new(1, 20),
-                        new(1, 21),
-                        new(1, 22),
-                        new(1, 23),
-                    }
+                    AutoFromAnimationPath = true,
                 }
             };
             
+            Util.AutoSetupFromAnimationPath(WalkBackwardAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.WalkBackward] = WalkBackwardAnimation;
 
             var AirActionableRisingAnimation = new RisingTrajectoryAnimation()
