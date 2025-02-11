@@ -182,6 +182,7 @@ namespace Quantum
             machine.Configure(State.Backdash)
                 .Permit(Trigger.Finish, State.StandActionable)
                 .OnEntry(OnBackdash)
+                .OnEntry(InputSystem.ClearBufferParams)
                 .SubstateOf(State.Ground);
             
             machine.Configure(State.GroundAction)

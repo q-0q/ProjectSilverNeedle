@@ -160,7 +160,7 @@ namespace Quantum
             var character = Characters.GetPlayerCharacter(param.f, EntityRef);
             
             StartNewTrajectory(param.f, trajectory.TrajectoryHeight, trajectory.TimeToTrajectoryHeight, 
-                trajectory.TrajectoryXVelocity, character.FallSpeed, character.FallTimeToSpeed, false);
+                trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds, character.FallSpeed, character.FallTimeToSpeed, false);
 
             param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             trajectoryData->jumpsRemaining--;

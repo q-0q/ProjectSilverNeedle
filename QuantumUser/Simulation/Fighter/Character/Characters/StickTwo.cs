@@ -36,6 +36,9 @@ namespace Quantum
             WalkForward,
             WalkBackward,
             CrouchActionable,
+            Jump,
+            _5M,
+            StandHitHigh,
         } 
 
         public StickTwo()
@@ -50,7 +53,7 @@ namespace Quantum
             var JumpHeight = FP.FromString("5.5");
             var JumpTimeToHeight = 25;
             var JumpForwardSpeed = FP.FromString("10");
-            var JumpBackwardSpeed = FP.FromString("7");
+            var JumpBackwardSpeed = FP.FromString("-7");
             JumpCount = 2;
 
             FallSpeed = FP.FromString("50");
@@ -63,45 +66,55 @@ namespace Quantum
             FP highDamage = 35;
             FP crazyDamage = 45;
             
-            FighterAnimation = new StateMap<FighterAnimation>();
-            Duration = new StateMap<int>();
-            Duration.DefaultValue = 0;
-            HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
-            HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
-            HitSectionGroup = new StateMap<SectionGroup<Hit>>();
-            Pushbox = new StateMap<CollisionBox>();
-            MovementSectionGroup = new StateMap<SectionGroup<FP>>();
-            AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
-            TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
-            InputTypes = new StateMap<InputSystem.InputType>();
-            InputTypes.DefaultValue = InputSystem.InputType.P;
-            CommandDirection = new StateMap<int>();
-            CommandDirection.DefaultValue = 5;
-            CancellableAfter = new StateMap<int>();
-            CancellableAfter.DefaultValue = 0;
-            WhiffCancellable = new StateMap<bool>();
-            WhiffCancellable.DefaultValue = false;
-            FireReceiverFinishAfter = new StateMap<int>();
-            FireReceiverFinishAfter.DefaultValue = 10;
-            AttachPositionSectionGroup = new StateMap<SectionGroup<FPVector2>>();
-            InvulnerableBefore = new StateMap<int>();
-            InvulnerableBefore.DefaultValue = 0;
+            SetupStateMaps();
 
-            var StandHurtboxesCollection = new CollisionBoxCollection()
+            UpwardJumpTrajectory = new Trajectory()
             {
-                CollisionBoxes = new List<CollisionBox>()
+                TimeToTrajectoryHeight = JumpTimeToHeight,
+                TrajectoryXVelocity = 0,
+                TrajectoryHeight = JumpHeight
+            };
+            
+            ForwardJumpTrajectory = new Trajectory()
+            {
+                TimeToTrajectoryHeight = JumpTimeToHeight,
+                TrajectoryXVelocity = JumpForwardSpeed,
+                TrajectoryHeight = JumpHeight
+            };
+            
+            BackwardJumpTrajectory = new Trajectory()
+            {
+                TimeToTrajectoryHeight = JumpTimeToHeight,
+                TrajectoryXVelocity = JumpBackwardSpeed,
+                TrajectoryHeight = JumpHeight
+            };
+
+
+            var StandHurtbox = new SectionGroup<CollisionBoxCollection>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
                 {
-                    new()
-                    {
-                        GrowHeight = true,
-                        GrowWidth = false,
-                        PosX = 0,
-                        PosY = 0,
-                        Height = 6,
-                        Width = 3,
-                    },
+                    new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new()
+                                {
+                                    GrowHeight = true,
+                                    GrowWidth = false,
+                                    PosX = 0,
+                                    PosY = 0,
+                                    Height = 6,
+                                    Width = 3,
+                                },
+                            }
+                        }
+                    )
                 }
             };
+
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Stand] = StandHurtbox;
 
             var CrouchHurtboxCollection = new CollisionBoxCollection()
             {
@@ -195,6 +208,7 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
+                    LengthScalar = 2,
                     AutoFromAnimationPath = true
                 }
             };
@@ -215,8 +229,29 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(WalkForwardAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardAnimation;
+
+            var WalkForwardMovement = new SectionGroup<FP>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    (new(Util.GetAnimationPathLength(this, WalkForwardAnimation.Path), 3))
+                }
+            };
+
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardMovement;
+
+            var StandHitHighAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.StandHitHigh,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             
-            
+            Util.AutoSetupFromAnimationPath(StandHitHighAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = StandHitHighAnimation;
 
             var WalkBackwardAnimation = new FighterAnimation()
             {
@@ -231,32 +266,83 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(WalkBackwardAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.WalkBackward] = WalkBackwardAnimation;
-
-            var AirActionableRisingAnimation = new RisingTrajectoryAnimation()
+            
+            var WalkBackwardMovement = new SectionGroup<FP>()
             {
+                Loop = true,
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    (new(Util.GetAnimationPathLength(this, WalkBackwardAnimation.Path), -2))
+                }
+            };
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkBackward] = WalkBackwardMovement;
+
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardMovement;
+
+            var JumpingAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.Jump,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                    }
+                    LengthScalar = 2,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(JumpingAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.AirActionable] = JumpingAnimation;
+
+
+            var _5MAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath._5M,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
                 }
             };
 
-            var AirActionableFallingAnimation = new FallingTrajectoryAnimation()
+            var _5MHits = new SectionGroup<Hit>()
             {
-                SectionGroup = new SectionGroup<int>()
+                Sections = new List<Tuple<int, Hit>>()
                 {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
+                    new Tuple<int, Hit>(10, null),
+                    new Tuple<int, Hit>(5, new Hit()
                     {
-                        new(1, 1),
-                        new(1, 2),
-                    }
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowHeight = false,
+                                            GrowWidth = true,
+                                            Width = 5,
+                                            Height = 2,
+                                            PosX = 0,
+                                            PosY = 4
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    new Tuple<int, Hit>(10, null)
                 }
             };
+            
+            Util.AutoSetupFromAnimationPath(_5MAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
+            Duration.Dictionary[StickTwoState._5M] = _5MAnimation.SectionGroup.Duration();
+            InputTypes.Dictionary[StickTwoState._5M] = InputSystem.InputType.S;
+            HitSectionGroup.Dictionary[StickTwoState._5M] = _5MHits;
+            
+            
+            
 
             var AirHitPostGroundBounceRisingAnimation = new RisingTrajectoryAnimation()
             {
@@ -284,17 +370,7 @@ namespace Quantum
                 }
             };
 
-            var StandHitHighAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
+
 
             var StandHitLowAnimation = new FighterAnimation()
             {
@@ -638,6 +714,9 @@ namespace Quantum
         
         public override void ConfigureCharacterFsm(PlayerFSM playerFsm)
         {
+            
+            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5M);
+            
             return;
             
             // 5L
