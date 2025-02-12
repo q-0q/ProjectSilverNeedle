@@ -38,7 +38,9 @@ namespace Quantum
             CrouchActionable,
             Jump,
             _5M,
+            _2M,
             StandHitHigh,
+            StandBlock,
         } 
 
         public StickTwo()
@@ -252,6 +254,19 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(StandHitHighAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = StandHitHighAnimation;
+            
+            
+            var StandBlockAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.StandBlock,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(StandBlockAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = StandBlockAnimation;
 
             var WalkBackwardAnimation = new FighterAnimation()
             {
@@ -309,6 +324,7 @@ namespace Quantum
                     new Tuple<int, Hit>(10, null),
                     new Tuple<int, Hit>(5, new Hit()
                     {
+                        Level = 2,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -338,10 +354,60 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
             FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
             Duration.Dictionary[StickTwoState._5M] = _5MAnimation.SectionGroup.Duration();
-            InputTypes.Dictionary[StickTwoState._5M] = InputSystem.InputType.S;
             HitSectionGroup.Dictionary[StickTwoState._5M] = _5MHits;
+            CancellableAfter.Dictionary[StickTwoState._5M] = 14;
+            WhiffCancellable.Dictionary[StickTwoState._5M] = false;
             
+            var _2MAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath._2M,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+
+            var _2MHits = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new Tuple<int, Hit>(10, null),
+                    new Tuple<int, Hit>(5, new Hit()
+                    {
+                        Level = 2,
+                        Type = Hit.HitType.Low,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowHeight = false,
+                                            GrowWidth = true,
+                                            Width = 5,
+                                            Height = 2,
+                                            PosX = 0,
+                                            PosY = 0
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    new Tuple<int, Hit>(10, null)
+                }
+            };
             
+            Util.AutoSetupFromAnimationPath(_2MAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState._2M] = _2MAnimation;
+            Duration.Dictionary[StickTwoState._2M] = _2MAnimation.SectionGroup.Duration();
+            HitSectionGroup.Dictionary[StickTwoState._2M] = _2MHits;
+            CancellableAfter.Dictionary[StickTwoState._2M] = 11;
+            WhiffCancellable.Dictionary[StickTwoState._2M] = false;
             
 
             var AirHitPostGroundBounceRisingAnimation = new RisingTrajectoryAnimation()
@@ -431,18 +497,7 @@ namespace Quantum
                     }
                 }
             };
-
-            var StandBlockAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
+            
             var ThrowTechAnimation = StandBlockAnimation;
 
             var CrouchBlockAnimation = new FighterAnimation()
@@ -714,71 +769,42 @@ namespace Quantum
         
         public override void ConfigureCharacterFsm(PlayerFSM playerFsm)
         {
+
+            ActionConfig _5M = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = true,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = true,
+                InputWeight = 0,
+                RawOk = true,
+                State = StickTwoState._5M
+            };
             
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5M);
+            ConfigureAction(playerFsm, _5M);
             
-            return;
+            ActionConfig _2M = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 2,
+                Crouching = true,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                State = StickTwoState._2M
+            };
             
-            // 5L
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5L);
+            ConfigureAction(playerFsm, _2M);
             
-            // 2L
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._2L, false, true, 1);
-            
-            // 5M
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5M);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5M, StickTwo.StickTwoState._2M);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5M, StickTwo.StickTwoState._2H);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5M, StickTwo.StickTwoState._5S1);
-            
-            // 2M
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._2M, false, true, 1);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._2M, StickTwo.StickTwoState._2H);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._2M, StickTwo.StickTwoState._5S1);
-            
-            // 2H
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._2H, false, true, 1);
-            
-            // 5H
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5H, true);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5H, StickTwo.StickTwoState._2H);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5H, StickTwo.StickTwoState._5S1);
-            
-            // 5S1
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5S1);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5S1, StickTwo.StickTwoState._5S2);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5S1, StickTwo.StickTwoState._5S3, 1);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._5S1, StickTwo.StickTwoState._6S3, 1);
-            
-            // 5S2
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5S2, false, true, 0, false);
-            
-            // 4S3
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._5S3, false, false, 0, false);
-            
-            // 6S3
-            ConfigureGroundAction(playerFsm, StickTwo.StickTwoState._6S3, false, true, 0, false);
-            
-            // 2S - grounded
-            ConfigureGroundToAirAction(playerFsm, StickTwo.StickTwoState._2S_ground, false, 1, true);
-            
-            // 2S - air
-            ConfigureAirAction(playerFsm, StickTwo.StickTwoState._2S_air, false, 1);
-            
-            // JL
-            ConfigureAirAction(playerFsm, StickTwo.StickTwoState._JL);
-            
-            // JM
-            ConfigureAirAction(playerFsm, StickTwo.StickTwoState._JM);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._JM, StickTwo.StickTwoState._JH, 1);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._JM, StickTwo.StickTwoState._JS, 1);
-            
-            // JH
-            ConfigureAirAction(playerFsm, StickTwo.StickTwoState._JH);
-            MakeActionCancellable(playerFsm, StickTwo.StickTwoState._JH, StickTwo.StickTwoState._JS, 1);
-            
-            // JS
-            ConfigureAirAction(playerFsm, StickTwo.StickTwoState._JS);
+            MakeActionCancellable(playerFsm, _5M, _2M);
         }
     }
 }

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Photon.Deterministic;
 using Quantum.Types;
 using Quantum.Types.Collision;
+using UnityEngine;
 using Wasp;
 
 
 namespace Quantum
 {
-    public abstract class Character
+    public abstract unsafe class Character
     {
         // Metadata
         public string Name;
@@ -35,8 +36,8 @@ namespace Quantum
         public StateMap<SectionGroup<FP>> MovementSectionGroup;
         public StateMap<SectionGroup<bool>> AllowCrossupSectionGroup;
         public StateMap<SectionGroup<Trajectory>> TrajectorySectionGroup;
-        public StateMap<InputSystem.InputType> InputTypes;
-        public StateMap<int> CommandDirection;
+        // public StateMap<InputSystem.InputType> InputTypes;
+        // public StateMap<int> CommandDirection;
         public StateMap<int> CancellableAfter;
         public StateMap<bool> WhiffCancellable;
         public StateMap<int> FireReceiverFinishAfter;
@@ -50,6 +51,8 @@ namespace Quantum
             FighterAnimation = new StateMap<FighterAnimation>();
             Duration = new StateMap<int>();
             Duration.DefaultValue = 0;
+            Duration.SuperFuncDictionary[PlayerFSM.State.Hit] = GetStun;
+            Duration.SuperFuncDictionary[PlayerFSM.State.Block] = GetStun;
             HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
             HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
             HitSectionGroup = new StateMap<SectionGroup<Hit>>();
@@ -57,10 +60,10 @@ namespace Quantum
             MovementSectionGroup = new StateMap<SectionGroup<FP>>();
             AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
             TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
-            InputTypes = new StateMap<InputSystem.InputType>();
-            InputTypes.DefaultValue = InputSystem.InputType.P;
-            CommandDirection = new StateMap<int>();
-            CommandDirection.DefaultValue = 5;
+            // InputTypes = new StateMap<InputSystem.InputType>();
+            // InputTypes.DefaultValue = InputSystem.InputType.P;
+            // CommandDirection = new StateMap<int>();
+            // CommandDirection.DefaultValue = 5;
             CancellableAfter = new StateMap<int>();
             CancellableAfter.DefaultValue = 0;
             WhiffCancellable = new StateMap<bool>();
@@ -70,174 +73,92 @@ namespace Quantum
             AttachPositionSectionGroup = new StateMap<SectionGroup<FPVector2>>();
             InvulnerableBefore = new StateMap<int>();
             InvulnerableBefore.DefaultValue = 0;
+            return;
+
+            int GetStun(FrameParam frameParam)
+            {
+                if (frameParam is null) return 0;
+                
+                frameParam.f.Unsafe.TryGetPointer<StunData>(frameParam.EntityRef, out var stunData);
+                var stun = stunData->stun;
+                return stun;
+            }
         }
         
+        
+        
+        public class ActionConfig
+        {
+            public int State = -1;
+            public InputSystem.InputType InputType = InputSystem.InputType.P;
+            public int CommandDirection = 5;
+            public bool JumpCancellable = false;
+            public bool DashCancellable = false;
+            public bool GroundOk = true;
+            public bool AirOk = false;
+            public bool RawOk = true;
+            public bool Crouching = false;
+            public bool Aerial = false;
+            public int InputWeight = 0;
+        }
         
         // FSM helper functions
-        protected void MakeActionCancellable(PlayerFSM fsm, int source,
-            int destination,int weight = 0)
-        {
-            fsm.Fsm.Configure(source)
-                .PermitIf(PlayerFSM.Trigger.Action, destination, param =>
-                {
-                    if (param is null) return false;
-                    var actionParam = (ActionParam)param;
-                    return (Util.CanCancelNow(actionParam.f, actionParam.EntityRef) &&
-                            Util.DoesInputMatch(actionParam.f, actionParam.EntityRef, actionParam.CommandDirection,
-                                actionParam.Type));
-                }, weight);
-        }
-        
-        protected void ConfigureGroundAction(PlayerFSM fsm, int actionState, 
-            bool jumpCancellable = false, bool crouch = false, int weight = 0, bool usableRaw = true)
-        {
-            if (usableRaw) {
-                fsm.Fsm.Configure(PlayerFSM.State.GroundActionable)
-                    .PermitIf(PlayerFSM.Trigger.Action, actionState, param =>
-                        {
-                            if (param is null) return false;
-                            var actionParam = (ActionParam)param;
-                            return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
-                                actionParam.CommandDirection,
-                                actionParam.Type);
-                        }, weight);
 
-                fsm.Fsm.Configure(PlayerFSM.State.Dash)
-                    .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                        param =>
-                        {
-                            if (param is null) return false;
-                            var actionParam = (ActionParam)param;
-                            return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
-                                actionParam.CommandDirection,
-                                actionParam.Type);
-                        }, weight);
+        
+        protected void ConfigureAction(PlayerFSM fsm, ActionConfig actionConfig)
+        {
+
+            if (actionConfig.RawOk)
+            {
+                if (actionConfig.GroundOk)
+                {
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.GroundActionable);
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.Dash);
+                }
+                if (actionConfig.AirOk)
+                {
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.AirActionable);
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.AirDash);
+                }
             }
 
-            fsm.Fsm.Configure(actionState)
-                .SubstateOf(crouch ? PlayerFSM.State.Crouch : PlayerFSM.State.Stand)
-                .SubstateOf(PlayerFSM.State.GroundAction);
-            
-            if (!jumpCancellable) return;
-            
-            fsm.Fsm.Configure(actionState)
-                .PermitIf(PlayerFSM.Trigger.Jump, PlayerFSM.State.AirActionable, param =>
-                {
-                    if (param is null) return false;
-                    var jumpParam = (JumpParam)param;
-                    return Util.CanCancelNow(jumpParam.f, jumpParam.EntityRef);
-                });
-            
-            // fsm.Fsm.Configure(actionState)
-            //     .PermitIf(PlayerFSM.Trigger.Dash, PlayerFSM.State.Dash, param =>
-            //     {
-            //         if (param is null) return false;
-            //         var frameParam = (FrameParam)param;
-            //         return ActionDict[actionState].CanCancelNow(frameParam.f, fsm);
-            //     });
-        }
+            fsm.Fsm.Configure(actionConfig.State)
+                .SubstateOf(actionConfig.Crouching ? PlayerFSM.State.Crouch : PlayerFSM.State.Stand)
+                .SubstateOf(actionConfig.Aerial ? PlayerFSM.State.AirAction : PlayerFSM.State.GroundAction);
 
-        protected void ConfigureAirAction(PlayerFSM fsm, int actionState,
-            bool jumpCancellable = false,
-            int weight = 0)
-        {
-            fsm.Fsm.Configure(PlayerFSM.State.AirActionable)
-                .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                    param =>
-                    {
-                        if (param is null) return false;
-                        var actionParam = (ActionParam)param;
-                        return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
-                            actionParam.CommandDirection,
-                            actionParam.Type);
-                    }, weight);
-
-            fsm.Fsm.Configure(actionState)
-                .SubstateOf(PlayerFSM.State.AirAction);
-            
-            fsm.Fsm.Configure(PlayerFSM.State.AirDash)
-                .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                    param =>
-                    {
-                        if (param is null) return false;
-                        var actionParam = (ActionParam)param;
-                        return Util.DoesInputMatch(actionParam.f, actionParam.EntityRef,
-                            actionParam.CommandDirection,
-                            actionParam.Type);
-                    }, weight);
-            
-            if (!jumpCancellable) return;
-            
-            fsm.Fsm.Configure(actionState)
-                .PermitIf(PlayerFSM.Trigger.Jump, PlayerFSM.State.AirActionable, param =>
-                {
-                    if (param is null) return false;
-                    var jumpParam = (JumpParam)param;
-                    return Util.CanCancelNow(jumpParam.f, jumpParam.EntityRef);
-                });
-            
-            // fsm.Fsm.Configure(actionState)
-            //     .PermitIf(PlayerFSM.Trigger.Dash, PlayerFSM.State.AirDash, param =>
-            //     {
-            //         if (param is null) return false;
-            //         var frameParam = (FrameParam)param;
-            //         return ActionDict[actionState].CanCancelNow(frameParam.f, fsm);
-            //     });
-        }
-        
-        protected void ConfigureGroundToAirAction(PlayerFSM fsm,
-            int actionState,
-            bool jumpCancellable = false, int weight = 0, bool usableRaw = true)
-        {
-            if (usableRaw) {
-                fsm.Fsm.Configure(PlayerFSM.State.GroundActionable)
-                    .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                        param =>
-                        {
-                            if (param is null) return false;
-                            var actionParam = (ActionParam)param;
-                            return (Util.CanCancelNow(actionParam.f, actionParam.EntityRef) &&
-                                    Util.DoesInputMatch(actionParam.f, actionParam.EntityRef, actionParam.CommandDirection,
-                                        actionParam.Type));
-                        }, weight);
-
-                fsm.Fsm.Configure(PlayerFSM.State.Dash)
-                    .PermitIf(PlayerFSM.Trigger.Action, actionState,
-                        param =>
-                        {
-                            if (param is null) return false;
-                            var actionParam = (ActionParam)param;
-                            return (Util.CanCancelNow(actionParam.f, actionParam.EntityRef) &&
-                                    Util.DoesInputMatch(actionParam.f, actionParam.EntityRef, actionParam.CommandDirection,
-                                        actionParam.Type));
-                        }, weight);
+            if (actionConfig.JumpCancellable)
+            {
+                fsm.Fsm.Configure(actionConfig.State)
+                    .PermitIf(PlayerFSM.Trigger.Jump, PlayerFSM.State.AirActionable, Util.CanCancelNow);
             }
 
-            fsm.Fsm.Configure(actionState)
-                .SubstateOf(PlayerFSM.State.AirAction);
-            
-            if (!jumpCancellable) return;
-            
-            fsm.Fsm.Configure(actionState)
-                .PermitIf(PlayerFSM.Trigger.Jump, PlayerFSM.State.AirActionable, param =>
-                {
-                    if (param is null) return false;
-                    var jumpParam = (JumpParam)param;
-                    return Util.CanCancelNow(jumpParam.f, jumpParam.EntityRef);
-                });
-            
-            // fsm.Fsm.Configure(actionState)
-            //     .PermitIf(PlayerFSM.Trigger.Dash, PlayerFSM.State.Dash, param =>
-            //     {
-            //         if (param is null) return false;
-            //         var frameParam = (FrameParam)param;
-            //         return ActionDict[actionState].CanCancelNow(frameParam.f, fsm);
-            //     });
+            if (actionConfig.DashCancellable)
+            {
+                fsm.Fsm.Configure(actionConfig.State)
+                    .PermitIf(PlayerFSM.Trigger.Dash, PlayerFSM.State.AirActionable, Util.CanCancelNow);
+            }
+        }
+
+        private static void AllowRawFromState(PlayerFSM fsm, ActionConfig actionConfig, int state)
+        {
+            fsm.Fsm.Configure(state)
+                .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
+                    actionConfig.State, 
+                    param =>
+                        Util.DoesInputMatch(actionConfig, param), 
+                    actionConfig.InputWeight);
         }
         
-        
-        
-        
+        protected void MakeActionCancellable(PlayerFSM fsm, ActionConfig source,
+            ActionConfig destination)
+        {
+            fsm.Fsm.Configure(source.State)
+                .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
+                    destination.State, 
+                    param => 
+                        (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)), 
+                    destination.InputWeight);
+        }
 
     }
 }

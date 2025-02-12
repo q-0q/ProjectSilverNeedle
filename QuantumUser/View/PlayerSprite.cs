@@ -35,9 +35,7 @@ public class PlayerSprite : QuantumEntityViewComponent
         int path = PredictedFrame.Get<AnimationData>(EntityRef).path;
         var pathEnum = Characters.Get(characterEnum).AnimationPathsEnum;
         string stringPath = Enum.ToObject(pathEnum, path).ToString();
-        // Debug.Log(stringPath);
         string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/" + stringPath + "_" + frame;
-        Debug.Log(fullPath);
         Sprite sprite = Resources.Load<Sprite>(fullPath);
 
         

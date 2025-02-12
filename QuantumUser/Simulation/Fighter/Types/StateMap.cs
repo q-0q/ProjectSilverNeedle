@@ -8,22 +8,34 @@ namespace Quantum.Types
         public T DefaultValue;
         public Dictionary<int, T> Dictionary;
         public Dictionary<int, T> SuperDictionary;
-        public Dictionary<int, Func<T>> FuncDictionary;
+        public Dictionary<int, Func<FrameParam, T>> FuncDictionary;
+        public Dictionary<int, Func<FrameParam, T>> SuperFuncDictionary;
+        
 
         public StateMap()
         {
             Dictionary = new Dictionary<int, T>();
             SuperDictionary = new Dictionary<int, T>();
-            FuncDictionary = new Dictionary<int, Func<T>>();
+            FuncDictionary = new Dictionary<int, Func<FrameParam, T>>();
+            SuperFuncDictionary = new Dictionary<int, Func<FrameParam, T>>();
         }
         
-        public T Get(PlayerFSM fsm)
+        public T Get(PlayerFSM fsm, FrameParam frameParam = null)
         {
             int state = fsm.Fsm.State();
+            return Lookup(state, fsm, frameParam);
+        }
+
+        public T Lookup(int state, PlayerFSM fsm, FrameParam frameParam = null)
+        {
+            if (FuncDictionary.ContainsKey(state))
+            {
+                return FuncDictionary[state](frameParam);
+            }
             
             if (FuncDictionary.ContainsKey(state))
             {
-                return FuncDictionary[state]();
+                return FuncDictionary[state](frameParam);
             }
 
             foreach (var (key, value) in SuperDictionary)
@@ -31,6 +43,14 @@ namespace Quantum.Types
                 if (fsm.Fsm.IsInState(key))
                 {
                     return value;
+                }
+            }
+            
+            foreach (var (key, value) in SuperFuncDictionary)
+            {
+                if (fsm.Fsm.IsInState(key))
+                {
+                    return value(frameParam);
                 }
             }
             

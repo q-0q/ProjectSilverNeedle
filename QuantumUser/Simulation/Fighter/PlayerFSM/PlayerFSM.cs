@@ -84,7 +84,7 @@ namespace Quantum
             FrontThrow,
             BackThrow,
             ThrowTech,
-            Action,
+            ButtonAndDirection,
             Jump,
             Land,
             HitWall,
@@ -113,7 +113,6 @@ namespace Quantum
         public void ConfigureBaseFsm(Machine<int, Trigger> machine)
         {
             machine.OnTransitionCompleted(OnStateChanged);
-            machine.OnTransitioned(OnTransitioned);
             
             // Ground
             machine.Configure(State.Ground)
@@ -149,8 +148,6 @@ namespace Quantum
                 .OnEntry(EndSlowdown)
                 .OnEntry(ResetCombo)
                 .SubstateOf(State.Ground);
-            
-            Debug.Log("GroundActionable configured");
             
             machine.Configure(State.StandActionable) 
                 .SubstateOf(State.GroundActionable)
@@ -428,12 +425,7 @@ namespace Quantum
             
             Util.WritebackFsm(param.f, EntityRef);
         }
-
-        private void OnTransitioned(TriggerParams? triggerParams)
-        {
-            Debug.Log("Transition");
-        }
-
+        
         private void DoImpactVibrate(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;

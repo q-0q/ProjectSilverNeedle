@@ -432,7 +432,7 @@ namespace Quantum
 
         private static void TryFireActionForFsm(Frame f, PlayerFSM fsm, InputType type, int commandDirection)
         {
-            ActionParam param = new ActionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
+            ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
             if (type == InputType.D)
             {
@@ -440,7 +440,7 @@ namespace Quantum
             }
             else
             {
-                fsm.Fsm.Fire(PlayerFSM.Trigger.Action, param);
+                fsm.Fsm.Fire(PlayerFSM.Trigger.ButtonAndDirection, param);
             }
             
         }

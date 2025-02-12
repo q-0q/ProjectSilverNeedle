@@ -205,22 +205,26 @@ namespace Quantum
         }
         
         // Old Action functions that have been migrated
+
         
-        public static bool CanCancelNow(Frame f, EntityRef entityRef)
+        public static bool CanCancelNow(TriggerParams param)
         {
+            var frameParam = (FrameParam)param;
+            var f = frameParam.f;
+            var entityRef = frameParam.EntityRef;
+            
             Character character = Characters.GetPlayerCharacter(f, entityRef);
             PlayerFSM fsm = GetPlayerFSM(f, entityRef);
+            
             return (fsm.FramesInCurrentState(f) >= character.CancellableAfter.Get(fsm)) && (!fsm.IsWhiffed(f) || 
                 character.WhiffCancellable.Get(fsm));
         }
-        
-        public static bool DoesInputMatch(Frame f, EntityRef entityRef, int commandDirection, InputSystem.InputType type)
-         {
-             Character character = Characters.GetPlayerCharacter(f, entityRef);
-             PlayerFSM fsm = GetPlayerFSM(f, entityRef);
-             
-             return (character.InputTypes.Get(fsm) == type &&
-                     InputSystem.NumpadMatchesNumpad(commandDirection, character.CommandDirection.Get(fsm)));
+        public static bool DoesInputMatch(Character.ActionConfig actionConfig, TriggerParams param)
+        {
+            if (param is null) return false;
+            var buttonAndDirectionParam = (ButtonAndDirectionParam)param; 
+             return (actionConfig.InputType == buttonAndDirectionParam.Type &&
+                     InputSystem.NumpadMatchesNumpad(buttonAndDirectionParam.CommandDirection, actionConfig.CommandDirection));
          }
         
     }
