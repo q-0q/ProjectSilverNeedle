@@ -33,14 +33,38 @@ namespace Quantum
         public enum StickTwoAnimationPath
         {
             StandActionable,
+            CrouchActionable,
             WalkForward,
             WalkBackward,
-            CrouchActionable,
             Jump,
+            Dash,
+            Backdash,
+            Airdash,
+            AirBackdash,
+            ThrowStartup,
+            FrontThrow,
+            BackThrow,
+            ThrowWhiff,
+
+            StandHitHigh,
+            StandHitLow,
+            CrouchHit,
+            AirHit,
+            GroundBounce,
+            StandBlock,
+            CrouchBlock,
+            AirBlock,
+            HardKnockdown,
+            SoftKnockdown,
+            DeadFromGround,
+            DeadFromAir,
+            
+            Landsquat,
+            ThrowTech,
+            KinematicReceiver,
+            
             _5M,
             _2M,
-            StandHitHigh,
-            StandBlock,
         } 
 
         public StickTwo()
@@ -48,56 +72,51 @@ namespace Quantum
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
             AnimationPathsEnum = typeof(StickTwoAnimationPath);
-
-            var WalkForwardSpeed = FP.FromString("12");
-            var WalkBackwardSpeed = FP.FromString("9");
-
-            var JumpHeight = FP.FromString("5.5");
-            var JumpTimeToHeight = 25;
-            var JumpForwardSpeed = FP.FromString("10");
-            var JumpBackwardSpeed = FP.FromString("-7");
+            
             JumpCount = 2;
 
             FallSpeed = FP.FromString("50");
             FallTimeToSpeed = 20;
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
-
-            FP lowDamage = 12;
-            FP mediumDamage = 20;
-            FP highDamage = 35;
-            FP crazyDamage = 45;
             
-            SetupStateMaps();
+            var jumpHeight = FP.FromString("5.5");
+            var jumpTimeToHeight = 25;
+            var jumpForwardSpeed = FP.FromString("10");
+            var jumpBackwardSpeed = FP.FromString("-7");
 
             UpwardJumpTrajectory = new Trajectory()
             {
-                TimeToTrajectoryHeight = JumpTimeToHeight,
+                TimeToTrajectoryHeight = jumpTimeToHeight,
                 TrajectoryXVelocity = 0,
-                TrajectoryHeight = JumpHeight
+                TrajectoryHeight = jumpHeight
             };
             
             ForwardJumpTrajectory = new Trajectory()
             {
-                TimeToTrajectoryHeight = JumpTimeToHeight,
-                TrajectoryXVelocity = JumpForwardSpeed,
-                TrajectoryHeight = JumpHeight
+                TimeToTrajectoryHeight = jumpTimeToHeight,
+                TrajectoryXVelocity = jumpForwardSpeed,
+                TrajectoryHeight = jumpHeight
             };
             
             BackwardJumpTrajectory = new Trajectory()
             {
-                TimeToTrajectoryHeight = JumpTimeToHeight,
-                TrajectoryXVelocity = JumpBackwardSpeed,
-                TrajectoryHeight = JumpHeight
+                TimeToTrajectoryHeight = jumpTimeToHeight,
+                TrajectoryXVelocity = jumpBackwardSpeed,
+                TrajectoryHeight = jumpHeight
             };
-
-
-            var StandHurtbox = new SectionGroup<CollisionBoxCollection>()
+            
+            SetupStateMaps();
+            
+            
+            // Hurtboxes
+            
+            var standHurtbox = new SectionGroup<CollisionBoxCollection>()
             {
                 Loop = true,
                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
                 {
-                    new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
+                    new(10, new CollisionBoxCollection()
                         {
                             CollisionBoxes = new List<CollisionBox>()
                             {
@@ -107,7 +126,7 @@ namespace Quantum
                                     GrowWidth = false,
                                     PosX = 0,
                                     PosY = 0,
-                                    Height = 6,
+                                    Height = 7,
                                     Width = 3,
                                 },
                             }
@@ -116,41 +135,64 @@ namespace Quantum
                 }
             };
 
-            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Stand] = StandHurtbox;
 
-            var CrouchHurtboxCollection = new CollisionBoxCollection()
+
+            var crouchHurtboxCollection = new SectionGroup<CollisionBoxCollection>()
             {
-                CollisionBoxes = new List<CollisionBox>()
+                Loop = true,
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
                 {
-                    new()
-                    {
-                        GrowHeight = true,
-                        GrowWidth = false,
-                        PosX = 0,
-                        PosY = 0,
-                        Height = 4,
-                        Width = 3,
-                    }
+                    new (10, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new()
+                                {
+                                    GrowHeight = true,
+                                    GrowWidth = false,
+                                    PosX = 0,
+                                    PosY = 0,
+                                    Height = 5,
+                                    Width = 3,
+                                }
+                            }
+                        }
+                    )
                 }
             };
-
-            var AirHitHurtboxCollection = new CollisionBoxCollection()
+            
+            var airHitHurtboxCollection = new SectionGroup<CollisionBoxCollection>()
             {
-                CollisionBoxes = new List<CollisionBox>()
+                Loop = true,
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
                 {
-                    new()
-                    {
-                        GrowHeight = false,
-                        GrowWidth = false,
-                        PosX = 0,
-                        PosY = 2,
-                        Height = 6,
-                        Width = 7,
-                    }
+                    new (10, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new()
+                                {
+                                    GrowHeight = false,
+                                    GrowWidth = false,
+                                    PosX = 0,
+                                    PosY = 2,
+                                    Height = 6,
+                                    Width = 7,
+                                }
+                            }
+                        }
+                    )
                 }
             };
+            
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Stand] = standHurtbox;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Crouch] = crouchHurtboxCollection;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Air] = airHitHurtboxCollection;
 
-            var StandPushbox = new CollisionBox()
+            
+            // Pushboxes
+
+            var standPushbox = new CollisionBox()
             {
                 GrowHeight = true,
                 GrowWidth = false,
@@ -160,7 +202,7 @@ namespace Quantum
                 Width = 1,
             };
 
-            var CrouchPushbox = new CollisionBox()
+            var crouchPushbox = new CollisionBox()
             {
                 GrowHeight = true,
                 GrowWidth = false,
@@ -170,7 +212,7 @@ namespace Quantum
                 Width = 1,
             };
 
-            var AirPushbox = new CollisionBox()
+            var airPushbox = new CollisionBox()
             {
                 GrowHeight = true,
                 GrowWidth = false,
@@ -179,18 +221,14 @@ namespace Quantum
                 Height = 3,
                 Width = 1,
             };
-
-            var TallPushbox = new CollisionBox()
-            {
-                GrowHeight = false,
-                GrowWidth = false,
-                PosX = 0,
-                PosY = 3,
-                Height = 16,
-                Width = 1,
-            };
-
-            var StandAnimation = new FighterAnimation()
+            
+            Pushbox.SuperDictionary[PlayerFSM.State.Stand] = standPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.Crouch] = crouchPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.Air] = airPushbox;
+            
+            // Basic animations
+            
+            var standAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.StandActionable,
                 SectionGroup = new SectionGroup<int>()
@@ -201,10 +239,7 @@ namespace Quantum
                 }
             };
             
-            Util.AutoSetupFromAnimationPath(StandAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.StandActionable] = StandAnimation;
-
-            var CrouchAnimation = new FighterAnimation()
+            var crouchAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.CrouchActionable,
                 SectionGroup = new SectionGroup<int>()
@@ -215,10 +250,7 @@ namespace Quantum
                 }
             };
             
-            Util.AutoSetupFromAnimationPath(CrouchAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.CrouchActionable] = CrouchAnimation;
-
-            var WalkForwardAnimation = new FighterAnimation()
+            var walkForwardAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.WalkForward,
                 SectionGroup = new SectionGroup<int>()
@@ -229,46 +261,7 @@ namespace Quantum
                 }
             };
             
-            Util.AutoSetupFromAnimationPath(WalkForwardAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardAnimation;
-
-            var WalkForwardMovement = new SectionGroup<FP>()
-            {
-                Loop = true,
-                Sections = new List<Tuple<int, FP>>()
-                {
-                    (new(Util.GetAnimationPathLength(this, WalkForwardAnimation.Path), 3))
-                }
-            };
-
-            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardMovement;
-
-            var StandHitHighAnimation = new FighterAnimation()
-            {
-                Path = (int)StickTwoAnimationPath.StandHitHigh,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    AutoFromAnimationPath = true
-                }
-            };
-            
-            Util.AutoSetupFromAnimationPath(StandHitHighAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = StandHitHighAnimation;
-            
-            
-            var StandBlockAnimation = new FighterAnimation()
-            {
-                Path = (int)StickTwoAnimationPath.StandBlock,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    AutoFromAnimationPath = true
-                }
-            };
-            
-            Util.AutoSetupFromAnimationPath(StandBlockAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = StandBlockAnimation;
-
-            var WalkBackwardAnimation = new FighterAnimation()
+            var walkBackwardAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.WalkBackward,
                 SectionGroup = new SectionGroup<int>()
@@ -279,22 +272,7 @@ namespace Quantum
                 }
             };
             
-            Util.AutoSetupFromAnimationPath(WalkBackwardAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.WalkBackward] = WalkBackwardAnimation;
-            
-            var WalkBackwardMovement = new SectionGroup<FP>()
-            {
-                Loop = true,
-                Sections = new List<Tuple<int, FP>>()
-                {
-                    (new(Util.GetAnimationPathLength(this, WalkBackwardAnimation.Path), -2))
-                }
-            };
-            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkBackward] = WalkBackwardMovement;
-
-            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = WalkForwardMovement;
-
-            var JumpingAnimation = new FighterAnimation()
+            var jumpingAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.Jump,
                 SectionGroup = new SectionGroup<int>()
@@ -303,11 +281,149 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
+
+
+            var standHitHighAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.StandHitHigh,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             
-            Util.AutoSetupFromAnimationPath(JumpingAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.AirActionable] = JumpingAnimation;
+            var standHitLowAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.StandHitLow,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var crouchHitAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.CrouchHit,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var airHitAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.AirHit,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
 
+            var groundBounceAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.GroundBounce,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var standBlockAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.StandBlock,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var crouchBlockAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.CrouchBlock,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var airBlockAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.AirBlock,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(standAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandActionable] = standAnimation;
 
+            Util.AutoSetupFromAnimationPath(crouchAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.CrouchActionable] = crouchAnimation;
+            
+            Util.AutoSetupFromAnimationPath(walkForwardAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.WalkForward] = walkForwardAnimation;
+
+            Util.AutoSetupFromAnimationPath(walkBackwardAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardAnimation;
+            
+            Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.AirActionable] = jumpingAnimation;
+            
+            Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = standHitHighAnimation;
+            
+            Util.AutoSetupFromAnimationPath(standHitLowAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandHitLow] = standHitLowAnimation;
+            
+            Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.CrouchHit] = crouchHitAnimation;
+            
+            // Util.AutoSetupFromAnimationPath(airHitAnimation, this);
+            // FighterAnimation.Dictionary[PlayerFSM.State.AirHit] = airHitAnimation;
+            //
+            // Util.AutoSetupFromAnimationPath(groundBounceAnimation, this);
+            // FighterAnimation.Dictionary[PlayerFSM.State.AirHitPostGroundBounce] = groundBounceAnimation;
+            
+            Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = standBlockAnimation;
+
+            Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.CrouchBlock] = crouchBlockAnimation;
+            
+            // Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
+            // FighterAnimation.Dictionary[PlayerFSM.State.AirBlock] = airBlockAnimation;
+            
+            // Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
+            // FighterAnimation.Dictionary[PlayerFSM.State.HardKnockdown] = hardKnockdownAnimation;
+            
+            // Basic movement
+            
+            var walkForwardMovement = new SectionGroup<FP>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 3))
+                }
+            };
+
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = walkForwardMovement;
+            var walkBackwardMovement = new SectionGroup<FP>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -2))
+                }
+            };
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = walkForwardMovement;
+            
+
+            ////////////////////////////////////////////////////////////////////////////////////
+
+            
             var _5MAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath._5M,
@@ -324,7 +440,7 @@ namespace Quantum
                     new Tuple<int, Hit>(10, null),
                     new Tuple<int, Hit>(5, new Hit()
                     {
-                        Level = 2,
+                        Level = 1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -337,7 +453,7 @@ namespace Quantum
                                         {
                                             GrowHeight = false,
                                             GrowWidth = true,
-                                            Width = 5,
+                                            Width = 4,
                                             Height = 2,
                                             PosX = 0,
                                             PosY = 4
@@ -350,6 +466,15 @@ namespace Quantum
                     new Tuple<int, Hit>(10, null)
                 }
             };
+
+            var _5MHurtTypes = new SectionGroup<PlayerFSM.HurtType>()
+            {
+                Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
+                {
+                    new(15, PlayerFSM.HurtType.Counter),
+                    new(20, PlayerFSM.HurtType.Punish)
+                }
+            };
             
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
             FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
@@ -357,6 +482,7 @@ namespace Quantum
             HitSectionGroup.Dictionary[StickTwoState._5M] = _5MHits;
             CancellableAfter.Dictionary[StickTwoState._5M] = 14;
             WhiffCancellable.Dictionary[StickTwoState._5M] = false;
+            HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
             
             var _2MAnimation = new FighterAnimation()
             {
@@ -371,7 +497,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new Tuple<int, Hit>(10, null),
+                    new Tuple<int, Hit>(16, null),
                     new Tuple<int, Hit>(5, new Hit()
                     {
                         Level = 2,
@@ -388,7 +514,7 @@ namespace Quantum
                                         {
                                             GrowHeight = false,
                                             GrowWidth = true,
-                                            Width = 5,
+                                            Width = 4,
                                             Height = 2,
                                             PosX = 0,
                                             PosY = 0
@@ -401,368 +527,35 @@ namespace Quantum
                     new Tuple<int, Hit>(10, null)
                 }
             };
+
+            var _2MMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new Tuple<int, FP>(2, 1),
+                    new Tuple<int, FP>(10, 0),
+                    new Tuple<int, FP>(5, 1),
+                    new Tuple<int, FP>(10, 0)
+                }
+            };
+            
+            var _2MHurtTypes = new SectionGroup<PlayerFSM.HurtType>()
+            {
+                Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
+                {
+                    new(21, PlayerFSM.HurtType.Counter),
+                    new(20, PlayerFSM.HurtType.Punish)
+                }
+            };
             
             Util.AutoSetupFromAnimationPath(_2MAnimation, this);
             FighterAnimation.Dictionary[StickTwoState._2M] = _2MAnimation;
             Duration.Dictionary[StickTwoState._2M] = _2MAnimation.SectionGroup.Duration();
             HitSectionGroup.Dictionary[StickTwoState._2M] = _2MHits;
-            CancellableAfter.Dictionary[StickTwoState._2M] = 11;
+            CancellableAfter.Dictionary[StickTwoState._2M] = 16;
             WhiffCancellable.Dictionary[StickTwoState._2M] = false;
-            
-
-            var AirHitPostGroundBounceRisingAnimation = new RisingTrajectoryAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                    }
-                }
-            };
-
-            var AirPostHitGroundBounceFallingAnimation = new FallingTrajectoryAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 1),
-                        new(1, 0),
-                    }
-                }
-            };
-
-
-
-            var StandHitLowAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-
-            var CrouchHitAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-
-            var AirHitRisingAnimation = new RisingTrajectoryAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0),
-                        new(8, 1),
-                    }
-                }
-            };
-
-            var AirHitFallingAnimation = new FallingTrajectoryAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 1),
-                        new(8, 2),
-                        new(8, 3),
-                    }
-                }
-            };
-
-            var KinematicReceiverAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(18, 0),
-                    }
-                }
-            };
-            
-            var ThrowTechAnimation = StandBlockAnimation;
-
-            var CrouchBlockAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-
-            var AirBlockAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-
-            var HardKnockdownAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 0),
-                        new(20, 1),
-                        new(10, 2),
-                        new(10, 3),
-                        new(7, 4),
-                        new(7, 5),
-                    }
-                }
-            };
-
-            var DeadFromAirAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 0),
-                        new(20, 1),
-                    }
-                }
-            };
-
-            var DeadFromGroundAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(15, 0),
-                        new(5, 1),
-                        new(25, 2),
-                        new(5, 3),
-                        new(5, 4),
-                        new(5, 5),
-                    }
-                }
-            };
-
-            var SoftKnockdownAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 1),
-                        new(5, 2),
-                        new(5, 3),
-                        new(5, 4),
-                    }
-                }
-            };
-
-            var LandsquatAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0)
-                    }
-                }
-            };
-
-            var DashAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(5, 0),
-                        new(10, 1),
-                        new(6, 17),
-                    }
-                }
-            };
-
-            var DashMovementSectionGroup = new SectionGroup<FP>()
-            {
-                Sections = new List<Tuple<int, FP>>()
-                {
-                    new(8, 0),
-                    new(7, 3),
-                    new(3, 0),
-                }
-            };
-
-            var BackdashAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(6, 0),
-                        new(4, 1),
-                        new(6, 2),
-                        new(6, 3),
-                    }
-                }
-            };
-            var AirdashAnimation = DashAnimation;
-
-            var BackdashMovementSectionGroup = new SectionGroup<FP>()
-            {
-                Sections = new List<Tuple<int, FP>>()
-                {
-                    new(6, 0),
-                    new(7, -4),
-                    new(9, 0),
-                }
-            };
-            var AirBackdashAnimation = BackdashAnimation;
-
-            var ThrowStartupAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0)
-                    }
-                }
-            };
-
-            var FrontThrowKinematics = new Kinematics()
-            {
-                FireReceiverFinishAfter = 40,
-                Animation = new FighterAnimation()
-                {
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(8, 0),
-                            new(18, 1),
-                            new(10, 2),
-                            new(25, 3)
-                        }
-                    }
-                },
-
-                GrabPositionSectionGroup = new SectionGroup<FPVector2>()
-                {
-                    Sections = new List<Tuple<int, FPVector2>>()
-                    {
-                        new(8, new FPVector2(2, 3)),
-                        new(23, new FPVector2(2, 4)),
-                        new(5, new FPVector2(2, 3)),
-                        new(25, new FPVector2(2, 1))
-                    }
-                },
-
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(16, null),
-                        new(4, new Hit()
-                        {
-                            Damage = 50
-                        }),
-                        new(20, null)
-                    }
-                }
-
-            };
-
-            var BackThrowKinematics = new Kinematics()
-            {
-                FireReceiverFinishAfter = 37,
-                Animation = new FighterAnimation()
-                {
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(8, 0),
-                            new(18, 1),
-                            new(10, 2),
-                            new(12, 3),
-                            new(18, 4)
-                        }
-                    }
-                },
-
-                GrabPositionSectionGroup = new SectionGroup<FPVector2>()
-                {
-                    Sections = new List<Tuple<int, FPVector2>>()
-                    {
-                        new(8, new FPVector2(2, 3)),
-                        new(18, new FPVector2(2, 4)),
-                        new(10, new FPVector2(0, 5)),
-                        new(25, new FPVector2(-6, 1))
-                    }
-                },
-
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(16, null),
-                        new(4, new Hit()
-                        {
-                            Damage = 50
-                        }),
-                        new(20, null)
-                    }
-                }
-
-            };
-
-            var ThrowWhiffAnimation = new FighterAnimation()
-            {
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0),
-                        new(10, 1),
-                    }
-                }
-            };
-
-
-
-            ////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-            FP crazyScaling = FP.FromString("0.6");
-            FP highScaling = FP.FromString("0.75");
-            FP mediumScaling = FP.FromString("0.85");
-            FP lowScaling = FP.FromString("0.95");
+            MovementSectionGroup.Dictionary[StickTwoState._2M] = _2MMovement;
+            HurtTypeSectionGroup.Dictionary[StickTwoState._2M] = _2MHurtTypes;
 
 
         }

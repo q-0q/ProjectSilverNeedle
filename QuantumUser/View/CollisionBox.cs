@@ -11,7 +11,7 @@ using Input = UnityEngine.Input;
 public class CollisionBox : QuantumEntityViewComponent
 {
     private SpriteRenderer _spriteRenderer;
-    private static float _alpha = 0.1f;
+    private static float _alpha = 0.0f;
     private static Color _hurtboxColor = new(0, 0f, 255f, _alpha);
     private static Color _hitboxColor = new(255f, 0, 0, _alpha);
     private static Color _pushboxColor = new(255f, 255f, 0, _alpha);

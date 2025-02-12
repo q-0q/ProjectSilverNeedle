@@ -531,7 +531,7 @@ namespace Quantum
             if (hurtType == HurtType.Counter)
             {
                 f.Events.GameEvent(EntityRef, GameEventType.Counter);
-                Util.StartDramatic(f, EntityRef, 20);
+                Util.StartDramatic(f, EntityRef, 13);
                 InputSystem.ClearBuffer(f, Util.GetOtherPlayer(f, EntityRef));
                 stop = AttackLevelCounterHitstop[hitboxData.level];
                 
