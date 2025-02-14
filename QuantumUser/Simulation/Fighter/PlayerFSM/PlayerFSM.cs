@@ -273,14 +273,12 @@ namespace Quantum
                 .OnEntry(OnHKD)
                 .OnEntry(EndSlowdown)
                 .Permit(Trigger.Finish, State.StandActionable)
-                .SubstateOf(State.Ground)
-                .SubstateOf(State.Stand);
-            
+                .SubstateOf(State.Ground);
+
             machine.Configure(State.SoftKnockdown)
                 .OnEntry(EndSlowdown)
                 .Permit(Trigger.Finish, State.StandActionable)
-                .SubstateOf(State.Ground)
-                .SubstateOf(State.Stand);
+                .SubstateOf(State.Ground);
 
             machine.Configure(State.DeadFromAir)
                 .OnEntry(DoImpactVibrate)

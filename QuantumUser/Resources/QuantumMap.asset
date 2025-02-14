@@ -54,11 +54,11 @@ MonoBehaviour:
         cpuEnabled:
           Value: 1
         forceCounter:
-          Value: 1
+          Value: 0
         doAction:
           Value: 0
         doJump:
-          Value: 0
+          Value: 1
         block:
           Value: 0
         dash:

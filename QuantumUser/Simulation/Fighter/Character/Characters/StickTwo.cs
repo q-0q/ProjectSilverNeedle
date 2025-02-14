@@ -50,7 +50,6 @@ namespace Quantum
             StandHitLow,
             CrouchHit,
             AirHit,
-            GroundBounce,
             StandBlock,
             CrouchBlock,
             AirBlock,
@@ -61,7 +60,6 @@ namespace Quantum
             
             Landsquat,
             ThrowTech,
-            KinematicReceiver,
             
             _5M,
             _2M,
@@ -107,7 +105,6 @@ namespace Quantum
             };
             
             SetupStateMaps();
-            
             
             // Hurtboxes
             
@@ -225,6 +222,8 @@ namespace Quantum
             Pushbox.SuperDictionary[PlayerFSM.State.Stand] = standPushbox;
             Pushbox.SuperDictionary[PlayerFSM.State.Crouch] = crouchPushbox;
             Pushbox.SuperDictionary[PlayerFSM.State.Air] = airPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.HardKnockdown] = crouchPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.SoftKnockdown] = crouchPushbox;
             
             // Basic animations
             
@@ -318,15 +317,6 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-
-            var groundBounceAnimation = new FighterAnimation()
-            {
-                Path = (int)StickTwoAnimationPath.GroundBounce,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    AutoFromAnimationPath = true
-                }
-            };
             
             var standBlockAnimation = new FighterAnimation()
             {
@@ -349,6 +339,33 @@ namespace Quantum
             var airBlockAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.AirBlock,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var hardKnockdownAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.HardKnockdown,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var softKnockdownAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.SoftKnockdown,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var deadFromGroundAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.DeadFromGround,
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -379,11 +396,10 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.CrouchHit] = crouchHitAnimation;
             
-            // Util.AutoSetupFromAnimationPath(airHitAnimation, this);
-            // FighterAnimation.Dictionary[PlayerFSM.State.AirHit] = airHitAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(groundBounceAnimation, this);
-            // FighterAnimation.Dictionary[PlayerFSM.State.AirHitPostGroundBounce] = groundBounceAnimation;
+            Util.AutoSetupFromAnimationPath(airHitAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.AirHit] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.State.AirHitPostGroundBounce] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.State.KinematicReceiver] = airHitAnimation;
             
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = standBlockAnimation;
@@ -391,11 +407,17 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.CrouchBlock] = crouchBlockAnimation;
             
-            // Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
-            // FighterAnimation.Dictionary[PlayerFSM.State.AirBlock] = airBlockAnimation;
+            Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.AirBlock] = airBlockAnimation;
             
-            // Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
-            // FighterAnimation.Dictionary[PlayerFSM.State.HardKnockdown] = hardKnockdownAnimation;
+            Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.HardKnockdown] = hardKnockdownAnimation;
+            
+            Util.AutoSetupFromAnimationPath(softKnockdownAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.SoftKnockdown] = softKnockdownAnimation;
+            
+            Util.AutoSetupFromAnimationPath(deadFromGroundAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.DeadFromGround] = deadFromGroundAnimation;
             
             // Basic movement
             
@@ -441,6 +463,8 @@ namespace Quantum
                     new Tuple<int, Hit>(5, new Hit()
                     {
                         Level = 1,
+                        // HardKnockdown = true,
+                        // Damage = 100,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -456,7 +480,7 @@ namespace Quantum
                                             Width = 4,
                                             Height = 2,
                                             PosX = 0,
-                                            PosY = 4
+                                            PosY = 5,
                                         }
                                     }
                                 })

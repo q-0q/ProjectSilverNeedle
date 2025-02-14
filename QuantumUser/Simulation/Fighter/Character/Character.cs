@@ -53,17 +53,24 @@ namespace Quantum
             Duration.DefaultValue = 0;
             Duration.SuperFuncDictionary[PlayerFSM.State.Hit] = GetStun;
             Duration.SuperFuncDictionary[PlayerFSM.State.Block] = GetStun;
+            Duration.Dictionary[PlayerFSM.State.HardKnockdown] = 50;
+            Duration.Dictionary[PlayerFSM.State.SoftKnockdown] = 20;
+
             HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
             HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
             HitSectionGroup = new StateMap<SectionGroup<Hit>>();
             Pushbox = new StateMap<CollisionBox>();
             MovementSectionGroup = new StateMap<SectionGroup<FP>>();
+            MovementSectionGroup.Dictionary[PlayerFSM.State.SoftKnockdown] = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new Tuple<int, FP>(20, -6)
+                }
+            };
+            
             AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
             TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
-            // InputTypes = new StateMap<InputSystem.InputType>();
-            // InputTypes.DefaultValue = InputSystem.InputType.P;
-            // CommandDirection = new StateMap<int>();
-            // CommandDirection.DefaultValue = 5;
             CancellableAfter = new StateMap<int>();
             CancellableAfter.DefaultValue = 0;
             WhiffCancellable = new StateMap<bool>();
@@ -74,6 +81,8 @@ namespace Quantum
             InvulnerableBefore = new StateMap<int>();
             InvulnerableBefore.DefaultValue = 0;
             return;
+            
+            
 
             int GetStun(FrameParam frameParam)
             {

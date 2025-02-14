@@ -7,6 +7,8 @@ using Quantum;
 using Quantum.Types;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class GameFSMScreenTransition : QuantumEntityViewComponent
@@ -15,10 +17,14 @@ public class GameFSMScreenTransition : QuantumEntityViewComponent
     public Color Color = Color.black;
 
     private int FadeInDuration = 5;
+    private int DistortionDuration = 65;
+    private float DistortionAmount = -0.35f;
     private int FadeOutDuration = 5;
 
     public static event Action OnCountdownStart;
     public static event Action OnResetStart;
+
+    private LensDistortion _lensDistortion;
     
     public override void OnInitialize()
     {
@@ -32,6 +38,7 @@ public class GameFSMScreenTransition : QuantumEntityViewComponent
 
     private void Start()
     {
+        FindObjectOfType<Volume>().profile.TryGet<LensDistortion>(out _lensDistortion);
         OnCountdownStart?.Invoke();
     }
 
@@ -46,6 +53,8 @@ public class GameFSMScreenTransition : QuantumEntityViewComponent
         {
             OnCountdownStart?.Invoke();
             alpha = Mathf.InverseLerp(FadeInDuration, 0, frames);
+            var distortion = Mathf.InverseLerp(DistortionDuration, 0, frames) * DistortionAmount;
+            if (_lensDistortion is not null) _lensDistortion.intensity.value = distortion;
         }
         else if (state is GameFSM.State.RoundEnd)
         {
