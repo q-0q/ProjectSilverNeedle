@@ -467,7 +467,8 @@ namespace Quantum
             MakeNotWhiffed(f, hitboxData.source);
             Fsm.Fire(trigger, juggleParam);
 
-            if (Fsm.IsInState(State.Ground) || Util.IsPlayerInCorner(f, EntityRef)) {
+            //Fsm.IsInState(State.Ground) || Util.IsPlayerInCorner(f, EntityRef)
+            if (true) {
                 FP pushback = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
                 FP pushbackDistance = pushback;
                 if (PlayerDirectionSystem.IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;

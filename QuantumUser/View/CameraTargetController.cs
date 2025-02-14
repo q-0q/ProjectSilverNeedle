@@ -18,7 +18,7 @@ public class CameraTargetController : MonoBehaviour
     public bool Player1Dramatic = false;
     
     private float _baseYPos;
-    private float _yPulldown = 2.5f;
+    private float _yPulldown = 4f;
 
     private void Awake()
     {

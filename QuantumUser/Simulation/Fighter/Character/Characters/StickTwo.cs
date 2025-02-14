@@ -281,6 +281,14 @@ namespace Quantum
                 }
             };
 
+            var dashAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.Dash,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
 
             var standHitHighAnimation = new FighterAnimation()
             {
@@ -387,6 +395,10 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.AirActionable] = jumpingAnimation;
             
+            Util.AutoSetupFromAnimationPath(dashAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.Dash] = dashAnimation;
+            Duration.Dictionary[PlayerFSM.State.Dash] = dashAnimation.SectionGroup.Duration();
+            
             Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = standHitHighAnimation;
             
@@ -429,8 +441,7 @@ namespace Quantum
                     (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 3))
                 }
             };
-
-            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = walkForwardMovement;
+            
             var walkBackwardMovement = new SectionGroup<FP>()
             {
                 Loop = true,
@@ -439,8 +450,21 @@ namespace Quantum
                     (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -2))
                 }
             };
+
+            var dashMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(3, 0),
+                    new(11, 4),
+                    new(10, FP.FromString("0.25")),
+                    new (10, 0),
+                }
+            };
+            
             MovementSectionGroup.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardMovement;
             MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = walkForwardMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.Dash] = dashMovement;
             
 
             ////////////////////////////////////////////////////////////////////////////////////
@@ -462,9 +486,10 @@ namespace Quantum
                     new Tuple<int, Hit>(10, null),
                     new Tuple<int, Hit>(5, new Hit()
                     {
-                        Level = 1,
+                        Level = 0,
                         // HardKnockdown = true,
                         // Damage = 100,
+                        // Launches = true,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()

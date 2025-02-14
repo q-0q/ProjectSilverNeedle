@@ -14,7 +14,7 @@ namespace Quantum
         static FP _crossupThreshhold = FP.FromString("0.01");
         private const bool AllowCrossup = false;
         private static int _pushbackDuration = 23;
-        private static int _momentumDuration = 25;
+        private static int _momentumDuration = 35;
         private static FP _throwTechPushback = FP.FromString("6"); 
         private FP _wallsSkew = FP.FromString("0.99");
 
@@ -257,7 +257,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
 
-            FP amount = PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef) ? 3 : -3;
+            FP amount = PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef) ? 4 : -4;
             StartMomentum(frameParam.f, amount);
 
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
