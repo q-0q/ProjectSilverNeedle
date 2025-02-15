@@ -289,6 +289,15 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
+            
+            var backdashAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.Backdash,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
 
             var standHitHighAnimation = new FighterAnimation()
             {
@@ -398,6 +407,12 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(dashAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.Dash] = dashAnimation;
             Duration.Dictionary[PlayerFSM.State.Dash] = dashAnimation.SectionGroup.Duration();
+            FighterAnimation.Dictionary[PlayerFSM.State.AirDash] = dashAnimation;
+            Duration.Dictionary[PlayerFSM.State.AirDash] = dashAnimation.SectionGroup.Duration();
+            
+            Util.AutoSetupFromAnimationPath(backdashAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.Backdash] = backdashAnimation;
+            Duration.Dictionary[PlayerFSM.State.Backdash] = backdashAnimation.SectionGroup.Duration();
             
             Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = standHitHighAnimation;
@@ -456,8 +471,19 @@ namespace Quantum
                 Sections = new List<Tuple<int, FP>>()
                 {
                     new(3, 0),
-                    new(11, 4),
-                    new(10, FP.FromString("0.25")),
+                    new(16, 5),
+                    new(12, FP.FromString("0.6")),
+                    new (10, 0),
+                }
+            };
+            
+            var backdashMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(3, 0),
+                    new(15, -4),
+                    new(5, FP.FromString("-0.25")),
                     new (10, 0),
                 }
             };
@@ -465,8 +491,10 @@ namespace Quantum
             MovementSectionGroup.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardMovement;
             MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = walkForwardMovement;
             MovementSectionGroup.Dictionary[PlayerFSM.State.Dash] = dashMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.AirDash] = dashMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.Backdash] = backdashMovement;
+            InvulnerableBefore.Dictionary[PlayerFSM.State.Backdash] = 12;
             
-
             ////////////////////////////////////////////////////////////////////////////////////
 
             

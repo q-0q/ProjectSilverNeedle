@@ -71,10 +71,14 @@ namespace Quantum
 
         public static void OnReady(TriggerParams? triggerParams)
         {
+            
+            Debug.Log("OnReady");
 
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
             var frame = frameParam.f;
+            
+            Debug.Log("OnReady, after cast");
             
             foreach (var (entityRef, _) in frame.GetComponentIterator<PlayerLink>())
             {

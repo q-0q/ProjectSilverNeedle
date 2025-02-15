@@ -59,7 +59,7 @@ namespace Quantum
             ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Hurtbox, EntityRef);
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
             
-            // if (character.InvulnerableBefore.Get(this) >= FramesInCurrentState(f)) return;
+            if (character.InvulnerableBefore.Get(this) > FramesInCurrentState(f)) return;
             
             CollisionBoxCollection hurtboxCollection =
                 character.HurtboxCollectionSectionGroup.Get(this)?.GetCurrentItem(f, this);
@@ -150,6 +150,7 @@ namespace Quantum
             
             ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Pushbox, entityRef);
             var Fsm = Util.GetPlayerFSM(f, entityRef, debug);
+            if (Fsm is null) return;
             if (Fsm.Fsm.IsInState(State.KinematicReceiver)) return;
 
             Character character = Characters.GetPlayerCharacter(f, entityRef);
@@ -234,6 +235,7 @@ namespace Quantum
                             hurtboxEntityRef, out var overlapCenter, out var overlapWidth)) continue;
                     
                     var targetFsm = Util.GetPlayerFSM(f, targetEntityRef);
+                    if (targetFsm is null) return false;
                     
                     if (targetFsm.Fsm.IsInState(State.Air)) return false;
                     if (targetFsm.Fsm.IsInState(State.Hit)) return false;

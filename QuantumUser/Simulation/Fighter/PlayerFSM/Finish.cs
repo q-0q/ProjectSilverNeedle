@@ -34,6 +34,7 @@ namespace Quantum
         {
             EntityRef otherPlayerEntityRef = Util.GetOtherPlayer(f, EntityRef);
             var opponentFsm = Util.GetPlayerFSM(f, otherPlayerEntityRef);
+            if (opponentFsm is null) return;
 
             if (opponentFsm.Fsm.IsInState(State.ThrowTech))
             {

@@ -41,6 +41,7 @@ public class PlayerSprite : QuantumEntityViewComponent
         
         // offense / defense sorting
         PlayerFSM fsm = Util.GetPlayerFSM(PredictedFrame, EntityRef);
+        if (fsm is null) return;
         bool back = fsm.Fsm.IsInState(PlayerFSM.State.Block) || fsm.Fsm.IsInState(PlayerFSM.State.Hit);
         gameObject.layer = back ? LayerMask.NameToLayer("PlayerBack") : LayerMask.NameToLayer("PlayerFront");
         

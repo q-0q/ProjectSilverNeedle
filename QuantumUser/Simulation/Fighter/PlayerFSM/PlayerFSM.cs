@@ -171,7 +171,17 @@ namespace Quantum
                 .PermitIf(Trigger.BlockLow, State.CrouchBlock, _ => true, -2)
                 .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
                 .Permit(Trigger.BackThrow, State.ThrowBackStartup)
-                .OnExit(StartMomentumCallback)
+                .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
+                .OnExitFrom(Trigger.ButtonAndDirection, StartMomentumCallback)
+                .OnExitFrom(Trigger.Jump, StartMomentumCallback)
+                .OnExitFrom(Trigger.JumpCancel, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .SubstateOf(State.Stand)
                 .SubstateOf(State.Ground);
@@ -180,6 +190,7 @@ namespace Quantum
                 .Permit(Trigger.Finish, State.StandActionable)
                 .OnEntry(OnBackdash)
                 .OnEntry(InputSystem.ClearBufferParams)
+                .SubstateOf(State.Stand)
                 .SubstateOf(State.Ground);
             
             machine.Configure(State.GroundAction)

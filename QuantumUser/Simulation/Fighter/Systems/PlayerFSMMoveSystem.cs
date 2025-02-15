@@ -22,6 +22,7 @@ namespace Quantum
         private static void AdvanceFsm(Frame f, Filter filter)
         {
             PlayerFSM fsm = Util.GetPlayerFSM(f, filter.Entity);
+            if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
