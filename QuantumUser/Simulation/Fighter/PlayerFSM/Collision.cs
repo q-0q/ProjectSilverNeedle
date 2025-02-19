@@ -26,6 +26,7 @@ namespace Quantum
             public int subtype;
             public FP width;
             public FP height;
+            public FPVector2 pos;
         
             public int level;
             public int bonusHitStun;
@@ -269,23 +270,15 @@ namespace Quantum
             hitEntities.Clear();
         }
         
-        static bool CollisionBoxesOverlap(Frame f, EntityRef boxA, EntityRef boxB, out FPVector2 overlapCenter, out FP overlapWidth)
+        static bool CollisionBoxesOverlap(Frame f, CollisionBoxInternal boxAInternal, CollisionBoxInternal boxBInternal, out FPVector2 overlapCenter, out FP overlapWidth)
         {
             overlapCenter = FPVector2.Zero; // Or any default value indicating no overlap
             overlapWidth = 0;
             
-            if (boxA == EntityRef.None) return false;
-            if (boxB == EntityRef.None) return false;
-            
-            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxA, out var boxAData);
-            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxB, out var boxBData);
-            f.Unsafe.TryGetPointer<Transform3D>(boxA, out var transformA);
-            f.Unsafe.TryGetPointer<Transform3D>(boxB, out var transformB);
-            
-            FPVector2 extentsA = new FPVector2(boxAData->width * FP._0_50, boxAData->height * FP._0_50);
-            FPVector2 extentsB = new FPVector2(boxBData->width * FP._0_50, boxBData->height * FP._0_50);
-            FPVector2 posA = transformA->Position.XY;
-            FPVector2 posB = transformB->Position.XY;
+            FPVector2 extentsA = new FPVector2(boxAInternal.width * FP._0_50, boxAInternal.height * FP._0_50);
+            FPVector2 extentsB = new FPVector2(boxBInternal.width * FP._0_50, boxBInternal.height * FP._0_50);
+            FPVector2 posA = boxAInternal.pos.XY;
+            FPVector2 posB = boxBInternal.pos.XY;
             
             FP aHalfWidth = extentsA.X;
             FP aHalfHeight = extentsA.Y;
@@ -322,22 +315,15 @@ namespace Quantum
             return false;
         }
         
-        static bool AreCollisionBoxesNextToEachOther(Frame f, EntityRef boxA, EntityRef boxB, out FP deltaX)
+        static bool AreCollisionBoxesNextToEachOther(Frame f, CollisionBoxInternal boxAInternal, CollisionBoxInternal boxBInternal, out FP deltaX)
         {
             deltaX = 0;
-            if (boxA == EntityRef.None) return false;
-            if (boxB == EntityRef.None) return false;
-            
-            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxA, out var boxAData);
-            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxB, out var boxBData);
-            f.Unsafe.TryGetPointer<Transform3D>(boxA, out var transformA);
-            f.Unsafe.TryGetPointer<Transform3D>(boxB, out var transformB);
 
-            FPVector2 posA = transformA->Position.XY;
-            FPVector2 posB = transformB->Position.XY;
+            FPVector2 posA = boxAInternal.pos.XY;
+            FPVector2 posB = boxBInternal.pos.XY;
             
-            FP aHalfHeight = (boxAData->height * FP._0_50);
-            FP bHalfHeight = (boxBData->height * FP._0_50);
+            FP aHalfHeight = (boxAInternal.height * FP._0_50);
+            FP bHalfHeight = (boxBInternal.height * FP._0_50);
 
             FP deltaY = Util.Abs(posA.Y - posB.Y);
             
