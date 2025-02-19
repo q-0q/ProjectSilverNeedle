@@ -17,10 +17,10 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
     public override void OnUpdateView()
     {
         
-        if (!PredictedFrame.Has<PlayerFSMData>(EntityRef)) return;
+        if (!PredictedFrame.Has<FSMData>(EntityRef)) return;
 
         // PlayerFSM.State state = (PlayerFSM.State)PredictedFrame.Get<PlayerFSMData>(EntityRef).currentState;
-        int numFrames = PredictedFrame.Get<PlayerFSMData>(EntityRef).framesInState;
+        int numFrames = PredictedFrame.Get<FSMData>(EntityRef).framesInState;
 
         Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)PredictedFrame.Get<PlayerLink>(EntityRef).characterId;
         var fsm = PlayerFsmLoader.GetPlayerFsm(PredictedFrame, EntityRef);

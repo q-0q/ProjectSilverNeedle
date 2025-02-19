@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0, g: 0.3959732, b: 1, a: 1}
   m_FogMode: 2
   m_FogDensity: 0.0075
@@ -641,11 +641,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prototype:
     cpuEnabled:
-      Value: 0
-    forceCounter:
-      Value: 0
-    doAction:
       Value: 1
+    forceCounter:
+      Value: 1
+    doAction:
+      Value: 0
     doJump:
       Value: 0
     block:
@@ -653,7 +653,7 @@ MonoBehaviour:
     dash:
       Value: 0
     inputType: 2
-    commandDirection: 5
+    commandDirection: 2
 --- !u!114 &147541240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1181,7 +1181,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 204152357}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2668bf5e0a844483bec00c9713bb63f, type: 3}
   m_Name: 
@@ -1477,7 +1477,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 234629028}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -3708,7 +3708,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.9659797, b: 0.7783019, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
@@ -8496,6 +8496,7 @@ GameObject:
   - component: {fileID: 1033192728}
   - component: {fileID: 1033192731}
   - component: {fileID: 1033192732}
+  - component: {fileID: 1033192733}
   m_Layer: 5
   m_Name: Health Bars
   m_TagString: Untagged
@@ -8629,6 +8630,18 @@ MonoBehaviour:
   Player1HealthBar: {fileID: 0}
   Player0ComboBar: {fileID: 0}
   Player1ComboBar: {fileID: 0}
+--- !u!225 &1033192733
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033192725}
+  m_Enabled: 0
+  m_Alpha: 0.38
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1071425604
 GameObject:
   m_ObjectHideFlags: 0

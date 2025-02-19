@@ -53,8 +53,8 @@ public class GameFSMScreenTransition : QuantumEntityViewComponent
         {
             OnCountdownStart?.Invoke();
             alpha = Mathf.InverseLerp(FadeInDuration, 0, frames);
-            var distortion = Mathf.InverseLerp(DistortionDuration, 0, frames) * DistortionAmount;
-            if (_lensDistortion is not null) _lensDistortion.intensity.value = distortion;
+            // var distortion = Mathf.InverseLerp(DistortionDuration, 0, frames) * DistortionAmount;
+            // if (_lensDistortion is not null) _lensDistortion.intensity.value = distortion;
         }
         else if (state is GameFSM.State.RoundEnd)
         {
@@ -64,6 +64,10 @@ public class GameFSMScreenTransition : QuantumEntityViewComponent
         {
             OnResetStart?.Invoke();
             alpha = 1f;
+        }
+        else
+        {
+            // if (_lensDistortion is not null) _lensDistortion.intensity.value = 0;
         }
 
         var c = Color;

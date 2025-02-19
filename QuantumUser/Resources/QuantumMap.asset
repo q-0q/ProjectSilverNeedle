@@ -52,11 +52,11 @@ MonoBehaviour:
       type: {class: CpuControllerDataPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:
         cpuEnabled:
-          Value: 0
-        forceCounter:
-          Value: 0
-        doAction:
           Value: 1
+        forceCounter:
+          Value: 1
+        doAction:
+          Value: 0
         doJump:
           Value: 0
         block:
@@ -64,7 +64,7 @@ MonoBehaviour:
         dash:
           Value: 0
         inputType: 2
-        commandDirection: 5
+        commandDirection: 2
     - rid: 5002722801950392320
       type: {class: InteractionControllerDataPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:

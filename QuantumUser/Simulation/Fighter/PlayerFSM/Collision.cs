@@ -120,6 +120,19 @@ namespace Quantum
                 hit.Damage, hit.BonusHitstun, hit.BonusBlockstun, hit.Level, hit.Launches, hit.HardKnockdown, hit.GroundBounce, hit.WallBounce);
         }
 
+        
+        // Todo:
+        // remove this function. instead, add a hit to the throw
+        // startup state in PlayerFSM.ConfigureBaseFsm().
+        
+        // further, we will want to generalize CollisionBoxType.Throwbox into
+        // CollisionBoxType.Kinematic. The goal is to create a hitbox type that can
+        // also be used by character-specific hits to trigger command grabs, supers,
+        // parries, or any other "micro cutscene" style interactions... :)
+        
+        // Maybe Kinematic should be renamed to Cutscene?
+        // Break "KinematicReciever" state into multiple states that can be used
+        // to create a movie with code.... lol wtf
         public void Throwbox(Frame f)
         {
             ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Throwbox, EntityRef);
@@ -146,7 +159,6 @@ namespace Quantum
 
         public static void Pushbox(Frame f, EntityRef entityRef, bool debug=false)
         {
-            
             
             ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Pushbox, entityRef);
             var Fsm = Util.GetPlayerFSM(f, entityRef, debug);

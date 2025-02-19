@@ -97,7 +97,7 @@ namespace Quantum
             var fsm = PlayerFsmLoader.GetPlayerFsm(f, entityRef);
             if (fsm is null) return;
             
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             playerFsmData->currentState = (int)fsm.Fsm.State();
            
         }
@@ -130,7 +130,7 @@ namespace Quantum
             var fsm = PlayerFsmLoader.GetPlayerFsm(f, entityRef);
             if (fsm is null) return null;
             
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
 
             
             fsm.Fsm.Assume(playerFsmData->currentState);

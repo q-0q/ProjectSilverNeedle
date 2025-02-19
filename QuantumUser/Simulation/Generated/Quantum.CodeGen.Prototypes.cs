@@ -206,6 +206,25 @@ namespace Quantum.Prototypes {
     }
   }
   [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.FSMData))]
+  public unsafe partial class FSMDataPrototype : ComponentPrototype<Quantum.FSMData> {
+    public Int32 currentState;
+    public Int32 framesInState;
+    public FP virtualTimeInState;
+    partial void MaterializeUser(Frame frame, ref Quantum.FSMData result, in PrototypeMaterializationContext context);
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.FSMData component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.FSMData result, in PrototypeMaterializationContext context = default) {
+        result.currentState = this.currentState;
+        result.framesInState = this.framesInState;
+        result.virtualTimeInState = this.virtualTimeInState;
+        MaterializeUser(frame, ref result, in context);
+    }
+  }
+  [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.FrameMeterData))]
   public unsafe partial class FrameMeterDataPrototype : ComponentPrototype<Quantum.FrameMeterData> {
     [DynamicCollectionAttribute()]
@@ -432,27 +451,6 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.PlayerDirection result, in PrototypeMaterializationContext context = default) {
         result.FacingRight = this.FacingRight;
-        MaterializeUser(frame, ref result, in context);
-    }
-  }
-  [System.SerializableAttribute()]
-  [Quantum.Prototypes.Prototype(typeof(Quantum.PlayerFSMData))]
-  public unsafe partial class PlayerFSMDataPrototype : ComponentPrototype<Quantum.PlayerFSMData> {
-    public Int32 currentState;
-    public Int32 framesInState;
-    public FP virtualTimeInState;
-    public Int32 actionId;
-    partial void MaterializeUser(Frame frame, ref Quantum.PlayerFSMData result, in PrototypeMaterializationContext context);
-    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
-        Quantum.PlayerFSMData component = default;
-        Materialize((Frame)f, ref component, in context);
-        return f.Set(entity, component) == SetResult.ComponentAdded;
-    }
-    public void Materialize(Frame frame, ref Quantum.PlayerFSMData result, in PrototypeMaterializationContext context = default) {
-        result.currentState = this.currentState;
-        result.framesInState = this.framesInState;
-        result.virtualTimeInState = this.virtualTimeInState;
-        result.actionId = this.actionId;
         MaterializeUser(frame, ref result, in context);
     }
   }

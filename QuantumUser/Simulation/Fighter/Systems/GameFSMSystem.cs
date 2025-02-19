@@ -14,7 +14,7 @@ namespace Quantum
     public unsafe class GameFSMSystem : SystemMainThreadFilter<GameFSMSystem.Filter>
     {
         private static readonly FP RoundStartDistance = 12;
-        public static readonly int CountdownDuration = 150;
+        public static readonly int CountdownDuration = 10;
         public static readonly int RoundEndDuration = 150;
         public static readonly int RoundResetDuration = 60;
         
@@ -94,7 +94,7 @@ namespace Quantum
             var frameParam = (FrameParam)triggerParams;
             var frame = frameParam.f;
             
-            AnimationEntitySystem.Create(frame, AnimationEntities.AnimationEntityEnum.Countdown, FPVector2.Zero, 0, false);
+            // AnimationEntitySystem.Create(frame, AnimationEntities.AnimationEntityEnum.Countdown, FPVector2.Zero, 0, false);
         }
         
         public static void ResetPlayers(TriggerParams? triggerParams)
@@ -136,7 +136,7 @@ namespace Quantum
             f.Add(entityRef, new PlayerDirection());
             f.Add(entityRef, new TrajectoryData());
             f.Add(entityRef, new InputBuffer());
-            f.Add(entityRef, new PlayerFSMData());
+            f.Add(entityRef, new FSMData());
             f.Add(entityRef, new AnimationData());
             f.Add(entityRef, new HitEntitiesTracker()
             {
@@ -179,9 +179,8 @@ namespace Quantum
             inputBuffer->length = 0;
             inputBuffer->type = 0;
 
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             playerFsmData->currentState = 0;
-            playerFsmData->actionId = 0;
             playerFsmData->framesInState = 0;
 
             f.Unsafe.TryGetPointer<AnimationData>(entityRef, out var animationData);

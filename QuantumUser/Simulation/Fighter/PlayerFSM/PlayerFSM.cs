@@ -330,7 +330,17 @@ namespace Quantum
             
             machine.Configure(State.AirDash)
                 .Permit(Trigger.Finish, State.AirActionable)
-                .OnEntry(StartMomentumCallback)
+                .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
+                .OnExitFrom(Trigger.ButtonAndDirection, StartMomentumCallback)
+                .OnExitFrom(Trigger.Jump, StartMomentumCallback)
+                .OnExitFrom(Trigger.JumpCancel, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(OnAirdash)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .PermitIf(Trigger.BlockHigh, State.AirBlock, _ => true, -2)
@@ -452,20 +462,20 @@ namespace Quantum
 
         private void ResetStateEnteredFrame(Frame f)
         {
-            f.Unsafe.TryGetPointer<PlayerFSMData>(EntityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
             playerFsmData->framesInState = 0;
             playerFsmData->virtualTimeInState = 0;
         }
 
         public int FramesInCurrentState(Frame f)
         {
-            f.Unsafe.TryGetPointer<PlayerFSMData>(EntityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
         }
         
         public static int FramesInCurrentState(Frame f, EntityRef entityRef)
         {
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
         }
         
