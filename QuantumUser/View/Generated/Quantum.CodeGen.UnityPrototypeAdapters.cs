@@ -50,7 +50,7 @@ namespace Quantum.Prototypes.Unity {
   #endif //;
   
   [System.SerializableAttribute()]
-  public unsafe partial class CollisionBoxDataPrototype : Quantum.QuantumUnityPrototypeAdapter<Quantum.Prototypes.CollisionBoxDataPrototype> {
+  public unsafe partial class CollisionBoxDataxPrototype : Quantum.QuantumUnityPrototypeAdapter<Quantum.Prototypes.CollisionBoxDataxPrototype> {
     public Quantum.QuantumEntityPrototype source;
     public Int32 type;
     public Int32 subtype;
@@ -71,9 +71,9 @@ namespace Quantum.Prototypes.Unity {
     public QBoolean hardKnockdown;
     public QBoolean groundBounce;
     public QBoolean wallBounce;
-    partial void ConvertUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.CollisionBoxDataPrototype prototype);
-    public override Quantum.Prototypes.CollisionBoxDataPrototype Convert(Quantum.QuantumEntityPrototypeConverter converter) {
-      var result = new Quantum.Prototypes.CollisionBoxDataPrototype();
+    partial void ConvertUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.CollisionBoxDataxPrototype prototype);
+    public override Quantum.Prototypes.CollisionBoxDataxPrototype Convert(Quantum.QuantumEntityPrototypeConverter converter) {
+      var result = new Quantum.Prototypes.CollisionBoxDataxPrototype();
       converter.Convert(this.source, out result.source);
       converter.Convert(this.type, out result.type);
       converter.Convert(this.subtype, out result.subtype);

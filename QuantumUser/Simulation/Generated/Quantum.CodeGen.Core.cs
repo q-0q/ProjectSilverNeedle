@@ -630,7 +630,7 @@ namespace Quantum {
     }
   }
   [StructLayout(LayoutKind.Explicit)]
-  public unsafe partial struct CollisionBoxData : Quantum.IComponent {
+  public unsafe partial struct CollisionBoxDatax : Quantum.IComponent {
     public const Int32 SIZE = 128;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(40)]
@@ -675,7 +675,7 @@ namespace Quantum {
     public QBoolean wallBounce;
     public override Int32 GetHashCode() {
       unchecked { 
-        var hash = 8263;
+        var hash = 9697;
         hash = hash * 31 + source.GetHashCode();
         hash = hash * 31 + type.GetHashCode();
         hash = hash * 31 + subtype.GetHashCode();
@@ -700,7 +700,7 @@ namespace Quantum {
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
-        var p = (CollisionBoxData*)ptr;
+        var p = (CollisionBoxDatax*)ptr;
         serializer.Stream.Serialize(&p->bonusBlockStun);
         serializer.Stream.Serialize(&p->bonusHitStun);
         serializer.Stream.Serialize(&p->level);
@@ -815,25 +815,29 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct FSMData : Quantum.IComponent {
-    public const Int32 SIZE = 16;
+    public const Int32 SIZE = 24;
     public const Int32 ALIGNMENT = 8;
-    [FieldOffset(0)]
-    public Int32 currentState;
     [FieldOffset(4)]
-    public Int32 framesInState;
+    public Int32 currentState;
     [FieldOffset(8)]
+    public Int32 framesInState;
+    [FieldOffset(16)]
     public FP virtualTimeInState;
+    [FieldOffset(0)]
+    public Int32 currentCollisionState;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 8647;
         hash = hash * 31 + currentState.GetHashCode();
         hash = hash * 31 + framesInState.GetHashCode();
         hash = hash * 31 + virtualTimeInState.GetHashCode();
+        hash = hash * 31 + currentCollisionState.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (FSMData*)ptr;
+        serializer.Stream.Serialize(&p->currentCollisionState);
         serializer.Stream.Serialize(&p->currentState);
         serializer.Stream.Serialize(&p->framesInState);
         FP.Serialize(&p->virtualTimeInState, serializer);
@@ -1300,8 +1304,8 @@ namespace Quantum {
       BuildSignalsArrayOnComponentRemoved<CharacterController2D>();
       BuildSignalsArrayOnComponentAdded<CharacterController3D>();
       BuildSignalsArrayOnComponentRemoved<CharacterController3D>();
-      BuildSignalsArrayOnComponentAdded<Quantum.CollisionBoxData>();
-      BuildSignalsArrayOnComponentRemoved<Quantum.CollisionBoxData>();
+      BuildSignalsArrayOnComponentAdded<Quantum.CollisionBoxDatax>();
+      BuildSignalsArrayOnComponentRemoved<Quantum.CollisionBoxDatax>();
       BuildSignalsArrayOnComponentAdded<Quantum.ComboData>();
       BuildSignalsArrayOnComponentRemoved<Quantum.ComboData>();
       BuildSignalsArrayOnComponentAdded<Quantum.CpuControllerData>();
@@ -1433,7 +1437,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(Button), Button.SIZE);
       typeRegistry.Register(typeof(CharacterController2D), CharacterController2D.SIZE);
       typeRegistry.Register(typeof(CharacterController3D), CharacterController3D.SIZE);
-      typeRegistry.Register(typeof(Quantum.CollisionBoxData), Quantum.CollisionBoxData.SIZE);
+      typeRegistry.Register(typeof(Quantum.CollisionBoxDatax), Quantum.CollisionBoxDatax.SIZE);
       typeRegistry.Register(typeof(ColorRGBA), ColorRGBA.SIZE);
       typeRegistry.Register(typeof(Quantum.ComboData), Quantum.ComboData.SIZE);
       typeRegistry.Register(typeof(ComponentPrototypeRef), ComponentPrototypeRef.SIZE);
@@ -1526,7 +1530,7 @@ namespace Quantum {
         .AddBuiltInComponents()
         .Add<Quantum.AnimationData>(Quantum.AnimationData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AnimationEntityData>(Quantum.AnimationEntityData.Serialize, null, null, ComponentFlags.None)
-        .Add<Quantum.CollisionBoxData>(Quantum.CollisionBoxData.Serialize, null, null, ComponentFlags.None)
+        .Add<Quantum.CollisionBoxDatax>(Quantum.CollisionBoxDatax.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.ComboData>(Quantum.ComboData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.CpuControllerData>(Quantum.CpuControllerData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.DramaticData>(Quantum.DramaticData.Serialize, null, null, ComponentFlags.None)
