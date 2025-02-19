@@ -29,7 +29,6 @@ namespace Quantum
             fsm.Hurtbox(f);
             fsm.Throwbox(f);
             fsm.Hitbox(f);
-            PlayerFSM.Pushbox(f, filter.Entity);
             
             Util.WritebackFsm(f, filter.Entity);
         }

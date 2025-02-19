@@ -137,7 +137,7 @@ namespace Quantum
             f.Add(entityRef, new TrajectoryData());
             f.Add(entityRef, new InputBuffer());
             f.Add(entityRef, new FSMData());
-            f.Add(entityRef, new AnimationData());
+            f.Add(entityRef, new AnimationData()); // This we can get rid of by using state on view to get animation
             f.Add(entityRef, new HitEntitiesTracker()
             {
                 HitEntities = new QListPtr<EntityRef>()

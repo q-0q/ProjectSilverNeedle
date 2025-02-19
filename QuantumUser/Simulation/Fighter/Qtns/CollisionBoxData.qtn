@@ -1,4 +1,4 @@
-component CollisionBoxData
+component CollisionBoxDatax
 {
     entity_ref source;
     int type;

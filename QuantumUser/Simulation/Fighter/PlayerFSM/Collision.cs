@@ -18,6 +18,33 @@ namespace Quantum
             Counter,
             Punish
         }
+        
+        protected class CollisionBoxInternal
+        {
+            public EntityRef source;
+            public int type;
+            public int subtype;
+            public FP width;
+            public FP height;
+        
+            public int level;
+            public int bonusHitStun;
+            public int bonusBlockStun;
+            public FP blockPushback;
+            public FP hitPushback;
+        
+            public FP visualAngle;
+            public FP trajectoryHeight;
+            public FP trajectoryXVelocity;
+            public FP gravityScaling;
+            public FP damageScaling;
+            public FP damage;
+            public bool launches;
+            public bool hardKnockdown;
+            public bool groundBounce;
+            public bool wallBounce;
+        }
+        
 
         public static FP ThrowDistance = FP.FromString("2");
         public static int ThrowTechWindowSize = 10;
@@ -41,83 +68,15 @@ namespace Quantum
         public static int CounterBonusHitstop = 10;
         public static int PunishBonusHitstop = 0;
         
-        private static CollisionBoxCollection _kinematicSourceCollisionBoxCollection = new CollisionBoxCollection()
-        {
-            CollisionBoxes = new List<CollisionBox>()
-            {
-                new CollisionBox()
-                {
-                    GrowWidth = false,
-                    Width = 10,
-                    Height = 10
-                }
-            }
-        };
+
         
-        public void Hurtbox(Frame f)
-        {
-            ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Hurtbox, EntityRef);
-            Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            
-            if (character.InvulnerableBefore.Get(this) > FramesInCurrentState(f)) return;
-            
-            CollisionBoxCollection hurtboxCollection =
-                character.HurtboxCollectionSectionGroup.Get(this)?.GetCurrentItem(f, this);
-            HurtType hurtType = GetHurtType(f);
-            RenderCollisionBoxCollection(f, hurtboxCollection, CollisionBox.CollisionBoxType.Hurtbox, EntityRef, 
-                (int)hurtType, 0,0,0, 0, 0, 0 ,
-                0, 0);
-        }
-
-        private HurtType GetHurtType(Frame f)
-        {
-            if (Util.EntityIsCpu(f, EntityRef))
-            {
-                if (Util.GetCpuControllerData(f)->forceCounter &&
-                    (Fsm.IsInState(State.GroundActionable) || Fsm.IsInState(State.AirActionable))) 
-                    return HurtType.Counter;
-            }
-            
-            Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            var hurtTypeSectionGroup = character.HurtTypeSectionGroup.Get(this);
-            return hurtTypeSectionGroup?.GetCurrentItem(f, this) ?? HurtType.Regular;
-        }
-
+        
         public void Hitbox(Frame f)
         {
             if (IsOnFirstFrameOfHit(f))
             {
                 ClearHitEntities(f);
             }
-            
-            ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Hitbox, EntityRef);
-            
-            if (!Fsm.IsInState(State.Action) && !Fsm.IsInState(State.KinematicSource)) return;
-            
-            Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            SectionGroup<Hit> hitSectionGroup = character.HitSectionGroup.Get(this);
-            
-            var hit = hitSectionGroup?.GetCurrentItem(f, this);
-            if (hit is null) return;
-            var firstFrame = hitSectionGroup.GetCurrentFirstFrame(f, this);
-            int frames = FramesInCurrentState(f);
-            var hitType = hit.Type;
-
-            CollisionBoxCollection hitboxCollection;
-
-            if (Fsm.IsInState(State.KinematicSource))
-            {
-                hitboxCollection = _kinematicSourceCollisionBoxCollection;
-                hit.HardKnockdown = true;
-            }
-            else {
-                hitboxCollection = hit.HitboxCollections.GetItemFromIndex(frames - firstFrame);
-            }
-            
-            RenderCollisionBoxCollection(f, hitboxCollection, 
-                CollisionBox.CollisionBoxType.Hitbox, EntityRef, (int)hitType, hit.TrajectoryHeight, 
-                hit.TrajectoryXVelocity, hit.VisualAngle, hit.BlockPushback, hit.HitPushback, hit.GravityScaling, hit.DamageScaling, 
-                hit.Damage, hit.BonusHitstun, hit.BonusBlockstun, hit.Level, hit.Launches, hit.HardKnockdown, hit.GroundBounce, hit.WallBounce);
         }
 
         
@@ -133,65 +92,40 @@ namespace Quantum
         // Maybe Kinematic should be renamed to Cutscene?
         // Break "KinematicReciever" state into multiple states that can be used
         // to create a movie with code.... lol wtf
-        public void Throwbox(Frame f)
-        {
-            ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Throwbox, EntityRef);
-            
-            if (!Fsm.IsInState(State.ThrowStartup)) return;
-            if (FramesInCurrentState(f) != ThrowStartupFrames) return;
-            
-            var throwbox = new CollisionBox()
-            {
-                GrowHeight = true,
-                GrowWidth = false,
-                Width = 2 * ThrowDistance,
-                Height = 5,
-            };
+        // public void Throwbox(Frame f)
+        // {
+        //     ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Throwbox, EntityRef);
+        //     
+        //     if (!Fsm.IsInState(State.ThrowStartup)) return;
+        //     if (FramesInCurrentState(f) != ThrowStartupFrames) return;
+        //     
+        //     var throwbox = new CollisionBox()
+        //     {
+        //         GrowHeight = true,
+        //         GrowWidth = false,
+        //         Width = 2 * ThrowDistance,
+        //         Height = 5,
+        //     };
+        //
+        //     CollisionBoxCollection collisionBoxCollection = new CollisionBoxCollection()
+        //     {
+        //         CollisionBoxes = new List<CollisionBox>() { throwbox }
+        //     };
+        //     
+        //     RenderCollisionBoxCollection(f, collisionBoxCollection, CollisionBox.CollisionBoxType.Throwbox, EntityRef,
+        //         0, 0, 0, 0,0, 0,1,1,0);
+        // }
 
-            CollisionBoxCollection collisionBoxCollection = new CollisionBoxCollection()
-            {
-                CollisionBoxes = new List<CollisionBox>() { throwbox }
-            };
-            
-            RenderCollisionBoxCollection(f, collisionBoxCollection, CollisionBox.CollisionBoxType.Throwbox, EntityRef,
-                0, 0, 0, 0,0, 0,1,1,0);
-        }
-
-        public static void Pushbox(Frame f, EntityRef entityRef, bool debug=false)
-        {
-            
-            ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Pushbox, entityRef);
-            var Fsm = Util.GetPlayerFSM(f, entityRef, debug);
-            if (Fsm is null) return;
-            if (Fsm.Fsm.IsInState(State.KinematicReceiver)) return;
-
-            Character character = Characters.GetPlayerCharacter(f, entityRef);
-
-            var section = character.AllowCrossupSectionGroup.Get(Fsm);
-            
-            // if (section is not null && section.GetCurrentItem(f, Fsm)) return;
-
-            CollisionBox pushbox = character.Pushbox.Get(Fsm);
-            
-            if (pushbox is null) return;
-
-            CollisionBoxCollection pushboxCollection = new CollisionBoxCollection()
-                { CollisionBoxes = new List<CollisionBox>() { pushbox } };
-            
-            RenderCollisionBoxCollection(f, pushboxCollection, CollisionBox.CollisionBoxType.Pushbox, entityRef, 
-                0, 0, 0, 0, 0, 0, 0,
-                0, 0);
-        }
         
         public void HitboxHurtboxCollide(Frame f)
         {
             
-            foreach (var (hitboxEntityRef, hitboxData) in f.GetComponentIterator<CollisionBoxData>())
+            foreach (var (hitboxEntityRef, hitboxData) in f.GetComponentIterator<CollisionBoxInternal>())
             {
                 if (hitboxData.source == EntityRef) continue;
                 if (hitboxData.type != (int)CollisionBox.CollisionBoxType.Hitbox) continue;
 
-                foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxData>())
+                foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxInternal>())
                 {
                     if (hurtboxData.source != EntityRef) continue;
                     if (hurtboxData.type != (int)CollisionBox.CollisionBoxType.Hurtbox) continue;
@@ -233,13 +167,13 @@ namespace Quantum
 
         private bool EntityIsHitByThrowbox(Frame f, EntityRef targetEntityRef, EntityRef sourceEntityRef)
         {
-            foreach (var (throwboxEntityRef, throwboxData) in f.GetComponentIterator<CollisionBoxData>())
+            foreach (var (throwboxEntityRef, throwboxData) in f.GetComponentIterator<CollisionBoxInternal>())
             {
                 if (throwboxData.type != (int) CollisionBox.CollisionBoxType.Throwbox) continue;
                 if (throwboxData.source != sourceEntityRef) continue;
                 
 
-                foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxData>())
+                foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxInternal>())
                 {
                     if (hurtboxData.type != (int)CollisionBox.CollisionBoxType.Hurtbox) continue;
                     if (hurtboxData.source != targetEntityRef) continue;
@@ -260,7 +194,41 @@ namespace Quantum
 
             return false;
         }
-
+        
+        
+        // FP growOffsetX = collisionBox.GrowWidth ? collisionBox.Width * FP._0_50 : 0;
+        // FP growOffsetY = collisionBox.GrowHeight ? collisionBox.Height * FP._0_50 : 0;
+        // FP flipXMod = PlayerDirectionSystem.IsFacingRight(f, source) ? FP._1 : FP.Minus_1;
+        //         
+        // FPVector3 posOffset = new FPVector3(collisionBox.PosX, collisionBox.PosY, 0);
+        // FPVector3 growOffset = new FPVector3(growOffsetX, growOffsetY, 0);
+        //
+        // FPVector3 offset = (posOffset + growOffset);
+        // FPVector3 offsetFlipped = new FPVector3(offset.X * flipXMod, offset.Y, 0);
+        //         
+        // collisionBoxTransform->Position = sourceTransform->Position + offsetFlipped;
+        
+        
+        
+        
+        
+        
+        
+        
+        private HurtType GetHurtType(Frame f)
+        {
+            if (Util.EntityIsCpu(f, EntityRef))
+            {
+                if (Util.GetCpuControllerData(f)->forceCounter &&
+                    (Fsm.IsInState(State.GroundActionable) || Fsm.IsInState(State.AirActionable))) 
+                    return HurtType.Counter;
+            }
+            
+            Character character = Characters.GetPlayerCharacter(f, EntityRef);
+            var hurtTypeSectionGroup = character.HurtTypeSectionGroup.Get(this);
+            return hurtTypeSectionGroup?.GetCurrentItem(f, this) ?? HurtType.Regular;
+        }
+        
         private bool CanBeHitBySource(Frame f, EntityRef source)
         {
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(source, out var hitEntitiesTracker);
@@ -279,16 +247,6 @@ namespace Quantum
             hitEntities.Add(EntityRef);
         }
         
-        private static void ClearCollisionBoxesOfType(Frame f, CollisionBox.CollisionBoxType type, EntityRef source)
-        {
-            foreach (var (entityRef, collisionBoxData) in f.GetComponentIterator<CollisionBoxData>())
-            {
-                if (collisionBoxData.type != (int)type) continue;
-                if (collisionBoxData.source != source) continue;
-                f.Destroy(entityRef);
-            }
-        }
-
         private bool IsOnFirstFrameOfHit(Frame f)
         {
             if (!HasHitActive(f)) return false;
@@ -310,60 +268,6 @@ namespace Quantum
             var hitEntities = f.ResolveList(hitEntitiesTracker->HitEntities);
             hitEntities.Clear();
         }
-
-        private static void RenderCollisionBoxCollection(Frame f, CollisionBoxCollection collisionBoxCollection, 
-            CollisionBox.CollisionBoxType type, EntityRef source, 
-            int subType, FP trajectoryHeight, FP trajectoryXVelocity, FP visualAngle, FP blockPushback, FP hitPushback, FP gravityScaling, 
-            FP damageScaling, FP damage, int bonusHitStun = 0, int bonusBlockStun = 0, int level = 0, bool launches = false, 
-            bool hardKnockdown = false, bool groundBounce = false, bool wallBounce = false)
-        {
-            if (collisionBoxCollection == null) return;
-            
-            foreach (var collisionBox in collisionBoxCollection.CollisionBoxes)
-            {
-
-                
-                EntityRef entity =
-                    f.Create(f.FindAsset<EntityPrototype>("QuantumUser/Resources/CollisionBoxEntityPrototype"));
-                f.Unsafe.TryGetPointer<CollisionBoxData>(entity, out var collisionBoxData);
-                
-                collisionBoxData->source = source;
-                collisionBoxData->type = (int)type;
-                collisionBoxData->subtype = subType;
-                collisionBoxData->width = collisionBox.Width;
-                collisionBoxData->height = collisionBox.Height;
-                collisionBoxData->bonusHitStun = bonusHitStun;
-                collisionBoxData->bonusBlockStun = bonusBlockStun;
-                collisionBoxData->level = level;
-                collisionBoxData->trajectoryHeight = trajectoryHeight;
-                collisionBoxData->trajectoryXVelocity = trajectoryXVelocity;
-                collisionBoxData->launches = launches;
-                collisionBoxData->visualAngle = visualAngle;
-                collisionBoxData->blockPushback = blockPushback;
-                collisionBoxData->hitPushback = hitPushback;
-                collisionBoxData->hardKnockdown = hardKnockdown;
-                collisionBoxData->gravityScaling = gravityScaling;
-                collisionBoxData->damageScaling = damageScaling;
-                collisionBoxData->damage = damage;
-                collisionBoxData->groundBounce = groundBounce;
-                collisionBoxData->wallBounce = wallBounce;
-                
-                f.Unsafe.TryGetPointer<Transform3D>(entity, out var collisionBoxTransform);
-                f.Unsafe.TryGetPointer<Transform3D>(source, out var sourceTransform);
-                
-                FP growOffsetX = collisionBox.GrowWidth ? collisionBox.Width * FP._0_50 : 0;
-                FP growOffsetY = collisionBox.GrowHeight ? collisionBox.Height * FP._0_50 : 0;
-                FP flipXMod = PlayerDirectionSystem.IsFacingRight(f, source) ? FP._1 : FP.Minus_1;
-                
-                FPVector3 posOffset = new FPVector3(collisionBox.PosX, collisionBox.PosY, 0);
-                FPVector3 growOffset = new FPVector3(growOffsetX, growOffsetY, 0);
-
-                FPVector3 offset = (posOffset + growOffset);
-                FPVector3 offsetFlipped = new FPVector3(offset.X * flipXMod, offset.Y, 0);
-                
-                collisionBoxTransform->Position = sourceTransform->Position + offsetFlipped;
-            }
-        }
         
         static bool CollisionBoxesOverlap(Frame f, EntityRef boxA, EntityRef boxB, out FPVector2 overlapCenter, out FP overlapWidth)
         {
@@ -373,8 +277,8 @@ namespace Quantum
             if (boxA == EntityRef.None) return false;
             if (boxB == EntityRef.None) return false;
             
-            f.Unsafe.TryGetPointer<CollisionBoxData>(boxA, out var boxAData);
-            f.Unsafe.TryGetPointer<CollisionBoxData>(boxB, out var boxBData);
+            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxA, out var boxAData);
+            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxB, out var boxBData);
             f.Unsafe.TryGetPointer<Transform3D>(boxA, out var transformA);
             f.Unsafe.TryGetPointer<Transform3D>(boxB, out var transformB);
             
@@ -424,8 +328,8 @@ namespace Quantum
             if (boxA == EntityRef.None) return false;
             if (boxB == EntityRef.None) return false;
             
-            f.Unsafe.TryGetPointer<CollisionBoxData>(boxA, out var boxAData);
-            f.Unsafe.TryGetPointer<CollisionBoxData>(boxB, out var boxBData);
+            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxA, out var boxAData);
+            f.Unsafe.TryGetPointer<CollisionBoxInternal>(boxB, out var boxBData);
             f.Unsafe.TryGetPointer<Transform3D>(boxA, out var transformA);
             f.Unsafe.TryGetPointer<Transform3D>(boxB, out var transformB);
 
@@ -455,7 +359,7 @@ namespace Quantum
         }
 
 
-        private void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxData hurtboxData, CollisionBoxData hitboxData, FPVector2 location)
+        private void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
             Hit.HitType hitType = (Hit.HitType)hitboxData.subtype;
             HurtType hurtType = GetHurtType(f);
@@ -508,7 +412,7 @@ namespace Quantum
             
         }
 
-        private void InvokeDamagingCollisionCore(Frame f, CollisionBoxData hurtboxData, CollisionBoxData hitboxData,
+        private void InvokeDamagingCollisionCore(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData,
             HurtType hurtType, FPVector2 location)
         {
             

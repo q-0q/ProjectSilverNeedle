@@ -14,18 +14,18 @@ namespace Quantum {
   using UnityEngine;
   
   [UnityEngine.DisallowMultipleComponent()]
-  public unsafe partial class QPrototypeCollisionBoxData : QuantumUnityComponentPrototype<Quantum.Prototypes.CollisionBoxDataPrototype>, IQuantumUnityPrototypeWrapperForComponent<Quantum.CollisionBoxData> {
-    partial void CreatePrototypeUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.CollisionBoxDataPrototype prototype);
+  public unsafe partial class QPrototypeCollisionBoxDatax : QuantumUnityComponentPrototype<Quantum.Prototypes.CollisionBoxDataxPrototype>, IQuantumUnityPrototypeWrapperForComponent<Quantum.CollisionBoxDatax> {
+    partial void CreatePrototypeUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.CollisionBoxDataxPrototype prototype);
     [DrawInline()]
     [ReadOnly(InEditMode = false)]
-    public Quantum.Prototypes.Unity.CollisionBoxDataPrototype Prototype;
+    public Quantum.Prototypes.Unity.CollisionBoxDataxPrototype Prototype;
     public override System.Type ComponentType {
       get {
-        return typeof(Quantum.CollisionBoxData);
+        return typeof(Quantum.CollisionBoxDatax);
       }
     }
     public override ComponentPrototype CreatePrototype(Quantum.QuantumEntityPrototypeConverter converter) {
-      Quantum.Prototypes.CollisionBoxDataPrototype result;
+      Quantum.Prototypes.CollisionBoxDataxPrototype result;
       converter.Convert(Prototype, out result);
       CreatePrototypeUser(converter, ref result);
       return result;

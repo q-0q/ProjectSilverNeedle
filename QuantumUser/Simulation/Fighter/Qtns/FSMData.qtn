@@ -3,4 +3,5 @@ component FSMData
     int currentState;
     int framesInState;
     FP virtualTimeInState;
+    int currentCollisionState;
 }

@@ -92,8 +92,8 @@ namespace Quantum.Prototypes {
     }
   }
   [System.SerializableAttribute()]
-  [Quantum.Prototypes.Prototype(typeof(Quantum.CollisionBoxData))]
-  public unsafe class CollisionBoxDataPrototype : ComponentPrototype<Quantum.CollisionBoxData> {
+  [Quantum.Prototypes.Prototype(typeof(Quantum.CollisionBoxDatax))]
+  public unsafe class CollisionBoxDataxPrototype : ComponentPrototype<Quantum.CollisionBoxDatax> {
     public MapEntityId source;
     public Int32 type;
     public Int32 subtype;
@@ -115,11 +115,11 @@ namespace Quantum.Prototypes {
     public QBoolean groundBounce;
     public QBoolean wallBounce;
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
-        Quantum.CollisionBoxData component = default;
+        Quantum.CollisionBoxDatax component = default;
         Materialize((Frame)f, ref component, in context);
         return f.Set(entity, component) == SetResult.ComponentAdded;
     }
-    public void Materialize(Frame frame, ref Quantum.CollisionBoxData result, in PrototypeMaterializationContext context = default) {
+    public void Materialize(Frame frame, ref Quantum.CollisionBoxDatax result, in PrototypeMaterializationContext context = default) {
         PrototypeValidator.FindMapEntity(this.source, in context, out result.source);
         result.type = this.type;
         result.subtype = this.subtype;
@@ -211,6 +211,7 @@ namespace Quantum.Prototypes {
     public Int32 currentState;
     public Int32 framesInState;
     public FP virtualTimeInState;
+    public Int32 currentCollisionState;
     partial void MaterializeUser(Frame frame, ref Quantum.FSMData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.FSMData component = default;
@@ -221,6 +222,7 @@ namespace Quantum.Prototypes {
         result.currentState = this.currentState;
         result.framesInState = this.framesInState;
         result.virtualTimeInState = this.virtualTimeInState;
+        result.currentCollisionState = this.currentCollisionState;
         MaterializeUser(frame, ref result, in context);
     }
   }
