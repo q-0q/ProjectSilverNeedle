@@ -22,7 +22,7 @@ namespace Quantum
         public bool WallBounces;
     }
     
-    public class ActionParam : FrameParam
+    public class ButtonAndDirectionParam : FrameParam
     {
         public InputSystem.InputType Type;
         public int CommandDirection;

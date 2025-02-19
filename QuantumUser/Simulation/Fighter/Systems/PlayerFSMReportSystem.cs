@@ -10,7 +10,7 @@ namespace Quantum
         public struct Filter
         {
             public EntityRef Entity;
-            public PlayerFSMData* PlayerFsmData;
+            public FSMData* PlayerFsmData;
 
         }
         
@@ -22,6 +22,7 @@ namespace Quantum
         private static void AdvanceFsm(Frame f, Filter filter)
         {
             PlayerFSM fsm = Util.GetPlayerFSM(f, filter.Entity);
+            if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
@@ -52,7 +53,7 @@ namespace Quantum
             FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetSlowdownMod(f, entityRef);
             
             
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             playerFsmData->framesInState++;
             playerFsmData->virtualTimeInState += virtualTimeIncrement;
             

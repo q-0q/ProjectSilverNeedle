@@ -14,7 +14,7 @@ namespace Quantum
         static FP _crossupThreshhold = FP.FromString("0.01");
         private const bool AllowCrossup = false;
         private static int _pushbackDuration = 23;
-        private static int _momentumDuration = 25;
+        private static int _momentumDuration = 35;
         private static FP _throwTechPushback = FP.FromString("6"); 
         private FP _wallsSkew = FP.FromString("0.99");
 
@@ -50,51 +50,15 @@ namespace Quantum
         
         private FPVector2 ComputeMovementThisFrame(Frame f)
         {
-            FP xMoveAmount = 0;
-            FP yMoveAmount = 0;
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
-
-            if (Fsm.IsInState(State.WalkForward))
-            {
-                xMoveAmount = character.WalkForwardSpeed * Util.FrameLengthInSeconds;
-            }
-            else if (Fsm.IsInState(State.WalkBackward))
-            {
-                xMoveAmount = character.WalkBackwardSpeed * Util.FrameLengthInSeconds * FP.Minus_1;
-            }
-            else if (Fsm.IsInState(State.Dash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.DashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.Backdash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.BackdashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.AirDash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.DashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.AirBackdash))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.BackdashMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.SoftKnockdown))
-            {
-                xMoveAmount = GetXMovementFromMovementSectionGroup(f, SoftKnockdownMovementSectionGroup);
-            }
-            else if (Fsm.IsInState(State.Action))
-            {
-                if (character.ActionDict[Fsm.State()].MovementSectionGroup is not null)
-                {
-                    xMoveAmount = GetXMovementFromMovementSectionGroup(f ,character.ActionDict[Fsm.State()].MovementSectionGroup);
-                }
-            }
+            FP xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.MovementSectionGroup.Get(this));
             
-            return new FPVector2(xMoveAmount, yMoveAmount);
+            return new FPVector2(xMoveAmount, 0);
         }
 
         private FP GetXMovementFromMovementSectionGroup(Frame f, SectionGroup<FP> sectionGroup)
         {
+            if (sectionGroup is null) return 0;
             FP sectionDistance = sectionGroup.GetCurrentItem(f, this);
             FP sectionDuration = sectionGroup.GetCurrentItemDuration(f, this);
             return sectionDistance / sectionDuration;
@@ -120,7 +84,6 @@ namespace Quantum
             {
                 if (AreCollisionBoxesNextToEachOther(f, opponentPushboxEntityRef, pushboxEntityRef, out FP deltaX))
                 {
-                    // if (!Util.EntityIsCpu(f, entityRef)) Debug.Log(deltaX + " --- " + v.X);
                     v.X = !PlayerDirectionSystem.IsOnLeft(f, entityRef) ? Util.Max(v.X, deltaX + _crossupThreshhold) : Util.Min(v.X, deltaX - _crossupThreshhold);
                 }
             }
@@ -294,7 +257,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
 
-            FP amount = PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef) ? 3 : -3;
+            FP amount = PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef) ? 4 : -4;
             StartMomentum(frameParam.f, amount);
 
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);

@@ -31,13 +31,17 @@ public class PlayerSprite : QuantumEntityViewComponent
         
         Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)PredictedFrame.Get<PlayerLink>(EntityRef).characterId;
         string characterName = Characters.Get(characterEnum).Name;
-        string path = "Sprites/Characters/" + characterName + "/Frames/" + characterName;
         int frame = PredictedFrame.Get<AnimationData>(EntityRef).frame + 1;
-        Sprite sprite = Resources.Load<Sprite>(path + frame);
+        int path = PredictedFrame.Get<AnimationData>(EntityRef).path;
+        var pathEnum = Characters.Get(characterEnum).AnimationPathsEnum;
+        string stringPath = Enum.ToObject(pathEnum, path).ToString();
+        string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/" + stringPath + "_" + frame;
+        Sprite sprite = Resources.Load<Sprite>(fullPath);
 
         
         // offense / defense sorting
         PlayerFSM fsm = Util.GetPlayerFSM(PredictedFrame, EntityRef);
+        if (fsm is null) return;
         bool back = fsm.Fsm.IsInState(PlayerFSM.State.Block) || fsm.Fsm.IsInState(PlayerFSM.State.Hit);
         gameObject.layer = back ? LayerMask.NameToLayer("PlayerBack") : LayerMask.NameToLayer("PlayerFront");
         

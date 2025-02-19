@@ -1,7 +1,0 @@
-component PlayerFSMData
-{
-    int currentState;
-    int framesInState;
-    FP virtualTimeInState;
-    int actionId;
-}

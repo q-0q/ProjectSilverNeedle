@@ -11,7 +11,6 @@ namespace Quantum
         {
             
             // Force static initialization of InheritableEnum class
-            Debug.Log("Trying to initialize...");
             var _ = PlayerFSM.State.GroundActionable;
             
             var p0 = new PlayerFSM();
@@ -22,6 +21,7 @@ namespace Quantum
             var p1Character = Characters.GetPlayerCharacter(f, Util.GetPlayer(f, 1));
             p1Character.ConfigureCharacterFsm(p1);
 
+            Debug.Log("Filling playerFsms...");
             PlayerFsms = new List<PlayerFSM>
             {
                 p0,
@@ -31,7 +31,7 @@ namespace Quantum
 
         public static PlayerFSM GetPlayerFsm(Frame f, EntityRef entityRef)
         {
-            return PlayerFsms[Util.GetPlayerId(f, entityRef)];
+            return PlayerFsms?[Util.GetPlayerId(f, entityRef)];
         }
     }
 }

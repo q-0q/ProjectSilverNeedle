@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Photon.Deterministic;
+using Quantum;
 using Quantum.Types;
 using Quantum.Types.Collision;
 using UnityEngine;
@@ -9,23 +10,6 @@ namespace Quantum
 {
     public class StickTwo : Character
     {
-        // { PlayerFSM.State.Action1 , _5L},
-        // { PlayerFSM.State.Action2 , _2L},
-        // { PlayerFSM.State.Action3 , _5M},
-        // { PlayerFSM.State.Action4 , _2M},
-        // { StickTwoState._2H , _2H},
-        // { StickTwoState._5H , _5H},
-        // { StickTwoState._5S1 , _5S1},
-        // { StickTwoState._5S2 , _5S2},
-        // { StickTwoState._5S3 , _5S3},
-        // { StickTwoState._6S3 , _6S3},
-        // { StickTwoState._2S_ground , _2S},
-        // { StickTwoState._2S_air , _2S},
-        // { StickTwoState._JL , _JL},
-        // { StickTwoState._JM , _JM},
-        // { StickTwoState._JH , _JH},
-        // { StickTwoState._JS , _JS},
-        
         public class StickTwoState : PlayerFSM.State
         {
             public static int _5L;
@@ -44,22 +28,51 @@ namespace Quantum
             public static int _JM;
             public static int _JH;
             public static int _JS;
+            public static int Meditate;
         }
-        
+
+        public enum StickTwoAnimationPath
+        {
+            StandActionable,
+            CrouchActionable,
+            WalkForward,
+            WalkBackward,
+            Jump,
+            Dash,
+            Backdash,
+            Airdash,
+            AirBackdash,
+            ThrowStartup,
+            FrontThrow,
+            BackThrow,
+            ThrowWhiff,
+
+            StandHitHigh,
+            StandHitLow,
+            CrouchHit,
+            AirHit,
+            StandBlock,
+            CrouchBlock,
+            AirBlock,
+            HardKnockdown,
+            SoftKnockdown,
+            DeadFromGround,
+            DeadFromAir,
+            
+            Landsquat,
+            ThrowTech,
+            
+            _5M,
+            _2M,
+            _2H,
+        } 
+
         public StickTwo()
         {
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
+            AnimationPathsEnum = typeof(StickTwoAnimationPath);
             
-            Debug.Log("StandActionable: " + PlayerFSM.State.StandActionable);
-            
-            WalkForwardSpeed = FP.FromString("12");
-            WalkBackwardSpeed = FP.FromString("9");
-
-            JumpHeight = FP.FromString("5.5");
-            JumpTimeToHeight = 25;
-            JumpForwardSpeed = FP.FromString("10");
-            JumpBackwardSpeed = FP.FromString("7");
             JumpCount = 2;
 
             FallSpeed = FP.FromString("50");
@@ -67,61 +80,121 @@ namespace Quantum
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
-            FP lowDamage = 12;
-            FP mediumDamage = 20;
-            FP highDamage = 35;
-            FP crazyDamage = 45;
-            
-            StandHurtboxesCollection = new CollisionBoxCollection()
+            var jumpHeight = FP.FromString("5.5");
+            var jumpTimeToHeight = 25;
+            var jumpForwardSpeed = FP.FromString("10");
+            var jumpBackwardSpeed = FP.FromString("-7");
+
+            UpwardJumpTrajectory = new Trajectory()
             {
-                CollisionBoxes = new List<CollisionBox>()
-                {
-                    new()
-                    {
-                        GrowHeight = true,
-                        GrowWidth = false,
-                        PosX = 0,
-                        PosY = 0,
-                        Height = 6,
-                        Width = 3,
-                    },
-                    
-                }
+                TimeToTrajectoryHeight = jumpTimeToHeight,
+                TrajectoryXVelocity = 0,
+                TrajectoryHeight = jumpHeight
             };
             
-            CrouchHurtboxCollection = new CollisionBoxCollection()
+            ForwardJumpTrajectory = new Trajectory()
             {
-                CollisionBoxes = new List<CollisionBox>()
-                {
-                    new()
-                    {
-                        GrowHeight = true,
-                        GrowWidth = false,
-                        PosX = 0,
-                        PosY = 0,
-                        Height = 4,
-                        Width = 3,
-                    }
-                }
+                TimeToTrajectoryHeight = jumpTimeToHeight,
+                TrajectoryXVelocity = jumpForwardSpeed,
+                TrajectoryHeight = jumpHeight
+            };
+            
+            BackwardJumpTrajectory = new Trajectory()
+            {
+                TimeToTrajectoryHeight = jumpTimeToHeight,
+                TrajectoryXVelocity = jumpBackwardSpeed,
+                TrajectoryHeight = jumpHeight
+            };
+            
+            SetupStateMaps();
+            
+            // Hurtboxes
+
+            CollisionBox standHurtbox = new()
+            {
+                GrowHeight = true,
+                GrowWidth = false,
+                PosX = 0,
+                PosY = 0,
+                Height = 7,
+                Width = 3,
             };
 
-            AirHitHurtboxCollection = new CollisionBoxCollection()
+            CollisionBox crouchHurtbox = new()
             {
-                CollisionBoxes = new List<CollisionBox>()
+                GrowHeight = true,
+                GrowWidth = false,
+                PosX = 0,
+                PosY = 0,
+                Height = 5,
+                Width = 3,
+            };
+            
+            
+            var standHurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
                 {
-                    new()
-                    {
-                        GrowHeight = false,
-                        GrowWidth = false,
-                        PosX = 0,
-                        PosY = 2,
-                        Height = 6,
-                        Width = 7,
-                    }
+                    new(10, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }
+                    )
                 }
             };
+            
+            var crouchHurtboxCollection = new SectionGroup<CollisionBoxCollection>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                {
+                    new (10, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                crouchHurtbox
+                            }
+                        }
+                    )
+                }
+            };
+            
+            var airHitHurtboxCollection = new SectionGroup<CollisionBoxCollection>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                {
+                    new (10, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new()
+                                {
+                                    GrowHeight = false,
+                                    GrowWidth = false,
+                                    PosX = 0,
+                                    PosY = 2,
+                                    Height = 6,
+                                    Width = 7,
+                                }
+                            }
+                        }
+                    )
+                }
+            };
+            
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Stand] = standHurtboxCollectionSectionGroup;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Crouch] = crouchHurtboxCollection;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Air] = airHitHurtboxCollection;
 
-            StandPushbox = new CollisionBox()
+            
+            // Pushboxes
+
+            var standPushbox = new CollisionBox()
             {
                 GrowHeight = true,
                 GrowWidth = false,
@@ -130,8 +203,8 @@ namespace Quantum
                 Height = 6,
                 Width = 1,
             };
-            
-            CrouchPushbox = new CollisionBox()
+
+            var crouchPushbox = new CollisionBox()
             {
                 GrowHeight = true,
                 GrowWidth = false,
@@ -140,8 +213,8 @@ namespace Quantum
                 Height = 4,
                 Width = 1,
             };
-            
-            AirPushbox = new CollisionBox()
+
+            var airPushbox = new CollisionBox()
             {
                 GrowHeight = true,
                 GrowWidth = false,
@@ -151,2367 +224,563 @@ namespace Quantum
                 Width = 1,
             };
             
-            TallPushbox = new CollisionBox()
+            Pushbox.SuperDictionary[PlayerFSM.State.Stand] = standPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.Crouch] = crouchPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.Air] = airPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.HardKnockdown] = crouchPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.State.SoftKnockdown] = crouchPushbox;
+            
+            // Basic animations
+            
+            var standAnimation = new FighterAnimation()
             {
-                GrowHeight = false,
-                GrowWidth = false,
-                PosX = 0,
-                PosY = 3,
-                Height = 16,
-                Width = 1,
-            };
-
-            StandAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 0,
+                Path = (int)StickTwoAnimationPath.StandActionable,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0)
-                    }
+                    LengthScalar = 2,
+                    AutoFromAnimationPath = true
                 }
             };
             
-            CrouchAnimation = new FighterAnimation()
+            var crouchAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 1,
+                Path = (int)StickTwoAnimationPath.CrouchActionable,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0)
-                    }
+                    LengthScalar = 2,
+                    AutoFromAnimationPath = true
                 }
             };
             
-            CrouchAnimation = new FighterAnimation()
+            var walkForwardAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 1,
+                Path = (int)StickTwoAnimationPath.WalkForward,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0)
-                    }
+                    LengthScalar = 2,
+                    AutoFromAnimationPath = true
                 }
             };
             
-            WalkForwardAnimation = new FighterAnimation()
+            var walkBackwardAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 12,
+                Path = (int)StickTwoAnimationPath.WalkBackward,
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 9,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                        new(1, 2),
-                        new(1, 3),
-                        new(1, 4),
-                        new(1, 5),
-                    }
+                    LengthScalar = 2,
+                    AutoFromAnimationPath = true,
                 }
             };
             
-            WalkBackwardAnimation = new FighterAnimation()
+            var jumpingAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 12,
+                Path = (int)StickTwoAnimationPath.Jump,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Loop = true,
-                    LengthScalar = 14,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 5),
-                        new(1, 4),
-                        new(1, 3),
-                        new(1, 2),
-                        new(1, 1),
-                        new(1, 0),
-                    }
+                    LengthScalar = 2,
+                    AutoFromAnimationPath = true
                 }
             };
 
-            AirActionableRisingAnimation = new RisingTrajectoryAnimation()
+            var dashAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 18,
+                Path = (int)StickTwoAnimationPath.Dash,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            AirActionableFallingAnimation = new FallingTrajectoryAnimation()
+            var backdashAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 19,
+                Path = (int)StickTwoAnimationPath.Backdash,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 1),
-                        new(1, 2),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
 
-            AirHitPostGroundBounceRisingAnimation = new RisingTrajectoryAnimation()
+            var standHitHighAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 28,
+                Path = (int)StickTwoAnimationPath.StandHitHigh,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 0),
-                        new(1, 1),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            AirPostHitGroundBounceFallingAnimation = new FallingTrajectoryAnimation()
+            var standHitLowAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 28,
+                Path = (int)StickTwoAnimationPath.StandHitLow,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 5,
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(1, 1),
-                        new(1, 0),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            StandHitHighAnimation = new FighterAnimation()
+            var crouchHitAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 6,
+                Path = (int)StickTwoAnimationPath.CrouchHit,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            StandHitLowAnimation = new FighterAnimation()
+            var airHitAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 8,
+                Path = (int)StickTwoAnimationPath.AirHit,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            CrouchHitAnimation = new FighterAnimation()
+            var standBlockAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 10,
+                Path = (int)StickTwoAnimationPath.StandBlock,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-
-            AirHitRisingAnimation = new RisingTrajectoryAnimation()
-            {
-                SpriteSheetOffset = 24,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0),
-                        new(8, 1),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            AirHitFallingAnimation = new FallingTrajectoryAnimation()
+            var crouchBlockAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 24,
+                Path = (int)StickTwoAnimationPath.CrouchBlock,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 1),
-                        new(8, 2),
-                        new(8, 3),
-                    }
-                }
-            };
-
-            KinematicReceiverAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 24,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(18, 0),
-                    }
-                }
-            };
-
-            StandBlockAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 2,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-            ThrowTechAnimation = StandBlockAnimation;
-            
-            CrouchBlockAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 4,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-
-            AirBlockAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 22,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(7, 0),
-                        new(7, 1),
-                    }
-                }
-            };
-
-            HardKnockdownAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 30,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 0),
-                        new(20, 1),
-                        new(10, 2),
-                        new(10, 3),
-                        new(7, 4),
-                        new(7, 5),
-                    }
-                }
-            };
-
-            DeadFromAirAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 30,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 0),
-                        new(20, 1),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            DeadFromGroundAnimation = new FighterAnimation()
+            var airBlockAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 59,
+                Path = (int)StickTwoAnimationPath.AirBlock,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(15, 0),
-                        new(5, 1),
-                        new(25, 2),
-                        new(5, 3),
-                        new(5, 4),
-                        new(5, 5),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
             
-            SoftKnockdownAnimation = new FighterAnimation()
+            var hardKnockdownAnimation = new FighterAnimation()
             {
-                SpriteSheetOffset = 54,
+                Path = (int)StickTwoAnimationPath.HardKnockdown,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(8, 1),
-                        new(5, 2),
-                        new(5, 3),
-                        new(5, 4),
-                    }
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var softKnockdownAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.SoftKnockdown,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var deadFromGroundAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.DeadFromGround,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(standAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandActionable] = standAnimation;
+
+            Util.AutoSetupFromAnimationPath(crouchAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.CrouchActionable] = crouchAnimation;
+            
+            Util.AutoSetupFromAnimationPath(walkForwardAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.WalkForward] = walkForwardAnimation;
+
+            Util.AutoSetupFromAnimationPath(walkBackwardAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardAnimation;
+            
+            Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.AirActionable] = jumpingAnimation;
+            
+            Util.AutoSetupFromAnimationPath(dashAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.Dash] = dashAnimation;
+            Duration.Dictionary[PlayerFSM.State.Dash] = dashAnimation.SectionGroup.Duration();
+            FighterAnimation.Dictionary[PlayerFSM.State.AirDash] = dashAnimation;
+            Duration.Dictionary[PlayerFSM.State.AirDash] = dashAnimation.SectionGroup.Duration();
+            
+            Util.AutoSetupFromAnimationPath(backdashAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.Backdash] = backdashAnimation;
+            Duration.Dictionary[PlayerFSM.State.Backdash] = backdashAnimation.SectionGroup.Duration();
+            
+            Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = standHitHighAnimation;
+            
+            Util.AutoSetupFromAnimationPath(standHitLowAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandHitLow] = standHitLowAnimation;
+            
+            Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.CrouchHit] = crouchHitAnimation;
+            
+            Util.AutoSetupFromAnimationPath(airHitAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.AirHit] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.State.AirHitPostGroundBounce] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.State.KinematicReceiver] = airHitAnimation;
+            
+            Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = standBlockAnimation;
+
+            Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.CrouchBlock] = crouchBlockAnimation;
+            
+            Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.AirBlock] = airBlockAnimation;
+            
+            Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.HardKnockdown] = hardKnockdownAnimation;
+            
+            Util.AutoSetupFromAnimationPath(softKnockdownAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.SoftKnockdown] = softKnockdownAnimation;
+            
+            Util.AutoSetupFromAnimationPath(deadFromGroundAnimation, this);
+            FighterAnimation.Dictionary[PlayerFSM.State.DeadFromGround] = deadFromGroundAnimation;
+            
+            // Basic movement
+            
+            var walkForwardMovement = new SectionGroup<FP>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 3))
+                }
+            };
+            
+            var walkBackwardMovement = new SectionGroup<FP>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -2))
                 }
             };
 
-            LandsquatAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 1,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0)
-                    }
-                }
-            };
-
-            DashAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 36,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(5, 0),
-                        new(10, 1),
-                        new(6, 17),
-                    }
-                }
-            };
-
-            DashMovementSectionGroup = new SectionGroup<FP>()
+            var dashMovement = new SectionGroup<FP>()
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(8, 0),
-                    new(7, 3),
                     new(3, 0),
+                    new(8, 4),
+                    new(8, 1),
+                    new(12, FP.FromString("0.6")),
+                    new (10, 0),
                 }
             };
             
-            BackdashAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 50,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(6, 0),
-                        new(4, 1),
-                        new(6, 2),
-                        new(6, 3),
-                    }
-                }
-            };
-            AirdashAnimation = DashAnimation;
-            
-            BackdashMovementSectionGroup = new SectionGroup<FP>()
+            var backdashMovement = new SectionGroup<FP>()
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(6, 0),
-                    new(7, -4),
-                    new(9, 0),
-                }
-            };
-            AirBackdashAnimation = BackdashAnimation;
-
-            ThrowStartupAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 38,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0)
-                    }
+                    new(3, 0),
+                    new(15, -4),
+                    new(5, FP.FromString("-0.25")),
+                    new (10, 0),
                 }
             };
             
-            FrontThrowKinematics = new Kinematics()
-            {
-                FireReceiverFinishAfter = 40,
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 39,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(8, 0),
-                            new(18, 1),
-                            new(10, 2),
-                            new(25, 3)
-                        }
-                    }
-                },
-                
-                GrabPositionSectionGroup = new SectionGroup<FPVector2>()
-                {
-                    Sections = new List<Tuple<int, FPVector2>>()
-                    {
-                        new(8, new FPVector2(2, 3)),
-                        new(23, new FPVector2(2, 4)),
-                        new(5, new FPVector2(2, 3)),
-                        new(25, new FPVector2(2, 1))
-                    }
-                },
-                
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new (16, null),
-                        new (4, new Hit()
-                        {
-                            Damage = 50
-                        }),
-                        new (20, null)
-                    }
-                }
-                
-            };
-            
-            BackThrowKinematics = new Kinematics()
-            {
-                FireReceiverFinishAfter = 37,
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 45,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(8, 0),
-                            new(18, 1),
-                            new(10, 2),
-                            new(12, 3),
-                            new(18, 4)
-                        }
-                    }
-                },
-                
-                GrabPositionSectionGroup = new SectionGroup<FPVector2>()
-                {
-                    Sections = new List<Tuple<int, FPVector2>>()
-                    {
-                        new(8, new FPVector2(2, 3)),
-                        new(18, new FPVector2(2, 4)),
-                        new(10, new FPVector2(0, 5)),
-                        new(25, new FPVector2(-6, 1))
-                    }
-                },
-                
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new (16, null),
-                        new (4, new Hit()
-                        {
-                            Damage = 50
-                        }),
-                        new (20, null)
-                    }
-                }
-                
-            };
-            
-            ThrowWhiffAnimation = new FighterAnimation()
-            {
-                SpriteSheetOffset = 43,
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Sections = new List<Tuple<int, int>>()
-                    {
-                        new(10, 0),
-                        new(10, 1),
-                    }
-                }
-            };
-            
-            
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = walkForwardMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.Dash] = dashMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.AirDash] = dashMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.State.Backdash] = backdashMovement;
+            InvulnerableBefore.Dictionary[PlayerFSM.State.Backdash] = 12;
             
             ////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-            FP crazyScaling = FP.FromString("0.6");
-            FP highScaling = FP.FromString("0.75");
-            FP mediumScaling = FP.FromString("0.85");
-            FP lowScaling = FP.FromString("0.95");
-
-
             
-            FighterAction _2L = new FighterAction()
+            var _5MAnimation = new FighterAnimation()
             {
-                Animation = new FighterAnimation()
+                Path = (int)StickTwoAnimationPath._5M,
+                SectionGroup = new SectionGroup<int>()
                 {
-                    SpriteSheetOffset = 68,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(5, 0),
-                            new(2, 1),
-                            new(4, 2)
-                        }
-                    }
-                },
-
-                CancellableAfter = 6,
-                CommandDirection = 2,
-                InputType = InputSystem.InputType.P,
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(5, null),
-                        new(2, new Hit()
-                        {
-                            Type = Hit.HitType.Low,
-                            HitPushback = 2,
-                            BlockPushback = 2,
-                            DamageScaling = crazyScaling,
-                            Damage = lowDamage,
-                            VisualAngle = 5,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new(20, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                GrowHeight = true,
-                                                GrowWidth = true,
-                                                Height = 2,
-                                                Width = 4,
-                                                PosX = 0,
-                                                PosY = 0
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
-                        new (20, null)
-                    }
-                },
-                
-                HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new (5, StandHurtboxesCollection),
-                        new (2, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                new()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = false,
-                                    PosX = 0,
-                                    PosY = 0,
-                                    Height = 6,
-                                    Width = 3,
-                                },
-                                new CollisionBox()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = true,
-                                    Height = 3,
-                                    Width = 5,
-                                    PosX = 0,
-                                    PosY = 0
-                                }
-                            }
-                        }),
-                        new (5, StandHurtboxesCollection)
-                    }
-                },
-
-                HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                {
-                    Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                    {
-                        new(7, PlayerFSM.HurtType.Counter),
-                        new(5, PlayerFSM.HurtType.Punish)
-                    }
-                },
-            };
-            
-            
-            
-            
-            
-            
-            
-            FighterAction _5L = new FighterAction()
-            {
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 65,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(5, 0),
-                            new(2, 1),
-                            new(8, 2)
-                        }
-                    }
-                },
-
-                CancellableAfter = 6,
-                CommandDirection = 5,
-                InputType = InputSystem.InputType.P,
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(5, null),
-                        new(2, new Hit()
-                        {
-                            HitPushback = 2,
-                            BlockPushback = 2,
-                            Damage = lowDamage,
-                            VisualAngle = -5,
-                            DamageScaling = crazyScaling,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new(20, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                GrowHeight = false,
-                                                GrowWidth = true,
-                                                Height = 2,
-                                                Width = 3,
-                                                PosX = 0,
-                                                PosY = 4
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
-                        new (20, null)
-                    }
-                },
-                
-                HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new (5, StandHurtboxesCollection),
-                        new (2, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                new()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = false,
-                                    PosX = 0,
-                                    PosY = 0,
-                                    Height = 6,
-                                    Width = 3,
-                                },
-                                new CollisionBox()
-                                {
-                                    GrowHeight = false,
-                                    GrowWidth = true,
-                                    Height = 3,
-                                    Width = 4,
-                                    PosX = 0,
-                                    PosY = 4
-                                }
-                            }
-                        }),
-                        new (5, StandHurtboxesCollection)
-                    }
-                },
-
-                HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                {
-                    Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                    {
-                        new(7, PlayerFSM.HurtType.Counter),
-                        new(5, PlayerFSM.HurtType.Punish)
-                    }
-                },
-            };
-
-
-
-
-            FighterAction _5M = new FighterAction()
-            {
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 71,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(2, 0),
-                            new(6, 1),
-                            new(7, 3),
-                            new(13, 5),
-                        }
-                    }
-                },
-
-                CancellableAfter = 10,
-                CommandDirection = 5,
-                InputType = InputSystem.InputType.K,
-                MovementSectionGroup = new SectionGroup<FP>()
-                {
-                    Sections = new List<Tuple<int, FP>>()
-                    {
-                        new(6, 0),
-                        new(2, 1),
-                        new(20, 0),
-                    }
-                },
-                
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(8, null),
-                        new(3, new Hit()
-                        {
-                            BlockPushback = 2,
-                            GravityScaling = 1,
-                            TrajectoryXVelocity = 20,
-                            TrajectoryHeight = 1,
-                            Level = 2,
-                            Damage = mediumDamage,
-                            VisualAngle = 6,
-                            DamageScaling = mediumScaling,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new(20, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                GrowHeight = false,
-                                                GrowWidth = true,
-                                                Height = 2,
-                                                Width = 4,
-                                                PosX = 0,
-                                                PosY = 4
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
-                        new (20, null)
-                    }
-                },
-                
-                HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new (8, StandHurtboxesCollection),
-                        new (3, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                new()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = false,
-                                    PosX = 0,
-                                    PosY = 0,
-                                    Height = 6,
-                                    Width = 3,
-                                },
-                                new CollisionBox()
-                                {
-                                    GrowHeight = false,
-                                    GrowWidth = true,
-                                    Height = 3,
-                                    Width = FP.FromString("4.5"),
-                                    PosX = 0,
-                                    PosY = 4
-                                }
-                            }
-                        }),
-                        new (10, StandHurtboxesCollection)
-                    }
-                },
-
-                HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                {
-                    Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                    {
-                        new(11, PlayerFSM.HurtType.Counter),
-                        new(10, PlayerFSM.HurtType.Punish)
-                    }
-                },
-            };
-            
-            
-            FighterAction _2M = new FighterAction()
-            {
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 77,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(2, 0),
-                            new(8, 1),
-                            new(2, 2),
-                            new(13, 3),
-                            new(12, 4),
-                        }
-                    }
-                },
-
-                CancellableAfter = 10,
-                CommandDirection = 2,
-                InputType = InputSystem.InputType.K,
-                MovementSectionGroup = new SectionGroup<FP>()
-                {
-                    Sections = new List<Tuple<int, FP>>()
-                    {
-                        new(8, 0),
-                        new(2, 1),
-                        new(20, 0),
-                    }
-                },
-                
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(10, null),
-                        new(3, new Hit()
-                        {
-                            BlockPushback = 2,
-                            DamageScaling = mediumScaling,
-                            Type = Hit.HitType.Low,
-                            Level = 2,
-                            Damage = mediumDamage,
-                            VisualAngle = 10,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new(20, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                GrowHeight = true,
-                                                GrowWidth = true,
-                                                Height = 2,
-                                                Width = 4,
-                                                PosX = 0,
-                                                PosY = 0,
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
-                        new (20, null)
-                    }
-                },
-                
-                HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new (10, CrouchHurtboxCollection),
-                        new (20, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                new()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = false,
-                                    PosX = -2,
-                                    PosY = 0,
-                                    Height = 4,
-                                    Width = 4,
-                                },
-                                new()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = true,
-                                    PosX = 0,
-                                    PosY = 0,
-                                    Height = 2,
-                                    Width = 5,
-                                },
-                            }
-                        })
-                    }
-                },
-
-                HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                {
-                    Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                    {
-                        new(13, PlayerFSM.HurtType.Counter),
-                        new(10, PlayerFSM.HurtType.Punish)
-                    }
-                },
-            };
-            
-            
-            
-            FighterAction _2H = new FighterAction()
-            {
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 82,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(7, 0),
-                            new(8, 1),
-                            new(10, 3),
-                            new(10, 4),
-                            new(9, 5),
-                        }
-                    }
-                },
-                
-                CommandDirection = 2,
-                InputType = InputSystem.InputType.H,
-                
-                
-                MovementSectionGroup = new SectionGroup<FP>()
-                {
-                    Sections = new List<Tuple<int, FP>>()
-                    {
-                        new(15, 0),
-                        new(2, 1),
-                        new(20, 0),
-                    }
-                },
-                
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(15, null),
-                        new(3, new Hit()
-                        {
-                            BlockPushback = 2,
-                            DamageScaling = lowScaling,
-                            // GravityScaling = FP.FromString("1.1"),
-                            Launches = true,
-                            TrajectoryHeight = FP.FromString("6.5"),
-                            TrajectoryXVelocity = 3,
-                            VisualAngle = -90,
-                            Level = 4,
-                            Damage = highDamage,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new(20, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                GrowHeight = true,
-                                                GrowWidth = false,
-                                                Height = 3,
-                                                Width = 7,
-                                                PosX = 0,
-                                                PosY = 0,
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
-                        new (20, null)
-                    }
-                },
-                
-                HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new (25, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                new CollisionBox()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = false,
-                                    Height = 7,
-                                    Width = 7,
-                                    PosX = 0,
-                                    PosY = 0,
-                                }
-                            }
-                        })
-                    }
-                },
-
-                HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                {
-                    Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                    {
-                        new(18, PlayerFSM.HurtType.Counter),
-                        new(10, PlayerFSM.HurtType.Punish)
-                    }
-                },
-            };
-
-
-            FighterAction _5H = new FighterAction()
-            {
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 88,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new (8, 0),
-                            new (3, 1),
-                            new (2, 2),
-                            new (11, 4),
-                            new (7, 5),
-                            new (7, 6),
-                            new (4, 7),
-                        }
-                    }
-                },
-                
-                CancellableAfter = 16,
-                CommandDirection = 5,
-                InputType = InputSystem.InputType.H,
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new (15, null),
-                        new (5, new Hit()
-                        {
-                            VisualAngle = 30,
-                            GroundBounce = true,
-                            DamageScaling = lowScaling,
-                            TrajectoryHeight = 8,
-                            Level = 3,
-                            Type = Hit.HitType.High,
-                            TrajectoryXVelocity = 7,
-                            Damage = highDamage,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new (20, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                GrowHeight = false,
-                                                GrowWidth = true,
-                                                Height = FP.FromString("4"),
-                                                Width = FP.FromString("3.5"),
-                                                PosX = 0,
-                                                PosY = FP.FromString("4"),
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
-                        new (20, null),
-                    }
-                },
-                
-                HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new (50, StandHurtboxesCollection),
-                        new (30, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                StandHurtboxesCollection.CollisionBoxes[0],
-                                new CollisionBox()
-                                {
-                                    GrowHeight = false,
-                                    GrowWidth = true,
-                                    Height = 3,
-                                    Width = FP.FromString("2.5"),
-                                    PosX = 0,
-                                    PosY = 3,
-                                }
-                            }
-                        })
-                    }
-                },
-                
-                HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                {
-                    Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                    {
-                        new (20, PlayerFSM.HurtType.Counter),
-                        new (30, PlayerFSM.HurtType.Punish)
-                    }
-                },
-                
-                MovementSectionGroup = new SectionGroup<FP>()
-                {
-                    Sections = new List<Tuple<int, FP>>()
-                    {
-                        new(11, 0),
-                        new(2, FP.FromString("1.5")),
-                        new (20, 0),
-                    }
+                    AutoFromAnimationPath = true
                 }
             };
 
-
-
-            FighterAction _5S1;
+            var _5MHits = new SectionGroup<Hit>()
             {
-                int startup = 11;
-                int active = 3;
-                CollisionBox mainHurtbox = new CollisionBox()
+                Sections = new List<Tuple<int, Hit>>()
                 {
-                    GrowHeight = true,
-                    GrowWidth = true,
-                    Width = 3,
-                    Height = 6,
-                    PosX = -1,
-                    PosY = 0,
-                };
-                
-                _5S1 = new FighterAction()
-                {
-                    InputType = InputSystem.InputType.S,
-                    CommandDirection = 5,
-                    CancellableAfter = 5,
-                    WhiffCancellable = true,
-                    Animation = new FighterAnimation()
+                    new Tuple<int, Hit>(10, null),
+                    new Tuple<int, Hit>(5, new Hit()
                     {
-                        SpriteSheetOffset = 101,
-                        SectionGroup = new SectionGroup<int>()
+                        Level = 0,
+                        // HardKnockdown = true,
+                        // Damage = 100,
+                        // Launches = true,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
-                            Sections = new List<Tuple<int, int>>()
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                new(3, 0),
-                                new(2, 1),
-                                new(2, 2),
-                                new(startup - 7, 3),
-                                new(active + 2, 4),
-                                new(9, 5),
-                                new(6, 6),
-                            }
-                        }
-                    },
-
-                    HitSectionGroup = new SectionGroup<Hit>()
-                    {
-                        Sections = new List<Tuple<int, Hit>>()
-                        {
-                            new(startup, null),
-                            new(active, new Hit()
-                            {
-                                Level = 3,
-                                TrajectoryHeight = 2,
-                                TrajectoryXVelocity = 11,
-                                HitPushback = 3,
-                                BlockPushback = 4,
-                                Damage = mediumDamage,
-                                VisualAngle = -10,
-                                DamageScaling = highScaling,
-                                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                                new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
                                 {
-                                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                    CollisionBoxes = new List<CollisionBox>()
                                     {
-                                        new(20, new CollisionBoxCollection()
+                                        new CollisionBox()
                                         {
-                                            CollisionBoxes = new List<CollisionBox>()
-                                            {
-                                                new CollisionBox()
-                                                {
-                                                    GrowHeight = false,
-                                                    GrowWidth = true,
-                                                    Height = 2,
-                                                    Width = 5,
-                                                    PosX = 0,
-                                                    PosY = 4
-                                                }
-                                            }
-                                        })
-                                    }
-                                }
-                            }),
-                            new (20, null)
-                        }
-                    },
-                    
-                    HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                    {
-                        Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                        {
-                            new(startup + active, PlayerFSM.HurtType.Counter),
-                            new(20, PlayerFSM.HurtType.Punish)
-                        }
-                    },
-                    
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(startup, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}}),
-                            new(active + 3, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox, new CollisionBox()
-                            {
-                                GrowHeight = false,
-                                GrowWidth = true,
-                                Height = 3,
-                                Width = FP.FromString("5.5"),
-                                PosX = 0,
-                                PosY = 4
-                            } }}),
-                            new(startup, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}})
-                        }
-                    }
-                };
-            }
-            
-            
-            
-            
-            FighterAction _5S2;
-            {
-                int startup = 27;
-                int active = 3;
-                CollisionBox mainHurtbox = new CollisionBox()
-                {
-                    GrowHeight = true,
-                    GrowWidth = false,
-                    Width = 4,
-                    Height = 3,
-                    PosX = 0,
-                    PosY = 0,
-                };
-                
-                _5S2 = new FighterAction()
-                {
-                    InputType = InputSystem.InputType.S,
-                    CommandDirection = 5,
-                    Animation = new FighterAnimation()
-                    {
-                        SpriteSheetOffset = 108,
-                        SectionGroup = new SectionGroup<int>()
-                        {
-                            Sections = new List<Tuple<int, int>>()
-                            {
-                                new(3, 0),
-                                new(2, 1),
-                                new(2, 2),
-                                new(6, 3),
-                                new(startup - 13, 4),
-                                new(active + 2, 5),
-                                new(6, 6),
-                            }
-                        }
-                    },
-
-                    HitSectionGroup = new SectionGroup<Hit>()
-                    {
-                        Sections = new List<Tuple<int, Hit>>()
-                        {
-                            new(startup, null),
-                            new(active, new Hit()
-                            {
-                                Level = 3,
-                                TrajectoryHeight = 2,
-                                TrajectoryXVelocity = 10,
-                                HitPushback = 3,
-                                Damage = lowDamage,
-                                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                                {
-                                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                    {
-                                        new(20, new CollisionBoxCollection()
-                                        {
-                                            CollisionBoxes = new List<CollisionBox>()
-                                            {
-                                                new CollisionBox()
-                                                {
-                                                    GrowHeight = true,
-                                                    GrowWidth = true,
-                                                    Height = 2,
-                                                    Width = FP.FromString("5.5"),
-                                                    PosX = 0,
-                                                    PosY = 0
-                                                }
-                                            }
-                                        })
-                                    }
-                                }
-                            }),
-                            new (20, null)
-                        }
-                    },
-                    
-                    HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                    {
-                        Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                        {
-                            new(startup + active, PlayerFSM.HurtType.Counter),
-                            new(20, PlayerFSM.HurtType.Punish)
-                        }
-                    },
-                    
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(startup, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}}),
-                            new(active + 3, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox, new CollisionBox()
-                            {
-                                GrowHeight = true,
-                                GrowWidth = true,
-                                Height = 3,
-                                Width = FP.FromString("6"),
-                                PosX = 0,
-                                PosY = 0
-                            } }}),
-                            new(startup, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}})
-                        }
-                    },
-                    
-                    MovementSectionGroup = new SectionGroup<FP>()
-                    {
-                        Sections = new List<Tuple<int, FP>>()
-                        {
-                            new(startup - 2, 0),
-                            new (2, 4),
-                            new (30, 0)
-                        }
-                    }
-                };
-            }
-            
-            
-            
-            FighterAction _5S3;
-            {
-                int startup = 21;
-                int active = 3;
-                CollisionBox mainHurtbox = new CollisionBox()
-                {
-                    GrowHeight = true,
-                    GrowWidth = true,
-                    Width = 3,
-                    Height = 6,
-                    PosX = -1,
-                    PosY = 0,
-                };
-                
-                _5S3 = new FighterAction()
-                {
-                    InputType = InputSystem.InputType.S,
-                    CommandDirection = 4,
-                    Animation = new FighterAnimation()
-                    {
-                        SpriteSheetOffset = 115,
-                        SectionGroup = new SectionGroup<int>()
-                        {
-                            Sections = new List<Tuple<int, int>>()
-                            {
-                                new(4, 0),
-                                new(4, 1),
-                                new(4, 2),
-                                new(5, 3), // hit
-                                new(4, 4),
-                                new(5, 5), // hit
-                                new(4, 6),
-                                new(5, 7),
-                                new(5, 9),
-                            }
-                        }
-                    },
-
-
-                    HitSectionGroup = new SectionGroup<Hit>()
-                    {
-                        Sections = new List<Tuple<int, Hit>>()
-                        {
-                            new(12, null),
-                            new(3, new Hit()
-                            {
-                                Level = 2,
-                                TrajectoryHeight = 3,
-                                TrajectoryXVelocity = 11,
-                                HitPushback = 1,
-                                BlockPushback = 1,
-                                GravityScaling = FP.FromString("1.05"),
-                                Launches = true,
-                                Type = Hit.HitType.Low,
-                                Damage = mediumDamage,
-                                VisualAngle = 18,
-                                DamageScaling = lowScaling,
-                                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                                {
-                                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                    {
-                                        new(20, new CollisionBoxCollection()
-                                        {
-                                            CollisionBoxes = new List<CollisionBox>()
-                                            {
-                                                new CollisionBox()
-                                                {
-                                                    GrowHeight = true,
-                                                    GrowWidth = true,
-                                                    Height = 3,
-                                                    Width = 5,
-                                                    PosX = 0,
-                                                    PosY = 0
-                                                }
-                                            }
-                                        })
-                                    }
-                                }
-                            }),
-                            new(6, null),
-                            new(3, new Hit()
-                            {
-                                Level = 3,
-                                TrajectoryHeight = 4,
-                                TrajectoryXVelocity = 12,
-                                HitPushback = 4,
-                                BlockPushback = 4,
-                                GroundBounce = true,
-                                Damage = mediumDamage,
-                                VisualAngle = -18,
-                                GravityScaling = FP.FromString("1.04"),
-                                DamageScaling = mediumScaling,
-                                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                                {
-                                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                    {
-                                        new(20, new CollisionBoxCollection()
-                                        {
-                                            CollisionBoxes = new List<CollisionBox>()
-                                            {
-                                                new CollisionBox()
-                                                {
-                                                    GrowHeight = false,
-                                                    GrowWidth = true,
-                                                    Height = 2,
-                                                    Width = 5,
-                                                    PosX = 0,
-                                                    PosY = 4
-                                                }
-                                            }
-                                        })
-                                    }
-                                }
-                            }),
-                            new (20, null)
-                        }
-                    },
-                    
-                    HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                    {
-                        Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                        {
-                            new(26, PlayerFSM.HurtType.Counter),
-                            new(20, PlayerFSM.HurtType.Punish)
-                        }
-                    },
-                    
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(12, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}}),
-                            new(14, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox, new CollisionBox()
-                            {
-                                GrowHeight = false,
-                                GrowWidth = true,
-                                Height = 3,
-                                Width = FP.FromString("5.5"),
-                                PosX = 0,
-                                PosY = 4
-                            } }}),
-                            new(20, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}})
-                        }
-                    },
-                    
-                    MovementSectionGroup = new SectionGroup<FP>()
-                    {
-                        Sections = new List<Tuple<int, FP>>()
-                        {
-                            new(10, 2),
-                            new (2, 1),
-                            new (3, 0),
-                            new (2, 1),
-                            new (30, 4)
-                        }
-                    }
-                };
-            }
-            
-            
-            
-            
-            
-            FighterAction _6S3;
-            {
-                int startup = 16;
-                int active = 2;
-                CollisionBox mainHurtbox = new CollisionBox()
-                {
-                    GrowHeight = true,
-                    GrowWidth = false,
-                    Width = 6,
-                    Height = 4,
-                    PosX = 0,
-                    PosY = 0,
-                };
-
-                Hit hit = new Hit()
-                {
-                    Level = 4,
-                    TrajectoryHeight = 5,
-                    TrajectoryXVelocity = 18,
-                    HitPushback = 8,
-                    GroundBounce = true,
-                    HardKnockdown = true,
-                    Damage = crazyDamage,
-                    VisualAngle = 80,
-                    DamageScaling = lowScaling,
-                    HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(20, new CollisionBoxCollection()
-                            {
-                                CollisionBoxes = new List<CollisionBox>()
-                                {
-                                    new CollisionBox()
-                                    {
-                                        GrowHeight = true,
-                                        GrowWidth = true,
-                                        Height = FP.FromString("3.25"),
-                                        Width = FP.FromString("5.5"),
-                                        PosX = 0,
-                                        PosY = 0
-                                    }
-                                }
-                            })
-                        }
-                    }
-                };
-                
-                _6S3 = new FighterAction()
-                {
-                    InputType = InputSystem.InputType.S,
-                    CommandDirection = 6,
-                    Animation = new FighterAnimation()
-                    {
-                        SpriteSheetOffset = 125,
-                        SectionGroup = new SectionGroup<int>()
-                        {
-                            Sections = new List<Tuple<int, int>>()
-                            {
-                                new(3, 0),
-                                // new(3, 1),
-                                // new(3, 2),
-                                new(3, 3),
-                                new(startup - 6, 4),
-                                new(active, 5),
-                                new(active, 6),
-                                new(10, 7),
-                                new(8, 8),
-                                new(8, 9),
-                            }
-                        }
-                    },
-
-                    HitSectionGroup = new SectionGroup<Hit>()
-                    {
-                        Sections = new List<Tuple<int, Hit>>()
-                        {
-                            new(startup, null),
-                            new(active, hit),
-                            new(active, hit),
-                            new (20, null)
-                        }
-                    },
-                    
-                    HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                    {
-                        Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                        {
-                            new(startup + active + active, PlayerFSM.HurtType.Counter),
-                            new(20, PlayerFSM.HurtType.Punish)
-                        }
-                    },
-                    
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(startup, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}}),
-                            new(active + active + 3, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox, new CollisionBox()
-                            {
-                                GrowHeight = true,
-                                GrowWidth = true,
-                                Height = 3,
-                                Width = FP.FromString("6"),
-                                PosX = 0,
-                                PosY = 0
-                            } }}),
-                            new(startup, new CollisionBoxCollection() { CollisionBoxes = new List<CollisionBox>() { mainHurtbox}})
-                        }
-                    },
-                    
-                    MovementSectionGroup = new SectionGroup<FP>()
-                    {
-                        Sections = new List<Tuple<int, FP>>()
-                        {
-                            new(startup - 2, 0),
-                            new (2, 4),
-                            new (30, 3)
-                        }
-                    }
-                };
-            }
-
-            FighterAction _2S;
-            {
-                _2S = new FighterAction()
-                {
-                    InputType = InputSystem.InputType.S,
-                    CommandDirection = 2,
-                    Animation = new FighterAnimation()
-                    {
-                        SpriteSheetOffset = 135,
-                        SectionGroup = new SectionGroup<int>()
-                        {
-                            Sections = new List<Tuple<int, int>>()
-                            {
-                                new(5, 0),
-                                new(3, 1),
-                                new(3, 2),
-                                new(15, 3),
-                                new(10, 4),
-                                new(200, 5),
-                            }
-                        }
-                    },
-                    TrajectorySectionGroup = new SectionGroup<ActionTrajectory>()
-                    {
-                        Sections = new List<Tuple<int, ActionTrajectory>>()
-                        {
-                            new(5, new ActionTrajectory()
-                            {
-                                TrajectoryHeight = FP.FromString("0.5"),
-                                TrajectoryXVelocity = 1,
-                                TimeToTrajectoryHeight = 5,
-                            }),
-                            new(10, new ActionTrajectory()
-                            {
-                                TrajectoryHeight = 4,
-                                TrajectoryXVelocity = 5,
-                                TimeToTrajectoryHeight = 35,
-                            }),
-                            new (10, null)
-                        }
-                    },
-                    HitSectionGroup = new SectionGroup<Hit>()
-                    {
-                        Sections = new List<Tuple<int, Hit>>()
-                        {
-                            new(5, null),
-                            new(15, new Hit()
-                            {
-                                Launches = true,
-                                TrajectoryXVelocity = 35,
-                                TrajectoryHeight = FP.FromString("1.5"),
-                                Level = 0,
-                                Damage = mediumDamage,
-                                VisualAngle = -20,
-                                DamageScaling = lowScaling,
-                                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                                {
-                                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                    {
-                                        new Tuple<int, CollisionBoxCollection>(100, new CollisionBoxCollection()
-                                        {
-                                            CollisionBoxes = new List<CollisionBox>()
-                                            {
-                                                new CollisionBox()
-                                                {
-                                                    GrowHeight = true,
-                                                    GrowWidth = false,
-                                                    Height = 7,
-                                                    Width = 7,
-                                                    PosX = 0,
-                                                    PosY = 0,
-                                                }
-                                            }
-                                        })
-                                    }
-                                }
-                            }),
-                            new(200, null)
-                        }
-                    },
-                    
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new (12, null),
-                            new (200, new CollisionBoxCollection()
-                            {
-                                CollisionBoxes = new List<CollisionBox>()
-                                {
-                                    new CollisionBox()
-                                    {
-                                        GrowHeight = true,
-                                        GrowWidth = false,
-                                        Height = 7,
-                                        Width = 7,
-                                        PosX = 0,
-                                        PosY = 0,
-                                    }
-                                }
-                            })
-                        }
-                    },
-                    
-                    HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                    {
-                        Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                        {
-                            new(300, PlayerFSM.HurtType.Counter)
-                        }
-                    }
-                };
-            }
-            
-            // Air actions ------------------------------------------------------------------------
-            
-            FighterAction _JL = new FighterAction()
-            {
-                Animation = new FighterAnimation()
-                {
-                    SpriteSheetOffset = 141,
-                    SectionGroup = new SectionGroup<int>()
-                    {
-                        Sections = new List<Tuple<int, int>>()
-                        {
-                            new(5, 0),
-                            new(2, 1),
-                            new(8, 2)
-                        }
-                    }
-                },
-
-                CancellableAfter = 6,
-                CommandDirection = 5,
-                InputType = InputSystem.InputType.P,
-                HitSectionGroup = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(5, null),
-                        new(2, new Hit()
-                        {
-                            HitPushback = 2,
-                            BlockPushback = 2,
-                            Type = Hit.HitType.High,
-                            Damage = lowDamage,
-                            VisualAngle = 8,
-                            DamageScaling = crazyScaling,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new(20, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                GrowHeight = false,
-                                                GrowWidth = true,
-                                                Height = 2,
-                                                Width = 3,
-                                                PosX = 0,
-                                                PosY = 4
-                                            }
+                                            GrowHeight = false,
+                                            GrowWidth = true,
+                                            Width = 4,
+                                            Height = 2,
+                                            PosX = 0,
+                                            PosY = 5,
                                         }
-                                    })
-                                }
+                                    }
+                                })
                             }
-                        }),
-                        new (20, null)
-                    }
-                },
-                
-                HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new (5, StandHurtboxesCollection),
-                        new (2, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                new()
-                                {
-                                    GrowHeight = true,
-                                    GrowWidth = false,
-                                    PosX = 0,
-                                    PosY = 0,
-                                    Height = 6,
-                                    Width = 3,
-                                },
-                                new CollisionBox()
-                                {
-                                    GrowHeight = false,
-                                    GrowWidth = true,
-                                    Height = 3,
-                                    Width = 4,
-                                    PosX = 0,
-                                    PosY = 4
-                                }
-                            }
-                        }),
-                        new (5, StandHurtboxesCollection)
-                    }
-                },
-
-                HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                {
-                    Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                    {
-                        new(7, PlayerFSM.HurtType.Counter),
-                        new(5, PlayerFSM.HurtType.Punish)
-                    }
-                },
+                        }
+                    }),
+                    new Tuple<int, Hit>(10, null)
+                }
             };
 
-
-            FighterAction _JM;
+            var _5MHurtTypes = new SectionGroup<PlayerFSM.HurtType>()
             {
-                CollisionBox mainHurtbox = new CollisionBox()
+                Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
                 {
-                    Width = 4,
-                    Height = 4,
-                    PosY = 3,
-                    GrowHeight = false,
-                    GrowWidth = false
-                };
-                    
-                _JM = new FighterAction()
+                    new(15, PlayerFSM.HurtType.Counter),
+                    new(20, PlayerFSM.HurtType.Punish)
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(_5MAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
+            Duration.Dictionary[StickTwoState._5M] = _5MAnimation.SectionGroup.Duration();
+            HitSectionGroup.Dictionary[StickTwoState._5M] = _5MHits;
+            CancellableAfter.Dictionary[StickTwoState._5M] = 14;
+            WhiffCancellable.Dictionary[StickTwoState._5M] = false;
+            HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
+            
+            var _2MAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath._2M,
+                SectionGroup = new SectionGroup<int>()
                 {
-                    Animation = new FighterAnimation()
-                    {
-                        SpriteSheetOffset = 144,
-                        SectionGroup = new SectionGroup<int>()
-                        {
-                            Sections = new List<Tuple<int, int>>()
-                            {
-                                new(2, 0),
-                                new(8, 1),
-                                new(2, 2),
-                                new(13, 3),
-                                new(12, 4),
-                            }
-                        }
-                    },
+                    AutoFromAnimationPath = true
+                }
+            };
 
-                    CancellableAfter = 11,
-                    CommandDirection = 5,
-                    InputType = InputSystem.InputType.K,
-                    MovementSectionGroup = new SectionGroup<FP>()
+            var _2MHits = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new Tuple<int, Hit>(16, null),
+                    new Tuple<int, Hit>(5, new Hit()
                     {
-                        Sections = new List<Tuple<int, FP>>()
+                        Level = 2,
+                        Type = Hit.HitType.High,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
-                            new(8, 0),
-                            new(2, -1),
-                            new(20, 0),
-                        }
-                    },
-
-                    HitSectionGroup = new SectionGroup<Hit>()
-                    {
-                        Sections = new List<Tuple<int, Hit>>()
-                        {
-                            new(10, null),
-                            new(3, new Hit()
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                Type = Hit.HitType.High,
-                                Level = 3,
-                                TrajectoryXVelocity = 9,
-                                GravityScaling = 1,
-                                HitPushback = 3,
-                                Damage = mediumDamage,
-                                VisualAngle = -8,
-                                DamageScaling = mediumScaling,
-                                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                                new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
                                 {
-                                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                    CollisionBoxes = new List<CollisionBox>()
                                     {
-                                        new(20, new CollisionBoxCollection()
+                                        new CollisionBox()
                                         {
-                                            CollisionBoxes = new List<CollisionBox>()
-                                            {
-                                                new CollisionBox()
-                                                {
-                                                    GrowHeight = false,
-                                                    GrowWidth = true,
-                                                    Height = 2,
-                                                    Width = 4,
-                                                    PosX = 0,
-                                                    PosY = 2,
-                                                }
-                                            }
-                                        })
+                                            GrowHeight = false,
+                                            GrowWidth = true,
+                                            Width = 4,
+                                            Height = 2,
+                                            PosX = 0,
+                                            PosY = 0
+                                        }
                                     }
-                                }
-                            }),
-                            new(20, null)
-                        }
-                    },
-
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(10, new CollisionBoxCollection()
-                                {
-                                    CollisionBoxes = new List<CollisionBox>() {
-                                        mainHurtbox
-                                    }
-                                }
-                            ),
-                            new(20, new CollisionBoxCollection()
-                            {
-                                CollisionBoxes = new List<CollisionBox>()
-                                {
-                                    mainHurtbox,
-                                    new()
-                                    {
-                                        GrowHeight = false,
-                                        GrowWidth = true,
-                                        PosX = 0,
-                                        PosY = 2,
-                                        Height = 3,
-                                        Width = 5,
-                                    },
-                                }
-                            })
-                        }
-                    },
-
-                    HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                    {
-                        Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                        {
-                            new(13, PlayerFSM.HurtType.Counter),
-                            new(10, PlayerFSM.HurtType.Punish)
-                        }
-                    },
-                };
-            }
-
-
-            FighterAction _JH;
-            {
-                int startup = 15;
-                CollisionBox mainHurtbox = new CollisionBox()
-                {
-                    Width = 4,
-                    Height = 4,
-                    PosY = 3,
-                    GrowHeight = false,
-                    GrowWidth = false
-                };
-                    
-                _JH = new FighterAction()
-                {
-                    Animation = new FighterAnimation()
-                    {
-                        SpriteSheetOffset = 149,
-                        SectionGroup = new SectionGroup<int>()
-                        {
-                            Sections = new List<Tuple<int, int>>()
-                            {
-                                new(4, 0),
-                                new(4, 1),
-                                new(startup - 8, 2),
-                                // new(5, 3),
-                                new(3, 4),
-                                new(7, 5),
-                                new(13, 6),
+                                })
                             }
                         }
-                    },
+                    }),
+                    new Tuple<int, Hit>(10, null)
+                }
+            };
 
-                    CancellableAfter = startup + 1,
-                    CommandDirection = 5,
-                    InputType = InputSystem.InputType.H,
+            var _2MMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new Tuple<int, FP>(2, 1),
+                    new Tuple<int, FP>(10, 0),
+                    new Tuple<int, FP>(5, 1),
+                    new Tuple<int, FP>(10, 0)
+                }
+            };
+            
+            var _2MHurtTypes = new SectionGroup<PlayerFSM.HurtType>()
+            {
+                Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
+                {
+                    new(21, PlayerFSM.HurtType.Counter),
+                    new(20, PlayerFSM.HurtType.Punish)
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(_2MAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState._2M] = _2MAnimation;
+            Duration.Dictionary[StickTwoState._2M] = _2MAnimation.SectionGroup.Duration();
+            HitSectionGroup.Dictionary[StickTwoState._2M] = _2MHits;
+            CancellableAfter.Dictionary[StickTwoState._2M] = 16;
+            WhiffCancellable.Dictionary[StickTwoState._2M] = false;
+            MovementSectionGroup.Dictionary[StickTwoState._2M] = _2MMovement;
+            HurtTypeSectionGroup.Dictionary[StickTwoState._2M] = _2MHurtTypes;
 
-                    HitSectionGroup = new SectionGroup<Hit>()
+
+            var _2HAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath._2H,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var _2HHits = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new Tuple<int, Hit>(16, null),
+                    new Tuple<int, Hit>(14, new Hit()
                     {
-                        Sections = new List<Tuple<int, Hit>>()
+                        Level = 3,
+                        Type = Hit.HitType.Mid,
+                        Launches = true,
+                        TrajectoryHeight = 6,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
-                            new(startup, null),
-                            new(3, new Hit()
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                Type = Hit.HitType.High,
-                                Level = 4,
-                                TrajectoryXVelocity = 9,
-                                TrajectoryHeight = 3,
-                                GravityScaling = 1,
-                                HitPushback = 3,
-                                Damage = highDamage,
-                                VisualAngle = -40,
-                                DamageScaling = mediumScaling,
-                                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                                new Tuple<int, CollisionBoxCollection>(8, new CollisionBoxCollection()
                                 {
-                                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                    CollisionBoxes = new List<CollisionBox>()
                                     {
-                                        new(20, new CollisionBoxCollection()
+                                        new CollisionBox()
                                         {
-                                            CollisionBoxes = new List<CollisionBox>()
-                                            {
-                                                new CollisionBox()
-                                                {
-                                                    GrowHeight = false,
-                                                    GrowWidth = true,
-                                                    Height = 4,
-                                                    Width = 4,
-                                                    PosX = 0,
-                                                    PosY = FP.FromString("3.5"),
-                                                }
-                                            }
-                                        })
+                                            GrowHeight = false,
+                                            GrowWidth = false,
+                                            Width = 1,
+                                            Height = 4,
+                                            PosX = 0,
+                                            PosY = 6
+                                        }
                                     }
-                                }
-                            }),
-                            new(20, null)
-                        }
-                    },
-
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(startup, new CollisionBoxCollection()
-                                {
-                                    CollisionBoxes = new List<CollisionBox>() {
-                                        mainHurtbox
-                                    }
-                                }
-                            ),
-                            new(3, new CollisionBoxCollection()
-                            {
-                                CollisionBoxes = new List<CollisionBox>()
-                                {
-                                    mainHurtbox,
-                                    new()
-                                    {
-                                        GrowHeight = false,
-                                        GrowWidth = true,
-                                        Height = 5,
-                                        Width = 5,
-                                        PosX = 0,
-                                        PosY = FP.FromString("3.5"),
-                                    },
-                                }
-                            }),
-                            new(20, new CollisionBoxCollection()
-                                {
-                                    CollisionBoxes = new List<CollisionBox>() {
-                                        mainHurtbox
-                                    }
-                                }
-                            ),
-                        }
-                    },
-
-                    HurtTypeSectionGroup = new SectionGroup<PlayerFSM.HurtType>()
-                    {
-                        Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
-                        {
-                            new(startup + 3, PlayerFSM.HurtType.Counter),
-                            new(10, PlayerFSM.HurtType.Punish)
-                        }
-                    },
-                };
-            }
-
-
-            FighterAction _JS;
-            {
-                CollisionBox mainHurtBox = new CollisionBox()
-                {
-                    Width = 5,
-                    Height = 5,
-                    GrowWidth = false,
-                    GrowHeight = false,
-                    PosX = 0,
-                    PosY = FP.FromString("2.5"),
-                };
-                
-                int startup = 18;
-                int active = 4;
-                Hit hit = new Hit()
-                {
-                    GravityScaling = FP.FromString("1.02"),
-                    Level = 2,
-                    TrajectoryHeight = 4,
-                    TrajectoryXVelocity = 35,
-                    HitPushback = 3,
-                    WallBounce = true,
-                    Damage = mediumDamage,
-                    DamageScaling = mediumScaling,
-                    Type = Hit.HitType.High,
-                    HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new(100, new CollisionBoxCollection()
-                            {
-                                CollisionBoxes = new List<CollisionBox>()
-                                {
-                                    new CollisionBox()
-                                    {
-                                        GrowWidth = true,
-                                        GrowHeight = false,
-                                        Height = 7,
-                                        Width = 5,
-                                        PosX = 0,
-                                        PosY = 2
-                                    }
-                                }
-                            })
-                        }
-                    }
-                };
-                
-                _JS = new FighterAction()
-                {
-                    InputType = InputSystem.InputType.S,
-                    Animation = new FighterAnimation()
-                    {
-                        SpriteSheetOffset = 156,
-                        SectionGroup = new SectionGroup<int>()
-                        {
-                            Sections = new List<Tuple<int, int>>()
-                            {
-                                new(4, 0),
-                                new(4, 1),
-                                new(4, 2),
-                                new(startup - 12, 3),
-                                new(active + 4, 4),
-                                new(18, 6)
+                                })
                             }
                         }
-                    },
-                    
-                    
-                    TrajectorySectionGroup = new SectionGroup<ActionTrajectory>()
-                    {
-                        Sections = new List<Tuple<int, ActionTrajectory>>()
-                        {
-                            new(startup, new ActionTrajectory()
-                            {
-                                TrajectoryHeight = FP.FromString("2"),
-                                TimeToTrajectoryHeight = 9
-                            })
-                        }
-                    },
-                    
-                    HitSectionGroup = new SectionGroup<Hit>()
-                    {
-                        Sections = new List<Tuple<int, Hit>>()
-                        {
-                            new(startup, null),
-                            new (1, hit),
-                            // new (active - 1, hit),
-                            new(100, null)
-                        }
-                    },
-                    
-                    HurtboxCollectionSectionGroup = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new (startup, new CollisionBoxCollection(){ CollisionBoxes = new List<CollisionBox>() {mainHurtBox}}),
-                            new (active + 4, new CollisionBoxCollection(){ CollisionBoxes = new List<CollisionBox>()
-                            {
-                                mainHurtBox,
-                                new CollisionBox()
-                                {
-                                    GrowHeight = false,
-                                    GrowWidth = true,
-                                    Width = FP.FromString("5.5"),
-                                    Height = 8,
-                                    PosX = 0,
-                                    PosY = 2
-                                }
-                            }}),
-                            new (100, new CollisionBoxCollection(){ CollisionBoxes = new List<CollisionBox>() {mainHurtBox}}),
-                        }
-                    }
-                };
-            }
-            
-            
-            
-            ActionDict = new Dictionary<int, FighterAction>
-            {
-                { StickTwoState._5L , _5L},
-                { StickTwoState._2L , _2L},
-                { StickTwoState._5M , _5M},
-                { StickTwoState._2M , _2M},
-                { StickTwoState._2H , _2H},
-                { StickTwoState._5H , _5H},
-                { StickTwoState._5S1 , _5S1},
-                { StickTwoState._5S2 , _5S2},
-                { StickTwoState._5S3 , _5S3},
-                { StickTwoState._6S3 , _6S3},
-                { StickTwoState._2S_ground , _2S},
-                { StickTwoState._2S_air , _2S},
-                { StickTwoState._JL , _JL},
-                { StickTwoState._JM , _JM},
-                { StickTwoState._JH , _JH},
-                { StickTwoState._JS , _JS},
+                    }),
+                    new Tuple<int, Hit>(10, null)
+                }
             };
+            
+            Util.AutoSetupFromAnimationPath(_2HAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState._2H] = _2HAnimation;
+            Duration.Dictionary[StickTwoState._2H] = _2HAnimation.SectionGroup.Duration();
+            HitSectionGroup.Dictionary[StickTwoState._2H] = _2HHits;
 
-            InvulnerableBefore = new Dictionary<int, int>()
+            var meditateAnimation = new FighterAnimation()
             {
-                [PlayerFSM.State.Backdash] = 10
+                Path = (int)StickTwoAnimationPath.FrontThrow,
+                SectionGroup = new SectionGroup<int>()
+                {
+                     AutoFromAnimationPath = true
+                }
             };
+            
+            Util.AutoSetupFromAnimationPath(meditateAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState.Meditate] = meditateAnimation;
+            Duration.Dictionary[StickTwoState.Meditate] = meditateAnimation.SectionGroup.Duration();
             
         }
         
         public override void ConfigureCharacterFsm(PlayerFSM playerFsm)
         {
+
+            ActionConfig _5M = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = true,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = true,
+                InputWeight = 0,
+                RawOk = true,
+                State = StickTwoState._5M
+            };
             
-            // 5L
-            ConfigureGroundAction(playerFsm, StickTwoState._5L);
+            ConfigureAction(playerFsm, _5M);
             
-            // 2L
-            ConfigureGroundAction(playerFsm, StickTwoState._2L, false, true, 1);
+            ActionConfig _2M = new ActionConfig()
+            {
+                Aerial = true,
+                AirOk = true,
+                CommandDirection = 2,
+                Crouching = true,
+                DashCancellable = false,
+                GroundOk = false,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                State = StickTwoState._2M
+            };
             
-            // 5M
-            ConfigureGroundAction(playerFsm, StickTwoState._5M);
-            MakeActionCancellable(playerFsm, StickTwoState._5M, StickTwoState._2M);
-            MakeActionCancellable(playerFsm, StickTwoState._5M, StickTwoState._2H);
-            MakeActionCancellable(playerFsm, StickTwoState._5M, StickTwoState._5S1);
+            ConfigureAction(playerFsm, _2M);
             
-            // 2M
-            ConfigureGroundAction(playerFsm, StickTwoState._2M, false, true, 1);
-            MakeActionCancellable(playerFsm, StickTwoState._2M, StickTwoState._2H);
-            MakeActionCancellable(playerFsm, StickTwoState._2M, StickTwoState._5S1);
+            MakeActionCancellable(playerFsm, _5M, _2M);
             
-            // 2H
-            ConfigureGroundAction(playerFsm, StickTwoState._2H, false, true, 1);
             
-            // 5H
-            ConfigureGroundAction(playerFsm, StickTwoState._5H, true);
-            MakeActionCancellable(playerFsm, StickTwoState._5H, StickTwoState._2H);
-            MakeActionCancellable(playerFsm, StickTwoState._5H, StickTwoState._5S1);
+            ActionConfig _2H = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 2,
+                Crouching = true,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.H,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                State = StickTwoState._2H
+            };
             
-            // 5S1
-            ConfigureGroundAction(playerFsm, StickTwoState._5S1);
-            MakeActionCancellable(playerFsm, StickTwoState._5S1, StickTwoState._5S2);
-            MakeActionCancellable(playerFsm, StickTwoState._5S1, StickTwoState._5S3, 1);
-            MakeActionCancellable(playerFsm, StickTwoState._5S1, StickTwoState._6S3, 1);
+            ConfigureAction(playerFsm, _2H);
+
+            ActionConfig Meditate = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.K,
+                State = StickTwoState.Meditate
+            };
             
-            // 5S2
-            ConfigureGroundAction(playerFsm, StickTwoState._5S2, false, true, 0, false);
-            
-            // 4S3
-            ConfigureGroundAction(playerFsm, StickTwoState._5S3, false, false, 0, false);
-            
-            // 6S3
-            ConfigureGroundAction(playerFsm, StickTwoState._6S3, false, true, 0, false);
-            
-            // 2S - grounded
-            ConfigureGroundToAirAction(playerFsm, StickTwoState._2S_ground, false, 1, true);
-            
-            // 2S - air
-            ConfigureAirAction(playerFsm, StickTwoState._2S_air, false, 1);
-            
-            // JL
-            ConfigureAirAction(playerFsm, StickTwoState._JL);
-            
-            // JM
-            ConfigureAirAction(playerFsm, StickTwoState._JM);
-            MakeActionCancellable(playerFsm, StickTwoState._JM, StickTwoState._JH, 1);
-            MakeActionCancellable(playerFsm, StickTwoState._JM, StickTwoState._JS, 1);
-            
-            // JH
-            ConfigureAirAction(playerFsm, StickTwoState._JH);
-            MakeActionCancellable(playerFsm, StickTwoState._JH, StickTwoState._JS, 1);
-            
-            // JS
-            ConfigureAirAction(playerFsm, StickTwoState._JS);
+            ConfigureAction(playerFsm, Meditate);
         }
-        
     }
 }
+
+
+
+        

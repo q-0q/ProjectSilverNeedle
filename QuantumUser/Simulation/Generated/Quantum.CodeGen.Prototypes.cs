@@ -53,6 +53,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.AnimationData))]
   public unsafe partial class AnimationDataPrototype : ComponentPrototype<Quantum.AnimationData> {
     public Int32 frame;
+    public Int32 path;
     partial void MaterializeUser(Frame frame, ref Quantum.AnimationData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.AnimationData component = default;
@@ -61,6 +62,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.AnimationData result, in PrototypeMaterializationContext context = default) {
         result.frame = this.frame;
+        result.path = this.path;
         MaterializeUser(frame, ref result, in context);
     }
   }
@@ -200,6 +202,25 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.DramaticData result, in PrototypeMaterializationContext context = default) {
         result.remaining = this.remaining;
+        MaterializeUser(frame, ref result, in context);
+    }
+  }
+  [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.FSMData))]
+  public unsafe partial class FSMDataPrototype : ComponentPrototype<Quantum.FSMData> {
+    public Int32 currentState;
+    public Int32 framesInState;
+    public FP virtualTimeInState;
+    partial void MaterializeUser(Frame frame, ref Quantum.FSMData result, in PrototypeMaterializationContext context);
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.FSMData component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.FSMData result, in PrototypeMaterializationContext context = default) {
+        result.currentState = this.currentState;
+        result.framesInState = this.framesInState;
+        result.virtualTimeInState = this.virtualTimeInState;
         MaterializeUser(frame, ref result, in context);
     }
   }
@@ -430,27 +451,6 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.PlayerDirection result, in PrototypeMaterializationContext context = default) {
         result.FacingRight = this.FacingRight;
-        MaterializeUser(frame, ref result, in context);
-    }
-  }
-  [System.SerializableAttribute()]
-  [Quantum.Prototypes.Prototype(typeof(Quantum.PlayerFSMData))]
-  public unsafe partial class PlayerFSMDataPrototype : ComponentPrototype<Quantum.PlayerFSMData> {
-    public Int32 currentState;
-    public Int32 framesInState;
-    public FP virtualTimeInState;
-    public Int32 actionId;
-    partial void MaterializeUser(Frame frame, ref Quantum.PlayerFSMData result, in PrototypeMaterializationContext context);
-    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
-        Quantum.PlayerFSMData component = default;
-        Materialize((Frame)f, ref component, in context);
-        return f.Set(entity, component) == SetResult.ComponentAdded;
-    }
-    public void Materialize(Frame frame, ref Quantum.PlayerFSMData result, in PrototypeMaterializationContext context = default) {
-        result.currentState = this.currentState;
-        result.framesInState = this.framesInState;
-        result.virtualTimeInState = this.virtualTimeInState;
-        result.actionId = this.actionId;
         MaterializeUser(frame, ref result, in context);
     }
   }

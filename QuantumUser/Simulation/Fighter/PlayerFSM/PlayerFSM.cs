@@ -84,7 +84,7 @@ namespace Quantum
             FrontThrow,
             BackThrow,
             ThrowTech,
-            Action,
+            ButtonAndDirection,
             Jump,
             Land,
             HitWall,
@@ -113,7 +113,6 @@ namespace Quantum
         public void ConfigureBaseFsm(Machine<int, Trigger> machine)
         {
             machine.OnTransitionCompleted(OnStateChanged);
-            machine.OnTransitioned(OnTransitioned);
             
             // Ground
             machine.Configure(State.Ground)
@@ -150,8 +149,6 @@ namespace Quantum
                 .OnEntry(ResetCombo)
                 .SubstateOf(State.Ground);
             
-            Debug.Log("GroundActionable configured");
-            
             machine.Configure(State.StandActionable) 
                 .SubstateOf(State.GroundActionable)
                 .SubstateOf(State.Stand);
@@ -169,12 +166,22 @@ namespace Quantum
             machine.Configure(State.Dash)
                 .Permit(Trigger.Finish, State.StandActionable)
                 .Permit(Trigger.Jump, State.AirActionable)
-                .Permit(Trigger.Backward, State.WalkBackward)
+                // .Permit(Trigger.Backward, State.WalkBackward)
                 .PermitIf(Trigger.BlockHigh, State.StandBlock, _ => true, -2)
                 .PermitIf(Trigger.BlockLow, State.CrouchBlock, _ => true, -2)
                 .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
                 .Permit(Trigger.BackThrow, State.ThrowBackStartup)
-                .OnEntry(StartMomentumCallback)
+                .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
+                .OnExitFrom(Trigger.ButtonAndDirection, StartMomentumCallback)
+                .OnExitFrom(Trigger.Jump, StartMomentumCallback)
+                .OnExitFrom(Trigger.JumpCancel, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .SubstateOf(State.Stand)
                 .SubstateOf(State.Ground);
@@ -182,6 +189,8 @@ namespace Quantum
             machine.Configure(State.Backdash)
                 .Permit(Trigger.Finish, State.StandActionable)
                 .OnEntry(OnBackdash)
+                .OnEntry(InputSystem.ClearBufferParams)
+                .SubstateOf(State.Stand)
                 .SubstateOf(State.Ground);
             
             machine.Configure(State.GroundAction)
@@ -275,14 +284,12 @@ namespace Quantum
                 .OnEntry(OnHKD)
                 .OnEntry(EndSlowdown)
                 .Permit(Trigger.Finish, State.StandActionable)
-                .SubstateOf(State.Ground)
-                .SubstateOf(State.Stand);
-            
+                .SubstateOf(State.Ground);
+
             machine.Configure(State.SoftKnockdown)
                 .OnEntry(EndSlowdown)
                 .Permit(Trigger.Finish, State.StandActionable)
-                .SubstateOf(State.Ground)
-                .SubstateOf(State.Stand);
+                .SubstateOf(State.Ground);
 
             machine.Configure(State.DeadFromAir)
                 .OnEntry(DoImpactVibrate)
@@ -323,7 +330,17 @@ namespace Quantum
             
             machine.Configure(State.AirDash)
                 .Permit(Trigger.Finish, State.AirActionable)
-                .OnEntry(StartMomentumCallback)
+                .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
+                .OnExitFrom(Trigger.ButtonAndDirection, StartMomentumCallback)
+                .OnExitFrom(Trigger.Jump, StartMomentumCallback)
+                .OnExitFrom(Trigger.JumpCancel, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.HitLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockHigh, StartMomentumCallback)
+                .OnExitFrom(Trigger.BlockLow, StartMomentumCallback)
+                .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(OnAirdash)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .PermitIf(Trigger.BlockHigh, State.AirBlock, _ => true, -2)
@@ -427,12 +444,7 @@ namespace Quantum
             
             Util.WritebackFsm(param.f, EntityRef);
         }
-
-        private void OnTransitioned(TriggerParams? triggerParams)
-        {
-            Debug.Log("Transition");
-        }
-
+        
         private void DoImpactVibrate(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;
@@ -450,20 +462,20 @@ namespace Quantum
 
         private void ResetStateEnteredFrame(Frame f)
         {
-            f.Unsafe.TryGetPointer<PlayerFSMData>(EntityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
             playerFsmData->framesInState = 0;
             playerFsmData->virtualTimeInState = 0;
         }
 
         public int FramesInCurrentState(Frame f)
         {
-            f.Unsafe.TryGetPointer<PlayerFSMData>(EntityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
         }
         
         public static int FramesInCurrentState(Frame f, EntityRef entityRef)
         {
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
         }
         

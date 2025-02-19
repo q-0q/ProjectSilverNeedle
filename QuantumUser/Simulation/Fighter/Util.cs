@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using Photon.Deterministic;
+using Quantum.Types;
+using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using Wasp;
 using Debug = UnityEngine.Debug;
@@ -91,8 +95,9 @@ namespace Quantum
         public static void WritebackFsm(Frame f, EntityRef entityRef)
         {
             var fsm = PlayerFsmLoader.GetPlayerFsm(f, entityRef);
+            if (fsm is null) return;
             
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             playerFsmData->currentState = (int)fsm.Fsm.State();
            
         }
@@ -121,15 +126,11 @@ namespace Quantum
         {
 
             f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
-            var player = (int)playerLink->Player;
             
-            
-            // var fsm = Characters.GetPlayerCharacter(f, entityRef).PlayerFsms[player];
-
             var fsm = PlayerFsmLoader.GetPlayerFsm(f, entityRef);
-
+            if (fsm is null) return null;
             
-            f.Unsafe.TryGetPointer<PlayerFSMData>(entityRef, out var playerFsmData);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
 
             
             fsm.Fsm.Assume(playerFsmData->currentState);
@@ -178,6 +179,61 @@ namespace Quantum
             f.Unsafe.TryGetPointer<ScoreData>(entityRef, out var scoreData);
             scoreData->score++;
         }
+
+
+        public static int GetAnimationPathLength(Character character, int path)
+        {
+            var pathEnum = character.AnimationPathsEnum;
+            var characterName = character.Name;
+            string stringPath = Enum.ToObject(pathEnum, path).ToString();
+    
+            // Building the path within the Resources folder
+            string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath;
+    
+            // Load all PNG files from the Resources path
+            var sprites = Resources.LoadAll<Sprite>(fullPath);  // Assuming you are working with Sprite assets
+    
+            // Return the count of loaded sprites (this represents the number of PNG files)
+            return sprites.Length;
+        }
+        
+        public static void AutoSetupFromAnimationPath(FighterAnimation animation, Character character)
+        {
+            var sectionGroup = animation.SectionGroup;
+            var path = animation.Path;
+            if (!sectionGroup.AutoFromAnimationPath) return;
+            sectionGroup.Sections = new List<Tuple<int, int>>();
+            int length = Util.GetAnimationPathLength(character, path);
+            sectionGroup.Sections.Capacity = length;
+            for (int i = 0; i < length; i++)
+            {
+                sectionGroup.Sections.Add(new Tuple<int, int>(1, i));
+            }
+        }
+        
+        // Old Action functions that have been migrated
+
+        
+        public static bool CanCancelNow(TriggerParams param)
+        {
+            var frameParam = (FrameParam)param;
+            var f = frameParam.f;
+            var entityRef = frameParam.EntityRef;
+            
+            Character character = Characters.GetPlayerCharacter(f, entityRef);
+            PlayerFSM fsm = GetPlayerFSM(f, entityRef);
+            if (fsm is null) return false;
+            
+            return (fsm.FramesInCurrentState(f) >= character.CancellableAfter.Get(fsm)) && (!fsm.IsWhiffed(f) || 
+                character.WhiffCancellable.Get(fsm));
+        }
+        public static bool DoesInputMatch(Character.ActionConfig actionConfig, TriggerParams param)
+        {
+            if (param is null) return false;
+            var buttonAndDirectionParam = (ButtonAndDirectionParam)param; 
+             return (actionConfig.InputType == buttonAndDirectionParam.Type &&
+                     InputSystem.NumpadMatchesNumpad(buttonAndDirectionParam.CommandDirection, actionConfig.CommandDirection));
+         }
         
     }
     

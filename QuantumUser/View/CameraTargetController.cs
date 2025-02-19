@@ -18,7 +18,7 @@ public class CameraTargetController : MonoBehaviour
     public bool Player1Dramatic = false;
     
     private float _baseYPos;
-    private float _yPulldown = 2.5f;
+    private float _yPulldown = 4f;
 
     private void Awake()
     {
@@ -31,8 +31,6 @@ public class CameraTargetController : MonoBehaviour
 
     private void ResetView()
     {
-        Debug.Log("ResetView");
-
         transform.position = new Vector3(0, transform.position.y, transform.position.z);
         // _player0Pos = Vector3.zero;
         // _player1Pos = Vector3.zero;

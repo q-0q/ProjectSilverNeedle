@@ -29,7 +29,7 @@ namespace Quantum.Types.Collision
         public FP BlockPushback = FP.FromString("2");
         public FP HitPushback = 1;
         public FP TrajectoryHeight = 2;
-        public FP TrajectoryXVelocity = 5;
+        public FP TrajectoryXVelocity = 8;
         public bool Launches = false;
         
         public bool GroundBounce = false;

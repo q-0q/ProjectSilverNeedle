@@ -4,15 +4,18 @@ using Photon.Deterministic;
 using Quantum;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 using Input = UnityEngine.Input;
 
 public class DramaticVirtualCamera : MonoBehaviour
 {
     private CinemachineVirtualCamera _virtualCamera;
+    private Volume _volume;
 
     private void Awake()
     {
         _virtualCamera = GetComponent<CinemachineVirtualCamera>();
+        _volume = FindObjectOfType<Volume>();
     }
 
     private void Update()

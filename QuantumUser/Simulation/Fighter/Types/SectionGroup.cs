@@ -9,8 +9,10 @@ namespace Quantum.Types
     {
         public bool Loop = false;
         public int LengthScalar = 1;
+        public bool AutoFromAnimationPath = false;
         public List<Tuple<int, T>> Sections;
-        
+
+
         public T GetCurrentItem(Frame f, PlayerFSM fsm)
         {
             int frames = fsm.FramesInCurrentState(f);
