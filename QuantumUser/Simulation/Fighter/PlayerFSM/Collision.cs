@@ -19,7 +19,7 @@ namespace Quantum
             Punish
         }
         
-        protected class CollisionBoxInternal
+        public class CollisionBoxInternal
         {
             public EntityRef source;
             public CollisionBox.CollisionBoxType type;
@@ -117,7 +117,7 @@ namespace Quantum
         //         0, 0, 0, 0,0, 0,1,1,0);
         // }
 
-        private static List<CollisionBoxInternal> GetCollisionBoxInternalsOfType(Frame f, EntityRef source, CollisionBox.CollisionBoxType type)
+        public static List<CollisionBoxInternal> GetCollisionBoxInternalsOfType(Frame f, EntityRef source, CollisionBox.CollisionBoxType type)
         {
             f.Unsafe.TryGetPointer<FSMData>(source, out var fsmData);
             int collisionState = fsmData->currentCollisionState;
@@ -131,7 +131,7 @@ namespace Quantum
             
             if (type == CollisionBox.CollisionBoxType.Pushbox)
             {
-                var pushBox = character.Pushbox.Lookup(collisionStateFrames, playerFsm);
+                var pushBox = character.Pushbox.Lookup(collisionState, playerFsm);
                 var pushboxInternal = new CollisionBoxInternal()
                 {
                     source = source,
@@ -140,6 +140,8 @@ namespace Quantum
                     height = pushBox.Height,
                     pos = GetCollisionBoxWorldPosition(f, source, pushBox).XY
                 };
+                
+                Debug.Log(pushboxInternal.pos);
 
                 return new List<CollisionBoxInternal>() { pushboxInternal };
             }
@@ -381,6 +383,8 @@ namespace Quantum
 
             // Calculate deltaX based on edges
             deltaX = posA.X - posB.X;
+            
+            // Debug.Log("posA: " + posA + "posB: " + posB);
 
             // Calculate the distance needed to be "next to each other"
             FP minDistanceY = aHalfHeight + bHalfHeight;

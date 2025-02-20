@@ -179,9 +179,10 @@ namespace Quantum
             inputBuffer->length = 0;
             inputBuffer->type = 0;
 
-            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
-            playerFsmData->currentState = 0;
-            playerFsmData->framesInState = 0;
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var fsmData);
+            fsmData->currentState = 0;
+            fsmData->framesInState = 0;
+            fsmData->currentCollisionState = 0;
 
             f.Unsafe.TryGetPointer<AnimationData>(entityRef, out var animationData);
             animationData->path = 0;
