@@ -22,8 +22,8 @@ namespace Quantum
         protected class CollisionBoxInternal
         {
             public EntityRef source;
-            public int type;
-            public int subtype;
+            public CollisionBox.CollisionBoxType type;
+            public HurtType HurtType;
             public FP width;
             public FP height;
             public FPVector2 pos;
@@ -117,102 +117,153 @@ namespace Quantum
         //         0, 0, 0, 0,0, 0,1,1,0);
         // }
 
-        
-        public void HitboxHurtboxCollide(Frame f)
+        private static List<CollisionBoxInternal> GetCollisionBoxInternalsOfType(Frame f, EntityRef source, CollisionBox.CollisionBoxType type)
         {
+            f.Unsafe.TryGetPointer<FSMData>(source, out var fsmData);
+            int collisionState = fsmData->currentCollisionState;
             
-            foreach (var (hitboxEntityRef, hitboxData) in f.GetComponentIterator<CollisionBoxInternal>())
+            Character character = Characters.GetPlayerCharacter(f, source);
+            PlayerFSM playerFsm = Util.GetPlayerFSM(f, source);
+            
+            
+            int frames = playerFsm.FramesInCurrentState(f);
+            int collisionStateFrames = frames - 1; // This is  stupid
+            
+            if (type == CollisionBox.CollisionBoxType.Pushbox)
             {
-                if (hitboxData.source == EntityRef) continue;
-                if (hitboxData.type != (int)CollisionBox.CollisionBoxType.Hitbox) continue;
-
-                foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxInternal>())
+                var pushBox = character.Pushbox.Lookup(collisionStateFrames, playerFsm);
+                var pushboxInternal = new CollisionBoxInternal()
                 {
-                    if (hurtboxData.source != EntityRef) continue;
-                    if (hurtboxData.type != (int)CollisionBox.CollisionBoxType.Hurtbox) continue;
-                    
-                    
-                    if (!CollisionBoxesOverlap(f, hitboxEntityRef, hurtboxEntityRef, out var overlapCenter, out var overlapWidth)) continue;
-                    if (!CanBeHitBySource(f, hitboxData.source)) continue;
-                    
-                    AddMeToSourceHitList(f, hitboxData.source);
-                    InvokeHitboxHurtboxCollision(f, hurtboxData, hitboxData, overlapCenter);
-                    
-                }
+                    source = source,
+                    type = CollisionBox.CollisionBoxType.Pushbox,
+                    width = pushBox.Width,
+                    height = pushBox.Height,
+                    pos = GetCollisionBoxWorldPosition(f, source, pushBox).XY
+                };
+
+                return new List<CollisionBoxInternal>() { pushboxInternal };
             }
-        }
-
-        public void ThrowboxCollide(Frame f)
-        {
-            FrameParam frameParam = new FrameParam() { f = f, EntityRef = EntityRef };
-            if (EntityIsHitByThrowbox(f, EntityRef, Util.GetOtherPlayer(f, EntityRef)))
+            else if (type == CollisionBox.CollisionBoxType.Hurtbox)
             {
-                var hurtType = GetHurtType(f);
-                if ((hurtType is HurtType.Counter or HurtType.Punish) && 
-                    ! (Fsm.IsInState(State.ThrowConnect) || Fsm.IsInState(State.ThrowStartup)))
-                {
-                    f.Events.GameEvent(EntityRef, GameEventType.Punish);
-                }
-
-                f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
-                trajectoryData->hardKnockdown = true;
+                var hurtBoxCollectionSectionGroup = character.HurtboxCollectionSectionGroup.Lookup(collisionStateFrames, playerFsm);
+            }
+            else if (type == CollisionBox.CollisionBoxType.Hitbox)
+            {
+                var hitSectionGroup = character.HitSectionGroup.Lookup(collisionStateFrames, playerFsm);
+            }
+            else if (type == CollisionBox.CollisionBoxType.Throwbox)
+            {
                 
-                Fsm.Fire(Trigger.ReceiveKinematics, frameParam);
-                ClearCollisionBoxesOfType(f, CollisionBox.CollisionBoxType.Hitbox, EntityRef);
             }
-            if (EntityIsHitByThrowbox(f, Util.GetOtherPlayer(f, EntityRef), EntityRef))
-            {
-                Fsm.Fire(Trigger.ThrowConnect, frameParam);
-            }
+
+            return null;
+
+
+
+            //var hurtboxCollection = hurtboxCollectionSectionGroup.GetItemFromIndex(collisionStateFrames);
         }
 
-        private bool EntityIsHitByThrowbox(Frame f, EntityRef targetEntityRef, EntityRef sourceEntityRef)
-        {
-            foreach (var (throwboxEntityRef, throwboxData) in f.GetComponentIterator<CollisionBoxInternal>())
-            {
-                if (throwboxData.type != (int) CollisionBox.CollisionBoxType.Throwbox) continue;
-                if (throwboxData.source != sourceEntityRef) continue;
-                
-
-                foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxInternal>())
-                {
-                    if (hurtboxData.type != (int)CollisionBox.CollisionBoxType.Hurtbox) continue;
-                    if (hurtboxData.source != targetEntityRef) continue;
-                    if (!CollisionBoxesOverlap(f, throwboxEntityRef, 
-                            hurtboxEntityRef, out var overlapCenter, out var overlapWidth)) continue;
-                    
-                    var targetFsm = Util.GetPlayerFSM(f, targetEntityRef);
-                    if (targetFsm is null) return false;
-                    
-                    if (targetFsm.Fsm.IsInState(State.Air)) return false;
-                    if (targetFsm.Fsm.IsInState(State.Hit)) return false;
-                    if (targetFsm.Fsm.IsInState(State.Block)) return false;
-                    if (targetFsm.Fsm.IsInState(State.Backdash)) return false;
-                    
-                    return true;
-                }
-            }
-
-            return false;
-        }
         
-        
-        // FP growOffsetX = collisionBox.GrowWidth ? collisionBox.Width * FP._0_50 : 0;
-        // FP growOffsetY = collisionBox.GrowHeight ? collisionBox.Height * FP._0_50 : 0;
-        // FP flipXMod = PlayerDirectionSystem.IsFacingRight(f, source) ? FP._1 : FP.Minus_1;
-        //         
-        // FPVector3 posOffset = new FPVector3(collisionBox.PosX, collisionBox.PosY, 0);
-        // FPVector3 growOffset = new FPVector3(growOffsetX, growOffsetY, 0);
+        // public void HitboxHurtboxCollide(Frame f)
+        // {
+        //     
+        //     
+        //     
+        //     foreach (var (hitboxEntityRef, hitboxData) in f.GetComponentIterator<CollisionBoxInternal>())
+        //     {
+        //         if (hitboxData.source == EntityRef) continue;
+        //         if (hitboxData.type != (int)CollisionBox.CollisionBoxType.Hitbox) continue;
         //
-        // FPVector3 offset = (posOffset + growOffset);
-        // FPVector3 offsetFlipped = new FPVector3(offset.X * flipXMod, offset.Y, 0);
+        //         foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxInternal>())
+        //         {
+        //             if (hurtboxData.source != EntityRef) continue;
+        //             if (hurtboxData.type != (int)CollisionBox.CollisionBoxType.Hurtbox) continue;
+        //             
+        //             
+        //             if (!CollisionBoxesOverlap(f, hitboxEntityRef, hurtboxEntityRef, out var overlapCenter, out var overlapWidth)) continue;
+        //             if (!CanBeHitBySource(f, hitboxData.source)) continue;
+        //             
+        //             AddMeToSourceHitList(f, hitboxData.source);
+        //             InvokeHitboxHurtboxCollision(f, hurtboxData, hitboxData, overlapCenter);
+        //             
+        //         }
+        //     }
+        // }
+
+        // public void ThrowboxCollide(Frame f)
+        // {
+        //     FrameParam frameParam = new FrameParam() { f = f, EntityRef = EntityRef };
+        //     if (EntityIsHitByThrowbox(f, EntityRef, Util.GetOtherPlayer(f, EntityRef)))
+        //     {
+        //         var hurtType = GetHurtType(f);
+        //         if ((hurtType is HurtType.Counter or HurtType.Punish) && 
+        //             ! (Fsm.IsInState(State.ThrowConnect) || Fsm.IsInState(State.ThrowStartup)))
+        //         {
+        //             f.Events.GameEvent(EntityRef, GameEventType.Punish);
+        //         }
+        //
+        //         f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
+        //         trajectoryData->hardKnockdown = true;
         //         
-        // collisionBoxTransform->Position = sourceTransform->Position + offsetFlipped;
+        //         Fsm.Fire(Trigger.ReceiveKinematics, frameParam);
+        //     }
+        //     if (EntityIsHitByThrowbox(f, Util.GetOtherPlayer(f, EntityRef), EntityRef))
+        //     {
+        //         Fsm.Fire(Trigger.ThrowConnect, frameParam);
+        //     }
+        // }
+
+        // private bool EntityIsHitByThrowbox(Frame f, EntityRef targetEntityRef, EntityRef sourceEntityRef)
+        // {
+        //     foreach (var (throwboxEntityRef, throwboxData) in f.GetComponentIterator<CollisionBoxInternal>())
+        //     {
+        //         if (throwboxData.type != (int) CollisionBox.CollisionBoxType.Throwbox) continue;
+        //         if (throwboxData.source != sourceEntityRef) continue;
+        //         
+        //
+        //         foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxInternal>())
+        //         {
+        //             if (hurtboxData.type != (int)CollisionBox.CollisionBoxType.Hurtbox) continue;
+        //             if (hurtboxData.source != targetEntityRef) continue;
+        //             if (!CollisionBoxesOverlap(f, throwboxEntityRef, 
+        //                     hurtboxEntityRef, out var overlapCenter, out var overlapWidth)) continue;
+        //             
+        //             var targetFsm = Util.GetPlayerFSM(f, targetEntityRef);
+        //             if (targetFsm is null) return false;
+        //             
+        //             if (targetFsm.Fsm.IsInState(State.Air)) return false;
+        //             if (targetFsm.Fsm.IsInState(State.Hit)) return false;
+        //             if (targetFsm.Fsm.IsInState(State.Block)) return false;
+        //             if (targetFsm.Fsm.IsInState(State.Backdash)) return false;
+        //             
+        //             return true;
+        //         }
+        //     }
+        //
+        //     return false;
+        // }
+        //
         
+
         
-        
-        
-        
+
+
+        private static FPVector3 GetCollisionBoxWorldPosition(Frame f, EntityRef source, CollisionBox collisionBox)
+        {
+            FP growOffsetX = collisionBox.GrowWidth ? collisionBox.Width * FP._0_50 : 0;
+            FP growOffsetY = collisionBox.GrowHeight ? collisionBox.Height * FP._0_50 : 0;
+            FP flipXMod = PlayerDirectionSystem.IsFacingRight(f, source) ? FP._1 : FP.Minus_1;
+                    
+            FPVector3 posOffset = new FPVector3(collisionBox.PosX, collisionBox.PosY, 0);
+            FPVector3 growOffset = new FPVector3(growOffsetX, growOffsetY, 0);
+            
+            FPVector3 offset = (posOffset + growOffset);
+            FPVector3 offsetFlipped = new FPVector3(offset.X * flipXMod, offset.Y, 0);
+                    
+            
+            f.Unsafe.TryGetPointer<Transform3D>(source, out var sourceTransform);
+            return sourceTransform->Position + offsetFlipped;
+        }
         
         
         
@@ -347,7 +398,7 @@ namespace Quantum
 
         private void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
-            Hit.HitType hitType = (Hit.HitType)hitboxData.subtype;
+            Hit.HitType hitType = (Hit.HitType)hitboxData.HurtType;
             HurtType hurtType = GetHurtType(f);
             var isBlocking = IsBlockingHitType(f, hitType);
             var trigger = GetCollisionTrigger(f, hitType, isBlocking);

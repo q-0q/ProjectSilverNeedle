@@ -28,10 +28,6 @@ namespace Quantum.Types
 
         public T Lookup(int state, PlayerFSM fsm, FrameParam frameParam = null)
         {
-            if (FuncDictionary.ContainsKey(state))
-            {
-                return FuncDictionary[state](frameParam);
-            }
             
             if (FuncDictionary.ContainsKey(state))
             {
