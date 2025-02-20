@@ -67,11 +67,11 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
             lr.enabled = true; // Enable this LineRenderer
 
             Vector3 pos = new Vector3(rect.pos.X.AsFloat, rect.pos.Y.AsFloat, 0);
-            DrawRectangle(lr, pos, rect.width.AsFloat, rect.height.AsFloat);
+            DrawRectangle(lr, pos, rect.width.AsFloat, rect.height.AsFloat, Color.yellow);
         }
     }
     
-    void DrawRectangle(LineRenderer lr, Vector3 position, float width, float height)
+    void DrawRectangle(LineRenderer lr, Vector3 position, float width, float height, Color color)
     {
         // Define the four corners of the rectangle
         Vector3[] positions = new Vector3[5];
@@ -82,8 +82,8 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
         positions[4] = positions[0]; // Close the rectangle (Back to the bottom-left)
 
         lr.positionCount = 5;
-        lr.startColor = Color.red;
-        lr.endColor = Color.blue;
+        lr.startColor = color;
+        lr.endColor = color;
         lr.SetPositions(positions);
     }
     
