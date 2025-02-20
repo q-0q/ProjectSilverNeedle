@@ -25,10 +25,8 @@ namespace Quantum
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
-            // Collision detection
-            fsm.Hurtbox(f);
-            fsm.Throwbox(f);
-            fsm.Hitbox(f);
+            // Write collision state
+            filter.PlayerFsmData->currentCollisionState = fsm.Fsm.State();
             
             Util.WritebackFsm(f, filter.Entity);
         }

@@ -15,7 +15,7 @@ namespace Quantum
         private const bool AllowCrossup = false;
         private static int _pushbackDuration = 23;
         private static int _momentumDuration = 35;
-        private static FP _throwTechPushback = FP.FromString("6"); 
+        private static FP _throwTechPushback = FP.FromString("6");
         private FP _wallsSkew = FP.FromString("0.99");
 
         private FP _pushboxResistance = FP.FromString("0.3"); // 0 - 1;
@@ -26,17 +26,15 @@ namespace Quantum
         {
             Sections = new List<Tuple<int, FP>>()
             {
-                new(8,-1),
-                new (10, -4),
-                new (20, 0)
+                new(8, -1),
+                new(10, -4),
+                new(20, 0)
             }
         };
 
 
         public void Move(Frame f)
         {
-
-            
             FPVector2 movementThisFrame = ComputeMovementThisFrame(f);
             ApplyUnflippedMovement(f, movementThisFrame);
             MomentumMove(f);
@@ -45,14 +43,13 @@ namespace Quantum
             KinematicReceiverMove(f);
 
             ClampPosToWall(f);
-            
         }
-        
+
         private FPVector2 ComputeMovementThisFrame(Frame f)
         {
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
             FP xMoveAmount = GetXMovementFromMovementSectionGroup(f, character.MovementSectionGroup.Get(this));
-            
+
             return new FPVector2(xMoveAmount, 0);
         }
 
@@ -70,33 +67,30 @@ namespace Quantum
             {
                 v.X *= FP.Minus_1;
             }
-            
+
             ApplyFlippedMovement(f, v, EntityRef);
         }
 
-        private static void ApplyFlippedMovement(Frame f, FPVector2 v, EntityRef entityRef, bool debug=false)
+        private static void ApplyFlippedMovement(Frame f, FPVector2 v, EntityRef entityRef, bool debug = false)
         {
-            
-            
-            GetPushboxes(f,  entityRef, out var opponentPushboxEntityRef, out var pushboxEntityRef);
+            GetPushboxes(f,  entityRef, out var opponentPushboxInternal, out var pushboxInternal);
             
             if (!AllowCrossup)
             {
-                if (AreCollisionBoxesNextToEachOther(f, opponentPushboxEntityRef, pushboxEntityRef, out FP deltaX))
+                if (AreCollisionBoxesNextToEachOther(f, opponentPushboxInternal, pushboxInternal, out FP deltaX))
                 {
-                    v.X = !PlayerDirectionSystem.IsOnLeft(f, entityRef) ? Util.Max(v.X, deltaX + _crossupThreshhold) : Util.Min(v.X, deltaX - _crossupThreshhold);
+                    v.X = !PlayerDirectionSystem.IsOnLeft(f, entityRef)
+                        ? Util.Max(v.X, deltaX + _crossupThreshhold)
+                        : Util.Min(v.X, deltaX - _crossupThreshhold);
+                    
                 }
             }
-
             
             f.Unsafe.TryGetPointer<Transform3D>(entityRef, out var transform3D);
             FP slowdownMod = Util.GetSlowdownMod(f, entityRef);
-            
-            
+
+
             transform3D->Position += (v.XYO * slowdownMod);
-            
-            
-            Pushbox(f, entityRef, debug);
         }
 
         private void SetPosition(Frame f, FPVector2 v)
@@ -109,50 +103,36 @@ namespace Quantum
         private void PushboxCollide(Frame f)
         {
             if (AllowCrossup) return;
-            
-            GetPushboxes(f, EntityRef, out var opponentEntityRef, out var entityRef);
-            
-            if (!CollisionBoxesOverlap(f, opponentEntityRef, entityRef, out var overlapCenter, out var overlapWidth)) return;
+
+            GetPushboxes(f, EntityRef, out var opponentPushboxInternal, out var collisionBoxInternal);
+
+            if (!CollisionBoxesOverlap(f, opponentPushboxInternal, collisionBoxInternal, out var overlapCenter,
+                    out var overlapWidth)) return;
 
             FPVector2 pushboxMovement = new FPVector2(-overlapWidth * _pushboxResistance, 0);
-                    
+
             if (!PlayerDirectionSystem.IsOnLeft(f, EntityRef))
             {
                 pushboxMovement.X *= FP.Minus_1;
             }
-            
+
             // if (!Util.EntityIsCpu(f, EntityRef)) Debug.Log(pushboxMovement);
-            
+
             ApplyFlippedMovement(f, pushboxMovement, EntityRef);
         }
 
-        private static void GetPushboxes(Frame f, EntityRef entityRef, out EntityRef opponentPushboxEntityRef, out EntityRef pushboxEntityRef)
+        private static void GetPushboxes(Frame f, EntityRef entityRef, out CollisionBoxInternal opponentPushboxInternal,
+            out CollisionBoxInternal pushboxInternal)
         {
-            foreach (var (opponentEntity, opponentPushboxData) in f.GetComponentIterator<CollisionBoxData>())
-            {
-                if (opponentPushboxData.source == entityRef) continue;
-                if (opponentPushboxData.type != (int)CollisionBox.CollisionBoxType.Pushbox) continue;
-
-                foreach (var (entity, selfPushboxData) in f.GetComponentIterator<CollisionBoxData>())
-                {
-                    if (selfPushboxData.source != entityRef) continue;
-                    if (selfPushboxData.type != (int)CollisionBox.CollisionBoxType.Pushbox) continue;
-
-                    opponentPushboxEntityRef = opponentEntity;
-                    pushboxEntityRef = entity;
-                    return;
-                }
-            }
-
-            opponentPushboxEntityRef = EntityRef.None;
-            pushboxEntityRef = EntityRef.None;
+            pushboxInternal= GetCollisionBoxInternalsOfType(f, entityRef, CollisionBox.CollisionBoxType.Pushbox)[0];
+            opponentPushboxInternal = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, entityRef), CollisionBox.CollisionBoxType.Pushbox)[0];
         }
 
         private void PushbackMove(Frame f)
         {
             f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
             if (pushbackData->framesInPushback >= _pushbackDuration) return;
-            
+
             FPVector2 v =
                 new FPVector2(GetPushbackVelocityThisFrame(pushbackData->framesInPushback,
                     pushbackData->pushbackAmount), 0);
@@ -160,9 +140,8 @@ namespace Quantum
             bool inCorner = Util.IsPlayerInCorner(f, EntityRef);
             EntityRef entityRef = inCorner ? Util.GetOtherPlayer(f, EntityRef) : EntityRef;
             if (inCorner) v.X *= FP.Minus_1;
-            
+
             ApplyFlippedMovement(f, v, entityRef, true);
-           
         }
 
         private void StartPushback(Frame f, FP totalDistance)
@@ -177,7 +156,7 @@ namespace Quantum
             FP t = (FP)framesInPushback / (FP)_pushbackDuration;
             return SampleCubicCurve(t) * totalDistance / (FP)_pushbackDuration;
         }
-        
+
         private FP GetMomentumVelocityThisFrame(int framesInMomentum, FP totalDistance)
         {
             FP t = (FP)framesInMomentum / (FP)_momentumDuration;
@@ -195,12 +174,11 @@ namespace Quantum
         {
             if (!Fsm.IsInState(State.KinematicReceiver)) return;
 
-            f.Unsafe.TryGetPointer<KinematicsData>(Util.GetOtherPlayer(f, EntityRef), 
+            f.Unsafe.TryGetPointer<KinematicsData>(Util.GetOtherPlayer(f, EntityRef),
                 out var kinematicsData);
 
             FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
             SetPosition(f, kinematicsData->attachPosition - offset);
-            
         }
 
         private void ResetYPos(TriggerParams? triggerParams)
@@ -220,31 +198,35 @@ namespace Quantum
             if (PlayerDirectionSystem.IsOnLeft(frameParam.f, EntityRef)) distance *= FP.Minus_1;
             StartPushback(frameParam.f, distance);
             Util.StartDramatic(frameParam.f, EntityRef, 35);
-            
+
             // only make the tech animation sprite for player 0
             if (Util.GetPlayerId(frameParam.f, EntityRef) != 0) return;
 
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            frameParam.f.Unsafe.TryGetPointer<Transform3D>(Util.GetOtherPlayer(frameParam.f, EntityRef), out var opponentTransform3D);
+            frameParam.f.Unsafe.TryGetPointer<Transform3D>(Util.GetOtherPlayer(frameParam.f, EntityRef),
+                out var opponentTransform3D);
 
             FPVector2 attachPos = GetFirstKinematicsAttachPosition(frameParam.f, EntityRef);
-            FPVector2 opponentAttachPos = GetFirstKinematicsAttachPosition(frameParam.f, Util.GetOtherPlayer(frameParam.f, EntityRef));
+            FPVector2 opponentAttachPos =
+                GetFirstKinematicsAttachPosition(frameParam.f, Util.GetOtherPlayer(frameParam.f, EntityRef));
 
             FPVector2 pos = attachPos + transform3D->Position.XY;
             FPVector2 opponentPos = opponentAttachPos + opponentTransform3D->Position.XY;
 
             FPVector2 avgPos = (pos + opponentPos) * FP._0_50;
-            
-            AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Tech, 
-                avgPos, 0, 
+
+            AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Tech,
+                avgPos, 0,
                 false);
         }
 
         public void ClampPosToWall(Frame f)
         {
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            
-            FP clampX = Fsm.IsInState(State.Air) || Fsm.IsInState(State.KinematicReceiver) ? WallHalfLength + 1 : WallHalfLength;
+
+            FP clampX = Fsm.IsInState(State.Air) || Fsm.IsInState(State.KinematicReceiver)
+                ? WallHalfLength + 1
+                : WallHalfLength;
             if (Util.IsPlayerFacingAwayFromWall(f, EntityRef)) clampX *= _wallsSkew;
 
             var lerpedX = Util.Lerp(transform3D->Position.X, Util.Clamp(transform3D->Position.X, -clampX, clampX),
@@ -261,27 +243,27 @@ namespace Quantum
             StartMomentum(frameParam.f, amount);
 
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            
-            AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Dash, 
+
+            AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Dash,
                 transform3D->Position.XY, 0, !PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef));
         }
-        
+
         private void StartMomentum(Frame f, FP totalDistance)
         {
             f.Unsafe.TryGetPointer<MomentumData>(EntityRef, out var pushbackData);
             pushbackData->framesInMomentum = 0;
             pushbackData->momentumAmount = totalDistance;
         }
-        
+
         private void MomentumMove(Frame f)
         {
             f.Unsafe.TryGetPointer<MomentumData>(EntityRef, out var momentumData);
             if (momentumData->framesInMomentum >= _pushbackDuration) return;
-            
+
             FPVector2 v =
                 new FPVector2(GetMomentumVelocityThisFrame(momentumData->framesInMomentum,
                     momentumData->momentumAmount), 0);
-            
+
             ApplyFlippedMovement(f, v, EntityRef);
         }
     }
