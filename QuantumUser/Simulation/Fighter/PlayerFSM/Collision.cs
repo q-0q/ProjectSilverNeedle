@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using Photon.Deterministic;
 using Quantum.Types;
@@ -141,17 +142,41 @@ namespace Quantum
                     pos = GetCollisionBoxWorldPosition(f, source, pushBox).XY
                 };
                 
-                Debug.Log(pushboxInternal.pos);
-
                 return new List<CollisionBoxInternal>() { pushboxInternal };
             }
-            else if (type == CollisionBox.CollisionBoxType.Hurtbox)
+
+            if (type == CollisionBox.CollisionBoxType.Hurtbox)
             {
-                var hurtBoxCollectionSectionGroup = character.HurtboxCollectionSectionGroup.Lookup(collisionStateFrames, playerFsm);
+                var hurtTypeSectionGroup = character.HurtTypeSectionGroup.Lookup(collisionState, playerFsm);
+                var hurtType = HurtType.Regular;
+                if (hurtTypeSectionGroup is not null)
+                    hurtType = hurtTypeSectionGroup.GetItemFromIndex(collisionStateFrames);
+                var hurtBoxCollectionSectionGroup = character.HurtboxCollectionSectionGroup.Lookup(collisionState, playerFsm);
+                var hurtboxCollection = hurtBoxCollectionSectionGroup.GetItemFromIndex(collisionStateFrames);
+
+                var hurtboxInternals = new List<CollisionBoxInternal>();
+                foreach (var hurtbox in hurtboxCollection.CollisionBoxes)
+                {
+                    var _internal = new CollisionBoxInternal()
+                    {
+                        source = source,
+                        type = CollisionBox.CollisionBoxType.Hurtbox,
+                        HurtType = hurtType,
+                        width = hurtbox.Width,
+                        height = hurtbox.Height,
+                        pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY
+                    };
+
+                    // Add the _internal object directly to the list
+                    hurtboxInternals.Add(_internal);
+                }
+
+                return hurtboxInternals;
+
             }
             else if (type == CollisionBox.CollisionBoxType.Hitbox)
             {
-                var hitSectionGroup = character.HitSectionGroup.Lookup(collisionStateFrames, playerFsm);
+                var hitSectionGroup = character.HitSectionGroup.Lookup(collisionState, playerFsm);
             }
             else if (type == CollisionBox.CollisionBoxType.Throwbox)
             {
