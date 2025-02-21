@@ -212,6 +212,7 @@ namespace Quantum.Prototypes {
     public Int32 framesInState;
     public FP virtualTimeInState;
     public Int32 currentCollisionState;
+    public Int32 collisionFramesInState;
     partial void MaterializeUser(Frame frame, ref Quantum.FSMData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.FSMData component = default;
@@ -223,6 +224,7 @@ namespace Quantum.Prototypes {
         result.framesInState = this.framesInState;
         result.virtualTimeInState = this.virtualTimeInState;
         result.currentCollisionState = this.currentCollisionState;
+        result.collisionFramesInState = this.collisionFramesInState;
         MaterializeUser(frame, ref result, in context);
     }
   }

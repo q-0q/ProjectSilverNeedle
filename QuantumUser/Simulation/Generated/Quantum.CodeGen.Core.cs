@@ -817,14 +817,16 @@ namespace Quantum {
   public unsafe partial struct FSMData : Quantum.IComponent {
     public const Int32 SIZE = 24;
     public const Int32 ALIGNMENT = 8;
-    [FieldOffset(4)]
-    public Int32 currentState;
     [FieldOffset(8)]
+    public Int32 currentState;
+    [FieldOffset(12)]
     public Int32 framesInState;
     [FieldOffset(16)]
     public FP virtualTimeInState;
-    [FieldOffset(0)]
+    [FieldOffset(4)]
     public Int32 currentCollisionState;
+    [FieldOffset(0)]
+    public Int32 collisionFramesInState;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 8647;
@@ -832,11 +834,13 @@ namespace Quantum {
         hash = hash * 31 + framesInState.GetHashCode();
         hash = hash * 31 + virtualTimeInState.GetHashCode();
         hash = hash * 31 + currentCollisionState.GetHashCode();
+        hash = hash * 31 + collisionFramesInState.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (FSMData*)ptr;
+        serializer.Stream.Serialize(&p->collisionFramesInState);
         serializer.Stream.Serialize(&p->currentCollisionState);
         serializer.Stream.Serialize(&p->currentState);
         serializer.Stream.Serialize(&p->framesInState);

@@ -27,6 +27,7 @@ namespace Quantum
             
             // Write collision state
             filter.PlayerFsmData->currentCollisionState = fsm.Fsm.State();
+            filter.PlayerFsmData->collisionFramesInState = fsm.FramesInCurrentState(f);
             
             Util.WritebackFsm(f, filter.Entity);
         }

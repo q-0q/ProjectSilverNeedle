@@ -183,6 +183,7 @@ namespace Quantum
             fsmData->currentState = 0;
             fsmData->framesInState = 0;
             fsmData->currentCollisionState = 0;
+            fsmData->collisionFramesInState = 0;
 
             f.Unsafe.TryGetPointer<AnimationData>(entityRef, out var animationData);
             animationData->path = 0;

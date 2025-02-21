@@ -123,13 +123,11 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<FSMData>(source, out var fsmData);
             int collisionState = fsmData->currentCollisionState;
+            int collisionStateFrames = fsmData->collisionFramesInState;
             
             Character character = Characters.GetPlayerCharacter(f, source);
             PlayerFSM playerFsm = Util.GetPlayerFSM(f, source);
             
-            
-            int frames = playerFsm.FramesInCurrentState(f);
-            int collisionStateFrames = frames - 1; // This is  stupid
             
             if (type == CollisionBox.CollisionBoxType.Pushbox)
             {
