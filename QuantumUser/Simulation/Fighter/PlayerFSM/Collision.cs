@@ -25,6 +25,7 @@ namespace Quantum
             public EntityRef source;
             public CollisionBox.CollisionBoxType type;
             public HurtType HurtType;
+            public Hit.HitType HitType;
             public FP width;
             public FP height;
             public FPVector2 pos;
@@ -167,16 +168,43 @@ namespace Quantum
                         pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY
                     };
 
-                    // Add the _internal object directly to the list
                     hurtboxInternals.Add(_internal);
                 }
 
                 return hurtboxInternals;
 
             }
-            else if (type == CollisionBox.CollisionBoxType.Hitbox)
+
+            if (type == CollisionBox.CollisionBoxType.Hitbox)
             {
                 var hitSectionGroup = character.HitSectionGroup.Lookup(collisionState, playerFsm);
+                if (hitSectionGroup is null) return new List<CollisionBoxInternal>();
+
+                var hit = hitSectionGroup.GetItemFromIndex(collisionStateFrames);
+                if (hit is null) return new List<CollisionBoxInternal>();
+
+                var firstFrame = hitSectionGroup.GetFirstFrameFromIndex(collisionStateFrames);
+
+                var hitType = hit.Type;
+                var hitboxCollection = hit.HitboxCollections.GetItemFromIndex(collisionStateFrames - firstFrame);
+                
+                var hitboxInternals = new List<CollisionBoxInternal>();
+                foreach (var hurtbox in hitboxCollection.CollisionBoxes)
+                {
+                    var _internal = new CollisionBoxInternal()
+                    {
+                        source = source,
+                        type = CollisionBox.CollisionBoxType.Hitbox,
+                        HitType = hitType,
+                        width = hurtbox.Width,
+                        height = hurtbox.Height,
+                        pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY
+                    };
+
+                    hitboxInternals.Add(_internal);
+                }
+                
+                return hitboxInternals;
             }
             else if (type == CollisionBox.CollisionBoxType.Throwbox)
             {

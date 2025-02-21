@@ -6,6 +6,7 @@ using Photon.Deterministic;
 using Quantum;
 using Quantum.Types.Collision;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Input = UnityEngine.Input;
@@ -47,12 +48,16 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
         var pushboxInternals =
             PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBox.CollisionBoxType.Pushbox);
 
-        var hurtboxInternls =
+        var hurtboxInternals =
             PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBox.CollisionBoxType.Hurtbox);
 
+        var hitboxInternals = PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef,
+            CollisionBox.CollisionBoxType.Hitbox);
 
         internals.AddRange(pushboxInternals);
-        internals.AddRange(hurtboxInternls);
+        internals.AddRange(hurtboxInternals);
+        internals.AddRange(hitboxInternals);
+        
         int requiredLineRenderers = internals.Count;
 
         // Make sure there are enough LineRenderers in the pool
