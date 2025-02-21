@@ -104,8 +104,10 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
         positions[4] = positions[0]; // Close the rectangle (Back to the bottom-left)
 
         lr.positionCount = 5;
-        lr.startColor = color;
-        lr.endColor = color;
+        
+        lr.material.SetColor("_Color", color);
+        // lr.startColor = color;
+        // lr.endColor = color;
         lr.SetPositions(positions);
     }
     
