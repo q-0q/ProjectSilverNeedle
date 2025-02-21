@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Photon.Deterministic;
 using Quantum;
 using Quantum.Types.Collision;
@@ -42,9 +43,13 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
         
         if (!PredictedFrame.Has<FSMData>(EntityRef)) return;
 
-        var rectangles =
+        var internals = new List<PlayerFSM.CollisionBoxInternal>();
+        var pushboxInternals =
             PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBox.CollisionBoxType.Pushbox);
-        int requiredLineRenderers = rectangles.Count;
+
+
+        internals.AddRange(pushboxInternals);
+        int requiredLineRenderers = internals.Count;
 
         // Make sure there are enough LineRenderers in the pool
         while (_lineRenderers.Count < requiredLineRenderers)
@@ -62,12 +67,20 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
         // Draw each rectangle
         for (int i = 0; i < requiredLineRenderers; i++)
         {
-            var rect = rectangles[i];
+            var _internal = internals[i];
             var lr = _lineRenderers[i];
-            lr.enabled = true; // Enable this LineRenderer
+            lr.enabled = true;
 
-            Vector3 pos = new Vector3(rect.pos.X.AsFloat, rect.pos.Y.AsFloat, 0);
-            DrawRectangle(lr, pos, rect.width.AsFloat, rect.height.AsFloat, Color.yellow);
+            var color = _internal.type switch
+            {
+                CollisionBox.CollisionBoxType.Hitbox => Color.red,
+                CollisionBox.CollisionBoxType.Hurtbox => Color.blue,
+                CollisionBox.CollisionBoxType.Throwbox => Color.green,
+                _ => Color.yellow
+            };
+
+            var pos = new Vector3(_internal.pos.X.AsFloat, _internal.pos.Y.AsFloat, 0);
+            DrawRectangle(lr, pos, _internal.width.AsFloat, _internal.height.AsFloat, color);
         }
     }
     

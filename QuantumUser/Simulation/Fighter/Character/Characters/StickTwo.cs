@@ -201,7 +201,7 @@ namespace Quantum
                 PosX = 0,
                 PosY = 0,
                 Height = 6,
-                Width = 1,
+                Width = FP.FromString("1.5"),
             };
 
             var crouchPushbox = new CollisionBox()
@@ -211,7 +211,7 @@ namespace Quantum
                 PosX = 0,
                 PosY = 0,
                 Height = 4,
-                Width = 1,
+                Width = 2,
             };
 
             var airPushbox = new CollisionBox()
@@ -221,7 +221,7 @@ namespace Quantum
                 PosX = 0,
                 PosY = 1,
                 Height = 3,
-                Width = 1,
+                Width = FP.FromString("1.5")
             };
             
             Pushbox.SuperDictionary[PlayerFSM.State.Stand] = standPushbox;
