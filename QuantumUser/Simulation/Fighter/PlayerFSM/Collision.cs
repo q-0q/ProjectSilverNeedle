@@ -65,23 +65,12 @@ namespace Quantum
         public static FP CounterHitDamageMultiplier = 2;
         public static FP CounterHitComboScaling = FP.FromString("1.3");
         public static FP CounterHitGravityScalingMultiplier = FP.FromString("0.95");
-        public static FP GlobalDamageModifier = FP.FromString("0.8");
+        public static FP GlobalDamageModifier = FP.FromString("10.8");
 
 
         public static int CounterBonusHitstop = 10;
         public static int PunishBonusHitstop = 0;
         
-
-        
-        
-        public void Hitbox(Frame f)
-        {
-            if (IsOnFirstFrameOfHit(f))
-            {
-                ClearHitEntities(f);
-            }
-        }
-
         
         // Todo:
         // remove this function. instead, add a hit to the throw
@@ -132,6 +121,9 @@ namespace Quantum
             if (type == CollisionBox.CollisionBoxType.Pushbox)
             {
                 var pushBox = character.Pushbox.Lookup(collisionState, playerFsm);
+
+                if (pushBox is null) return null;
+                
                 var pushboxInternal = new CollisionBoxInternal()
                 {
                     source = source,
@@ -151,6 +143,7 @@ namespace Quantum
                 if (hurtTypeSectionGroup is not null)
                     hurtType = hurtTypeSectionGroup.GetItemFromIndex(collisionStateFrames);
                 var hurtBoxCollectionSectionGroup = character.HurtboxCollectionSectionGroup.Lookup(collisionState, playerFsm);
+                if (hurtBoxCollectionSectionGroup is null) return new List<CollisionBoxInternal>();
                 var hurtboxCollection = hurtBoxCollectionSectionGroup.GetItemFromIndex(collisionStateFrames);
 
                 var hurtboxInternals = new List<CollisionBoxInternal>();
@@ -196,9 +189,25 @@ namespace Quantum
                         HitType = hitType,
                         width = hurtbox.Width,
                         height = hurtbox.Height,
-                        pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY
+                        pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY,
+                        
+                        level = hit.Level,
+                        bonusHitStun = hit.BonusHitstun,
+                        bonusBlockStun = hit.BonusBlockstun,
+                        blockPushback = hit.BlockPushback,
+                        hitPushback = hit.HitPushback,
+                        visualAngle = hit.VisualAngle,
+                        trajectoryHeight = hit.TrajectoryHeight,
+                        trajectoryXVelocity = hit.TrajectoryXVelocity,
+                        gravityScaling = hit.GravityScaling,
+                        damageScaling = hit.DamageScaling,
+                        damage = hit.Damage,
+                        launches = hit.Launches,
+                        hardKnockdown = hit.HardKnockdown,
+                        groundBounce = hit.GroundBounce,
+                        wallBounce = hit.WallBounce
                     };
-
+                    
                     hitboxInternals.Add(_internal);
                 }
                 
@@ -210,38 +219,35 @@ namespace Quantum
             }
 
             return null;
-
-
-
-            //var hurtboxCollection = hurtboxCollectionSectionGroup.GetItemFromIndex(collisionStateFrames);
         }
 
         
-        // public void HitboxHurtboxCollide(Frame f)
-        // {
-        //     
-        //     
-        //     
-        //     foreach (var (hitboxEntityRef, hitboxData) in f.GetComponentIterator<CollisionBoxInternal>())
-        //     {
-        //         if (hitboxData.source == EntityRef) continue;
-        //         if (hitboxData.type != (int)CollisionBox.CollisionBoxType.Hitbox) continue;
-        //
-        //         foreach (var (hurtboxEntityRef, hurtboxData) in f.GetComponentIterator<CollisionBoxInternal>())
-        //         {
-        //             if (hurtboxData.source != EntityRef) continue;
-        //             if (hurtboxData.type != (int)CollisionBox.CollisionBoxType.Hurtbox) continue;
-        //             
-        //             
-        //             if (!CollisionBoxesOverlap(f, hitboxEntityRef, hurtboxEntityRef, out var overlapCenter, out var overlapWidth)) continue;
-        //             if (!CanBeHitBySource(f, hitboxData.source)) continue;
-        //             
-        //             AddMeToSourceHitList(f, hitboxData.source);
-        //             InvokeHitboxHurtboxCollision(f, hurtboxData, hitboxData, overlapCenter);
-        //             
-        //         }
-        //     }
-        // }
+        public void HitboxHurtboxCollide(Frame f)
+        {
+
+            var hurtboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBox.CollisionBoxType.Hurtbox);
+            
+            // todo:
+            // we need a way of comprehensively getting hitboxes from ALL other FSMs, not just the opponent
+            // otherwise collision will never happen with Summons
+            var hitboxInternals = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, EntityRef),
+                CollisionBox.CollisionBoxType.Hitbox);
+            
+            
+            
+            foreach (var hitboxInternal in hitboxInternals)
+            {
+                foreach (var hurtboxInternal in hurtboxInternals)
+                {
+                    if (!CollisionBoxesOverlap(f, hitboxInternal, hurtboxInternal, out var overlapCenter, out var overlapWidth)) continue;
+                    if (!CanBeHitBySource(f, hitboxInternal.source)) continue;
+                    
+                    AddMeToSourceHitList(f, hitboxInternal.source);
+                    InvokeHitboxHurtboxCollision(f, hurtboxInternal, hitboxInternal, overlapCenter);
+                    
+                }
+            }
+        }
 
         // public void ThrowboxCollide(Frame f)
         // {
@@ -352,7 +358,7 @@ namespace Quantum
             hitEntities.Add(EntityRef);
         }
         
-        private bool IsOnFirstFrameOfHit(Frame f)
+        public bool IsOnFirstFrameOfHit(Frame f)
         {
             if (!HasHitActive(f)) return false;
             var hitSectionGroup = GetCurrentHitSectionGroup(f);
@@ -367,7 +373,7 @@ namespace Quantum
             return hitSectionGroup;
         }
 
-        private void ClearHitEntities(Frame f)
+        public void ClearHitEntities(Frame f)
         {
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(EntityRef, out var hitEntitiesTracker);
             var hitEntities = f.ResolveList(hitEntitiesTracker->HitEntities);
@@ -378,6 +384,8 @@ namespace Quantum
         {
             overlapCenter = FPVector2.Zero; // Or any default value indicating no overlap
             overlapWidth = 0;
+            
+            if (boxAInternal is null || boxBInternal is null) return false;
             
             FPVector2 extentsA = new FPVector2(boxAInternal.width * FP._0_50, boxAInternal.height * FP._0_50);
             FPVector2 extentsB = new FPVector2(boxBInternal.width * FP._0_50, boxBInternal.height * FP._0_50);
@@ -423,6 +431,8 @@ namespace Quantum
         {
             deltaX = 0;
 
+            if (boxAInternal is null || boxBInternal is null) return false;
+
             FPVector2 posA = boxAInternal.pos.XY;
             FPVector2 posB = boxBInternal.pos.XY;
             
@@ -453,8 +463,10 @@ namespace Quantum
 
         private void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
-            Hit.HitType hitType = (Hit.HitType)hitboxData.HurtType;
-            HurtType hurtType = GetHurtType(f);
+            
+            Debug.Log("Collision invoked");
+            Hit.HitType hitType = hitboxData.HitType;
+            HurtType hurtType = hurtboxData.HurtType;
             var isBlocking = IsBlockingHitType(f, hitType);
             var trigger = GetCollisionTrigger(f, hitType, isBlocking);
             
