@@ -47,8 +47,12 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
         var pushboxInternals =
             PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBox.CollisionBoxType.Pushbox);
 
+        var hurtboxInternls =
+            PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBox.CollisionBoxType.Hurtbox);
+
 
         internals.AddRange(pushboxInternals);
+        internals.AddRange(hurtboxInternls);
         int requiredLineRenderers = internals.Count;
 
         // Make sure there are enough LineRenderers in the pool

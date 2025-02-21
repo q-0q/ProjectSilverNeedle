@@ -39,6 +39,7 @@ namespace Quantum.Types
         
         public T GetItemFromIndex(int index)
         {
+            Debug.Log(index);
             int duration = Duration();
             if (Loop) index %= duration;
 
