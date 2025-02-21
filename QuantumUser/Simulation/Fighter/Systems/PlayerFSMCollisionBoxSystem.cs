@@ -25,6 +25,11 @@ namespace Quantum
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
+            if (fsm.IsOnFirstFrameOfHit(f))
+            {
+                fsm.ClearHitEntities(f);
+            }
+            
             // Write collision state
             filter.PlayerFsmData->currentCollisionState = fsm.Fsm.State();
             filter.PlayerFsmData->collisionFramesInState = fsm.FramesInCurrentState(f);

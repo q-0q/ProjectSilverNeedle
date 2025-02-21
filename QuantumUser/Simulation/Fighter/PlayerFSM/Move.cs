@@ -124,8 +124,8 @@ namespace Quantum
         private static void GetPushboxes(Frame f, EntityRef entityRef, out CollisionBoxInternal opponentPushboxInternal,
             out CollisionBoxInternal pushboxInternal)
         {
-            pushboxInternal= GetCollisionBoxInternalsOfType(f, entityRef, CollisionBox.CollisionBoxType.Pushbox)[0];
-            opponentPushboxInternal = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, entityRef), CollisionBox.CollisionBoxType.Pushbox)[0];
+            pushboxInternal= GetCollisionBoxInternalsOfType(f, entityRef, CollisionBox.CollisionBoxType.Pushbox)?[0];
+            opponentPushboxInternal = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, entityRef), CollisionBox.CollisionBoxType.Pushbox)?[0];
         }
 
         private void PushbackMove(Frame f)
