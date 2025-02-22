@@ -4,9 +4,9 @@ namespace Quantum.Types
 {
     public class Cutscene
     {
-        public int state;
-        public SectionGroup<FPVector2> reactorPositionSectionGroup;
-        public SectionGroup<int> reactorStateSectionGroup;
-        public int reactorDuration;
+        public int InitiatorState = -1;
+        public SectionGroup<FPVector2> ReactorPositionSectionGroup = null;
+        public int ReactorDuration = 0;
+        public bool Techable = false;
     }
 }

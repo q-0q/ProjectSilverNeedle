@@ -24,7 +24,8 @@ namespace Quantum
         public Trajectory UpwardJumpTrajectory;
         public Trajectory ForwardJumpTrajectory;
         public Trajectory BackwardJumpTrajectory;
-        
+
+        public Dictionary<int, Cutscene> Cutscenes;
         
         // State maps
         public StateMap<FighterAnimation> FighterAnimation;
