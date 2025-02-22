@@ -32,14 +32,6 @@ namespace Quantum
             public static int HardKnockdown;
             public static int SoftKnockdown;
             public static int Landsquat;
-            public static int ThrowStartup;
-            public static int ThrowFrontStartup;
-            public static int ThrowBackStartup;
-            public static int ThrowConnect;
-            public static int FrontThrowConnect;
-            public static int BackThrowConnect;
-            public static int ThrowWhiff;
-            public static int ThrowTech;
             public static int DeadFromAir;
             public static int DeadFromGround;
             
@@ -63,9 +55,7 @@ namespace Quantum
             public static int Stand;
             public static int Crouch;
             public static int Block;
-            public static int KinematicSource;
-            public static int KinematicReceiver;
-            public static int TechableKinematicReceiver;
+            public static int CutsceneReactor;
             
         }
         
@@ -81,9 +71,7 @@ namespace Quantum
             Backward,
             Dash,
             Backdash,
-            FrontThrow,
-            BackThrow,
-            ThrowTech,
+
             ButtonAndDirection,
             Jump,
             Land,
@@ -93,9 +81,13 @@ namespace Quantum
             HitLow,
             BlockHigh,
             BlockLow,
-            ThrowConnect,
-            ReceiveKinematics,
-            Die
+            
+            CutsceneStart,
+            CutsceneBreak,
+
+            
+            Die,
+            
         }
 
         public EntityRef EntityRef;
@@ -140,11 +132,11 @@ namespace Quantum
                 .Permit(Trigger.Dash, State.Dash)
                 .Permit(Trigger.Backdash, State.Backdash)
                 .Permit(Trigger.Jump, State.AirActionable)
-                .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
-                .Permit(Trigger.BackThrow, State.ThrowBackStartup)
+                // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
+                // .Permit(Trigger.BackThrow, State.ThrowBackStartup)
                 .PermitIf(Trigger.BlockHigh, State.StandBlock, _ => true, -2)
                 .PermitIf(Trigger.BlockLow, State.CrouchBlock, _ => true, -2)
-                .PermitIf(Trigger.ReceiveKinematics, State.TechableKinematicReceiver, _ => true, 0)
+                // .PermitIf(Trigger.ReceiveKinematics, State.TechableKinematicReceiver, _ => true, 0)
                 .OnEntry(EndSlowdown)
                 .OnEntry(ResetCombo)
                 .SubstateOf(State.Ground);
@@ -169,11 +161,11 @@ namespace Quantum
                 // .Permit(Trigger.Backward, State.WalkBackward)
                 .PermitIf(Trigger.BlockHigh, State.StandBlock, _ => true, -2)
                 .PermitIf(Trigger.BlockLow, State.CrouchBlock, _ => true, -2)
-                .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
-                .Permit(Trigger.BackThrow, State.ThrowBackStartup)
-                .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
-                .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
-                .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
+                // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
+                // .Permit(Trigger.BackThrow, State.ThrowBackStartup)
+                // .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
+                // .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
+                // .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
                 .OnExitFrom(Trigger.ButtonAndDirection, StartMomentumCallback)
                 .OnExitFrom(Trigger.Jump, StartMomentumCallback)
                 .OnExitFrom(Trigger.JumpCancel, StartMomentumCallback)
@@ -181,7 +173,7 @@ namespace Quantum
                 .OnExitFrom(Trigger.HitLow, StartMomentumCallback)
                 .OnExitFrom(Trigger.BlockHigh, StartMomentumCallback)
                 .OnExitFrom(Trigger.BlockLow, StartMomentumCallback)
-                .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
+                // .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .SubstateOf(State.Stand)
                 .SubstateOf(State.Ground);
@@ -200,48 +192,7 @@ namespace Quantum
                 .OnEntry(ResetWhiff)
                 .SubstateOf(State.Action)
                 .SubstateOf(State.Ground);
-
-            machine.Configure(State.ThrowStartup)
-                .Permit(Trigger.Finish, State.ThrowWhiff)
-                .Permit(Trigger.ReceiveKinematics, State.ThrowTech)
-                .OnEntry(InputSystem.ClearBufferParams)
-                .SubstateOf(State.Stand)
-                .SubstateOf(State.Ground);
-
-            machine.Configure(State.ThrowFrontStartup)
-                .SubstateOf(State.ThrowStartup)
-                .Permit(Trigger.ThrowConnect, State.FrontThrowConnect);
             
-            machine.Configure(State.ThrowBackStartup)
-                .SubstateOf(State.ThrowStartup)
-                .Permit(Trigger.ThrowConnect, State.BackThrowConnect);
-            
-            machine.Configure(State.ThrowWhiff)
-                .Permit(Trigger.Finish, State.StandActionable)
-                .SubstateOf(State.Stand)
-                .SubstateOf(State.Ground);
-            
-            machine.Configure(State.ThrowConnect)
-                .Permit(Trigger.Finish, State.StandActionable)
-                .Permit(Trigger.ThrowTech, State.ThrowTech)
-                .SubstateOf(State.KinematicSource)
-                .SubstateOf(State.Stand)
-                .SubstateOf(State.Ground);
-            
-            machine.Configure(State.FrontThrowConnect)
-                .SubstateOf(State.ThrowConnect);
-            
-            machine.Configure(State.BackThrowConnect)
-                .SubstateOf(State.ThrowConnect);
-            
-            machine.Configure(State.ThrowTech)
-                .OnEntry(ResetYPos)
-                .OnEntry(OnEnterThrowTech)
-                .OnEntry(InputSystem.ClearBufferParams)
-                .Permit(Trigger.Finish, State.StandActionable)
-                .SubstateOf(State.Stand)
-                .SubstateOf(State.Ground);
-
             machine.Configure(State.StandHitHigh)
                 .Permit(Trigger.Finish, State.StandActionable)
                 .PermitReentry(Trigger.HitHigh)
@@ -330,9 +281,6 @@ namespace Quantum
             
             machine.Configure(State.AirDash)
                 .Permit(Trigger.Finish, State.AirActionable)
-                .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
-                .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
-                .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
                 .OnExitFrom(Trigger.ButtonAndDirection, StartMomentumCallback)
                 .OnExitFrom(Trigger.Jump, StartMomentumCallback)
                 .OnExitFrom(Trigger.JumpCancel, StartMomentumCallback)
@@ -340,7 +288,6 @@ namespace Quantum
                 .OnExitFrom(Trigger.HitLow, StartMomentumCallback)
                 .OnExitFrom(Trigger.BlockHigh, StartMomentumCallback)
                 .OnExitFrom(Trigger.BlockLow, StartMomentumCallback)
-                .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(OnAirdash)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .PermitIf(Trigger.BlockHigh, State.AirBlock, _ => true, -2)
@@ -400,18 +347,7 @@ namespace Quantum
             // General
             machine.Configure(State.Hit);
 
-            machine.Configure(State.Any)
-                .PermitIf(Trigger.ReceiveKinematics, State.KinematicReceiver, _ => true, -1);
-
-            machine.Configure(State.KinematicReceiver)
-                .OnEntry(StartDramatics)
-                .Permit(Trigger.Finish, State.AirHit);
-
-            machine.Configure(State.TechableKinematicReceiver)
-                .PermitIf(Trigger.FrontThrow, State.ThrowTech, CanTechThrow)
-                .PermitIf(Trigger.BackThrow, State.ThrowTech, CanTechThrow)
-                .SubstateOf(State.KinematicReceiver);
-            
+            machine.Configure(State.Any);
         }
         
         

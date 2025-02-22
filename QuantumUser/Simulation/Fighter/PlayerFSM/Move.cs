@@ -40,7 +40,7 @@ namespace Quantum
             MomentumMove(f);
             PushbackMove(f);
             PushboxCollide(f);
-            KinematicReceiverMove(f);
+            // KinematicReceiverMove(f);
 
             ClampPosToWall(f);
         }
@@ -170,16 +170,16 @@ namespace Quantum
             return xCube * 3;
         }
 
-        private void KinematicReceiverMove(Frame f)
-        {
-            if (!Fsm.IsInState(State.KinematicReceiver)) return;
-
-            f.Unsafe.TryGetPointer<KinematicsData>(Util.GetOtherPlayer(f, EntityRef),
-                out var kinematicsData);
-
-            FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
-            SetPosition(f, kinematicsData->attachPosition - offset);
-        }
+        // private void KinematicReceiverMove(Frame f)
+        // {
+        //     if (!Fsm.IsInState(State.KinematicReceiver)) return;
+        //
+        //     f.Unsafe.TryGetPointer<KinematicsData>(Util.GetOtherPlayer(f, EntityRef),
+        //         out var kinematicsData);
+        //
+        //     FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
+        //     SetPosition(f, kinematicsData->attachPosition - offset);
+        // }
 
         private void ResetYPos(TriggerParams? triggerParams)
         {
@@ -224,7 +224,7 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
-            FP clampX = Fsm.IsInState(State.Air) || Fsm.IsInState(State.KinematicReceiver)
+            FP clampX = Fsm.IsInState(State.Air) // || Fsm.IsInState(State.KinematicReceiver)
                 ? WallHalfLength + 1
                 : WallHalfLength;
             if (Util.IsPlayerFacingAwayFromWall(f, EntityRef)) clampX *= _wallsSkew;

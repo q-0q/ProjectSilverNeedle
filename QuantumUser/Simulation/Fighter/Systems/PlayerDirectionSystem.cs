@@ -30,8 +30,7 @@ namespace Quantum
             if (fsm.Fsm.IsInState(PlayerFSM.State.Backdash)) return;
             if (fsm.Fsm.IsInState(PlayerFSM.State.AirDash)) return;
             if (fsm.Fsm.IsInState(PlayerFSM.State.AirBackdash)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.ThrowConnect)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.ThrowStartup)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.State.CutsceneReactor)) return;
             if (fsm.Fsm.IsInState(PlayerFSM.State.DeadFromAir)) return;
             if (fsm.Fsm.IsInState(PlayerFSM.State.DeadFromGround)) return;
             

@@ -47,7 +47,7 @@ namespace Quantum
             if (HasHitActive(f)) return FrameMeterType.Active;
             if (GetHurtType(f) == HurtType.Counter) return FrameMeterType.Startup;
             if (GetHurtType(f) == HurtType.Punish) return FrameMeterType.Recovery;
-            if (Fsm.IsInState(State.Hit) || Fsm.IsInState(State.KinematicReceiver)) return FrameMeterType.HitStun;
+            if (Fsm.IsInState(State.Hit)) return FrameMeterType.HitStun;
             if (Fsm.IsInState(State.Block)) return FrameMeterType.BlockStun;
             if (Fsm.IsInState(State.HardKnockdown)) return FrameMeterType.Oki;
             return FrameMeterType.None;

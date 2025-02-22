@@ -46,6 +46,8 @@ namespace Quantum
             public bool hardKnockdown;
             public bool groundBounce;
             public bool wallBounce;
+            
+            
         }
         
 
@@ -138,6 +140,8 @@ namespace Quantum
 
             if (type == CollisionBox.CollisionBoxType.Hurtbox)
             {
+                if (character.InvulnerableBefore.Lookup(collisionState, playerFsm) > collisionStateFrames)
+                    return new List<CollisionBoxInternal>();
                 var hurtTypeSectionGroup = character.HurtTypeSectionGroup.Lookup(collisionState, playerFsm);
                 var hurtType = HurtType.Regular;
                 if (hurtTypeSectionGroup is not null)
@@ -145,6 +149,8 @@ namespace Quantum
                 var hurtBoxCollectionSectionGroup = character.HurtboxCollectionSectionGroup.Lookup(collisionState, playerFsm);
                 if (hurtBoxCollectionSectionGroup is null) return new List<CollisionBoxInternal>();
                 var hurtboxCollection = hurtBoxCollectionSectionGroup.GetItemFromIndex(collisionStateFrames);
+                if (hurtboxCollection is null) return new List<CollisionBoxInternal>();
+
 
                 var hurtboxInternals = new List<CollisionBoxInternal>();
                 foreach (var hurtbox in hurtboxCollection.CollisionBoxes)

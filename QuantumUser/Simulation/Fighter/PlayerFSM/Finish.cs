@@ -30,18 +30,18 @@ namespace Quantum
             }
         }
         
-        public void CheckForOpponentThrowTech(Frame f)
-        {
-            EntityRef otherPlayerEntityRef = Util.GetOtherPlayer(f, EntityRef);
-            var opponentFsm = Util.GetPlayerFSM(f, otherPlayerEntityRef);
-            if (opponentFsm is null) return;
-
-            if (opponentFsm.Fsm.IsInState(State.ThrowTech))
-            {
-                var frameParam = new FrameParam() { f = f, EntityRef = EntityRef };
-                Fsm.Fire(Trigger.ThrowTech, frameParam);
-            }
-
-        }
+        // public void CheckForOpponentThrowTech(Frame f)
+        // {
+        //     EntityRef otherPlayerEntityRef = Util.GetOtherPlayer(f, EntityRef);
+        //     var opponentFsm = Util.GetPlayerFSM(f, otherPlayerEntityRef);
+        //     if (opponentFsm is null) return;
+        //
+        //     if (opponentFsm.Fsm.IsInState(State.ThrowTech))
+        //     {
+        //         var frameParam = new FrameParam() { f = f, EntityRef = EntityRef };
+        //         Fsm.Fire(Trigger.ThrowTech, frameParam);
+        //     }
+        //
+        // }
     }
 }
