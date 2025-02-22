@@ -28,7 +28,7 @@ namespace Quantum
             // Handle necessary state transitions
             fsm.DoFinish(f);
             fsm.CheckForLand(f);
-            fsm.CheckForOpponentThrowTech(f);
+            // fsm.CheckForOpponentThrowTech(f);
             InputSystem.FireFsmFromInput(f, fsm);
             
             Util.WritebackFsm(f, filter.Entity);

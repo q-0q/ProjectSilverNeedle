@@ -34,12 +34,9 @@ namespace Quantum.Types
                 return FuncDictionary[state](frameParam);
             }
 
-            foreach (var (key, value) in SuperDictionary)
+            if (Dictionary.ContainsKey(state))
             {
-                if (fsm.Fsm.IsInState(key))
-                {
-                    return value;
-                }
+                return Dictionary[state];
             }
             
             foreach (var (key, value) in SuperFuncDictionary)
@@ -50,11 +47,14 @@ namespace Quantum.Types
                 }
             }
             
-            if (Dictionary.ContainsKey(state))
+            foreach (var (key, value) in SuperDictionary)
             {
-                return Dictionary[state];
+                if (fsm.Fsm.IsInState(key))
+                {
+                    return value;
+                }
             }
-
+            
             return DefaultValue;
         }
     }

@@ -431,7 +431,7 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(airHitAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.AirHit] = airHitAnimation;
             FighterAnimation.Dictionary[PlayerFSM.State.AirHitPostGroundBounce] = airHitAnimation;
-            FighterAnimation.Dictionary[PlayerFSM.State.KinematicReceiver] = airHitAnimation;
+            // FighterAnimation.Dictionary[PlayerFSM.State.KinematicReceiver] = airHitAnimation;
             
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = standBlockAnimation;
@@ -558,6 +558,43 @@ namespace Quantum
                     new(20, PlayerFSM.HurtType.Punish)
                 }
             };
+
+            var _5MHurtboxes = new SectionGroup<CollisionBoxCollection>()
+            {
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                {
+                    new (10, new CollisionBoxCollection()
+                    {
+                        CollisionBoxes = new List<CollisionBox>()
+                        {
+                            standHurtbox
+                        }
+                    }),
+                    new (12, new CollisionBoxCollection()
+                    {
+                        CollisionBoxes = new List<CollisionBox>()
+                        {
+                            standHurtbox,
+                            new CollisionBox()
+                            {
+                                GrowHeight = false,
+                                GrowWidth = true,
+                                Width = FP.FromString("4.5"),
+                                Height = 3,
+                                PosX = 0,
+                                PosY = 5,
+                            }
+                        }
+                    }),
+                    new (10, new CollisionBoxCollection()
+                    {
+                        CollisionBoxes = new List<CollisionBox>()
+                        {
+                            standHurtbox
+                        }
+                    }),
+                }
+            };
             
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
             FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
@@ -566,6 +603,7 @@ namespace Quantum
             CancellableAfter.Dictionary[StickTwoState._5M] = 14;
             WhiffCancellable.Dictionary[StickTwoState._5M] = false;
             HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
+            HurtboxCollectionSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtboxes;
             
             var _2MAnimation = new FighterAnimation()
             {

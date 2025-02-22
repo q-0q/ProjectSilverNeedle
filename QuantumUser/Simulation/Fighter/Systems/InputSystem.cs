@@ -434,14 +434,8 @@ namespace Quantum
         {
             ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
-            if (type == InputType.D)
-            {
-                fsm.Fsm.Fire(commandDirection is 1 or 4 or 7 ? PlayerFSM.Trigger.BackThrow : PlayerFSM.Trigger.FrontThrow, param);
-            }
-            else
-            {
-                fsm.Fsm.Fire(PlayerFSM.Trigger.ButtonAndDirection, param);
-            }
+            fsm.Fsm.Fire(PlayerFSM.Trigger.ButtonAndDirection, param);
+
             
         }
 
