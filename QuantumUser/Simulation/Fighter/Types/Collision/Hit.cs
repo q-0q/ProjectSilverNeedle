@@ -43,5 +43,7 @@ namespace Quantum.Types.Collision
         
         public HitType Type = HitType.Mid;
         public SectionGroup<CollisionBoxCollection> HitboxCollections;
+
+        public int TriggerCutscene = -1;
     }
 }

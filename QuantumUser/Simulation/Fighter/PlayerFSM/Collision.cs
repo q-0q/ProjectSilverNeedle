@@ -46,8 +46,10 @@ namespace Quantum
             public bool hardKnockdown;
             public bool groundBounce;
             public bool wallBounce;
-            
-            
+
+            public int triggerCutscene;
+
+
         }
         
 
@@ -211,7 +213,9 @@ namespace Quantum
                         launches = hit.Launches,
                         hardKnockdown = hit.HardKnockdown,
                         groundBounce = hit.GroundBounce,
-                        wallBounce = hit.WallBounce
+                        wallBounce = hit.WallBounce,
+                        
+                        triggerCutscene = hit.TriggerCutscene
                     };
                     
                     hitboxInternals.Add(_internal);
@@ -470,7 +474,6 @@ namespace Quantum
         private void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
             
-            Debug.Log("Collision invoked");
             Hit.HitType hitType = hitboxData.HitType;
             HurtType hurtType = hurtboxData.HurtType;
             var isBlocking = IsBlockingHitType(f, hitType);
@@ -526,9 +529,6 @@ namespace Quantum
             HurtType hurtType, FPVector2 location)
         {
             
-
-            
-            
             EndSlowdown(new FrameParam() { f = f, EntityRef = EntityRef});
             var animationEntityEnum = hurtType is HurtType.Counter
                 ? AnimationEntities.AnimationEntityEnum.Counter
@@ -581,9 +581,19 @@ namespace Quantum
             
             InvokeStun(f, stun);
             HitstopSystem.EnqueueHitstop(f, stop);
+            
+            HandleCutsceneTrigger(f, hurtboxData, hitboxData);
 
             if (healthData->health <= 0) InvokePlayerDeath(f);
         }
+
+        private void HandleCutsceneTrigger(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData)
+        {
+             if (hitboxData.triggerCutscene == -1) return;
+             
+             Debug.Log("Cutscene " + hitboxData.triggerCutscene + " triggered frame " + f.Number);
+        }
+
 
         private void InvokePlayerDeath(Frame f)
         {
@@ -596,6 +606,7 @@ namespace Quantum
             
             Util.IncrementScore(f, Util.GetOtherPlayer(f, EntityRef));
         }
+        
 
         private void InvokeStun(Frame f, int amount)
         {

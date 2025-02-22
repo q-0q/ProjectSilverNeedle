@@ -65,7 +65,12 @@ namespace Quantum
             _5M,
             _2M,
             _2H,
-        } 
+        }
+        
+        public enum StickTwoCutscenes
+        {
+            Test
+        }
 
         public StickTwo()
         {
@@ -521,9 +526,6 @@ namespace Quantum
                     new Tuple<int, Hit>(5, new Hit()
                     {
                         Level = 0,
-                        // HardKnockdown = true,
-                        // Damage = 100,
-                        // Launches = true,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -623,6 +625,7 @@ namespace Quantum
                     {
                         Level = 2,
                         Type = Hit.HitType.High,
+                        TriggerCutscene = (int)StickTwoCutscenes.Test,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
