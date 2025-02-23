@@ -432,7 +432,6 @@ namespace Quantum
             var frameParam = (FrameParam)triggerParams;
             frameParam.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             return trajectoryData->hardKnockdown;
-
         }
         
         private bool PlayerIsDead(TriggerParams? triggerParams)

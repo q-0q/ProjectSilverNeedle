@@ -8,5 +8,6 @@ namespace Quantum.Types
         public SectionGroup<FPVector2> ReactorPositionSectionGroup = null;
         public int ReactorDuration = 0;
         public bool Techable = false;
+        public bool HardKnockdown = true;
     }
 }
