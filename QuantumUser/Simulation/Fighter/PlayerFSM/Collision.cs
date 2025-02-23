@@ -616,6 +616,10 @@ namespace Quantum
             hurtboxPlayerFsm.Fsm.Jump(State.CutsceneReactor, new FrameParam() { f = f, EntityRef = hurtboxInternal.source } );
             hitboxPlayerFsm.Fsm.Jump(cutscene.InitiatorState, new FrameParam() { f = f, EntityRef = hitboxInternal.source } );
 
+            
+            f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
+            trajectoryData->hardKnockdown = cutscene.HardKnockdown;
+            
             f.Unsafe.TryGetPointer<CutsceneData>(hurtboxInternal.source, out var cutsceneData);
             cutsceneData->initiator = hitboxInternal.source;
             cutsceneData->cutsceneIndex = cutsceneIndex;

@@ -15,6 +15,7 @@ namespace Quantum
             public static int _5L;
             public static int _2L;
             public static int _5M;
+            public static int HeatKnuckle;
             public static int _2M;
             public static int _5H;
             public static int _2H;
@@ -195,6 +196,7 @@ namespace Quantum
             HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Stand] = standHurtboxCollectionSectionGroup;
             HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Crouch] = crouchHurtboxCollection;
             HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Air] = airHitHurtboxCollection;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.CutsceneReactor] = airHitHurtboxCollection;
 
             
             // Pushboxes
@@ -526,7 +528,6 @@ namespace Quantum
                     new Tuple<int, Hit>(5, new Hit()
                     {
                         Level = 0,
-                        TriggerCutscene = (int)StickTwoCutscenes.Test,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -607,9 +608,9 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FPVector2>>()
                     {
-                        new (8, new FPVector2(3, 6)),
-                        new (32, new FPVector2(3, 7)),
-                        new (15, new FPVector2(5, 0)),
+                        new (8, new FPVector2(FP.FromString("2.5"), 7)),
+                        new (32, new FPVector2(FP.FromString("2.5"), 8)),
+                        new (15, new FPVector2(3, 0)),
                     }
                 }
             };
@@ -624,6 +625,50 @@ namespace Quantum
             WhiffCancellable.Dictionary[StickTwoState._5M] = false;
             HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
             HurtboxCollectionSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtboxes;
+            
+            
+            var HeatKnuckleHits = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new Tuple<int, Hit>(10, null),
+                    new Tuple<int, Hit>(5, new Hit()
+                    {
+                        Level = 0,
+                        TriggerCutscene = (int)StickTwoCutscenes.Test,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowHeight = false,
+                                            GrowWidth = true,
+                                            Width = 4,
+                                            Height = 2,
+                                            PosX = 0,
+                                            PosY = 5,
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    new Tuple<int, Hit>(10, null)
+                }
+            };
+            
+            FighterAnimation.Dictionary[StickTwoState.HeatKnuckle] = _5MAnimation;
+            Duration.Dictionary[StickTwoState.HeatKnuckle] = _5MAnimation.SectionGroup.Duration();
+            HitSectionGroup.Dictionary[StickTwoState.HeatKnuckle] = HeatKnuckleHits;
+            CancellableAfter.Dictionary[StickTwoState.HeatKnuckle] = 14;
+            WhiffCancellable.Dictionary[StickTwoState.HeatKnuckle] = false;
+            HurtTypeSectionGroup.Dictionary[StickTwoState.HeatKnuckle] = _5MHurtTypes;
+            HurtboxCollectionSectionGroup.Dictionary[StickTwoState.HeatKnuckle] = _5MHurtboxes;
             
             var _2MAnimation = new FighterAnimation()
             {
@@ -758,9 +803,48 @@ namespace Quantum
                      AutoFromAnimationPath = true
                 }
             };
+
+            var frontThrowHit = new Hit()
+            {
+                Level = 0,
+                Type = Hit.HitType.Mid,
+                HardKnockdown = true,
+                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new Tuple<int, CollisionBoxCollection>(8, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new CollisionBox()
+                                {
+                                    GrowHeight = false,
+                                    GrowWidth = false,
+                                    Width = 2,
+                                    Height = 2,
+                                    PosX = 2,
+                                    PosY = 6
+                                }
+                            }
+                        })
+                    }
+                }
+            };
+            var frontThrowHits = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new Tuple<int, Hit>(15, null),
+                    new Tuple<int, Hit>(2, frontThrowHit),
+                    new Tuple<int, Hit>(2, frontThrowHit),
+                    new Tuple<int, Hit>(20, null)
+                }
+            };
             
             Util.AutoSetupFromAnimationPath(frontThrowAnimation, this);
             FighterAnimation.Dictionary[StickTwoState.FrontThrow] = frontThrowAnimation;
+            HitSectionGroup.Dictionary[StickTwoState.FrontThrow] = frontThrowHits;
             Duration.Dictionary[StickTwoState.FrontThrow] = frontThrowAnimation.SectionGroup.Duration();
             
         }
@@ -784,6 +868,23 @@ namespace Quantum
             };
             
             ConfigureAction(playerFsm, _5M);
+            
+            ActionConfig heatKnuckle = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = true,
+                GroundOk = true,
+                InputType = InputSystem.InputType.K,
+                JumpCancellable = true,
+                InputWeight = 0,
+                RawOk = true,
+                State = StickTwoState.HeatKnuckle
+            };
+            
+            ConfigureAction(playerFsm, heatKnuckle);
             
             ActionConfig _2M = new ActionConfig()
             {
