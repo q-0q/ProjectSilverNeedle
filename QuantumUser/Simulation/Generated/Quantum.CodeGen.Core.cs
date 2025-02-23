@@ -796,6 +796,28 @@ namespace Quantum {
     }
   }
   [StructLayout(LayoutKind.Explicit)]
+  public unsafe partial struct CutsceneData : Quantum.IComponent {
+    public const Int32 SIZE = 16;
+    public const Int32 ALIGNMENT = 8;
+    [FieldOffset(8)]
+    public EntityRef initiator;
+    [FieldOffset(0)]
+    public Int32 cutsceneIndex;
+    public override Int32 GetHashCode() {
+      unchecked { 
+        var hash = 18049;
+        hash = hash * 31 + initiator.GetHashCode();
+        hash = hash * 31 + cutsceneIndex.GetHashCode();
+        return hash;
+      }
+    }
+    public static void Serialize(void* ptr, FrameSerializer serializer) {
+        var p = (CutsceneData*)ptr;
+        serializer.Stream.Serialize(&p->cutsceneIndex);
+        EntityRef.Serialize(&p->initiator, serializer);
+    }
+  }
+  [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct DramaticData : Quantum.IComponent {
     public const Int32 SIZE = 4;
     public const Int32 ALIGNMENT = 4;
@@ -1314,6 +1336,8 @@ namespace Quantum {
       BuildSignalsArrayOnComponentRemoved<Quantum.ComboData>();
       BuildSignalsArrayOnComponentAdded<Quantum.CpuControllerData>();
       BuildSignalsArrayOnComponentRemoved<Quantum.CpuControllerData>();
+      BuildSignalsArrayOnComponentAdded<Quantum.CutsceneData>();
+      BuildSignalsArrayOnComponentRemoved<Quantum.CutsceneData>();
       BuildSignalsArrayOnComponentAdded<Quantum.DramaticData>();
       BuildSignalsArrayOnComponentRemoved<Quantum.DramaticData>();
       BuildSignalsArrayOnComponentAdded<Quantum.FSMData>();
@@ -1447,6 +1471,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(ComponentPrototypeRef), ComponentPrototypeRef.SIZE);
       typeRegistry.Register(typeof(ComponentTypeRef), ComponentTypeRef.SIZE);
       typeRegistry.Register(typeof(Quantum.CpuControllerData), Quantum.CpuControllerData.SIZE);
+      typeRegistry.Register(typeof(Quantum.CutsceneData), Quantum.CutsceneData.SIZE);
       typeRegistry.Register(typeof(DistanceJoint), DistanceJoint.SIZE);
       typeRegistry.Register(typeof(DistanceJoint3D), DistanceJoint3D.SIZE);
       typeRegistry.Register(typeof(Quantum.DramaticData), Quantum.DramaticData.SIZE);
@@ -1530,13 +1555,14 @@ namespace Quantum {
       typeRegistry.Register(typeof(Quantum._globals_), Quantum._globals_.SIZE);
     }
     static partial void InitComponentTypeIdGen() {
-      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 24)
+      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 25)
         .AddBuiltInComponents()
         .Add<Quantum.AnimationData>(Quantum.AnimationData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AnimationEntityData>(Quantum.AnimationEntityData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.CollisionBoxDatax>(Quantum.CollisionBoxDatax.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.ComboData>(Quantum.ComboData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.CpuControllerData>(Quantum.CpuControllerData.Serialize, null, null, ComponentFlags.None)
+        .Add<Quantum.CutsceneData>(Quantum.CutsceneData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.DramaticData>(Quantum.DramaticData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.FSMData>(Quantum.FSMData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.FrameMeterData>(Quantum.FrameMeterData.Serialize, null, Quantum.FrameMeterData.OnRemoved, ComponentFlags.None)

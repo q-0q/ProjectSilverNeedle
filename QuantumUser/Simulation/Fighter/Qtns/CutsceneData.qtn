@@ -1,0 +1,5 @@
+component CutsceneData
+{
+    entity_ref initiator;
+    int cutsceneIndex;
+}

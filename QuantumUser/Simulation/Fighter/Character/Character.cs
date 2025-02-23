@@ -54,6 +54,7 @@ namespace Quantum
             Duration.DefaultValue = 0;
             Duration.SuperFuncDictionary[PlayerFSM.State.Hit] = GetStun;
             Duration.SuperFuncDictionary[PlayerFSM.State.Block] = GetStun;
+            Duration.SuperFuncDictionary[PlayerFSM.State.CutsceneReactor] = GetCutsceneReactorDuration;
             Duration.Dictionary[PlayerFSM.State.HardKnockdown] = 50;
             Duration.Dictionary[PlayerFSM.State.SoftKnockdown] = 20;
 
@@ -81,6 +82,7 @@ namespace Quantum
             AttachPositionSectionGroup = new StateMap<SectionGroup<FPVector2>>();
             InvulnerableBefore = new StateMap<int>();
             InvulnerableBefore.DefaultValue = 0;
+            Cutscenes = new Dictionary<int, Cutscene>();
             return;
             
             
@@ -92,6 +94,13 @@ namespace Quantum
                 frameParam.f.Unsafe.TryGetPointer<StunData>(frameParam.EntityRef, out var stunData);
                 var stun = stunData->stun;
                 return stun;
+            }
+
+            int GetCutsceneReactorDuration(FrameParam frameParam)
+            {
+                if (frameParam is null) return 0;
+                var cutscene = Util.GetActiveCutscene(frameParam.f, frameParam.EntityRef);
+                return cutscene?.ReactorDuration ?? 0;
             }
         }
         
@@ -110,6 +119,7 @@ namespace Quantum
             public bool Crouching = false;
             public bool Aerial = false;
             public int InputWeight = 0;
+            public bool IsCutscene = false;
         }
         
         // FSM helper functions
@@ -117,7 +127,12 @@ namespace Quantum
         
         protected void ConfigureAction(PlayerFSM fsm, ActionConfig actionConfig)
         {
+            fsm.Fsm.Configure(actionConfig.State)
+                .SubstateOf(actionConfig.Crouching ? PlayerFSM.State.Crouch : PlayerFSM.State.Stand)
+                .SubstateOf(actionConfig.Aerial ? PlayerFSM.State.AirAction : PlayerFSM.State.GroundAction);
 
+            if (actionConfig.IsCutscene) return;
+            
             if (actionConfig.RawOk)
             {
                 if (actionConfig.GroundOk)
@@ -131,11 +146,7 @@ namespace Quantum
                     AllowRawFromState(fsm, actionConfig, PlayerFSM.State.AirDash);
                 }
             }
-
-            fsm.Fsm.Configure(actionConfig.State)
-                .SubstateOf(actionConfig.Crouching ? PlayerFSM.State.Crouch : PlayerFSM.State.Stand)
-                .SubstateOf(actionConfig.Aerial ? PlayerFSM.State.AirAction : PlayerFSM.State.GroundAction);
-
+            
             if (actionConfig.JumpCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)

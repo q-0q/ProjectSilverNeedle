@@ -210,6 +210,24 @@ namespace Quantum
                 sectionGroup.Sections.Add(new Tuple<int, int>(1, i));
             }
         }
+
+
+        public static Cutscene GetActiveCutscene(Frame f, EntityRef entityRef)
+        {
+            f.Unsafe.TryGetPointer<CutsceneData>(entityRef, out var cutsceneData);
+            var index = cutsceneData->cutsceneIndex;
+            var character = Characters.GetPlayerCharacter(f, cutsceneData->initiator);
+            
+            try
+            {
+                return character.Cutscenes[index];
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("CutsceneData index does not map to a cutscene");
+                return null;
+            }
+        }
         
         // Old Action functions that have been migrated
 
