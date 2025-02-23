@@ -35,12 +35,15 @@ namespace Quantum
 
         public void Move(Frame f)
         {
+            CutsceneReactorMove(f);
+            
+            if (HitstopSystem.IsHitstopActive(f)) return;
+            
             FPVector2 movementThisFrame = ComputeMovementThisFrame(f);
             ApplyUnflippedMovement(f, movementThisFrame);
             MomentumMove(f);
             PushbackMove(f);
             PushboxCollide(f);
-            // KinematicReceiverMove(f);
 
             ClampPosToWall(f);
         }
@@ -170,16 +173,20 @@ namespace Quantum
             return xCube * 3;
         }
 
-        // private void KinematicReceiverMove(Frame f)
-        // {
-        //     if (!Fsm.IsInState(State.KinematicReceiver)) return;
-        //
-        //     f.Unsafe.TryGetPointer<KinematicsData>(Util.GetOtherPlayer(f, EntityRef),
-        //         out var kinematicsData);
-        //
-        //     FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
-        //     SetPosition(f, kinematicsData->attachPosition - offset);
-        // }
+        private void CutsceneReactorMove(Frame f)
+        {
+            if (!Fsm.IsInState(State.CutsceneReactor)) return;
+
+            var cutscene = Util.GetActiveCutscene(f, EntityRef);
+
+            f.Unsafe.TryGetPointer<CutsceneData>(EntityRef, out var cutsceneData);
+            f.Unsafe.TryGetPointer<Transform3D>(cutsceneData->initiator, out var transform3D);
+            var initiatorPos = transform3D->Position.XY;
+            var currentCutscenePos = cutscene.ReactorPositionSectionGroup.GetCurrentItem(f, this);
+            if (!PlayerDirectionSystem.IsFacingRight(f, cutsceneData->initiator)) currentCutscenePos.X *= -1;
+            FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
+            SetPosition(f, (initiatorPos + currentCutscenePos) - offset);
+        }
 
         private void ResetYPos(TriggerParams? triggerParams)
         {
