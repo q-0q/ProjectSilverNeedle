@@ -155,6 +155,7 @@ namespace Quantum
                 frames = new QListPtr<int>(),
             });
             f.Add(entityRef, new DramaticData());
+            f.Add(entityRef, new CutsceneData());
             f.Add(entityRef, new ScoreData() { score = 0 });
             
             ResetPlayer(f, entityRef);
@@ -223,6 +224,10 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->remaining = 0;
+            
+            f.Unsafe.TryGetPointer<CutsceneData>(entityRef, out var cutsceneData);
+            cutsceneData->initiator = EntityRef.None;
+            cutsceneData->cutsceneIndex = -1;
 
             f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
             var player = playerLink->Player;

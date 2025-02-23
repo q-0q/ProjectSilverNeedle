@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -47,7 +48,7 @@ namespace Quantum
             public bool groundBounce;
             public bool wallBounce;
 
-            public int triggerCutscene;
+            public int cutsceneIndex;
 
 
         }
@@ -215,7 +216,7 @@ namespace Quantum
                         groundBounce = hit.GroundBounce,
                         wallBounce = hit.WallBounce,
                         
-                        triggerCutscene = hit.TriggerCutscene
+                        cutsceneIndex = hit.TriggerCutscene
                     };
                     
                     hitboxInternals.Add(_internal);
@@ -587,11 +588,40 @@ namespace Quantum
             if (healthData->health <= 0) InvokePlayerDeath(f);
         }
 
-        private void HandleCutsceneTrigger(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData)
+        private void HandleCutsceneTrigger(Frame f, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal)
         {
-             if (hitboxData.triggerCutscene == -1) return;
-             
-             Debug.Log("Cutscene " + hitboxData.triggerCutscene + " triggered frame " + f.Number);
+            var cutsceneIndex = hitboxInternal.cutsceneIndex;
+            if (cutsceneIndex == -1) return;
+
+            var border = "=====================================================================================";
+            Debug.Log(border);
+            Debug.Log(border);
+            Debug.Log("Cutscene " + cutsceneIndex + " triggered frame " + f.Number);
+            
+            var hurtboxPlayerFsm = Util.GetPlayerFSM(f, hurtboxInternal.source);
+            var hitboxPlayerFsm = Util.GetPlayerFSM(f, hitboxInternal.source);
+
+            Cutscene cutscene;
+            
+            try
+            {
+                cutscene = Characters.GetPlayerCharacter(f, hitboxInternal.source).Cutscenes[cutsceneIndex];
+            }
+            catch (Exception)
+            {
+                Debug.LogError("You tried to trigger a cutscene index that has no cutscene mapped");
+                throw;
+            }
+            
+            hurtboxPlayerFsm.Fsm.Jump(State.CutsceneReactor, new FrameParam() { f = f, EntityRef = hurtboxInternal.source } );
+            hitboxPlayerFsm.Fsm.Jump(cutscene.InitiatorState, new FrameParam() { f = f, EntityRef = hitboxInternal.source } );
+
+            f.Unsafe.TryGetPointer<CutsceneData>(hurtboxInternal.source, out var cutsceneData);
+            cutsceneData->initiator = hitboxInternal.source;
+            cutsceneData->cutsceneIndex = cutsceneIndex;
+            
+            // Let's remember this, hopefully it wont give any weird issues.
+            Util.WritebackFsm(f, hitboxInternal.source);
         }
 
 

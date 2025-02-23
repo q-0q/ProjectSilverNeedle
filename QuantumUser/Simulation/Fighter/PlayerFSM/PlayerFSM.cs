@@ -348,6 +348,9 @@ namespace Quantum
             machine.Configure(State.Hit);
 
             machine.Configure(State.Any);
+
+            machine.Configure(State.CutsceneReactor)
+                .Permit(Trigger.Finish, State.AirHit);
         }
         
         

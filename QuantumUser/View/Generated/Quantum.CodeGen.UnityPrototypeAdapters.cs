@@ -99,6 +99,19 @@ namespace Quantum.Prototypes.Unity {
     }
   }
   [System.SerializableAttribute()]
+  public unsafe partial class CutsceneDataPrototype : Quantum.QuantumUnityPrototypeAdapter<Quantum.Prototypes.CutsceneDataPrototype> {
+    public Quantum.QuantumEntityPrototype initiator;
+    public Int32 cutsceneIndex;
+    partial void ConvertUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.CutsceneDataPrototype prototype);
+    public override Quantum.Prototypes.CutsceneDataPrototype Convert(Quantum.QuantumEntityPrototypeConverter converter) {
+      var result = new Quantum.Prototypes.CutsceneDataPrototype();
+      converter.Convert(this.initiator, out result.initiator);
+      converter.Convert(this.cutsceneIndex, out result.cutsceneIndex);
+      ConvertUser(converter, ref result);
+      return result;
+    }
+  }
+  [System.SerializableAttribute()]
   public unsafe partial class HitEntitiesTrackerPrototype : Quantum.QuantumUnityPrototypeAdapter<Quantum.Prototypes.HitEntitiesTrackerPrototype> {
     [DynamicCollectionAttribute()]
     public Quantum.QuantumEntityPrototype[] HitEntities = {};

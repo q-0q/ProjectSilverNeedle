@@ -191,6 +191,21 @@ namespace Quantum.Prototypes {
     }
   }
   [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.CutsceneData))]
+  public unsafe class CutsceneDataPrototype : ComponentPrototype<Quantum.CutsceneData> {
+    public MapEntityId initiator;
+    public Int32 cutsceneIndex;
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.CutsceneData component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.CutsceneData result, in PrototypeMaterializationContext context = default) {
+        PrototypeValidator.FindMapEntity(this.initiator, in context, out result.initiator);
+        result.cutsceneIndex = this.cutsceneIndex;
+    }
+  }
+  [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.DramaticData))]
   public unsafe partial class DramaticDataPrototype : ComponentPrototype<Quantum.DramaticData> {
     public Int32 remaining;

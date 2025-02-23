@@ -28,7 +28,7 @@ namespace Quantum
             public static int _JM;
             public static int _JH;
             public static int _JS;
-            public static int Meditate;
+            public static int FrontThrow;
         }
 
         public enum StickTwoAnimationPath
@@ -526,6 +526,7 @@ namespace Quantum
                     new Tuple<int, Hit>(5, new Hit()
                     {
                         Level = 0,
+                        TriggerCutscene = (int)StickTwoCutscenes.Test,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -597,6 +598,14 @@ namespace Quantum
                     }),
                 }
             };
+
+            Cutscene testCutscene = new Cutscene()
+            {
+                InitiatorState = StickTwoState.FrontThrow,
+                ReactorDuration = 45,
+            };
+
+            Cutscenes[(int)StickTwoCutscenes.Test] = testCutscene;
             
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
             FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
@@ -625,7 +634,6 @@ namespace Quantum
                     {
                         Level = 2,
                         Type = Hit.HitType.High,
-                        TriggerCutscene = (int)StickTwoCutscenes.Test,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -733,7 +741,7 @@ namespace Quantum
             Duration.Dictionary[StickTwoState._2H] = _2HAnimation.SectionGroup.Duration();
             HitSectionGroup.Dictionary[StickTwoState._2H] = _2HHits;
 
-            var meditateAnimation = new FighterAnimation()
+            var frontThrowAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.FrontThrow,
                 SectionGroup = new SectionGroup<int>()
@@ -742,9 +750,9 @@ namespace Quantum
                 }
             };
             
-            Util.AutoSetupFromAnimationPath(meditateAnimation, this);
-            FighterAnimation.Dictionary[StickTwoState.Meditate] = meditateAnimation;
-            Duration.Dictionary[StickTwoState.Meditate] = meditateAnimation.SectionGroup.Duration();
+            Util.AutoSetupFromAnimationPath(frontThrowAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState.FrontThrow] = frontThrowAnimation;
+            Duration.Dictionary[StickTwoState.FrontThrow] = frontThrowAnimation.SectionGroup.Duration();
             
         }
         
@@ -805,19 +813,14 @@ namespace Quantum
             
             ConfigureAction(playerFsm, _2H);
 
-            ActionConfig Meditate = new ActionConfig()
+            ActionConfig frontThrow = new ActionConfig()
             {
                 Aerial = false,
-                AirOk = false,
-                CommandDirection = 5,
-                Crouching = false,
-                DashCancellable = false,
-                GroundOk = true,
-                InputType = InputSystem.InputType.K,
-                State = StickTwoState.Meditate
+                State = StickTwoState.FrontThrow,
+                IsCutscene = true
             };
             
-            ConfigureAction(playerFsm, Meditate);
+            ConfigureAction(playerFsm, frontThrow);
         }
     }
 }
