@@ -436,7 +436,7 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(airHitAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.AirHit] = airHitAnimation;
             FighterAnimation.Dictionary[PlayerFSM.State.AirHitPostGroundBounce] = airHitAnimation;
-            // FighterAnimation.Dictionary[PlayerFSM.State.KinematicReceiver] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.State.CutsceneReactor] = airHitAnimation;
             
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = standBlockAnimation;
@@ -603,6 +603,15 @@ namespace Quantum
             {
                 InitiatorState = StickTwoState.FrontThrow,
                 ReactorDuration = 45,
+                ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
+                {
+                    Sections = new List<Tuple<int, FPVector2>>()
+                    {
+                        new (8, new FPVector2(3, 6)),
+                        new (32, new FPVector2(3, 7)),
+                        new (15, new FPVector2(5, 0)),
+                    }
+                }
             };
 
             Cutscenes[(int)StickTwoCutscenes.Test] = testCutscene;

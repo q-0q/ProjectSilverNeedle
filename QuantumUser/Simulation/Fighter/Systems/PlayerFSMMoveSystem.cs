@@ -24,7 +24,6 @@ namespace Quantum
             PlayerFSM fsm = Util.GetPlayerFSM(f, filter.Entity);
             if (fsm is null) return;
             
-            if (HitstopSystem.IsHitstopActive(f)) return;
             
             fsm.Move(f);
             
