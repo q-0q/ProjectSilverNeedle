@@ -645,7 +645,7 @@ MonoBehaviour:
     forceCounter:
       Value: 0
     doAction:
-      Value: 0
+      Value: 1
     doJump:
       Value: 0
     block:

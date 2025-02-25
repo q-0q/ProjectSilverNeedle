@@ -15,7 +15,6 @@ namespace Quantum
             public static int _5L;
             public static int _2L;
             public static int _5M;
-            public static int HeatKnuckle;
             public static int _2M;
             public static int _5H;
             public static int _2H;
@@ -29,7 +28,7 @@ namespace Quantum
             public static int _JM;
             public static int _JH;
             public static int _JS;
-            public static int FrontThrow;
+            public static int ForwardThrowCutscene;
         }
 
         public enum StickTwoAnimationPath
@@ -43,10 +42,9 @@ namespace Quantum
             Backdash,
             Airdash,
             AirBackdash,
-            ThrowStartup,
-            FrontThrow,
-            BackThrow,
-            ThrowWhiff,
+            Throw,
+            ForwardThrowCutscene,
+            BackThrowCutscene,
 
             StandHitHigh,
             StandHitLow,
@@ -68,9 +66,9 @@ namespace Quantum
             _2H,
         }
         
-        public enum StickTwoCutscenes
+        public class StickTwoCutscenes : PlayerFSM.CutsceneIndexes
         {
-            Test
+            // public static int Test;
         }
 
         public StickTwo()
@@ -400,6 +398,15 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
+
+            var throwAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.Throw,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             
             Util.AutoSetupFromAnimationPath(standAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.StandActionable] = standAnimation;
@@ -457,6 +464,9 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(deadFromGroundAnimation, this);
             FighterAnimation.Dictionary[PlayerFSM.State.DeadFromGround] = deadFromGroundAnimation;
+            
+            Util.AutoSetupFromAnimationPath(throwAnimation, this);
+            FighterAnimation.SuperDictionary[PlayerFSM.State.Throw] = throwAnimation;
             
             // Basic movement
             
@@ -600,22 +610,23 @@ namespace Quantum
                 }
             };
 
-            Cutscene testCutscene = new Cutscene()
+            Cutscene forwardThrowCutscene = new Cutscene()
             {
-                InitiatorState = StickTwoState.FrontThrow,
-                ReactorDuration = 45,
+                InitiatorState = StickTwoState.ForwardThrowCutscene,
+                ReactorDuration = 33,
                 ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
                 {
                     Sections = new List<Tuple<int, FPVector2>>()
                     {
-                        new (8, new FPVector2(FP.FromString("2.5"), 7)),
-                        new (32, new FPVector2(FP.FromString("2.5"), 8)),
+                        new (8, new FPVector2(FP.FromString("2.5"), FP.FromString("7.5"))),
+                        new (12, new FPVector2(FP.FromString("2.5"), 8)),
+                        new (10, new FPVector2(FP.FromString("2.5"), FP.FromString("7"))),
                         new (15, new FPVector2(3, 0)),
                     }
                 }
             };
 
-            Cutscenes[(int)StickTwoCutscenes.Test] = testCutscene;
+            Cutscenes[PlayerFSM.CutsceneIndexes.ForwardThrow] = forwardThrowCutscene;
             
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
             FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
@@ -626,49 +637,6 @@ namespace Quantum
             HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
             HurtboxCollectionSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtboxes;
             
-            
-            var HeatKnuckleHits = new SectionGroup<Hit>()
-            {
-                Sections = new List<Tuple<int, Hit>>()
-                {
-                    new Tuple<int, Hit>(10, null),
-                    new Tuple<int, Hit>(5, new Hit()
-                    {
-                        Level = 0,
-                        TriggerCutscene = (int)StickTwoCutscenes.Test,
-                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                        {
-                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                            {
-                                new Tuple<int, CollisionBoxCollection>(10, new CollisionBoxCollection()
-                                {
-                                    CollisionBoxes = new List<CollisionBox>()
-                                    {
-                                        new CollisionBox()
-                                        {
-                                            GrowHeight = false,
-                                            GrowWidth = true,
-                                            Width = 4,
-                                            Height = 2,
-                                            PosX = 0,
-                                            PosY = 5,
-                                        }
-                                    }
-                                })
-                            }
-                        }
-                    }),
-                    new Tuple<int, Hit>(10, null)
-                }
-            };
-            
-            FighterAnimation.Dictionary[StickTwoState.HeatKnuckle] = _5MAnimation;
-            Duration.Dictionary[StickTwoState.HeatKnuckle] = _5MAnimation.SectionGroup.Duration();
-            HitSectionGroup.Dictionary[StickTwoState.HeatKnuckle] = HeatKnuckleHits;
-            CancellableAfter.Dictionary[StickTwoState.HeatKnuckle] = 14;
-            WhiffCancellable.Dictionary[StickTwoState.HeatKnuckle] = false;
-            HurtTypeSectionGroup.Dictionary[StickTwoState.HeatKnuckle] = _5MHurtTypes;
-            HurtboxCollectionSectionGroup.Dictionary[StickTwoState.HeatKnuckle] = _5MHurtboxes;
             
             var _2MAnimation = new FighterAnimation()
             {
@@ -795,16 +763,16 @@ namespace Quantum
             Duration.Dictionary[StickTwoState._2H] = _2HAnimation.SectionGroup.Duration();
             HitSectionGroup.Dictionary[StickTwoState._2H] = _2HHits;
 
-            var frontThrowAnimation = new FighterAnimation()
+            var frontThrowCutsceneAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.FrontThrow,
+                Path = (int)StickTwoAnimationPath.ForwardThrowCutscene,
                 SectionGroup = new SectionGroup<int>()
                 {
                      AutoFromAnimationPath = true
                 }
             };
 
-            var frontThrowHit = new Hit()
+            var frontThrowCutsceneHit = new Hit()
             {
                 Level = 0,
                 Type = Hit.HitType.Mid,
@@ -831,21 +799,20 @@ namespace Quantum
                     }
                 }
             };
-            var frontThrowHits = new SectionGroup<Hit>()
+            var frontThrowCutsceneHits = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
                     new Tuple<int, Hit>(15, null),
-                    new Tuple<int, Hit>(2, frontThrowHit),
-                    new Tuple<int, Hit>(2, frontThrowHit),
+                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
                     new Tuple<int, Hit>(20, null)
                 }
             };
             
-            Util.AutoSetupFromAnimationPath(frontThrowAnimation, this);
-            FighterAnimation.Dictionary[StickTwoState.FrontThrow] = frontThrowAnimation;
-            HitSectionGroup.Dictionary[StickTwoState.FrontThrow] = frontThrowHits;
-            Duration.Dictionary[StickTwoState.FrontThrow] = frontThrowAnimation.SectionGroup.Duration();
+            Util.AutoSetupFromAnimationPath(frontThrowCutsceneAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation;
+            // HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneHits;
+            Duration.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation.SectionGroup.Duration();
             
         }
         
@@ -881,7 +848,6 @@ namespace Quantum
                 JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState.HeatKnuckle
             };
             
             ConfigureAction(playerFsm, heatKnuckle);
@@ -926,7 +892,7 @@ namespace Quantum
             ActionConfig frontThrow = new ActionConfig()
             {
                 Aerial = false,
-                State = StickTwoState.FrontThrow,
+                State = StickTwoState.ForwardThrowCutscene,
                 IsCutscene = true
             };
             

@@ -140,7 +140,7 @@ namespace Quantum
                 ? interactionControllerData.player0CommandDirection
                 : interactionControllerData.player1CommandDirection;
             
-            TryFireActionForFsm(f, fsm, type, commandDirection);
+            FireButtonAndDirectionTrigger(f, fsm, type, commandDirection);
         }
 
         private static void FireCpuAction(Frame f, PlayerFSM fsm)
@@ -150,7 +150,7 @@ namespace Quantum
                 if (!cpuControllerData.doAction) return;
                 var type = (InputType)cpuControllerData.inputType;
                 var commandDirection = cpuControllerData.commandDirection;
-                TryFireActionForFsm(f, fsm, type, commandDirection);
+                FireButtonAndDirectionTrigger(f, fsm, type, commandDirection);
                 return;
             }
         }
@@ -161,7 +161,8 @@ namespace Quantum
             {
                 if (type == InputType.Jump) return;
                 int commandDirection = GetBufferDirection(f, fsm.EntityRef);
-                TryFireActionForFsm(f, fsm, type, commandDirection);
+                FireThrowTrigger(f, fsm, type, commandDirection);
+                FireButtonAndDirectionTrigger(f, fsm, type, commandDirection);
             }
         }
         
@@ -430,13 +431,24 @@ namespace Quantum
             return inputBuffer->length != 0;
         }
 
-        private static void TryFireActionForFsm(Frame f, PlayerFSM fsm, InputType type, int commandDirection)
+        private static void FireButtonAndDirectionTrigger(Frame f, PlayerFSM fsm, InputType type, int commandDirection)
         {
             ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
             fsm.Fsm.Fire(PlayerFSM.Trigger.ButtonAndDirection, param);
-
+        }
+        
+        private static void FireThrowTrigger(Frame f, PlayerFSM fsm, InputType type, int commandDirection)
+        {
+            if (type != InputType.D) return;
             
+            ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
+
+            var trigger = NumpadMatchesNumpad(commandDirection, 4)
+                ? PlayerFSM.Trigger.BackThrow
+                : PlayerFSM.Trigger.ForwardThrow;
+            
+            fsm.Fsm.Fire(trigger, param);
         }
 
         public static void ClearBufferParams(TriggerParams? triggerParams)

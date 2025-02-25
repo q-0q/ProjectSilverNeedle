@@ -612,7 +612,8 @@ namespace Quantum
                 Debug.LogError("You tried to trigger a cutscene index that has no cutscene mapped");
                 throw;
             }
-            
+
+            Util.StartDramatic(f, EntityRef, 30);
             hurtboxPlayerFsm.Fsm.Jump(State.CutsceneReactor, new FrameParam() { f = f, EntityRef = hurtboxInternal.source } );
             hitboxPlayerFsm.Fsm.Jump(cutscene.InitiatorState, new FrameParam() { f = f, EntityRef = hitboxInternal.source } );
 
