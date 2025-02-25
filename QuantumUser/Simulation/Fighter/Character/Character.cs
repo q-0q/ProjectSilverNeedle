@@ -55,12 +55,57 @@ namespace Quantum
             Duration.SuperFuncDictionary[PlayerFSM.State.Hit] = GetStun;
             Duration.SuperFuncDictionary[PlayerFSM.State.Block] = GetStun;
             Duration.SuperFuncDictionary[PlayerFSM.State.CutsceneReactor] = GetCutsceneReactorDuration;
+
             Duration.Dictionary[PlayerFSM.State.HardKnockdown] = 50;
             Duration.Dictionary[PlayerFSM.State.SoftKnockdown] = 20;
+            Duration.SuperDictionary[PlayerFSM.State.Throw] = 40;
 
             HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
             HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
+            HurtTypeSectionGroup.SuperDictionary[PlayerFSM.State.Throw] = new SectionGroup<PlayerFSM.HurtType>()
+            {
+                Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
+                {
+                    new(100, PlayerFSM.HurtType.Counter)
+                }
+            };
+            
             HitSectionGroup = new StateMap<SectionGroup<Hit>>();
+            
+            HitSectionGroup.SuperDictionary[PlayerFSM.State.ForwardThrow] = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new ( 4 , null ),
+                    new (2, new Hit()
+                    {
+                        Type = Hit.HitType.Mid,
+                        TriggerCutscene = PlayerFSM.CutsceneIndexes.ForwardThrow,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new ( 2, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowWidth = false,
+                                            GrowHeight = false,
+                                            PosY = 4,
+                                            Width = FP.FromString("4.75"),
+                                            Height = 1,
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    new (10, null)
+                }
+            };
+            
             Pushbox = new StateMap<CollisionBox>();
             MovementSectionGroup = new StateMap<SectionGroup<FP>>();
             MovementSectionGroup.Dictionary[PlayerFSM.State.SoftKnockdown] = new SectionGroup<FP>()
@@ -130,7 +175,7 @@ namespace Quantum
             fsm.Fsm.Configure(actionConfig.State)
                 .SubstateOf(actionConfig.Crouching ? PlayerFSM.State.Crouch : PlayerFSM.State.Stand)
                 .SubstateOf(actionConfig.Aerial ? PlayerFSM.State.AirAction : PlayerFSM.State.GroundAction);
-
+            
             if (actionConfig.IsCutscene) return;
             
             if (actionConfig.RawOk)

@@ -34,6 +34,8 @@ namespace Quantum
             public static int Landsquat;
             public static int DeadFromAir;
             public static int DeadFromGround;
+            public static int ForwardThrow;
+            public static int Backthrow;
             
             // Air
             public static int AirDash;
@@ -55,8 +57,14 @@ namespace Quantum
             public static int Stand;
             public static int Crouch;
             public static int Block;
+            public static int Throw;
             public static int CutsceneReactor;
-            
+        }
+        
+        public class CutsceneIndexes : InheritableEnum.InheritableEnum
+        {
+            public static int ForwardThrow;
+            public static int BackwardThrow;
         }
         
         // When adding a new trigger
@@ -71,6 +79,8 @@ namespace Quantum
             Backward,
             Dash,
             Backdash,
+            ForwardThrow,
+            BackThrow,
 
             ButtonAndDirection,
             Jump,
@@ -81,11 +91,6 @@ namespace Quantum
             HitLow,
             BlockHigh,
             BlockLow,
-            
-            CutsceneStart,
-            CutsceneBreak,
-
-            
             Die,
             
         }
@@ -132,6 +137,8 @@ namespace Quantum
                 .Permit(Trigger.Dash, State.Dash)
                 .Permit(Trigger.Backdash, State.Backdash)
                 .Permit(Trigger.Jump, State.AirActionable)
+                .Permit(Trigger.ForwardThrow, State.ForwardThrow)
+                .Permit(Trigger.BackThrow, State.Backthrow)
                 // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
                 // .Permit(Trigger.BackThrow, State.ThrowBackStartup)
                 .PermitIf(Trigger.BlockHigh, State.StandBlock, _ => true, -2)
@@ -161,10 +168,10 @@ namespace Quantum
                 // .Permit(Trigger.Backward, State.WalkBackward)
                 .PermitIf(Trigger.BlockHigh, State.StandBlock, _ => true, -2)
                 .PermitIf(Trigger.BlockLow, State.CrouchBlock, _ => true, -2)
-                // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
-                // .Permit(Trigger.BackThrow, State.ThrowBackStartup)
-                // .OnExitFrom(Trigger.FrontThrow, StartMomentumCallback)
-                // .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
+                .Permit(Trigger.ForwardThrow, State.ForwardThrow)
+                .Permit(Trigger.BackThrow, State.Backthrow)
+                .OnExitFrom(Trigger.ForwardThrow, StartMomentumCallback)
+                .OnExitFrom(Trigger.BackThrow, StartMomentumCallback)
                 // .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
                 .OnExitFrom(Trigger.ButtonAndDirection, StartMomentumCallback)
                 .OnExitFrom(Trigger.Jump, StartMomentumCallback)
@@ -258,7 +265,16 @@ namespace Quantum
                 .SubstateOf(State.Crouch)
                 .SubstateOf(State.Ground);
             
+            machine.Configure(State.Throw)
+                .SubstateOf(State.Ground)
+                .SubstateOf(State.Stand)
+                .Permit(Trigger.Finish, State.StandActionable);
+
+            machine.Configure(State.ForwardThrow)
+                .SubstateOf(State.Throw);
             
+            machine.Configure(State.Backthrow)
+                .SubstateOf(State.Throw);        
             
             // Air
             machine.Configure(State.Air)
@@ -344,9 +360,10 @@ namespace Quantum
                 .OnEntry(OnWallBounce)
                 .SubstateOf(State.AirHit);
             
+            
+            
             // General
             machine.Configure(State.Hit);
-
             machine.Configure(State.Any);
 
             machine.Configure(State.CutsceneReactor)
@@ -389,7 +406,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var param = (FrameParam)triggerParams;
             HitstopSystem.EnqueueHitstop(param.f, 9);
-            param.f.Events.EntityVibrate(EntityRef, FP.FromString("1.25"), FP.FromString("0.4"), 40);
+            param.f.Events.EntityVibrate(EntityRef, FP.FromString("1.25"), FP.FromString("0.6"), 40);
         }
         
         private void OnHKD(TriggerParams? triggerParams)
