@@ -194,6 +194,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.CutsceneData))]
   public unsafe class CutsceneDataPrototype : ComponentPrototype<Quantum.CutsceneData> {
     public MapEntityId initiator;
+    public QBoolean initiatorFacingRight;
     public Int32 cutsceneIndex;
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.CutsceneData component = default;
@@ -202,6 +203,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.CutsceneData result, in PrototypeMaterializationContext context = default) {
         PrototypeValidator.FindMapEntity(this.initiator, in context, out result.initiator);
+        result.initiatorFacingRight = this.initiatorFacingRight;
         result.cutsceneIndex = this.cutsceneIndex;
     }
   }

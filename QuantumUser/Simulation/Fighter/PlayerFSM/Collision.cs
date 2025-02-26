@@ -8,6 +8,7 @@ using Quantum.Types.Collision;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using Wasp;
+using Random = UnityEngine.Random;
 
 namespace Quantum
 {
@@ -24,7 +25,7 @@ namespace Quantum
         public class CollisionBoxInternal
         {
             public EntityRef source;
-            public CollisionBox.CollisionBoxType type;
+            public CollisionBoxType type;
             public HurtType HurtType;
             public Hit.HitType HitType;
             public FP width;
@@ -113,7 +114,7 @@ namespace Quantum
         //         0, 0, 0, 0,0, 0,1,1,0);
         // }
 
-        public static List<CollisionBoxInternal> GetCollisionBoxInternalsOfType(Frame f, EntityRef source, CollisionBox.CollisionBoxType type)
+        public static List<CollisionBoxInternal> GetCollisionBoxInternalsOfType(Frame f, EntityRef source, CollisionBoxType type)
         {
             f.Unsafe.TryGetPointer<FSMData>(source, out var fsmData);
             int collisionState = fsmData->currentCollisionState;
@@ -123,7 +124,7 @@ namespace Quantum
             PlayerFSM playerFsm = Util.GetPlayerFSM(f, source);
             
             
-            if (type == CollisionBox.CollisionBoxType.Pushbox)
+            if (type == CollisionBoxType.Pushbox)
             {
                 var pushBox = character.Pushbox.Lookup(collisionState, playerFsm);
 
@@ -132,7 +133,7 @@ namespace Quantum
                 var pushboxInternal = new CollisionBoxInternal()
                 {
                     source = source,
-                    type = CollisionBox.CollisionBoxType.Pushbox,
+                    type = CollisionBoxType.Pushbox,
                     width = pushBox.Width,
                     height = pushBox.Height,
                     pos = GetCollisionBoxWorldPosition(f, source, pushBox).XY
@@ -141,7 +142,7 @@ namespace Quantum
                 return new List<CollisionBoxInternal>() { pushboxInternal };
             }
 
-            if (type == CollisionBox.CollisionBoxType.Hurtbox)
+            if (type == CollisionBoxType.Hurtbox)
             {
                 if (character.InvulnerableBefore.Lookup(collisionState, playerFsm) > collisionStateFrames)
                     return new List<CollisionBoxInternal>();
@@ -161,7 +162,7 @@ namespace Quantum
                     var _internal = new CollisionBoxInternal()
                     {
                         source = source,
-                        type = CollisionBox.CollisionBoxType.Hurtbox,
+                        type = CollisionBoxType.Hurtbox,
                         HurtType = hurtType,
                         width = hurtbox.Width,
                         height = hurtbox.Height,
@@ -175,7 +176,7 @@ namespace Quantum
 
             }
 
-            if (type == CollisionBox.CollisionBoxType.Hitbox)
+            if (type == CollisionBoxType.Hitbox)
             {
                 var hitSectionGroup = character.HitSectionGroup.Lookup(collisionState, playerFsm);
                 if (hitSectionGroup is null) return new List<CollisionBoxInternal>();
@@ -188,13 +189,14 @@ namespace Quantum
                 var hitType = hit.Type;
                 var hitboxCollection = hit.HitboxCollections.GetItemFromIndex(collisionStateFrames - firstFrame);
                 
+                
                 var hitboxInternals = new List<CollisionBoxInternal>();
                 foreach (var hurtbox in hitboxCollection.CollisionBoxes)
                 {
                     var _internal = new CollisionBoxInternal()
                     {
                         source = source,
-                        type = CollisionBox.CollisionBoxType.Hitbox,
+                        type = CollisionBoxType.Hitbox,
                         HitType = hitType,
                         width = hurtbox.Width,
                         height = hurtbox.Height,
@@ -224,11 +226,7 @@ namespace Quantum
                 
                 return hitboxInternals;
             }
-            else if (type == CollisionBox.CollisionBoxType.Throwbox)
-            {
-                // Todo
-            }
-
+            
             return null;
         }
 
@@ -236,13 +234,13 @@ namespace Quantum
         public void HitboxHurtboxCollide(Frame f)
         {
 
-            var hurtboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBox.CollisionBoxType.Hurtbox);
+            var hurtboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hurtbox);
             
             // todo:
             // we need a way of comprehensively getting hitboxes from ALL other FSMs, not just the opponent
             // otherwise collision will never happen with Summons
             var hitboxInternals = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, EntityRef),
-                CollisionBox.CollisionBoxType.Hitbox);
+                CollisionBoxType.Hitbox);
             
             
             
@@ -474,7 +472,22 @@ namespace Quantum
 
         private void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
+            if (hitboxData.HitType != Hit.HitType.Throw)
+            {
+                InvokeNonThrowCollision(f, hurtboxData, hitboxData, location);
+            }
+            else
+            {
+                if (Fsm.IsInState(State.Air) || Fsm.IsInState(State.Backdash) ||
+                    Fsm.IsInState(State.Hit) || Fsm.IsInState(State.Block)) return;
+            }
             
+            HandleCutsceneTrigger(f, hurtboxData, hitboxData);
+        }
+
+        private void InvokeNonThrowCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData,
+            FPVector2 location)
+        {
             Hit.HitType hitType = hitboxData.HitType;
             HurtType hurtType = hurtboxData.HurtType;
             var isBlocking = IsBlockingHitType(f, hitType);
@@ -523,7 +536,6 @@ namespace Quantum
             {
                 InvokeDamagingCollisionCore(f, hurtboxData, hitboxData, hurtType, location);
             }
-            
         }
 
         private void InvokeDamagingCollisionCore(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData,
@@ -583,8 +595,6 @@ namespace Quantum
             InvokeStun(f, stun);
             HitstopSystem.EnqueueHitstop(f, stop);
             
-            HandleCutsceneTrigger(f, hurtboxData, hitboxData);
-
             if (healthData->health <= 0) InvokePlayerDeath(f);
         }
 
@@ -613,7 +623,7 @@ namespace Quantum
                 throw;
             }
 
-            Util.StartDramatic(f, EntityRef, 30);
+            // Util.StartDramatic(f, EntityRef, 30);
             hurtboxPlayerFsm.Fsm.Jump(State.CutsceneReactor, new FrameParam() { f = f, EntityRef = hurtboxInternal.source } );
             hitboxPlayerFsm.Fsm.Jump(cutscene.InitiatorState, new FrameParam() { f = f, EntityRef = hitboxInternal.source } );
 
@@ -624,6 +634,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<CutsceneData>(hurtboxInternal.source, out var cutsceneData);
             cutsceneData->initiator = hitboxInternal.source;
             cutsceneData->cutsceneIndex = cutsceneIndex;
+            cutsceneData->initiatorFacingRight = PlayerDirectionSystem.IsFacingRight(f, hitboxInternal.source);
             
             // Let's remember this, hopefully it wont give any weird issues.
             Util.WritebackFsm(f, hitboxInternal.source);
@@ -667,6 +678,8 @@ namespace Quantum
         private Trigger GetCollisionTrigger(Frame f, Hit.HitType hitType, bool isBlocking)
         {
             Trigger trigger = Trigger.NeutralInput;
+
+            if (hitType is Hit.HitType.Throw) return trigger;
             
             // Block
             if (isBlocking && hitType is Hit.HitType.High)
@@ -702,11 +715,12 @@ namespace Quantum
 
         private bool IsBlockingHitType(Frame f, Hit.HitType type)
         {
+            if (type is Hit.HitType.Throw) return false;
+            
             if (!Fsm.IsInState(State.AirActionable) && !Fsm.IsInState(State.GroundActionable) && 
                 !Fsm.IsInState(State.Block) && !Fsm.IsInState(State.Landsquat) && 
                 !Fsm.IsInState(State.Dash) && !Fsm.IsInState(State.AirDash)) return false;
-
-
+            
             if (Util.EntityIsCpu(f, EntityRef))
             {
                 return Util.GetCpuControllerData(f)->block;

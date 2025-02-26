@@ -801,12 +801,15 @@ namespace Quantum {
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(8)]
     public EntityRef initiator;
+    [FieldOffset(4)]
+    public QBoolean initiatorFacingRight;
     [FieldOffset(0)]
     public Int32 cutsceneIndex;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 18049;
         hash = hash * 31 + initiator.GetHashCode();
+        hash = hash * 31 + initiatorFacingRight.GetHashCode();
         hash = hash * 31 + cutsceneIndex.GetHashCode();
         return hash;
       }
@@ -814,6 +817,7 @@ namespace Quantum {
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (CutsceneData*)ptr;
         serializer.Stream.Serialize(&p->cutsceneIndex);
+        QBoolean.Serialize(&p->initiatorFacingRight, serializer);
         EntityRef.Serialize(&p->initiator, serializer);
     }
   }

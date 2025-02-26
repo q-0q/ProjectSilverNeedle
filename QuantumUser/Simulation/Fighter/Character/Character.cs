@@ -79,8 +79,42 @@ namespace Quantum
                     new ( 4 , null ),
                     new (2, new Hit()
                     {
-                        Type = Hit.HitType.Mid,
+                        Type = Hit.HitType.Throw,
                         TriggerCutscene = PlayerFSM.CutsceneIndexes.ForwardThrow,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new ( 2, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowWidth = false,
+                                            GrowHeight = false,
+                                            PosY = 4,
+                                            Width = FP.FromString("4.75"),
+                                            Height = 1,
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    new (10, null)
+                }
+            };
+            
+            HitSectionGroup.SuperDictionary[PlayerFSM.State.Backthrow] = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new ( 4 , null ),
+                    new (2, new Hit()
+                    {
+                        Type = Hit.HitType.Throw,
+                        TriggerCutscene = PlayerFSM.CutsceneIndexes.BackwardThrow,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()

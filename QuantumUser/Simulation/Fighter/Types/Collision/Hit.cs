@@ -19,6 +19,7 @@ namespace Quantum.Types.Collision
             High,
             Mid,
             Low,
+            Throw
         }
 
         public int Level = 0;

@@ -29,6 +29,7 @@ namespace Quantum
             public static int _JH;
             public static int _JS;
             public static int ForwardThrowCutscene;
+            public static int BackThrowCutscene;
         }
 
         public enum StickTwoAnimationPath
@@ -628,6 +629,24 @@ namespace Quantum
 
             Cutscenes[PlayerFSM.CutsceneIndexes.ForwardThrow] = forwardThrowCutscene;
             
+            Cutscene backThrowCutscene = new Cutscene()
+            {
+                InitiatorState = StickTwoState.BackThrowCutscene,
+                ReactorDuration = 55,
+                ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
+                {
+                    Sections = new List<Tuple<int, FPVector2>>()
+                    {
+                        new (8, new FPVector2(FP.FromString("2.5"), FP.FromString("7.5"))),
+                        new (20, new FPVector2(FP.FromString("2.5"), 8)),
+                        new (13, new FPVector2(FP.FromString("0.1"), FP.FromString("7.5"))),
+                        new (15, new FPVector2(-4, 0)),
+                    }
+                }
+            };
+
+            Cutscenes[PlayerFSM.CutsceneIndexes.BackwardThrow] = backThrowCutscene;
+            
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
             FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
             Duration.Dictionary[StickTwoState._5M] = _5MAnimation.SectionGroup.Duration();
@@ -728,7 +747,7 @@ namespace Quantum
                     new Tuple<int, Hit>(16, null),
                     new Tuple<int, Hit>(14, new Hit()
                     {
-                        Level = 3,
+                        Level = 4,
                         Type = Hit.HitType.Mid,
                         Launches = true,
                         TrajectoryHeight = 6,
@@ -805,14 +824,71 @@ namespace Quantum
                 {
                     new Tuple<int, Hit>(15, null),
                     new Tuple<int, Hit>(2, frontThrowCutsceneHit),
+                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
+                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
                     new Tuple<int, Hit>(20, null)
                 }
             };
             
             Util.AutoSetupFromAnimationPath(frontThrowCutsceneAnimation, this);
             FighterAnimation.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation;
-            // HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneHits;
+            HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneHits;
             Duration.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation.SectionGroup.Duration();
+            
+            
+            
+            var backThrowCutsceneAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.BackThrowCutscene,
+                SectionGroup = new SectionGroup<int>()
+                {
+                     AutoFromAnimationPath = true
+                }
+            };
+
+            var backThrowCutsceneHit = new Hit()
+            {
+                Level = 0,
+                Type = Hit.HitType.Mid,
+                HardKnockdown = true,
+                HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new Tuple<int, CollisionBoxCollection>(8, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new CollisionBox()
+                                {
+                                    GrowHeight = false,
+                                    GrowWidth = false,
+                                    Width = 2,
+                                    Height = 2,
+                                    PosX = 2,
+                                    PosY = 6
+                                }
+                            }
+                        })
+                    }
+                }
+            };
+            var backThrowCutsceneHits = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new Tuple<int, Hit>(15, null),
+                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
+                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
+                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
+                    new Tuple<int, Hit>(20, null)
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(backThrowCutsceneAnimation, this);
+            FighterAnimation.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation;
+            HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = backThrowCutsceneHits;
+            Duration.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation.SectionGroup.Duration();
             
         }
         
@@ -897,6 +973,15 @@ namespace Quantum
             };
             
             ConfigureAction(playerFsm, frontThrow);
+            
+            ActionConfig backThrow = new ActionConfig()
+            {
+                Aerial = false,
+                State = StickTwoState.BackThrowCutscene,
+                IsCutscene = true
+            };
+            
+            ConfigureAction(playerFsm, backThrow);
         }
     }
 }

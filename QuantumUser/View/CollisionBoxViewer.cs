@@ -46,13 +46,13 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
 
         var internals = new List<PlayerFSM.CollisionBoxInternal>();
         var pushboxInternals =
-            PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBox.CollisionBoxType.Pushbox);
+            PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBoxType.Pushbox);
 
         var hurtboxInternals =
-            PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBox.CollisionBoxType.Hurtbox);
+            PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef, CollisionBoxType.Hurtbox);
 
         var hitboxInternals = PlayerFSM.GetCollisionBoxInternalsOfType(PredictedFrame, EntityRef,
-            CollisionBox.CollisionBoxType.Hitbox);
+            CollisionBoxType.Hitbox);
 
         if (pushboxInternals is not null) internals.AddRange(pushboxInternals);
         if (hurtboxInternals is not null) internals.AddRange(hurtboxInternals);
@@ -82,9 +82,8 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
 
             var color = _internal.type switch
             {
-                CollisionBox.CollisionBoxType.Hitbox => Color.red,
-                CollisionBox.CollisionBoxType.Hurtbox => Color.blue,
-                CollisionBox.CollisionBoxType.Throwbox => Color.green,
+                CollisionBoxType.Hitbox => _internal.HitType == Hit.HitType.Throw ? Color.green : Color.red,
+                CollisionBoxType.Hurtbox => Color.blue,
                 _ => Color.yellow
             };
 
@@ -128,17 +127,17 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
     //     var type = 
     //         (Quantum.Types.Collision.CollisionBox.CollisionBoxType)PredictedFrame.Get<CollisionBoxData>(EntityRef).type;
     //     
-    //     // if (type != Quantum.Types.Collision.CollisionBox.CollisionBoxType.Hitbox 
-    //     //     && type != Quantum.Types.Collision.CollisionBox.CollisionBoxType.Hurtbox) return Color.clear;
+    //     // if (type != Quantum.Types.Collision.CollisionBoxType.Hitbox 
+    //     //     && type != Quantum.Types.Collision.CollisionBoxType.Hurtbox) return Color.clear;
     //
     //     Color color;
-    //     if (type == Quantum.Types.Collision.CollisionBox.CollisionBoxType.Hitbox)
+    //     if (type == Quantum.Types.Collision.CollisionBoxType.Hitbox)
     //         color = _hitboxColor;
-    //     else if (type == Quantum.Types.Collision.CollisionBox.CollisionBoxType.Hurtbox)
+    //     else if (type == Quantum.Types.Collision.CollisionBoxType.Hurtbox)
     //         color = _hurtboxColor;
-    //     else if (type == Quantum.Types.Collision.CollisionBox.CollisionBoxType.Pushbox)
+    //     else if (type == Quantum.Types.Collision.CollisionBoxType.Pushbox)
     //         color = _pushboxColor;
-    //     else if (type == Quantum.Types.Collision.CollisionBox.CollisionBoxType.Throwbox)
+    //     else if (type == Quantum.Types.Collision.CollisionBoxType.Throwbox)
     //         color = Color.green;
     //     else
     //         color = Color.black;
