@@ -227,6 +227,7 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<CutsceneData>(entityRef, out var cutsceneData);
             cutsceneData->initiator = EntityRef.None;
+            cutsceneData->initiatorFacingRight = false;
             cutsceneData->cutsceneIndex = -1;
 
             f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);

@@ -150,6 +150,7 @@ namespace Quantum
                 if (!cpuControllerData.doAction) return;
                 var type = (InputType)cpuControllerData.inputType;
                 var commandDirection = cpuControllerData.commandDirection;
+                FireThrowTrigger(f, fsm, type, commandDirection);
                 FireButtonAndDirectionTrigger(f, fsm, type, commandDirection);
                 return;
             }

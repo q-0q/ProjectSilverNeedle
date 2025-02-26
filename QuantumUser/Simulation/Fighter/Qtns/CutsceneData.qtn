@@ -1,5 +1,7 @@
 component CutsceneData
 {
     entity_ref initiator;
+    bool initiatorFacingRight;
     int cutsceneIndex;
 }
+`

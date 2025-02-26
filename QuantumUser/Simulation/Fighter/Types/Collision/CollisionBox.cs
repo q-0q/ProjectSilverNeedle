@@ -2,15 +2,17 @@ using Photon.Deterministic;
 
 namespace Quantum.Types.Collision
 {
+    
+    public enum CollisionBoxType
+    {
+        Hitbox,
+        Hurtbox,
+        Pushbox,
+    }
+    
     public class CollisionBox
     {
-        public enum CollisionBoxType
-        {
-            Hitbox,
-            Hurtbox,
-            Pushbox,
-            Throwbox
-        }
+
 
         public bool GrowWidth = true;
         public bool GrowHeight = true;

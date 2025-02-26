@@ -127,8 +127,8 @@ namespace Quantum
         private static void GetPushboxes(Frame f, EntityRef entityRef, out CollisionBoxInternal opponentPushboxInternal,
             out CollisionBoxInternal pushboxInternal)
         {
-            pushboxInternal= GetCollisionBoxInternalsOfType(f, entityRef, CollisionBox.CollisionBoxType.Pushbox)?[0];
-            opponentPushboxInternal = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, entityRef), CollisionBox.CollisionBoxType.Pushbox)?[0];
+            pushboxInternal= GetCollisionBoxInternalsOfType(f, entityRef, CollisionBoxType.Pushbox)?[0];
+            opponentPushboxInternal = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, entityRef), CollisionBoxType.Pushbox)?[0];
         }
 
         private void PushbackMove(Frame f)
@@ -183,7 +183,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<Transform3D>(cutsceneData->initiator, out var transform3D);
             var initiatorPos = transform3D->Position.XY;
             var currentCutscenePos = cutscene.ReactorPositionSectionGroup.GetCurrentItem(f, this);
-            if (!PlayerDirectionSystem.IsFacingRight(f, cutsceneData->initiator)) currentCutscenePos.X *= -1;
+            if (!cutsceneData->initiatorFacingRight) currentCutscenePos.X *= -1;
             FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
             SetPosition(f, (initiatorPos + currentCutscenePos) - offset);
         }
