@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public static class PlayerFsmLoader
+    public static class FsmLoader
     {
         public static List<PlayerFSM> PlayerFsms;
 
-        public static void InitializePlayerFsms(Frame f)
+        public static void InitializeFsms(Frame f)
         {
             
             // Force static initialization of InheritableEnum class
@@ -21,7 +21,6 @@ namespace Quantum
             var p1Character = Characters.GetPlayerCharacter(f, Util.GetPlayer(f, 1));
             p1Character.ConfigureCharacterFsm(p1);
 
-            Debug.Log("Filling playerFsms...");
             PlayerFsms = new List<PlayerFSM>
             {
                 p0,
@@ -33,5 +32,7 @@ namespace Quantum
         {
             return PlayerFsms?[Util.GetPlayerId(f, entityRef)];
         }
+        
+        
     }
 }

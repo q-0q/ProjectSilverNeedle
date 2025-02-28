@@ -85,7 +85,7 @@ namespace Quantum
                 InitializePlayerComponents(frame, entityRef);
             }
             
-            PlayerFsmLoader.InitializePlayerFsms(frame);
+            FsmLoader.InitializeFsms(frame);
         }
         
         public static void OnCountdown(TriggerParams? triggerParams)

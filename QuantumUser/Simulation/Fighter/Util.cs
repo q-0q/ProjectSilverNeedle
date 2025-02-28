@@ -94,7 +94,7 @@ namespace Quantum
         
         public static void WritebackFsm(Frame f, EntityRef entityRef)
         {
-            var fsm = PlayerFsmLoader.GetPlayerFsm(f, entityRef);
+            var fsm = FsmLoader.GetPlayerFsm(f, entityRef);
             if (fsm is null) return;
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
@@ -127,7 +127,7 @@ namespace Quantum
 
             f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
             
-            var fsm = PlayerFsmLoader.GetPlayerFsm(f, entityRef);
+            var fsm = FsmLoader.GetPlayerFsm(f, entityRef);
             if (fsm is null) return null;
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
