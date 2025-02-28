@@ -23,7 +23,7 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
         int numFrames = PredictedFrame.Get<FSMData>(EntityRef).framesInState;
 
         Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)PredictedFrame.Get<PlayerLink>(EntityRef).characterId;
-        var fsm = PlayerFsmLoader.GetPlayerFsm(PredictedFrame, EntityRef);
+        var fsm = FsmLoader.GetPlayerFsm(PredictedFrame, EntityRef);
         if (fsm is null) return;
         var state = fsm.Fsm.State();
         
