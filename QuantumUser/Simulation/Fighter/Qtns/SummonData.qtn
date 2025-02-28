@@ -1,5 +1,4 @@
 component SummonData
 {
     entity_ref owner;
-    
 }
