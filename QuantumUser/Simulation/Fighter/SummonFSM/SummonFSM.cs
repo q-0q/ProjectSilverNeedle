@@ -14,11 +14,9 @@ namespace Quantum
         public class State : InheritableEnum.InheritableEnum
         {
             public static int Pooled;
+            public static int Unpooled;
         }
-
-        // When adding a new trigger
-        // 1. Add as an enum here
-        // 2. Create a TriggerWithParameter<Frame> field and initialize in ctor
+        
         public enum Trigger
         {
             Summoned,
@@ -44,11 +42,10 @@ namespace Quantum
         public void ConfigureBaseFsm(Machine<int, Trigger> machine)
         {
             machine.OnTransitionCompleted(OnStateChanged);
-            
-            
-            
+
+            machine.Configure(State.Pooled)
+                .Permit(Trigger.Summoned, State.Unpooled);
         }
-        
         
         private void OnStateChanged(TriggerParams? triggerParams)
         {
