@@ -9,6 +9,7 @@ namespace Quantum
         public struct Filter
         {
             public EntityRef Entity;
+            public FSMData* FsmData;
             
         }
         
