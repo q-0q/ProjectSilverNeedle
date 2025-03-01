@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public unsafe partial class PlayerFSM
+    public unsafe partial class FSM
     {
         public void Animation(Frame f)
         {

@@ -75,7 +75,7 @@ namespace Quantum.InheritableEnum
         public static void Initialize()
         {
             // This will force the static constructor of BaseState to run
-            var _ = PlayerFSM.State.GroundActionable;  // Trigger initialization by accessing a static member
+            var _ = PlayerFSM.PlayerState.GroundActionable;  // Trigger initialization by accessing a static member
         }
 
         // Method to retrieve the name of the field for a specific value

@@ -177,7 +177,7 @@ namespace Quantum
                 foreach (var (_, cpuControllerData) in f.GetComponentIterator<CpuControllerData>())
                 {
                     if (!cpuControllerData.dash) return;
-                    fsm.Fsm.Fire(PlayerFSM.Trigger.Dash, param);
+                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Dash, param);
                     return;
                 }
                 return;
@@ -189,11 +189,11 @@ namespace Quantum
             
             if (InputIsBuffered(InputType.Dash, f, fsm.EntityRef) && (commandDirection is 1 or 4 or 7))
             {
-                fsm.Fsm.Fire(PlayerFSM.Trigger.Backdash, param);
+                fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Backdash, param);
             }
             else if (InputIsBuffered(InputType.Dash, f, fsm.EntityRef))
             {
-                fsm.Fsm.Fire(PlayerFSM.Trigger.Dash, param);
+                fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Dash, param);
             }
         }
         
@@ -203,7 +203,7 @@ namespace Quantum
         {
             if (Util.EntityIsCpu(f, fsm.EntityRef))
             {
-                if (fsm.Fsm.IsInState(PlayerFSM.State.Ground))
+                if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.Ground))
                 {
                     foreach (var (_, cpuControllerData) in f.GetComponentIterator<CpuControllerData>())
                     {
@@ -217,7 +217,7 @@ namespace Quantum
             
             int numpad = Numpad(f, fsm.EntityRef);
             
-            if (fsm.Fsm.IsInState(PlayerFSM.State.Ground))
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.Ground))
             {
                 switch (numpad)
                 {
@@ -272,7 +272,7 @@ namespace Quantum
 
             if (Util.EntityIsCpu(f, fsm.EntityRef))
             {
-                fsm.Fsm.Fire(PlayerFSM.Trigger.NeutralInput, param);
+                fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.NeutralInput, param);
                 return;
             }
                 
@@ -282,32 +282,32 @@ namespace Quantum
             {
                 case 1:
                 {
-                    fsm.Fsm.Fire(PlayerFSM.Trigger.Down, param);
+                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Down, param);
                     break;
                 }
                 case 2:
                 {
-                    fsm.Fsm.Fire(PlayerFSM.Trigger.Down, param);
+                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Down, param);
                     break;
                 }
                 case 3:
                 {
-                    fsm.Fsm.Fire(PlayerFSM.Trigger.Down, param);
+                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Down, param);
                     break;
                 }
                 case 4:
                 {
-                    fsm.Fsm.Fire(PlayerFSM.Trigger.Backward, param);
+                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Backward, param);
                     break;
                 }
                 case 5:
                 {
-                    fsm.Fsm.Fire(PlayerFSM.Trigger.NeutralInput, param);
+                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.NeutralInput, param);
                     break;
                 }
                 case 6:
                 {
-                    fsm.Fsm.Fire(PlayerFSM.Trigger.Forward, param);
+                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Forward, param);
                     break;
                 }
             }
@@ -436,7 +436,7 @@ namespace Quantum
         {
             ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
-            fsm.Fsm.Fire(PlayerFSM.Trigger.ButtonAndDirection, param);
+            fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.ButtonAndDirection, param);
         }
         
         private static void FireThrowTrigger(Frame f, PlayerFSM fsm, InputType type, int commandDirection)
@@ -446,8 +446,8 @@ namespace Quantum
             ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
             var trigger = NumpadMatchesNumpad(commandDirection, 4)
-                ? PlayerFSM.Trigger.BackThrow
-                : PlayerFSM.Trigger.ForwardThrow;
+                ? PlayerFSM.PlayerTrigger.BackThrow
+                : PlayerFSM.PlayerTrigger.ForwardThrow;
             
             fsm.Fsm.Fire(trigger, param);
         }

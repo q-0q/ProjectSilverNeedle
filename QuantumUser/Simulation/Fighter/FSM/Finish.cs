@@ -5,15 +5,8 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public unsafe partial class PlayerFSM
+    public unsafe partial class FSM
     {
-        private static int HardKnockdownFrames = 60;
-        private static int SoftKnockdownFrames = 23;
-        private static int LandsquatFrames = 5;
-        private static int ThrowStartupFrames = 3;
-        private static int ThrowRecoveryFrames = 60;
-        private static int ThrowTechFrames = 20;
-        
         public void DoFinish(Frame f)
         {
             Character character = Characters.GetPlayerCharacter(f, EntityRef);
@@ -26,7 +19,7 @@ namespace Quantum
             if (FramesInCurrentState(f) >= duration)
             {
                 var param = new CollisionHitParams() { f = f, EntityRef = EntityRef };
-                Fsm.Fire(Trigger.Finish, param);
+                Fsm.Fire(PlayerFSM.PlayerTrigger.Finish, param);
             }
         }
         

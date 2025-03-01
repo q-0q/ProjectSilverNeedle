@@ -31,7 +31,7 @@ namespace Quantum
         public void TrajectoryArc(Frame f)
         {
             
-            if (!Fsm.IsInState(State.Air)) return;
+            if (!Fsm.IsInState(PlayerState.Air)) return;
             
             CheckForActionTrajectory(f);
             CheckForHitWall(f);
@@ -144,11 +144,11 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             if (trajectoryData->jumpsRemaining <= 0) return;
-            if (GetFramesInTrajectory(f) < 20 && Fsm.IsInState(State.Air)) return;
+            if (GetFramesInTrajectory(f) < 20 && Fsm.IsInState(PlayerState.Air)) return;
             
             var param = new JumpParam() { f = f, Type = type, EntityRef = EntityRef};
             
-            Fsm.Fire(Trigger.Jump, param);
+            Fsm.Fire(PlayerTrigger.Jump, param);
         }
 
         private void StartNewJump(TriggerParams? triggerParams)
@@ -224,7 +224,7 @@ namespace Quantum
         public void CheckForLand(Frame f)
         {
             
-            if (!Fsm.IsInState(State.Air)) return;
+            if (!Fsm.IsInState(PlayerState.Air)) return;
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FP posY = transform3D->Position.Y;
             
@@ -233,7 +233,7 @@ namespace Quantum
             
             var param = new FrameParam() { f = f, EntityRef = EntityRef};
             
-            Fsm.Fire(Trigger.Land, param);
+            Fsm.Fire(PlayerTrigger.Land, param);
             
         }
 
@@ -296,7 +296,7 @@ namespace Quantum
 
         private void CheckForActionTrajectory(Frame f)
         {
-            if (!Fsm.IsInState(State.Action)) return;
+            if (!Fsm.IsInState(PlayerState.Action)) return;
 
             var character = Characters.GetPlayerCharacter(f, EntityRef);
             var trajectorySectionGroup = character.TrajectorySectionGroup.Get(this);
@@ -313,7 +313,7 @@ namespace Quantum
 
         private void CheckForHitWall(Frame f)
         {
-            if (!Fsm.IsInState(State.AirHit)) return;
+            if (!Fsm.IsInState(PlayerState.AirHit)) return;
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             
             if (!trajectoryData->wallBounce) return;
@@ -321,7 +321,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             if (Util.Abs(transform3D->Position.X) < WallHalfLength) return;
             
-            Fsm.Fire(Trigger.HitWall, new FrameParam(){ f= f, EntityRef =  EntityRef});
+            Fsm.Fire(PlayerTrigger.HitWall, new FrameParam(){ f= f, EntityRef =  EntityRef});
         }
         
         

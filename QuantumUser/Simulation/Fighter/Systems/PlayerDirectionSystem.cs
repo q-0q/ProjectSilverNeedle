@@ -22,17 +22,17 @@ namespace Quantum
         
         public static void UpdatePlayerDirection(Frame f, PlayerFSM fsm)
         {
-            if (fsm.Fsm.IsInState(PlayerFSM.State.GroundAction)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.AirAction)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.Hit)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.HardKnockdown)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.Dash)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.Backdash)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.AirDash)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.AirBackdash)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.CutsceneReactor)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.DeadFromAir)) return;
-            if (fsm.Fsm.IsInState(PlayerFSM.State.DeadFromGround)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.GroundAction)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.AirAction)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.Hit)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.HardKnockdown)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.Dash)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.Backdash)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.AirDash)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.AirBackdash)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.DeadFromAir)) return;
+            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.DeadFromGround)) return;
             
             ForceUpdatePlayerDirection(f, fsm.EntityRef);
         }

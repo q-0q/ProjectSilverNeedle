@@ -10,7 +10,7 @@ namespace Quantum
 {
     public class StickTwo : Character
     {
-        public class StickTwoState : PlayerFSM.State
+        public class StickTwoState : PlayerFSM.PlayerState
         {
             public static int _5L;
             public static int _2L;
@@ -192,10 +192,10 @@ namespace Quantum
                 }
             };
             
-            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Stand] = standHurtboxCollectionSectionGroup;
-            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Crouch] = crouchHurtboxCollection;
-            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.Air] = airHitHurtboxCollection;
-            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.State.CutsceneReactor] = airHitHurtboxCollection;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Stand] = standHurtboxCollectionSectionGroup;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Crouch] = crouchHurtboxCollection;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Air] = airHitHurtboxCollection;
+            HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitHurtboxCollection;
 
             
             // Pushboxes
@@ -230,11 +230,11 @@ namespace Quantum
                 Width = FP.FromString("1.5")
             };
             
-            Pushbox.SuperDictionary[PlayerFSM.State.Stand] = standPushbox;
-            Pushbox.SuperDictionary[PlayerFSM.State.Crouch] = crouchPushbox;
-            Pushbox.SuperDictionary[PlayerFSM.State.Air] = airPushbox;
-            Pushbox.SuperDictionary[PlayerFSM.State.HardKnockdown] = crouchPushbox;
-            Pushbox.SuperDictionary[PlayerFSM.State.SoftKnockdown] = crouchPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.PlayerState.Stand] = standPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.PlayerState.Crouch] = crouchPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.PlayerState.Air] = airPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.PlayerState.HardKnockdown] = crouchPushbox;
+            Pushbox.SuperDictionary[PlayerFSM.PlayerState.SoftKnockdown] = crouchPushbox;
             
             // Basic animations
             
@@ -410,64 +410,64 @@ namespace Quantum
             };
             
             Util.AutoSetupFromAnimationPath(standAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.StandActionable] = standAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandActionable] = standAnimation;
 
             Util.AutoSetupFromAnimationPath(crouchAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.CrouchActionable] = crouchAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchActionable] = crouchAnimation;
             
             Util.AutoSetupFromAnimationPath(walkForwardAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.WalkForward] = walkForwardAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.WalkForward] = walkForwardAnimation;
 
             Util.AutoSetupFromAnimationPath(walkBackwardAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.WalkBackward] = walkBackwardAnimation;
             
             Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.AirActionable] = jumpingAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionable] = jumpingAnimation;
             
             Util.AutoSetupFromAnimationPath(dashAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.Dash] = dashAnimation;
-            Duration.Dictionary[PlayerFSM.State.Dash] = dashAnimation.SectionGroup.Duration();
-            FighterAnimation.Dictionary[PlayerFSM.State.AirDash] = dashAnimation;
-            Duration.Dictionary[PlayerFSM.State.AirDash] = dashAnimation.SectionGroup.Duration();
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.Dash] = dashAnimation;
+            Duration.Dictionary[PlayerFSM.PlayerState.Dash] = dashAnimation.SectionGroup.Duration();
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirDash] = dashAnimation;
+            Duration.Dictionary[PlayerFSM.PlayerState.AirDash] = dashAnimation.SectionGroup.Duration();
             
             Util.AutoSetupFromAnimationPath(backdashAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.Backdash] = backdashAnimation;
-            Duration.Dictionary[PlayerFSM.State.Backdash] = backdashAnimation.SectionGroup.Duration();
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation;
+            Duration.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation.SectionGroup.Duration();
             
             Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.StandHitHigh] = standHitHighAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitHigh] = standHitHighAnimation;
             
             Util.AutoSetupFromAnimationPath(standHitLowAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.StandHitLow] = standHitLowAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitLow] = standHitLowAnimation;
             
             Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.CrouchHit] = crouchHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchHit] = crouchHitAnimation;
             
             Util.AutoSetupFromAnimationPath(airHitAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.AirHit] = airHitAnimation;
-            FighterAnimation.Dictionary[PlayerFSM.State.AirHitPostGroundBounce] = airHitAnimation;
-            FighterAnimation.Dictionary[PlayerFSM.State.CutsceneReactor] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = airHitAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitAnimation;
             
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.StandBlock] = standBlockAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandBlock] = standBlockAnimation;
 
             Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.CrouchBlock] = crouchBlockAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchBlock] = crouchBlockAnimation;
             
             Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.AirBlock] = airBlockAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirBlock] = airBlockAnimation;
             
             Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.HardKnockdown] = hardKnockdownAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = hardKnockdownAnimation;
             
             Util.AutoSetupFromAnimationPath(softKnockdownAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.SoftKnockdown] = softKnockdownAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = softKnockdownAnimation;
             
             Util.AutoSetupFromAnimationPath(deadFromGroundAnimation, this);
-            FighterAnimation.Dictionary[PlayerFSM.State.DeadFromGround] = deadFromGroundAnimation;
+            FighterAnimation.Dictionary[PlayerFSM.PlayerState.DeadFromGround] = deadFromGroundAnimation;
             
             Util.AutoSetupFromAnimationPath(throwAnimation, this);
-            FighterAnimation.SuperDictionary[PlayerFSM.State.Throw] = throwAnimation;
+            FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Throw] = throwAnimation;
             
             // Basic movement
             
@@ -512,12 +512,12 @@ namespace Quantum
                 }
             };
             
-            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkBackward] = walkBackwardMovement;
-            MovementSectionGroup.Dictionary[PlayerFSM.State.WalkForward] = walkForwardMovement;
-            MovementSectionGroup.Dictionary[PlayerFSM.State.Dash] = dashMovement;
-            MovementSectionGroup.Dictionary[PlayerFSM.State.AirDash] = dashMovement;
-            MovementSectionGroup.Dictionary[PlayerFSM.State.Backdash] = backdashMovement;
-            InvulnerableBefore.Dictionary[PlayerFSM.State.Backdash] = 12;
+            MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.WalkBackward] = walkBackwardMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.WalkForward] = walkForwardMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.Dash] = dashMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.AirDash] = dashMovement;
+            MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashMovement;
+            InvulnerableBefore.Dictionary[PlayerFSM.PlayerState.Backdash] = 12;
             
             ////////////////////////////////////////////////////////////////////////////////////
 

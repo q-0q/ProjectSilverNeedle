@@ -9,7 +9,7 @@ namespace Quantum.Types
         public SectionGroup<int> SectionGroup;
         public int Path;
 
-        public virtual void SetAnimationPathForFsm(Frame f, PlayerFSM fsm)
+        public virtual void SetAnimationPathForFsm(Frame f, FSM fsm)
         {
             Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)f.Get<PlayerLink>(fsm.EntityRef).characterId;
             
