@@ -45,11 +45,11 @@ namespace Quantum
         private FrameMeterType GetFrameMeterType(Frame f)
         {
             if (HasHitActive(f)) return FrameMeterType.Active;
-            if (GetHurtType(f) == HurtType.Counter) return FrameMeterType.Startup;
-            if (GetHurtType(f) == HurtType.Punish) return FrameMeterType.Recovery;
-            if (Fsm.IsInState(State.Hit)) return FrameMeterType.HitStun;
-            if (Fsm.IsInState(State.Block)) return FrameMeterType.BlockStun;
-            if (Fsm.IsInState(State.HardKnockdown)) return FrameMeterType.Oki;
+            // if (GetHurtType(f) == HurtType.Counter) return FrameMeterType.Startup;
+            // if (GetHurtType(f) == HurtType.Punish) return FrameMeterType.Recovery;
+            if (Fsm.IsInState(PlayerState.Hit)) return FrameMeterType.HitStun;
+            if (Fsm.IsInState(PlayerState.Block)) return FrameMeterType.BlockStun;
+            if (Fsm.IsInState(PlayerState.HardKnockdown)) return FrameMeterType.Oki;
             return FrameMeterType.None;
         }
     }

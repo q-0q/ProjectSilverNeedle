@@ -9,34 +9,21 @@ using Wasp;
 
 namespace Quantum
 {
-    public unsafe partial class PlayerFSM
+    public unsafe partial class FSM
     {
         static FP _crossupThreshhold = FP.FromString("0.01");
         private const bool AllowCrossup = false;
         private static int _pushbackDuration = 23;
         private static int _momentumDuration = 35;
-        private static FP _throwTechPushback = FP.FromString("6");
         private FP _wallsSkew = FP.FromString("0.99");
 
         private FP _pushboxResistance = FP.FromString("0.3"); // 0 - 1;
 
         public readonly static FP WallHalfLength = FP.FromString("46"); // 46
 
-        private static SectionGroup<FP> SoftKnockdownMovementSectionGroup = new SectionGroup<FP>()
+        
+        public virtual void Move(Frame f)
         {
-            Sections = new List<Tuple<int, FP>>()
-            {
-                new(8, -1),
-                new(10, -4),
-                new(20, 0)
-            }
-        };
-
-
-        public void Move(Frame f)
-        {
-            CutsceneReactorMove(f);
-            
             if (HitstopSystem.IsHitstopActive(f)) return;
             
             FPVector2 movementThisFrame = ComputeMovementThisFrame(f);
@@ -74,7 +61,7 @@ namespace Quantum
             ApplyFlippedMovement(f, v, EntityRef);
         }
 
-        private static void ApplyFlippedMovement(Frame f, FPVector2 v, EntityRef entityRef, bool debug = false)
+        protected static void ApplyFlippedMovement(Frame f, FPVector2 v, EntityRef entityRef, bool debug = false)
         {
             GetPushboxes(f,  entityRef, out var opponentPushboxInternal, out var pushboxInternal);
             
@@ -96,7 +83,7 @@ namespace Quantum
             transform3D->Position += (v.XYO * slowdownMod);
         }
 
-        private void SetPosition(Frame f, FPVector2 v)
+        protected void SetPosition(Frame f, FPVector2 v)
         {
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             transform3D->Position = v.XYO;
@@ -147,12 +134,7 @@ namespace Quantum
             ApplyFlippedMovement(f, v, entityRef, true);
         }
 
-        private void StartPushback(Frame f, FP totalDistance)
-        {
-            f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
-            pushbackData->framesInPushback = 0;
-            pushbackData->pushbackAmount = totalDistance;
-        }
+
 
         private FP GetPushbackVelocityThisFrame(int framesInPushback, FP totalDistance)
         {
@@ -166,27 +148,14 @@ namespace Quantum
             return SampleCubicCurve(t) * totalDistance / (FP)_momentumDuration;
         }
 
-        private FP SampleCubicCurve(FP x)
+        protected FP SampleCubicCurve(FP x)
         {
             FP xMinus1 = x - 1;
             FP xCube = xMinus1 * xMinus1;
             return xCube * 3;
         }
 
-        private void CutsceneReactorMove(Frame f)
-        {
-            if (!Fsm.IsInState(State.CutsceneReactor)) return;
 
-            var cutscene = Util.GetActiveCutscene(f, EntityRef);
-
-            f.Unsafe.TryGetPointer<CutsceneData>(EntityRef, out var cutsceneData);
-            f.Unsafe.TryGetPointer<Transform3D>(cutsceneData->initiator, out var transform3D);
-            var initiatorPos = transform3D->Position.XY;
-            var currentCutscenePos = cutscene.ReactorPositionSectionGroup.GetCurrentItem(f, this);
-            if (!cutsceneData->initiatorFacingRight) currentCutscenePos.X *= -1;
-            FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
-            SetPosition(f, (initiatorPos + currentCutscenePos) - offset);
-        }
 
         private void ResetYPos(TriggerParams? triggerParams)
         {
@@ -196,42 +165,13 @@ namespace Quantum
             transform3D->Position.Y = 0;
         }
 
-        private void OnEnterThrowTech(TriggerParams? triggerParams)
-        {
-            if (triggerParams is null) return;
-            var frameParam = (FrameParam)triggerParams;
 
-            var distance = _throwTechPushback;
-            if (PlayerDirectionSystem.IsOnLeft(frameParam.f, EntityRef)) distance *= FP.Minus_1;
-            StartPushback(frameParam.f, distance);
-            Util.StartDramatic(frameParam.f, EntityRef, 35);
-
-            // only make the tech animation sprite for player 0
-            if (Util.GetPlayerId(frameParam.f, EntityRef) != 0) return;
-
-            frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            frameParam.f.Unsafe.TryGetPointer<Transform3D>(Util.GetOtherPlayer(frameParam.f, EntityRef),
-                out var opponentTransform3D);
-
-            FPVector2 attachPos = GetFirstKinematicsAttachPosition(frameParam.f, EntityRef);
-            FPVector2 opponentAttachPos =
-                GetFirstKinematicsAttachPosition(frameParam.f, Util.GetOtherPlayer(frameParam.f, EntityRef));
-
-            FPVector2 pos = attachPos + transform3D->Position.XY;
-            FPVector2 opponentPos = opponentAttachPos + opponentTransform3D->Position.XY;
-
-            FPVector2 avgPos = (pos + opponentPos) * FP._0_50;
-
-            AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Tech,
-                avgPos, 0,
-                false);
-        }
 
         public void ClampPosToWall(Frame f)
         {
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
-            FP clampX = Fsm.IsInState(State.Air) // || Fsm.IsInState(State.KinematicReceiver)
+            FP clampX = Fsm.IsInState(PlayerFSM.PlayerState.Air) // || Fsm.IsInState(State.KinematicReceiver)
                 ? WallHalfLength + 1
                 : WallHalfLength;
             if (Util.IsPlayerFacingAwayFromWall(f, EntityRef)) clampX *= _wallsSkew;
@@ -241,26 +181,9 @@ namespace Quantum
             transform3D->Position.X = lerpedX;
         }
 
-        private void StartMomentumCallback(TriggerParams? triggerParams)
-        {
-            if (triggerParams is null) return;
-            var frameParam = (FrameParam)triggerParams;
 
-            FP amount = PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef) ? 4 : -4;
-            StartMomentum(frameParam.f, amount);
 
-            frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
-            AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Dash,
-                transform3D->Position.XY, 0, !PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef));
-        }
-
-        private void StartMomentum(Frame f, FP totalDistance)
-        {
-            f.Unsafe.TryGetPointer<MomentumData>(EntityRef, out var pushbackData);
-            pushbackData->framesInMomentum = 0;
-            pushbackData->momentumAmount = totalDistance;
-        }
 
         private void MomentumMove(Frame f)
         {

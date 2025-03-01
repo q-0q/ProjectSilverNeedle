@@ -13,7 +13,7 @@ namespace Quantum.Types
         public List<Tuple<int, T>> Sections;
 
 
-        public T GetCurrentItem(Frame f, PlayerFSM fsm)
+        public T GetCurrentItem(Frame f, FSM fsm)
         {
             int frames = fsm.FramesInCurrentState(f);
             return GetItemFromIndex(frames);
@@ -25,7 +25,7 @@ namespace Quantum.Types
             return GetItemFromIndex(frames);
         }
         
-        public int GetCurrentItemDuration(Frame f, PlayerFSM fsm)
+        public int GetCurrentItemDuration(Frame f, FSM fsm)
         {
             int frames = fsm.FramesInCurrentState(f);
             return GetItemDuration(frames);
@@ -81,7 +81,7 @@ namespace Quantum.Types
             return Sections[^1].Item1;
         }
 
-        public int GetCurrentFirstFrame(Frame f, PlayerFSM fsm)
+        public int GetCurrentFirstFrame(Frame f, FSM fsm)
         {
             int frames = fsm.FramesInCurrentState(f);
             return GetFirstFrameFromIndex(frames);
@@ -127,7 +127,7 @@ namespace Quantum.Types
             return Sections[i].Item1 * LengthScalar;
         }
 
-        public bool IsOnFirstFrameOfSection(Frame f, PlayerFSM fsm)
+        public bool IsOnFirstFrameOfSection(Frame f, FSM fsm)
         {
             int index = fsm.FramesInCurrentState(f);   
             int duration = Duration();

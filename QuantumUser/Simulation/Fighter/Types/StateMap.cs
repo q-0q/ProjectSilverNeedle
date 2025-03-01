@@ -20,13 +20,13 @@ namespace Quantum.Types
             SuperFuncDictionary = new Dictionary<int, Func<FrameParam, T>>();
         }
         
-        public T Get(PlayerFSM fsm, FrameParam frameParam = null)
+        public T Get(FSM fsm, FrameParam frameParam = null)
         {
             int state = fsm.Fsm.State();
             return Lookup(state, fsm, frameParam);
         }
 
-        public T Lookup(int state, PlayerFSM fsm, FrameParam frameParam = null)
+        public T Lookup(int state, FSM fsm, FrameParam frameParam = null)
         {
             
             if (FuncDictionary.ContainsKey(state))

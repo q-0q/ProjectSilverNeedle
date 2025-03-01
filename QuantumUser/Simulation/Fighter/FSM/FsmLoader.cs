@@ -11,7 +11,7 @@ namespace Quantum
         {
             
             // Force static initialization of InheritableEnum class
-            var _ = PlayerFSM.State.GroundActionable;
+            var _ = PlayerFSM.PlayerState.GroundActionable;
             
             var p0 = new PlayerFSM();
             var p0Character = Characters.GetPlayerCharacter(f, Util.GetPlayer(f, 0));

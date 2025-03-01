@@ -12,10 +12,9 @@ namespace Quantum
     public abstract unsafe class Character
     {
         // Metadata
-        public string Name;
-        public Type StateType;
         public Type AnimationPathsEnum;
         public FPVector2 KinematicAttachPointOffset;
+        public string Name;
 
         public FP FallSpeed;
         public int FallTimeToSpeed;
@@ -52,17 +51,17 @@ namespace Quantum
             FighterAnimation = new StateMap<FighterAnimation>();
             Duration = new StateMap<int>();
             Duration.DefaultValue = 0;
-            Duration.SuperFuncDictionary[PlayerFSM.State.Hit] = GetStun;
-            Duration.SuperFuncDictionary[PlayerFSM.State.Block] = GetStun;
-            Duration.SuperFuncDictionary[PlayerFSM.State.CutsceneReactor] = GetCutsceneReactorDuration;
+            Duration.SuperFuncDictionary[PlayerFSM.PlayerState.Hit] = GetStun;
+            Duration.SuperFuncDictionary[PlayerFSM.PlayerState.Block] = GetStun;
+            Duration.SuperFuncDictionary[PlayerFSM.PlayerState.CutsceneReactor] = GetCutsceneReactorDuration;
 
-            Duration.Dictionary[PlayerFSM.State.HardKnockdown] = 50;
-            Duration.Dictionary[PlayerFSM.State.SoftKnockdown] = 20;
-            Duration.SuperDictionary[PlayerFSM.State.Throw] = 40;
+            Duration.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = 50;
+            Duration.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = 20;
+            Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
 
             HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
             HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
-            HurtTypeSectionGroup.SuperDictionary[PlayerFSM.State.Throw] = new SectionGroup<PlayerFSM.HurtType>()
+            HurtTypeSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Throw] = new SectionGroup<PlayerFSM.HurtType>()
             {
                 Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
                 {
@@ -72,7 +71,7 @@ namespace Quantum
             
             HitSectionGroup = new StateMap<SectionGroup<Hit>>();
             
-            HitSectionGroup.SuperDictionary[PlayerFSM.State.ForwardThrow] = new SectionGroup<Hit>()
+            HitSectionGroup.SuperDictionary[PlayerFSM.PlayerState.ForwardThrow] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
@@ -106,7 +105,7 @@ namespace Quantum
                 }
             };
             
-            HitSectionGroup.SuperDictionary[PlayerFSM.State.Backthrow] = new SectionGroup<Hit>()
+            HitSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Backthrow] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
@@ -142,7 +141,7 @@ namespace Quantum
             
             Pushbox = new StateMap<CollisionBox>();
             MovementSectionGroup = new StateMap<SectionGroup<FP>>();
-            MovementSectionGroup.Dictionary[PlayerFSM.State.SoftKnockdown] = new SectionGroup<FP>()
+            MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = new SectionGroup<FP>()
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
@@ -207,8 +206,8 @@ namespace Quantum
         protected void ConfigureAction(PlayerFSM fsm, ActionConfig actionConfig)
         {
             fsm.Fsm.Configure(actionConfig.State)
-                .SubstateOf(actionConfig.Crouching ? PlayerFSM.State.Crouch : PlayerFSM.State.Stand)
-                .SubstateOf(actionConfig.Aerial ? PlayerFSM.State.AirAction : PlayerFSM.State.GroundAction);
+                .SubstateOf(actionConfig.Crouching ? PlayerFSM.PlayerState.Crouch : PlayerFSM.PlayerState.Stand)
+                .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirAction : PlayerFSM.PlayerState.GroundAction);
             
             if (actionConfig.IsCutscene) return;
             
@@ -216,33 +215,33 @@ namespace Quantum
             {
                 if (actionConfig.GroundOk)
                 {
-                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.GroundActionable);
-                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.Dash);
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.GroundActionable);
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.Dash);
                 }
                 if (actionConfig.AirOk)
                 {
-                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.AirActionable);
-                    AllowRawFromState(fsm, actionConfig, PlayerFSM.State.AirDash);
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.AirActionable);
+                    AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.AirDash);
                 }
             }
             
             if (actionConfig.JumpCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)
-                    .PermitIf(PlayerFSM.Trigger.Jump, PlayerFSM.State.AirActionable, Util.CanCancelNow);
+                    .PermitIf(PlayerFSM.PlayerTrigger.Jump, PlayerFSM.PlayerState.AirActionable, Util.CanCancelNow);
             }
 
             if (actionConfig.DashCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)
-                    .PermitIf(PlayerFSM.Trigger.Dash, PlayerFSM.State.AirActionable, Util.CanCancelNow);
+                    .PermitIf(PlayerFSM.PlayerTrigger.Dash, PlayerFSM.PlayerState.AirActionable, Util.CanCancelNow);
             }
         }
 
         private static void AllowRawFromState(PlayerFSM fsm, ActionConfig actionConfig, int state)
         {
             fsm.Fsm.Configure(state)
-                .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
+                .PermitIf(PlayerFSM.PlayerTrigger.ButtonAndDirection,
                     actionConfig.State, 
                     param =>
                         Util.DoesInputMatch(actionConfig, param), 
@@ -253,7 +252,7 @@ namespace Quantum
             ActionConfig destination)
         {
             fsm.Fsm.Configure(source.State)
-                .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
+                .PermitIf(PlayerFSM.PlayerTrigger.ButtonAndDirection,
                     destination.State, 
                     param => 
                         (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)), 
