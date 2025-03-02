@@ -111,7 +111,6 @@ namespace Quantum
             base.SetupMachine();
             
             var machine = Fsm;
-            machine.OnTransitionCompleted(OnStateChanged);
 
             // Ground
             machine.Configure(PlayerState.Ground)
@@ -559,14 +558,13 @@ namespace Quantum
             comboData->damageScaling = 1;
         }
 
-        private void OnStateChanged(TriggerParams? triggerParams)
+        protected override void OnStateChanged(TriggerParams? triggerParams)
         {
+            base.OnStateChanged(triggerParams);
+            
             if (triggerParams is null) return;
             var param = (FrameParam)triggerParams;
-            ResetStateEnteredFrame(param.f);
             ForceUpdatePlayerDirection(param.f, EntityRef);
-
-            Util.WritebackFsm(param.f, EntityRef);
         }
 
         private void DoImpactVibrate(TriggerParams? triggerParams)
