@@ -27,20 +27,20 @@ public class PlayerSprite : QuantumEntityViewComponent
     public override void OnUpdateView()
     {
         
-        if (!PredictedFrame.Has<AnimationData>(EntityRef)) return;
+        FSM fsm = Util.GetFSM(PredictedFrame, EntityRef);
         
-        Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)PredictedFrame.Get<PlayerLink>(EntityRef).characterId;
-        string characterName = Characters.Get(characterEnum).Name;
+        if (!PredictedFrame.Has<AnimationData>(EntityRef)) return;
+
+        string characterName = fsm.Name;
         int frame = PredictedFrame.Get<AnimationData>(EntityRef).frame + 1;
         int path = PredictedFrame.Get<AnimationData>(EntityRef).path;
-        var pathEnum = Characters.Get(characterEnum).AnimationPathsEnum;
+        var pathEnum = fsm.AnimationPathsEnum;
         string stringPath = Enum.ToObject(pathEnum, path).ToString();
         string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/" + stringPath + "_" + frame;
         Sprite sprite = Resources.Load<Sprite>(fullPath);
 
         
         // offense / defense sorting
-        PlayerFSM fsm = Util.GetFSM(PredictedFrame, EntityRef);
         if (fsm is null) return;
         bool back = fsm.Fsm.IsInState(PlayerFSM.PlayerState.Block) || fsm.Fsm.IsInState(PlayerFSM.PlayerState.Hit) || fsm.Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor);
         gameObject.layer = back ? LayerMask.NameToLayer("PlayerBack") : LayerMask.NameToLayer("PlayerFront");

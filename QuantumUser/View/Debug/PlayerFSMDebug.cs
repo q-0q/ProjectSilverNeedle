@@ -22,12 +22,11 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
         // PlayerFSM.State state = (PlayerFSM.State)PredictedFrame.Get<PlayerFSMData>(EntityRef).currentState;
         int numFrames = PredictedFrame.Get<FSMData>(EntityRef).framesInState;
 
-        Characters.CharacterEnum characterEnum = (Characters.CharacterEnum)PredictedFrame.Get<PlayerLink>(EntityRef).characterId;
         var fsm = FsmLoader.GetPlayerFsm(EntityRef);
         if (fsm is null) return;
         var state = fsm.Fsm.State();
         
-        _tmp.text = InheritableEnum.GetFieldNameByValue(state, Characters.Get(characterEnum).StateType) + "\n" + numFrames;
+        _tmp.text = InheritableEnum.GetFieldNameByValue(state, fsm.StateType) + "\n" + numFrames;
         // _tmp.text = state.ToString();
     }
 }
