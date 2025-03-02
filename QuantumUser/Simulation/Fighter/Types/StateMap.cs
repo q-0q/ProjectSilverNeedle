@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Quantum.Types
 {
@@ -28,7 +29,6 @@ namespace Quantum.Types
 
         public T Lookup(int state, FSM fsm, FrameParam frameParam = null)
         {
-            
             if (FuncDictionary.ContainsKey(state))
             {
                 return FuncDictionary[state](frameParam);

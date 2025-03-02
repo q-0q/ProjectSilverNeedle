@@ -889,6 +889,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(backThrowCutsceneAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation;
+            Debug.Log("Mapped backthrow animation to int: " + StickTwoState.BackThrowCutscene);
             StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = backThrowCutsceneHits;
             StateMapConfig.Duration.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation.SectionGroup.Duration();
         }
