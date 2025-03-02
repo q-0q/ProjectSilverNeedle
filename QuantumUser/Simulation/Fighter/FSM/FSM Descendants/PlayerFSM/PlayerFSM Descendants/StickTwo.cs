@@ -894,9 +894,9 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation.SectionGroup.Duration();
         }
 
-        public void ConfigureCharacterFsm(PlayerFSM playerFsm)
+        public override void SetupMachine()
         {
-
+            base.SetupMachine();
             ActionConfig _5M = new ActionConfig()
             {
                 Aerial = false,
@@ -912,7 +912,7 @@ namespace Quantum
                 State = StickTwoState._5M
             };
             
-            ConfigureAction(playerFsm, _5M);
+            ConfigureAction(this, _5M);
             
             ActionConfig heatKnuckle = new ActionConfig()
             {
@@ -928,7 +928,7 @@ namespace Quantum
                 RawOk = true,
             };
             
-            ConfigureAction(playerFsm, heatKnuckle);
+            ConfigureAction(this, heatKnuckle);
             
             ActionConfig _2M = new ActionConfig()
             {
@@ -945,9 +945,9 @@ namespace Quantum
                 State = StickTwoState._2M
             };
             
-            ConfigureAction(playerFsm, _2M);
+            ConfigureAction(this, _2M);
             
-            MakeActionCancellable(playerFsm, _5M, _2M);
+            MakeActionCancellable(this, _5M, _2M);
             
             
             ActionConfig _2H = new ActionConfig()
@@ -965,7 +965,7 @@ namespace Quantum
                 State = StickTwoState._2H
             };
             
-            ConfigureAction(playerFsm, _2H);
+            ConfigureAction(this, _2H);
 
             ActionConfig frontThrow = new ActionConfig()
             {
@@ -974,7 +974,7 @@ namespace Quantum
                 IsCutscene = true
             };
             
-            ConfigureAction(playerFsm, frontThrow);
+            ConfigureAction(this, frontThrow);
             
             ActionConfig backThrow = new ActionConfig()
             {
@@ -983,7 +983,7 @@ namespace Quantum
                 IsCutscene = true
             };
             
-            ConfigureAction(playerFsm, backThrow);
+            ConfigureAction(this, backThrow);
         }
     }
 }
