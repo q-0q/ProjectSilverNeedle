@@ -22,7 +22,7 @@ namespace Quantum
             Oki,
         }
         
-        public void ReportFrameMeterType(Frame f)
+        public override void ReportFrameMeterType(Frame f)
         {
             FrameMeterType type = GetFrameMeterType(f);
             

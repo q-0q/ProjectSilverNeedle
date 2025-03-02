@@ -146,7 +146,7 @@ namespace Quantum
         public static bool IsPlayerFacingAwayFromWall(Frame f, EntityRef entityRef)
         {
             f.Unsafe.TryGetPointer<Transform3D>(entityRef, out var transform3D);
-            bool onLeft = PlayerDirectionSystem.IsOnLeft(f, entityRef);
+            bool onLeft = DirectionSystem.IsOnLeft(f, entityRef);
             if (onLeft && transform3D->Position.X < 0) return true;
             return !onLeft && transform3D->Position.X > 0;
         }

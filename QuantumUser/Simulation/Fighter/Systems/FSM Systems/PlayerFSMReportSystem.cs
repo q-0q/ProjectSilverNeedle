@@ -21,12 +21,12 @@ namespace Quantum
 
         private static void AdvanceFsm(Frame f, Filter filter)
         {
-            if (Util.GetFSM(f, filter.Entity) is not PlayerFSM fsm) return;
+            FSM fsm = Util.GetFSM(f, filter.Entity);
+            if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
-            // fsm.Move(f);
-            PlayerDirectionSystem.UpdatePlayerDirection(f, fsm);
+            DirectionSystem.UpdatePlayerDirection(f, fsm);
             fsm.TrajectoryArc(f);
             fsm.Animation(f);
             fsm.ReportFrameMeterType(f);

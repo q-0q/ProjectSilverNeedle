@@ -528,13 +528,13 @@ namespace Quantum
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
 
-            FP amount = PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef) ? 4 : -4;
+            FP amount = IsFacingRight(frameParam.f, EntityRef) ? 4 : -4;
             StartMomentum(frameParam.f, amount);
 
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
             AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Dash,
-                transform3D->Position.XY, 0, !PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef));
+                transform3D->Position.XY, 0, !IsFacingRight(frameParam.f, EntityRef));
         }
 
         private void StartMomentum(Frame f, FP totalDistance)
@@ -561,7 +561,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var param = (FrameParam)triggerParams;
             ResetStateEnteredFrame(param.f);
-            PlayerDirectionSystem.ForceUpdatePlayerDirection(param.f, EntityRef);
+            ForceUpdatePlayerDirection(param.f, EntityRef);
 
             Util.WritebackFsm(param.f, EntityRef);
         }
@@ -622,7 +622,7 @@ namespace Quantum
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
             AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Backdash,
-                transform3D->Position.XY, 0, !PlayerDirectionSystem.IsFacingRight(frameParam.f, EntityRef));
+                transform3D->Position.XY, 0, !IsFacingRight(frameParam.f, EntityRef));
         }
 
         // FSM helper functions

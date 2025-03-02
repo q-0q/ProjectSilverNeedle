@@ -21,7 +21,7 @@ namespace Quantum
 
         private static void AdvanceFsm(Frame f, Filter filter)
         {
-            PlayerFSM fsm = Util.GetFSM(f, filter.Entity);
+            FSM fsm = Util.GetFSM(f, filter.Entity);
             if (fsm is null) return;
             
             

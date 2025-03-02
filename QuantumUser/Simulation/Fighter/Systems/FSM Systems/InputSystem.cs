@@ -94,34 +94,34 @@ namespace Quantum
             }
         }
 
-        public static void FireFsmFromInput(Frame f, PlayerFSM fsm)
+        public static void FireFsmFromInput(Frame f, FSM fsm)
         {
             if (GameFSMSystem.GetGameState(f) != GameFSM.State.Playing) return;
             
             FireJump(f, fsm);
             FireDash(f, fsm);
-            FireAction(f, fsm);
-            FireMovement(f, fsm);
+            FireButtonAndDirection(f, fsm);
+            FireDirection(f, fsm);
         }
 
-        private static void FireAction(Frame f, PlayerFSM fsm)
+        private static void FireButtonAndDirection(Frame f, FSM fsm)
         {
             var interactionControllerData = Util.GetInteractionControllerData(f);
             if (interactionControllerData.enabled)
             {
-                FireInteractionControllerAction(f, fsm, interactionControllerData);
+                FireInteractionControllerButtonAndDirection(f, fsm, interactionControllerData);
             }
             else if (Util.EntityIsCpu(f, fsm.EntityRef))
             {
-                FireCpuAction(f, fsm);
+                FireCpuButtonAndDirection(f, fsm);
             }
             else
             {
-                FireHumanAction(f, fsm);
+                FireHumanButtonAndDirection(f, fsm);
             }
         }
 
-        private static void FireInteractionControllerAction(Frame f, PlayerFSM fsm, 
+        private static void FireInteractionControllerButtonAndDirection(Frame f, FSM fsm, 
             InteractionControllerData interactionControllerData)
         {
             
@@ -143,7 +143,7 @@ namespace Quantum
             FireButtonAndDirectionTrigger(f, fsm, type, commandDirection);
         }
 
-        private static void FireCpuAction(Frame f, PlayerFSM fsm)
+        private static void FireCpuButtonAndDirection(Frame f, FSM fsm)
         {
             foreach (var (_, cpuControllerData) in f.GetComponentIterator<CpuControllerData>())
             {
@@ -156,7 +156,7 @@ namespace Quantum
             }
         }
 
-        private static void FireHumanAction(Frame f, PlayerFSM fsm)
+        private static void FireHumanButtonAndDirection(Frame f, FSM fsm)
         {
             if (GetBufferType(f, fsm.EntityRef, out var type))
             {
@@ -168,7 +168,7 @@ namespace Quantum
         }
         
         
-        private static void FireDash(Frame f, PlayerFSM fsm)
+        private static void FireDash(Frame f, FSM fsm)
         {
             FrameParam param = new FrameParam() { f = f, EntityRef = fsm.EntityRef};
             
@@ -199,7 +199,7 @@ namespace Quantum
         
         
 
-        private static void FireJump(Frame f, PlayerFSM fsm)
+        private static void FireJump(Frame f, FSM fsm)
         {
             if (Util.EntityIsCpu(f, fsm.EntityRef))
             {
@@ -223,19 +223,19 @@ namespace Quantum
                 {
                     case 7:
                     {
-                        fsm.TryToFireJump(f, PlayerFSM.JumpType.Backward);
+                        fsm.TryToFireJump(f, FSM.JumpType.Backward);
                         return;
                         break;
                     }
                     case 8:
                     {
-                        fsm.TryToFireJump(f, PlayerFSM.JumpType.Up);
+                        fsm.TryToFireJump(f, FSM.JumpType.Up);
                         return;
                         break;
                     }
                     case 9:
                     {
-                        fsm.TryToFireJump(f, PlayerFSM.JumpType.Forward);
+                        fsm.TryToFireJump(f, FSM.JumpType.Forward);
                         return;
                         break;
                     }
@@ -248,24 +248,24 @@ namespace Quantum
                 {
                     case 7:
                     {
-                        fsm.TryToFireJump(f, PlayerFSM.JumpType.Backward);
+                        fsm.TryToFireJump(f, FSM.JumpType.Backward);
                         break;
                     }
                     case 8:
                     {
-                        fsm.TryToFireJump(f, PlayerFSM.JumpType.Up);
+                        fsm.TryToFireJump(f, FSM.JumpType.Up);
                         break;
                     }
                     case 9:
                     {
-                        fsm.TryToFireJump(f, PlayerFSM.JumpType.Forward);
+                        fsm.TryToFireJump(f, FSM.JumpType.Forward);
                         break;
                     }
                 }
             }
         }
 
-        private static void FireMovement(Frame f, PlayerFSM fsm)
+        private static void FireDirection(Frame f, FSM fsm)
         {
             
             FrameParam param = new FrameParam() { f = f, EntityRef = fsm.EntityRef};
@@ -321,7 +321,7 @@ namespace Quantum
             
             Input input = *f.GetPlayerInput(playerLink->Player);
             
-            bool facingRight = PlayerDirectionSystem.IsOnLeft(f, entityRef);
+            bool facingRight = DirectionSystem.IsOnLeft(f, entityRef);
             
 
             if (facingRight) return input.UnflippedNumpadDirection;
@@ -432,14 +432,14 @@ namespace Quantum
             return inputBuffer->length != 0;
         }
 
-        private static void FireButtonAndDirectionTrigger(Frame f, PlayerFSM fsm, InputType type, int commandDirection)
+        private static void FireButtonAndDirectionTrigger(Frame f, FSM fsm, InputType type, int commandDirection)
         {
             ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
             fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.ButtonAndDirection, param);
         }
         
-        private static void FireThrowTrigger(Frame f, PlayerFSM fsm, InputType type, int commandDirection)
+        private static void FireThrowTrigger(Frame f, FSM fsm, InputType type, int commandDirection)
         {
             if (type != InputType.D) return;
             

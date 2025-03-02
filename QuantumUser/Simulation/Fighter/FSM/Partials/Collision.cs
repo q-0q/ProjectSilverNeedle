@@ -226,7 +226,7 @@ namespace Quantum
         {
             FP growOffsetX = collisionBox.GrowWidth ? collisionBox.Width * FP._0_50 : 0;
             FP growOffsetY = collisionBox.GrowHeight ? collisionBox.Height * FP._0_50 : 0;
-            FP flipXMod = PlayerDirectionSystem.IsFacingRight(f, source) ? FP._1 : FP.Minus_1;
+            FP flipXMod = IsFacingRight(f, source) ? FP._1 : FP.Minus_1;
                     
             FPVector3 posOffset = new FPVector3(collisionBox.PosX, collisionBox.PosY, 0);
             FPVector3 growOffset = new FPVector3(growOffsetX, growOffsetY, 0);

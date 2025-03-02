@@ -37,7 +37,7 @@ namespace Quantum
             InvokeCollisionVibrate(f, trigger);
 
             var xVelocity = hitboxData.trajectoryXVelocity;
-            if (!PlayerDirectionSystem.IsFacingRight(f, hitboxData.source))
+            if (!IsFacingRight(f, hitboxData.source))
             {
                 xVelocity *= FP.Minus_1;
             }
@@ -57,7 +57,7 @@ namespace Quantum
             if (true) {
                 FP pushback = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
                 FP pushbackDistance = pushback;
-                if (PlayerDirectionSystem.IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
+                if (IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
                 StartPushback(f, pushbackDistance);
             }
             
@@ -71,7 +71,7 @@ namespace Quantum
                 HitstopSystem.EnqueueHitstop(f, stop);
                 
                 AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, location, hitboxData.visualAngle, 
-                    !PlayerDirectionSystem.IsFacingRight(f, hitboxData.source));
+                    !IsFacingRight(f, hitboxData.source));
             }
             else
             {
@@ -95,7 +95,7 @@ namespace Quantum
                 ? AnimationEntities.AnimationEntityEnum.Counter
                 : AnimationEntities.AnimationEntityEnum.Hit;
             AnimationEntitySystem.Create(f, animationEntityEnum, location, hitboxData.visualAngle, 
-                !PlayerDirectionSystem.IsFacingRight(f, hitboxData.source));
+                !IsFacingRight(f, hitboxData.source));
 
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             trajectoryData->hardKnockdown = hitboxData.hardKnockdown;
@@ -182,7 +182,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<CutsceneData>(hurtboxInternal.source, out var cutsceneData);
             cutsceneData->initiator = hitboxInternal.source;
             cutsceneData->cutsceneIndex = cutsceneIndex;
-            cutsceneData->initiatorFacingRight = PlayerDirectionSystem.IsFacingRight(f, hitboxInternal.source);
+            cutsceneData->initiatorFacingRight = IsFacingRight(f, hitboxInternal.source);
             
             // Let's remember this, hopefully it wont give any weird issues.
             Util.WritebackFsm(f, hitboxInternal.source);

@@ -19,7 +19,7 @@
       systems.Add(new SummonFSMSystem());
       systems.Add(new PlayerFSMSReportSystem());
       systems.Add(new HitstopSystem());
-      systems.Add(new PlayerDirectionSystem());
+      systems.Add(new DirectionSystem());
       systems.Add(new AnimationEntitySystem());
       systems.Add(new InputSystem());
     }

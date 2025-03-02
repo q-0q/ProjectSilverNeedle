@@ -23,6 +23,13 @@ namespace Quantum
         public Type StateType;
         
         public Dictionary<int, Cutscene> Cutscenes;
+        
+        public enum JumpType
+        {
+            Up,
+            Forward,
+            Backward
+        }
 
 
         public virtual void SetupStateMaps()
@@ -50,6 +57,23 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
+        }
+        
+        public virtual void TryToFireJump(Frame f, JumpType type)
+        {
+        }
+        
+        public virtual void CheckForLand(Frame f)
+        {
+        }
+        
+        public virtual void TrajectoryArc(Frame f)
+        {
+        }
+        
+        public virtual void ReportFrameMeterType(Frame f)
+        {
+
         }
     }
 }
