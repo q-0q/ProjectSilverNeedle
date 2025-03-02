@@ -26,7 +26,7 @@ namespace Quantum
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
-            DirectionSystem.UpdatePlayerDirection(f, fsm);
+            fsm.UpdateDirection(f);
             fsm.TrajectoryArc(f);
             fsm.Animation(f);
             fsm.ReportFrameMeterType(f);

@@ -9,7 +9,7 @@ namespace Quantum
 {
     public unsafe partial class PlayerFSM
     {
-        public override void UpdatePlayerDirection(Frame f)
+        public override void UpdateDirection(Frame f)
         {
             if (Fsm.IsInState(PlayerFSM.PlayerState.GroundAction)) return;
             if (Fsm.IsInState(PlayerFSM.PlayerState.AirAction)) return;
