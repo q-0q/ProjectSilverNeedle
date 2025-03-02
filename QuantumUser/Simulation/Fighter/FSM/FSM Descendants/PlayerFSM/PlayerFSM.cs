@@ -369,6 +369,8 @@ namespace Quantum
 
             machine.Configure(PlayerState.CutsceneReactor)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
+            
+            machine.Assume(PlayerState.StandActionable);
         }
 
         public override void SetupStateMaps()

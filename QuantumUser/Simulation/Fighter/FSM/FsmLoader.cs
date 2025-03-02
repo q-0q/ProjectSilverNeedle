@@ -10,9 +10,7 @@ namespace Quantum
         public static void InitializeFsms(Frame f)
         {
             
-            // Force static initialization of InheritableEnum class
-            var _ = PlayerFSM.PlayerState.GroundActionable;
-            
+            InheritableEnum.InheritableEnum.Initialize();
             
             // Todo: load player-selected FSM and summons also
             
