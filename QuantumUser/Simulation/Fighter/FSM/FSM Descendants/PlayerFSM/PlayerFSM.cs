@@ -384,6 +384,7 @@ namespace Quantum
             StateMapConfig.Duration.SuperFuncDictionary[PlayerFSM.PlayerState.Block] = GetStun;
             StateMapConfig.Duration.SuperFuncDictionary[PlayerFSM.PlayerState.CutsceneReactor] = GetCutsceneReactorDuration;
 
+            Debug.Log("Setting durations for PlayerFSM!");
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = 50;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = 20;
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;

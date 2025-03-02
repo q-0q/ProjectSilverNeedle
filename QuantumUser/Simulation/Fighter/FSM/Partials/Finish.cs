@@ -15,9 +15,11 @@ namespace Quantum
                 EntityRef = EntityRef,
             };
             int duration = StateMapConfig.Duration.Get(this, frameParam);
+            Debug.Log(duration);
             if (FramesInCurrentState(f) >= duration)
             {
                 var param = new CollisionHitParams() { f = f, EntityRef = EntityRef };
+                
                 Fsm.Fire(PlayerFSM.PlayerTrigger.Finish, param);
             }
         }
