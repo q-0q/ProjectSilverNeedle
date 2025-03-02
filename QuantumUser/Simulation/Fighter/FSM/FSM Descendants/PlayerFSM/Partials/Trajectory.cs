@@ -21,14 +21,9 @@ namespace Quantum
 
         private static readonly int ExtraFramesUntilMaxFallSpeedAfterAirdash = 20;
         
-        public enum JumpType
-        {
-            Up,
-            Forward,
-            Backward
-        }
+
         
-        public void TrajectoryArc(Frame f)
+        public override void TrajectoryArc(Frame f)
         {
             
             if (!Fsm.IsInState(PlayerState.Air)) return;
@@ -140,7 +135,7 @@ namespace Quantum
             
         }
 
-        public void TryToFireJump(Frame f, JumpType type)
+        public override void TryToFireJump(Frame f, JumpType type)
         {
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             if (trajectoryData->jumpsRemaining <= 0) return;
@@ -221,7 +216,7 @@ namespace Quantum
             trajectoryData->dashType = trajectoryDashType;
         }
 
-        public void CheckForLand(Frame f)
+        public override void CheckForLand(Frame f)
         {
             
             if (!Fsm.IsInState(PlayerState.Air)) return;
@@ -268,7 +263,7 @@ namespace Quantum
             trajectory.TrajectoryHeight = template.TrajectoryHeight;
             trajectory.TimeToTrajectoryHeight = template.TimeToTrajectoryHeight;
 
-            if (!PlayerDirectionSystem.IsFacingRight(f, EntityRef))
+            if (!IsFacingRight(f, EntityRef))
             {
                 trajectory.TrajectoryXVelocity *= FP.Minus_1;
             }
@@ -303,7 +298,7 @@ namespace Quantum
             var trajectory = trajectorySectionGroup.GetCurrentItem(f, this);
             if (trajectory is null) return;
 
-            FP flipMod = PlayerDirectionSystem.IsFacingRight(f, EntityRef) ? 1 : -1;
+            FP flipMod = IsFacingRight(f, EntityRef) ? 1 : -1;
             
             StartNewTrajectory(f, trajectory.TrajectoryHeight, trajectory.TimeToTrajectoryHeight, 
                 trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds * flipMod, FallSpeed, FallTimeToSpeed, false);

@@ -52,7 +52,7 @@ namespace Quantum
 
         private void ApplyUnflippedMovement(Frame f, FPVector2 v)
         {
-            if (!PlayerDirectionSystem.IsFacingRight(f, EntityRef))
+            if (!IsFacingRight(f, EntityRef))
             {
                 v.X *= FP.Minus_1;
             }
@@ -68,7 +68,7 @@ namespace Quantum
             {
                 if (AreCollisionBoxesNextToEachOther(f, opponentPushboxInternal, pushboxInternal, out FP deltaX))
                 {
-                    v.X = !PlayerDirectionSystem.IsOnLeft(f, entityRef)
+                    v.X = !IsOnLeft(f, entityRef)
                         ? Util.Max(v.X, deltaX + _crossupThreshhold)
                         : Util.Min(v.X, deltaX - _crossupThreshhold);
                     
@@ -100,7 +100,7 @@ namespace Quantum
 
             FPVector2 pushboxMovement = new FPVector2(-overlapWidth * _pushboxResistance, 0);
 
-            if (!PlayerDirectionSystem.IsOnLeft(f, EntityRef))
+            if (!IsOnLeft(f, EntityRef))
             {
                 pushboxMovement.X *= FP.Minus_1;
             }

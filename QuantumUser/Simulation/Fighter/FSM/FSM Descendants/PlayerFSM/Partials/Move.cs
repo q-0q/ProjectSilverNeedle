@@ -37,7 +37,7 @@ namespace Quantum
             var frameParam = (FrameParam)triggerParams;
 
             var distance = _throwTechPushback;
-            if (PlayerDirectionSystem.IsOnLeft(frameParam.f, EntityRef)) distance *= FP.Minus_1;
+            if (IsOnLeft(frameParam.f, EntityRef)) distance *= FP.Minus_1;
             StartPushback(frameParam.f, distance);
             Util.StartDramatic(frameParam.f, EntityRef, 35);
 
