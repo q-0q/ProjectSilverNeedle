@@ -8,6 +8,7 @@ namespace Quantum
         public enum State
         {
             Waiting,
+            Loading,
             Ready,
             Countdown,
             Playing,
@@ -21,6 +22,7 @@ namespace Quantum
             PlayerJoin,
             Started,
             Finish,
+            FinishLoading,
             PlayerDeath,
         }
         
@@ -35,11 +37,14 @@ namespace Quantum
             Fsm.OnTransitioned(OnStateChanged);
 
             Fsm.Configure(State.Waiting)
-                .PermitIf(Trigger.PlayerJoin, State.Ready, GameHasTwoPlayers);
+                .PermitIf(Trigger.PlayerJoin, State.Loading, GameHasTwoPlayers);
+            
+            Fsm.Configure(State.Loading)
+                .Permit(Trigger.FinishLoading, State.Ready)
+                .OnEntry(GameFSMSystem.OnLoading);
 
             Fsm.Configure(State.Ready)
-                .Permit(Trigger.Started, State.Countdown) // Change to destination: State.Countdown
-                .OnEntry(GameFSMSystem.OnReady);
+                .Permit(Trigger.Started, State.Countdown); // Change to destination: State.Countdown
 
             Fsm.Configure(State.Countdown)
                 .Permit(Trigger.Finish, State.Playing)

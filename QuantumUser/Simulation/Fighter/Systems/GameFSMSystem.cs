@@ -69,7 +69,7 @@ namespace Quantum
         }
 
 
-        public static void OnReady(TriggerParams? triggerParams)
+        public static void OnLoading(TriggerParams? triggerParams)
         {
             
             Debug.Log("OnReady");
@@ -80,12 +80,13 @@ namespace Quantum
             
             Debug.Log("OnReady, after cast");
             
+            FsmLoader.InitializeFsms(frame);
+            
             foreach (var (entityRef, _) in frame.GetComponentIterator<PlayerLink>())
             {
                 InitializePlayerComponents(frame, entityRef);
             }
             
-            FsmLoader.InitializeFsms(frame);
         }
         
         public static void OnCountdown(TriggerParams? triggerParams)

@@ -137,12 +137,16 @@ namespace Quantum
 
         public override void TryToFireJump(Frame f, JumpType type)
         {
+            Debug.Log("A");
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             if (trajectoryData->jumpsRemaining <= 0) return;
+            Debug.Log("B");
             if (GetFramesInTrajectory(f) < 20 && Fsm.IsInState(PlayerState.Air)) return;
+            Debug.Log("C");
             
             var param = new JumpParam() { f = f, Type = type, EntityRef = EntityRef};
             
+            Debug.Log("firing player trytofirejump");
             Fsm.Fire(PlayerTrigger.Jump, param);
         }
 

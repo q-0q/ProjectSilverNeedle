@@ -34,6 +34,7 @@ namespace Quantum
 
         public virtual void SetupStateMaps()
         {
+            StateMapConfig = new StateMapConfig();
         }
 
         public virtual void SetupMachine()
