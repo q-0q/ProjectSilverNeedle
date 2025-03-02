@@ -23,6 +23,7 @@ namespace Quantum
 
             var gameFsm = GameFsmLoader.LoadGameFSM(frame);
             FrameParam frameParam = new FrameParam() { f = frame, EntityRef = entity };
+            Debug.Log("Firing PlayerJoin");
             gameFsm.Fsm.Fire(GameFSM.Trigger.PlayerJoin, frameParam);
         }
     }
