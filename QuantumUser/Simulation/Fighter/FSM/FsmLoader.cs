@@ -5,7 +5,7 @@ namespace Quantum
 {
     public static class FsmLoader
     {
-        public static List<PlayerFSM> PlayerFsms;
+        public static Dictionary<EntityRef, FSM> FSMs;
 
         public static void InitializeFsms(Frame f)
         {
@@ -13,24 +13,27 @@ namespace Quantum
             // Force static initialization of InheritableEnum class
             var _ = PlayerFSM.PlayerState.GroundActionable;
             
-            var p0 = new PlayerFSM();
-            var p0Character = Characters.GetPlayerCharacter(f, Util.GetPlayer(f, 0));
-            p0Character.ConfigureCharacterFsm(p0);
             
-            var p1 = new PlayerFSM();
-            var p1Character = Characters.GetPlayerCharacter(f, Util.GetPlayer(f, 1));
-            p1Character.ConfigureCharacterFsm(p1);
+            // Todo: load player-selected FSM and summons also
+            
+            var p0 = new StickTwo();
+            p0.SetupMachine();
+            p0.SetupStateMaps();
+            
+            var p1 = new StickTwo();
+            p1.SetupMachine();
+            p1.SetupStateMaps();
 
-            PlayerFsms = new List<PlayerFSM>
+            FSMs = new Dictionary<EntityRef, FSM>()
             {
-                p0,
-                p1
+                { Util.GetPlayer(f, 0), p0 },
+                { Util.GetPlayer(f, 1), p1 }
             };
         }
 
-        public static PlayerFSM GetPlayerFsm(Frame f, EntityRef entityRef)
+        public static FSM GetPlayerFsm(EntityRef entityRef)
         {
-            return PlayerFsms?[Util.GetPlayerId(f, entityRef)];
+            return FSMs?[entityRef];
         }
         
         

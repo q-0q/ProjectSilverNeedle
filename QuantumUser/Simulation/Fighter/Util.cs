@@ -94,7 +94,7 @@ namespace Quantum
         
         public static void WritebackFsm(Frame f, EntityRef entityRef)
         {
-            var fsm = FsmLoader.GetPlayerFsm(f, entityRef);
+            var fsm = FsmLoader.GetPlayerFsm(entityRef);
             if (fsm is null) return;
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
@@ -122,21 +122,18 @@ namespace Quantum
             return new InteractionControllerData();
         }
 
-        public static PlayerFSM GetPlayerFSM(Frame f, EntityRef entityRef, bool debug=false)
+        public static FSM GetFSM(Frame f, EntityRef entityRef, bool debug=false)
         {
-
-            f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
             
-            var fsm = FsmLoader.GetPlayerFsm(f, entityRef);
+            var fsm = FsmLoader.GetPlayerFsm(entityRef);
             if (fsm is null) return null;
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
-
+            
             
             fsm.Fsm.Assume(playerFsmData->currentState);
             fsm.EntityRef = entityRef;
             
-           
             return fsm;
         }
 
@@ -216,11 +213,11 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<CutsceneData>(entityRef, out var cutsceneData);
             var index = cutsceneData->cutsceneIndex;
-            var character = Characters.GetPlayerCharacter(f, cutsceneData->initiator);
+            var fsm = Util.GetFSM(f, entityRef);
             
             try
             {
-                return character.Cutscenes[index];
+                return fsm.Cutscenes[index];
             }
             catch (Exception e)
             {
@@ -237,15 +234,17 @@ namespace Quantum
             var frameParam = (FrameParam)param;
             var f = frameParam.f;
             var entityRef = frameParam.EntityRef;
+
+            if (GetFSM(f, entityRef) is not PlayerFSM fsm)
+            {
+                Debug.LogError("Something went really wrong, you tried to check CanCancelNow on a non-Player FSM");
+                return false;
+            }
             
-            Character character = Characters.GetPlayerCharacter(f, entityRef);
-            PlayerFSM fsm = GetPlayerFSM(f, entityRef);
-            if (fsm is null) return false;
-            
-            return (fsm.FramesInCurrentState(f) >= character.CancellableAfter.Get(fsm)) && (!fsm.IsWhiffed(f) || 
-                character.WhiffCancellable.Get(fsm));
+            return (fsm.FramesInCurrentState(f) >= fsm.StateMapConfig.CancellableAfter.Get(fsm)) && (!fsm.IsWhiffed(f) || 
+                fsm.StateMapConfig.WhiffCancellable.Get(fsm));
         }
-        public static bool DoesInputMatch(Character.ActionConfig actionConfig, TriggerParams param)
+        public static bool DoesInputMatch(PlayerFSM.ActionConfig actionConfig, TriggerParams param)
         {
             if (param is null) return false;
             var buttonAndDirectionParam = (ButtonAndDirectionParam)param; 

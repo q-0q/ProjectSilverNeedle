@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public unsafe class PlayerFSMSCollisionSystem : SystemMainThreadFilter<PlayerFSMSCollisionSystem.Filter>
+    public unsafe class PlayerFSMThrowCollisionSystem : SystemMainThreadFilter<PlayerFSMThrowCollisionSystem.Filter>
     {
         public struct Filter
         {
             public EntityRef Entity;
             public FSMData* PlayerFsmData;
-            public PlayerLink PlayerLink;
 
         }
         
@@ -21,12 +20,12 @@ namespace Quantum
 
         private static void AdvanceFsm(Frame f, Filter filter)
         {
-            PlayerFSM fsm = Util.GetPlayerFSM(f, filter.Entity);
+            PlayerFSM fsm = Util.GetFSM(f, filter.Entity);
             if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
-            fsm.HitboxHurtboxCollide(f);
+            // fsm.ThrowboxCollide(f);
             
             Util.WritebackFsm(f, filter.Entity);
         }

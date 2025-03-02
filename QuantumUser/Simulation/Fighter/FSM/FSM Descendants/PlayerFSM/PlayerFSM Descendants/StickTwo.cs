@@ -113,7 +113,7 @@ namespace Quantum
             
         }
 
-        protected override void SetupStateMaps()
+        public override void SetupStateMaps()
         {
             base.SetupStateMaps();
             

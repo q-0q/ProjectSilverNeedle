@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Photon.Deterministic;
 using Quantum.Types;
+using Quantum.Types.Collision;
 using UnityEngine;
 using Wasp;
 
@@ -104,7 +106,7 @@ namespace Quantum
         }
 
 
-        protected override void SetupMachine()
+        public override void SetupMachine()
         {
             base.SetupMachine();
             
@@ -369,24 +371,24 @@ namespace Quantum
                 .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
         }
 
-        protected override void SetupStateMaps()
+        public override void SetupStateMaps()
         {
             base.SetupStateMaps();
             
-            FighterAnimation = new StateMap<FighterAnimation>();
-            Duration = new StateMap<int>();
-            Duration.DefaultValue = 0;
-            Duration.SuperFuncDictionary[PlayerFSM.PlayerState.Hit] = GetStun;
-            Duration.SuperFuncDictionary[PlayerFSM.PlayerState.Block] = GetStun;
-            Duration.SuperFuncDictionary[PlayerFSM.PlayerState.CutsceneReactor] = GetCutsceneReactorDuration;
+            StateMapConfig.FighterAnimation = new StateMap<FighterAnimation>();
+            StateMapConfig.Duration = new StateMap<int>();
+            StateMapConfig.Duration.DefaultValue = 0;
+            StateMapConfig.Duration.SuperFuncDictionary[PlayerFSM.PlayerState.Hit] = GetStun;
+            StateMapConfig.Duration.SuperFuncDictionary[PlayerFSM.PlayerState.Block] = GetStun;
+            StateMapConfig.Duration.SuperFuncDictionary[PlayerFSM.PlayerState.CutsceneReactor] = GetCutsceneReactorDuration;
 
-            Duration.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = 50;
-            Duration.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = 20;
-            Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = 50;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = 20;
+            StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
 
-            HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
-            HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
-            HurtTypeSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Throw] = new SectionGroup<PlayerFSM.HurtType>()
+            StateMapConfig.HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
+            StateMapConfig.HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
+            StateMapConfig.HurtTypeSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Throw] = new SectionGroup<PlayerFSM.HurtType>()
             {
                 Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
                 {
@@ -394,9 +396,9 @@ namespace Quantum
                 }
             };
 
-            HitSectionGroup = new StateMap<SectionGroup<Hit>>();
+            StateMapConfig.HitSectionGroup = new StateMap<SectionGroup<Hit>>();
 
-            HitSectionGroup.SuperDictionary[PlayerFSM.PlayerState.ForwardThrow] = new SectionGroup<Hit>()
+            StateMapConfig.HitSectionGroup.SuperDictionary[PlayerFSM.PlayerState.ForwardThrow] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
@@ -430,7 +432,7 @@ namespace Quantum
                 }
             };
 
-            HitSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Backthrow] = new SectionGroup<Hit>()
+            StateMapConfig.HitSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Backthrow] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
@@ -464,9 +466,9 @@ namespace Quantum
                 }
             };
 
-            Pushbox = new StateMap<CollisionBox>();
-            MovementSectionGroup = new StateMap<SectionGroup<FP>>();
-            MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = new SectionGroup<FP>()
+            StateMapConfig.Pushbox = new StateMap<CollisionBox>();
+            StateMapConfig.MovementSectionGroup = new StateMap<SectionGroup<FP>>();
+            StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = new SectionGroup<FP>()
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
@@ -474,17 +476,16 @@ namespace Quantum
                 }
             };
 
-            AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
-            TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
-            CancellableAfter = new StateMap<int>();
-            CancellableAfter.DefaultValue = 0;
-            WhiffCancellable = new StateMap<bool>();
-            WhiffCancellable.DefaultValue = false;
-            FireReceiverFinishAfter = new StateMap<int>();
-            FireReceiverFinishAfter.DefaultValue = 10;
-            AttachPositionSectionGroup = new StateMap<SectionGroup<FPVector2>>();
-            InvulnerableBefore = new StateMap<int>();
-            InvulnerableBefore.DefaultValue = 0;
+            StateMapConfig.AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
+            StateMapConfig.TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
+            StateMapConfig.CancellableAfter = new StateMap<int>();
+            StateMapConfig.CancellableAfter.DefaultValue = 0;
+            StateMapConfig.WhiffCancellable = new StateMap<bool>();
+            StateMapConfig.WhiffCancellable.DefaultValue = false;
+            StateMapConfig.FireReceiverFinishAfter = new StateMap<int>();
+            StateMapConfig.FireReceiverFinishAfter.DefaultValue = 10;
+            StateMapConfig.InvulnerableBefore = new StateMap<int>();
+            StateMapConfig.InvulnerableBefore.DefaultValue = 0;
             Cutscenes = new Dictionary<int, Cutscene>();
             return;
 

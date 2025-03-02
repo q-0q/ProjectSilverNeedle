@@ -81,13 +81,12 @@ namespace Quantum
             int collisionState = fsmData->currentCollisionState;
             int collisionStateFrames = fsmData->collisionFramesInState;
             
-            Character character = Characters.GetPlayerCharacter(f, source);
-            PlayerFSM playerFsm = Util.GetPlayerFSM(f, source);
+            var fsm = Util.GetFSM(f, source);
             
             
             if (type == CollisionBoxType.Pushbox)
             {
-                var pushBox = character.Pushbox.Lookup(collisionState, playerFsm);
+                var pushBox = fsm.StateMapConfig.Pushbox.Lookup(collisionState, fsm);
 
                 if (pushBox is null) return null;
                 
@@ -105,13 +104,13 @@ namespace Quantum
 
             if (type == CollisionBoxType.Hurtbox)
             {
-                if (character.InvulnerableBefore.Lookup(collisionState, playerFsm) > collisionStateFrames)
+                if (fsm.StateMapConfig.InvulnerableBefore.Lookup(collisionState, fsm) > collisionStateFrames)
                     return new List<CollisionBoxInternal>();
-                var hurtTypeSectionGroup = character.HurtTypeSectionGroup.Lookup(collisionState, playerFsm);
+                var hurtTypeSectionGroup = fsm.StateMapConfig.HurtTypeSectionGroup.Lookup(collisionState, fsm);
                 var hurtType = HurtType.Regular;
                 if (hurtTypeSectionGroup is not null)
                     hurtType = hurtTypeSectionGroup.GetItemFromIndex(collisionStateFrames);
-                var hurtBoxCollectionSectionGroup = character.HurtboxCollectionSectionGroup.Lookup(collisionState, playerFsm);
+                var hurtBoxCollectionSectionGroup = fsm.StateMapConfig.HurtboxCollectionSectionGroup.Lookup(collisionState, fsm);
                 if (hurtBoxCollectionSectionGroup is null) return new List<CollisionBoxInternal>();
                 var hurtboxCollection = hurtBoxCollectionSectionGroup.GetItemFromIndex(collisionStateFrames);
                 if (hurtboxCollection is null) return new List<CollisionBoxInternal>();
@@ -139,7 +138,7 @@ namespace Quantum
 
             if (type == CollisionBoxType.Hitbox)
             {
-                var hitSectionGroup = character.HitSectionGroup.Lookup(collisionState, playerFsm);
+                var hitSectionGroup = fsm.StateMapConfig.HitSectionGroup.Lookup(collisionState, fsm);
                 if (hitSectionGroup is null) return new List<CollisionBoxInternal>();
 
                 var hit = hitSectionGroup.GetItemFromIndex(collisionStateFrames);
@@ -269,8 +268,7 @@ namespace Quantum
 
         private SectionGroup<Hit> GetCurrentHitSectionGroup(Frame f)
         {
-            Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            SectionGroup<Hit> hitSectionGroup = character.HitSectionGroup.Get(this);
+            SectionGroup<Hit> hitSectionGroup = StateMapConfig.HitSectionGroup.Get(this);
             return hitSectionGroup;
         }
 

@@ -21,8 +21,7 @@ namespace Quantum
 
         private static void AdvanceFsm(Frame f, Filter filter)
         {
-            PlayerFSM fsm = Util.GetPlayerFSM(f, filter.Entity);
-            if (fsm is null) return;
+            if (Util.GetFSM(f, filter.Entity) is not PlayerFSM fsm) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
@@ -30,7 +29,6 @@ namespace Quantum
             PlayerDirectionSystem.UpdatePlayerDirection(f, fsm);
             fsm.TrajectoryArc(f);
             fsm.Animation(f);
-            fsm.UpdateKinematicsAttachPosition(f);
             fsm.ReportFrameMeterType(f);
             
             IncrementClock(f, filter.Entity);
