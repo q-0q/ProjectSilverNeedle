@@ -39,6 +39,15 @@ namespace Quantum
 
         public virtual void SetupMachine()
         {
+            Fsm.OnTransitionCompleted(OnStateChanged);
+        }
+        
+        protected virtual void OnStateChanged(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return;
+            var param = (FrameParam)triggerParams;
+            ResetStateEnteredFrame(param.f);
+            Util.WritebackFsm(param.f, EntityRef);
         }
 
         protected void ResetStateEnteredFrame(Frame f)
@@ -74,7 +83,6 @@ namespace Quantum
         
         public virtual void ReportFrameMeterType(Frame f)
         {
-
         }
     }
 }
