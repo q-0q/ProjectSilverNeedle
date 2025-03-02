@@ -6,6 +6,7 @@ namespace Quantum
     public static class FsmLoader
     {
         public static Dictionary<EntityRef, FSM> FSMs;
+        
 
         public static void InitializeFsms(Frame f)
         {
@@ -22,18 +23,32 @@ namespace Quantum
             p1.SetupMachine();
             p1.SetupStateMaps();
 
+            var summonEntity =CreateSummonEntity(f);
+            var s1 = new Fireball();
+            s1.SetupMachine();
+            s1.SetupStateMaps();
+
             FSMs = new Dictionary<EntityRef, FSM>()
             {
                 { Util.GetPlayer(f, 0), p0 },
-                { Util.GetPlayer(f, 1), p1 }
+                { Util.GetPlayer(f, 1), p1 },
+                { summonEntity, s1 }
             };
             
 
         }
 
-        public static FSM GetPlayerFsm(EntityRef entityRef)
+        public static FSM GetFsm(EntityRef entityRef)
         {
             return FSMs?[entityRef];
+        }
+
+        private static EntityRef CreateSummonEntity(Frame f)
+        {
+            EntityRef entity =
+                f.Create(f.FindAsset<EntityPrototype>("QuantumUser/Resources/Summon"));
+            
+            return entity;
         }
         
         

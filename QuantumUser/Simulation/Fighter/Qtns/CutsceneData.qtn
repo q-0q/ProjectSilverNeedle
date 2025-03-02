@@ -4,4 +4,3 @@ component CutsceneData
     bool initiatorFacingRight;
     int cutsceneIndex;
 }
-`

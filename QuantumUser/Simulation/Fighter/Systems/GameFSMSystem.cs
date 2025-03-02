@@ -71,20 +71,21 @@ namespace Quantum
 
         public static void OnLoading(TriggerParams? triggerParams)
         {
-            
-            Debug.Log("OnReady");
 
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
             var frame = frameParam.f;
-            
-            Debug.Log("OnReady, after cast");
             
             FsmLoader.InitializeFsms(frame);
             
             foreach (var (entityRef, _) in frame.GetComponentIterator<PlayerLink>())
             {
                 InitializePlayerComponents(frame, entityRef);
+            }
+            
+            foreach (var (entityRef, _) in frame.GetComponentIterator<SummonData>())
+            {
+                InitializeSummonComponents(frame, entityRef);
             }
             
         }
@@ -98,7 +99,7 @@ namespace Quantum
             // AnimationEntitySystem.Create(frame, AnimationEntities.AnimationEntityEnum.Countdown, FPVector2.Zero, 0, false);
         }
         
-        public static void ResetPlayers(TriggerParams? triggerParams)
+        public static void ResetAllFsmData(TriggerParams? triggerParams)
         {
             if (triggerParams == null) return;
             var frameParam = (FrameParam)triggerParams;
@@ -106,7 +107,12 @@ namespace Quantum
             
             foreach (var (entityRef, _) in frame.GetComponentIterator<PlayerLink>())
             {
-                ResetPlayer(frame, entityRef);
+                ResetPlayerFSMData(frame, entityRef);
+            }
+            
+            foreach (var (entityRef, _) in frame.GetComponentIterator<SummonData>())
+            {
+                ResetSummonFSMData(frame, entityRef);
             }
         }
         
@@ -158,11 +164,39 @@ namespace Quantum
             f.Add(entityRef, new CutsceneData());
             f.Add(entityRef, new ScoreData() { score = 0 });
             
-            ResetPlayer(f, entityRef);
+            ResetPlayerFSMData(f, entityRef);
+        }
+        
+        private static void InitializeSummonComponents(Frame f, EntityRef entityRef)
+        {
+            
+            f.Add(entityRef, new PlayerDirection());
+            f.Add(entityRef, new FSMData());
+            f.Add(entityRef, new AnimationData()); // This we can get rid of by using state on view to get animation
+            f.Add(entityRef, new HitEntitiesTracker()
+            {
+                HitEntities = new QListPtr<EntityRef>()
+            });
+            ResetSummonFSMData(f, entityRef);
+        }
+
+        private static void ResetSummonFSMData(Frame f, EntityRef entityRef)
+        {
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var fsmData);
+            fsmData->currentState = 0;
+            fsmData->framesInState = 0;
+            fsmData->currentCollisionState = 0;
+            fsmData->collisionFramesInState = 0;
+            
+            f.Unsafe.TryGetPointer<AnimationData>(entityRef, out var animationData);
+            animationData->path = 0;
+
+            f.Unsafe.TryGetPointer<HitEntitiesTracker>(entityRef, out var hitEntitiesTracker);
+            f.ResolveList(hitEntitiesTracker->HitEntities).Clear();
         }
 
 
-        private static void ResetPlayer(Frame f, EntityRef entityRef)
+        private static void ResetPlayerFSMData(Frame f, EntityRef entityRef)
         {
             if (Util.GetFSM(f, entityRef) is not PlayerFSM fsm) return;
             

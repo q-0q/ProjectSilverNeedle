@@ -20,7 +20,7 @@ public class SummonFSMDebug : QuantumEntityViewComponent
         if (!PredictedFrame.Has<FSMData>(EntityRef)) return;
         int numFrames = PredictedFrame.Get<FSMData>(EntityRef).framesInState;
 
-        var fsm = FsmLoader.GetPlayerFsm(EntityRef);
+        var fsm = FsmLoader.GetFsm(EntityRef);
         if (fsm is null) return;
         var state = fsm.Fsm.State();
         

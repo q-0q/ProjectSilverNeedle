@@ -60,7 +60,7 @@ namespace Quantum
 
             Fsm.Configure(State.RoundResetting)
                 .Permit(Trigger.Finish, State.Countdown)
-                .OnEntry(GameFSMSystem.ResetPlayers)
+                .OnEntry(GameFSMSystem.ResetAllFsmData)
                 .OnEntry(GameFSMSystem.ResetUnityView);
         }
 

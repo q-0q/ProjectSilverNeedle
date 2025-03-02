@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Photon.Deterministic;
 using Quantum.StateMap;
 using Quantum.Types;
+using Quantum.Types.Collision;
 using Wasp;
 
 namespace Quantum
@@ -10,7 +11,11 @@ namespace Quantum
     public abstract unsafe partial class FSM
     {
         public class FSMState : InheritableEnum.InheritableEnum { }
-        public class Trigger : InheritableEnum.InheritableEnum { }
+
+        public class Trigger : InheritableEnum.InheritableEnum
+        {
+            public static int Finish;
+        }
         
         public Type AnimationPathsEnum;
         public FPVector2 KinematicAttachPointOffset;
@@ -35,6 +40,20 @@ namespace Quantum
         public virtual void SetupStateMaps()
         {
             StateMapConfig = new StateMapConfig();
+            StateMapConfig.FighterAnimation = new StateMap<FighterAnimation>();
+            StateMapConfig.Duration = new StateMap<int>();
+            StateMapConfig.HurtboxCollectionSectionGroup = new StateMap<SectionGroup<CollisionBoxCollection>>();
+            StateMapConfig.HurtTypeSectionGroup = new StateMap<SectionGroup<PlayerFSM.HurtType>>();
+            StateMapConfig.HitSectionGroup = new StateMap<SectionGroup<Hit>>();
+            StateMapConfig.Pushbox = new StateMap<CollisionBox>();
+            StateMapConfig.MovementSectionGroup = new StateMap<SectionGroup<FP>>();
+            StateMapConfig.AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
+            StateMapConfig.TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
+            StateMapConfig.CancellableAfter = new StateMap<int>();
+            StateMapConfig.WhiffCancellable = new StateMap<bool>();
+            StateMapConfig.FireReceiverFinishAfter = new StateMap<int>();
+            StateMapConfig.InvulnerableBefore = new StateMap<int>();
+            Cutscenes = new Dictionary<int, Cutscene>();
         }
 
         public virtual void SetupMachine()

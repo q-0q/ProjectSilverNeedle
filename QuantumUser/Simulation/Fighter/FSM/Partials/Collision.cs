@@ -219,7 +219,7 @@ namespace Quantum
             }
         }
 
-        protected abstract void InvokeHitboxHurtboxCollision(Frame frame, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter);
+        protected virtual void InvokeHitboxHurtboxCollision(Frame frame, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
 
 
         private static FPVector3 GetCollisionBoxWorldPosition(Frame f, EntityRef source, CollisionBox collisionBox)

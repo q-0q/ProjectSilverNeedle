@@ -230,6 +230,7 @@ namespace Quantum.Prototypes {
     public FP virtualTimeInState;
     public Int32 currentCollisionState;
     public Int32 collisionFramesInState;
+    public Int32 test;
     partial void MaterializeUser(Frame frame, ref Quantum.FSMData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.FSMData component = default;
@@ -242,6 +243,7 @@ namespace Quantum.Prototypes {
         result.virtualTimeInState = this.virtualTimeInState;
         result.currentCollisionState = this.currentCollisionState;
         result.collisionFramesInState = this.collisionFramesInState;
+        result.test = this.test;
         MaterializeUser(frame, ref result, in context);
     }
   }
@@ -556,6 +558,19 @@ namespace Quantum.Prototypes {
     public void Materialize(Frame frame, ref Quantum.StunData result, in PrototypeMaterializationContext context = default) {
         result.stun = this.stun;
         MaterializeUser(frame, ref result, in context);
+    }
+  }
+  [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.SummonData))]
+  public unsafe class SummonDataPrototype : ComponentPrototype<Quantum.SummonData> {
+    public MapEntityId owner;
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.SummonData component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.SummonData result, in PrototypeMaterializationContext context = default) {
+        PrototypeValidator.FindMapEntity(this.owner, in context, out result.owner);
     }
   }
   [System.SerializableAttribute()]
