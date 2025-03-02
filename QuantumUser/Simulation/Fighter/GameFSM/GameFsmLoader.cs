@@ -10,24 +10,13 @@ namespace Quantum
         private static GameFSM GameFsm;
         public static EntityRef GameFsmEntityRef;
 
-        public static void InitializeGameFsm(Frame f)
+        public static void InitializeGameFsm(EntityRef entityRef)
         {
-            
             InheritableEnum.InheritableEnum.Initialize();
-            GameFsmEntityRef = GetGameFsmEntityRef(f);
+            GameFsmEntityRef = entityRef;
             GameFsm = new GameFSM(0, GameFsmEntityRef);
         }
-
-        private static EntityRef GetGameFsmEntityRef(Frame f)
-        {
-            foreach (var (entityRef, _) in f.GetComponentIterator<GameFSMData>())
-            {
-                return entityRef;
-            }
         
-            return EntityRef.None;
-        }
-
         public static GameFSM LoadGameFSM(Frame f)
         {
             f.Unsafe.TryGetPointer<GameFSMData>(GameFsmEntityRef, out var gameFsmData);
