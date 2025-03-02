@@ -8,9 +8,9 @@ namespace Quantum
     public unsafe partial class FSM
     {
         
-        public virtual void UpdatePlayerDirection(Frame f)
+        public virtual void UpdateDirection(Frame f)
         {
-
+            
         }
 
         public static bool IsOnLeft(Frame f, EntityRef entityRef)

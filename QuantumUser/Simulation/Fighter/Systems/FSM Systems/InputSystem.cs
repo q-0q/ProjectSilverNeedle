@@ -321,7 +321,7 @@ namespace Quantum
             
             Input input = *f.GetPlayerInput(playerLink->Player);
             
-            bool facingRight = DirectionSystem.IsOnLeft(f, entityRef);
+            bool facingRight = FSM.IsOnLeft(f, entityRef);
             
 
             if (facingRight) return input.UnflippedNumpadDirection;

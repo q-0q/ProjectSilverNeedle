@@ -245,7 +245,7 @@ namespace Quantum
                 transform->Position.Y = Util.GroundHeight;
             }
             
-            DirectionSystem.ForceUpdatePlayerDirection(f, entityRef);
+            PlayerFSM.ForceUpdatePlayerDirection(f, entityRef);
             
         }
 
