@@ -191,7 +191,7 @@ namespace Quantum
 
         private void InvokePlayerDeath(Frame f)
         {
-            GameFSMSystem.FireWriteGameFsm(f, GameFSM.Trigger.PlayerDeath);
+            GameFsmLoader.LoadGameFSM(f).Fsm.Fire(GameFSM.Trigger.PlayerDeath, new FrameParam() { f = f, EntityRef = EntityRef});
             Util.StartDramatic(f, EntityRef, 120);
             int slowdownDuration = 80;
             FP slowdownAmount = FP.FromString("0.5");

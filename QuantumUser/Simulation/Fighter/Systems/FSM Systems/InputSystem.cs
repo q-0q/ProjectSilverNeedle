@@ -36,7 +36,7 @@ namespace Quantum
         
         public override void Update(Frame f, ref Filter filter)
         {
-            if (GameFSMSystem.GetGameState(f) != GameFSM.State.Playing) return;
+            if (GameFsmLoader.LoadGameFSM(f).Fsm.State() != GameFSM.State.Playing) return;
             
             AdvanceBuffer(filter.InputBuffer);
             BufferInputs(f, filter.Entity);
@@ -96,7 +96,7 @@ namespace Quantum
 
         public static void FireFsmFromInput(Frame f, FSM fsm)
         {
-            if (GameFSMSystem.GetGameState(f) != GameFSM.State.Playing) return;
+            if (GameFsmLoader.LoadGameFSM(f).Fsm.State() != GameFSM.State.Playing) return;
             
             FireJump(f, fsm);
             FireDash(f, fsm);
@@ -267,7 +267,6 @@ namespace Quantum
 
         private static void FireDirection(Frame f, FSM fsm)
         {
-            
             FrameParam param = new FrameParam() { f = f, EntityRef = fsm.EntityRef};
 
             if (Util.EntityIsCpu(f, fsm.EntityRef))

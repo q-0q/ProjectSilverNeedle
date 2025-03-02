@@ -129,10 +129,10 @@ namespace Quantum
             if (fsm is null) return null;
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
+            fsm.EntityRef = entityRef;
             
             
             fsm.Fsm.Assume(playerFsmData->currentState);
-            fsm.EntityRef = entityRef;
             
             return fsm;
         }
