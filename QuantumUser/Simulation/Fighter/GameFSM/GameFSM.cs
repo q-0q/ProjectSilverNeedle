@@ -22,7 +22,6 @@ namespace Quantum
             PlayerJoin,
             Started,
             Finish,
-            FinishLoading,
             PlayerDeath,
         }
         
@@ -34,13 +33,15 @@ namespace Quantum
             State currentState = (State)currentStateInt;
             EntityRef = entityRef;
             Fsm = new Machine<State, Trigger>(currentState);
-            Fsm.OnTransitioned(OnStateChanged);
+            Fsm.OnTransitionCompleted(OnStateChanged);
+
+
 
             Fsm.Configure(State.Waiting)
                 .PermitIf(Trigger.PlayerJoin, State.Loading, GameHasTwoPlayers);
             
             Fsm.Configure(State.Loading)
-                .Permit(Trigger.FinishLoading, State.Ready)
+                .Permit(Trigger.Finish, State.Ready)
                 .OnEntry(GameFSMSystem.OnLoading);
 
             Fsm.Configure(State.Ready)

@@ -50,6 +50,10 @@ namespace Quantum
             {
                 finish = gameFsm.FramesInState(f) >= RoundResetDuration;
             }
+            else if (gameFsm.Fsm.IsInState(GameFSM.State.Loading))
+            {
+                finish = gameFsm.FramesInState(f) >= 30;
+            }
 
             if (finish)
             {
@@ -83,15 +87,6 @@ namespace Quantum
                 InitializePlayerComponents(frame, entityRef);
             }
             
-            
-            Debug.Log("firing finish loading");
-
-            var gameFsm = GameFsmLoader.LoadGameFSM(frame);
-            // gameFsm.Fsm.Assume(GameFSM.State.Loading);
-            // GameFSMSystem.WritebackGameFsm(frame, gameFsm);
-            //
-            // Debug.Log(GameFSMSystem.GetGameState(frame));
-            GameFsmLoader.LoadGameFSM(frame).Fsm.Fire(GameFSM.Trigger.FinishLoading, triggerParams);
         }
         
         public static void OnCountdown(TriggerParams? triggerParams)
