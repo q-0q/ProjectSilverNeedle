@@ -20,7 +20,6 @@ namespace Quantum.StateMap
         public StateMap<int> CancellableAfter;
         public StateMap<bool> WhiffCancellable;
         public StateMap<int> FireReceiverFinishAfter;
-        public StateMap<SectionGroup<FPVector2>> AttachPositionSectionGroup;
         public StateMap<int> InvulnerableBefore;
     }
 }

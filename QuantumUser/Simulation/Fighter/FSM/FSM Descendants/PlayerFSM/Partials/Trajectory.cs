@@ -157,10 +157,10 @@ namespace Quantum
             var param = (JumpParam)triggerParams;
             var trajectory = GetFlippedTrajectoryFromJumpType(param.f, param.Type);
             if (trajectory is null) return;
-            var character = Characters.GetPlayerCharacter(param.f, EntityRef);
+            
             
             StartNewTrajectory(param.f, trajectory.TrajectoryHeight, trajectory.TimeToTrajectoryHeight, 
-                trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds, character.FallSpeed, character.FallTimeToSpeed, false);
+                trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds, FallSpeed, FallTimeToSpeed, false);
 
             param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             trajectoryData->jumpsRemaining--;
@@ -247,7 +247,7 @@ namespace Quantum
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
             
-            trajectoryData->jumpsRemaining = Characters.GetPlayerCharacter(param.f, EntityRef).JumpCount;
+            trajectoryData->jumpsRemaining = JumpCount;
             transform3D->Position.Y = Util.GroundHeight;
         }
 
@@ -297,8 +297,7 @@ namespace Quantum
         {
             if (!Fsm.IsInState(PlayerState.Action)) return;
 
-            var character = Characters.GetPlayerCharacter(f, EntityRef);
-            var trajectorySectionGroup = character.TrajectorySectionGroup.Get(this);
+            var trajectorySectionGroup = StateMapConfig.TrajectorySectionGroup.Get(this);
             if (trajectorySectionGroup is null) return;
             if (!trajectorySectionGroup.IsOnFirstFrameOfSection(f, this)) return;
             var trajectory = trajectorySectionGroup.GetCurrentItem(f, this);
@@ -307,7 +306,7 @@ namespace Quantum
             FP flipMod = PlayerDirectionSystem.IsFacingRight(f, EntityRef) ? 1 : -1;
             
             StartNewTrajectory(f, trajectory.TrajectoryHeight, trajectory.TimeToTrajectoryHeight, 
-                trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds * flipMod, character.FallSpeed, character.FallTimeToSpeed, false);
+                trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds * flipMod, FallSpeed, FallTimeToSpeed, false);
         }
 
         private void CheckForHitWall(Frame f)
@@ -330,10 +329,9 @@ namespace Quantum
             var param = (FrameParam)triggerParams;
             
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            var character = Characters.GetPlayerCharacter(param.f, EntityRef);
             
             StartNewTrajectory(param.f, 0, 1, 
-                0, character.FallSpeed, character.FallTimeToSpeed + ExtraFramesUntilMaxFallSpeedAfterAirdash,
+                0, FallSpeed, FallTimeToSpeed + ExtraFramesUntilMaxFallSpeedAfterAirdash,
                 false, false, TrajectoryDashType.Forward);
         }
         
@@ -344,10 +342,9 @@ namespace Quantum
             var param = (FrameParam)triggerParams;
             
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            var character = Characters.GetPlayerCharacter(param.f, EntityRef);
             
             StartNewTrajectory(param.f, 0, 1, 
-                0, character.FallSpeed, character.FallTimeToSpeed + ExtraFramesUntilMaxFallSpeedAfterAirdash,
+                0, FallSpeed, FallTimeToSpeed + ExtraFramesUntilMaxFallSpeedAfterAirdash,
                 false, false, TrajectoryDashType.Backward);
         }
 

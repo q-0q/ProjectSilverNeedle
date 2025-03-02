@@ -20,7 +20,7 @@ namespace Quantum
             var initiatorPos = transform3D->Position.XY;
             var currentCutscenePos = cutscene.ReactorPositionSectionGroup.GetCurrentItem(f, this);
             if (!cutsceneData->initiatorFacingRight) currentCutscenePos.X *= -1;
-            FPVector2 offset = Characters.GetPlayerCharacter(f, EntityRef).KinematicAttachPointOffset;
+            FPVector2 offset = KinematicAttachPointOffset;
             SetPosition(f, (initiatorPos + currentCutscenePos) - offset);
         }
         

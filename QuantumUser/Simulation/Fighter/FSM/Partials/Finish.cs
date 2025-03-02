@@ -9,13 +9,12 @@ namespace Quantum
     {
         public void DoFinish(Frame f)
         {
-            Character character = Characters.GetPlayerCharacter(f, EntityRef);
             var frameParam = new FrameParam()
             {
                 f = f,
                 EntityRef = EntityRef,
             };
-            int duration = character.Duration.Get(this, frameParam);
+            int duration = StateMapConfig.Duration.Get(this, frameParam);
             if (FramesInCurrentState(f) >= duration)
             {
                 var param = new CollisionHitParams() { f = f, EntityRef = EntityRef };

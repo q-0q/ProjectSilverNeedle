@@ -9,8 +9,7 @@ namespace Quantum
     {
         public void Animation(Frame f)
         {
-            Character character = Characters.GetPlayerCharacter(f, EntityRef);
-            FighterAnimation currentAnimation = character.FighterAnimation.Get(this);
+            FighterAnimation currentAnimation = StateMapConfig.FighterAnimation.Get(this);
             if (currentAnimation is null) return;
             currentAnimation.SetAnimationPathForFsm(f, this);
         }

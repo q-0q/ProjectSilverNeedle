@@ -164,13 +164,15 @@ namespace Quantum
 
         private static void ResetPlayer(Frame f, EntityRef entityRef)
         {
+            if (Util.GetFSM(f, entityRef) is not PlayerFSM fsm) return;
+            
             f.Unsafe.TryGetPointer<HealthData>(entityRef, out var healthData);
             healthData->health = 500;
 
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
             trajectoryData->startingTrajectoryHeight = 0;
             trajectoryData->framesInTrajectory = 0;
-            trajectoryData->jumpsRemaining = Characters.GetPlayerCharacter(f, entityRef).JumpCount;
+            trajectoryData->jumpsRemaining = fsm.JumpCount;
             trajectoryData->xVelocity = 0;
             trajectoryData->hardKnockdown = false;
             trajectoryData->groundBounce = false;

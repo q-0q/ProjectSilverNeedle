@@ -25,11 +25,11 @@ namespace Quantum
         public Dictionary<int, Cutscene> Cutscenes;
 
 
-        protected virtual void SetupStateMaps()
+        public virtual void SetupStateMaps()
         {
         }
 
-        protected virtual void SetupMachine()
+        public virtual void SetupMachine()
         {
         }
 
