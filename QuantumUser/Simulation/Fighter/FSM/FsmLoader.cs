@@ -29,6 +29,9 @@ namespace Quantum
                 { Util.GetPlayer(f, 0), p0 },
                 { Util.GetPlayer(f, 1), p1 }
             };
+            
+            Debug.Log("firing finish loading");
+            GameFSMSystem.FireWriteGameFsm(f, GameFSM.Trigger.FinishLoading);
         }
 
         public static FSM GetPlayerFsm(EntityRef entityRef)
