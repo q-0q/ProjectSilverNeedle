@@ -181,14 +181,14 @@ namespace Quantum
         }
 
 
-        public static int GetAnimationPathLength(Character character, int path)
+        public static int GetAnimationPathLength(FSM fsm, int path)
         {
-            var pathEnum = character.AnimationPathsEnum;
-            var characterName = character.Name;
+            var pathEnum = fsm.AnimationPathsEnum;
+            var fsmName = fsm.Name;
             string stringPath = Enum.ToObject(pathEnum, path).ToString();
     
             // Building the path within the Resources folder
-            string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath;
+            string fullPath = "Sprites/Characters/" + fsmName + "/FrameGroups/" + stringPath;
     
             // Load all PNG files from the Resources path
             var sprites = Resources.LoadAll<Sprite>(fullPath);  // Assuming you are working with Sprite assets
@@ -197,13 +197,13 @@ namespace Quantum
             return sprites.Length;
         }
         
-        public static void AutoSetupFromAnimationPath(FighterAnimation animation, Character character)
+        public static void AutoSetupFromAnimationPath(FighterAnimation animation, FSM fsm)
         {
             var sectionGroup = animation.SectionGroup;
             var path = animation.Path;
             if (!sectionGroup.AutoFromAnimationPath) return;
             sectionGroup.Sections = new List<Tuple<int, int>>();
-            int length = Util.GetAnimationPathLength(character, path);
+            int length = Util.GetAnimationPathLength(fsm, path);
             sectionGroup.Sections.Capacity = length;
             for (int i = 0; i < length; i++)
             {

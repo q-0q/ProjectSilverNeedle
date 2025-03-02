@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Photon.Deterministic;
+using Quantum.StateMap;
 using Quantum.Types;
 using Wasp;
 
@@ -18,10 +19,20 @@ namespace Quantum
         
         public EntityRef EntityRef;
         public Machine<int, int> Fsm;
+        public StateMapConfig StateMapConfig;
+        public Type StateType;
         
         public Dictionary<int, Cutscene> Cutscenes;
 
-        
+
+        protected virtual void SetupStateMaps()
+        {
+        }
+
+        protected virtual void SetupMachine()
+        {
+        }
+
         protected void ResetStateEnteredFrame(Frame f)
         {
             f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
