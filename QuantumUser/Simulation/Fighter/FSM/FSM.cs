@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using Photon.Deterministic;
+using Quantum.Types;
 using Wasp;
 
 namespace Quantum
@@ -8,8 +11,16 @@ namespace Quantum
         public class FSMState : InheritableEnum.InheritableEnum { }
         public class Trigger : InheritableEnum.InheritableEnum { }
         
+        public Type AnimationPathsEnum;
+        public FPVector2 KinematicAttachPointOffset;
+        public string Name;
+
+        
         public EntityRef EntityRef;
         public Machine<int, int> Fsm;
+        
+        public Dictionary<int, Cutscene> Cutscenes;
+
         
         protected void ResetStateEnteredFrame(Frame f)
         {
