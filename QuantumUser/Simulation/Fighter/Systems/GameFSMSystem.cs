@@ -30,14 +30,12 @@ namespace Quantum
 
             FireFinish(f, filter);
 
-            GameFSM gameFsm = LoadGameFsm(f);
             IncrementClock(f, filter.Entity);
-            WritebackGameFsm(f, gameFsm);
         }
 
         private static void FireFinish(Frame f, Filter filter)
         {
-            GameFSM gameFsm = LoadGameFsm(f);
+            GameFSM gameFsm = GameFsmLoader.LoadGameFSM(f);
             FrameParam frameParam = new FrameParam() { f = f, EntityRef = filter.Entity };
             var finish = false;
             if (gameFsm.Fsm.IsInState(GameFSM.State.Countdown))
@@ -57,15 +55,13 @@ namespace Quantum
             {
                 gameFsm.Fsm.Fire(GameFSM.Trigger.Finish, frameParam);
             }
-            WritebackGameFsm(f, gameFsm);
         }
 
         private static void FireStart(Frame f, Filter filter)
         {
-            GameFSM gameFsm = LoadGameFsm(f);
+            GameFSM gameFsm = GameFsmLoader.LoadGameFSM(f);
             FrameParam frameParam = new FrameParam() { f = f, EntityRef = filter.Entity };
             gameFsm.Fsm.Fire(GameFSM.Trigger.Started, frameParam);
-            WritebackGameFsm(f, gameFsm);
         }
 
 
@@ -87,6 +83,15 @@ namespace Quantum
                 InitializePlayerComponents(frame, entityRef);
             }
             
+            
+            Debug.Log("firing finish loading");
+
+            var gameFsm = GameFsmLoader.LoadGameFSM(frame);
+            // gameFsm.Fsm.Assume(GameFSM.State.Loading);
+            // GameFSMSystem.WritebackGameFsm(frame, gameFsm);
+            //
+            // Debug.Log(GameFSMSystem.GetGameState(frame));
+            GameFsmLoader.LoadGameFSM(frame).Fsm.Fire(GameFSM.Trigger.FinishLoading, triggerParams);
         }
         
         public static void OnCountdown(TriggerParams? triggerParams)
@@ -249,39 +254,16 @@ namespace Quantum
             
         }
 
-        public static void FireWriteGameFsm(Frame f, GameFSM.Trigger trigger)
-        {
-            FrameParam frameParam = new FrameParam() { f = f };
-            GameFSM gameFsm = LoadGameFsm(f);
-            gameFsm.Fsm.Fire(trigger, frameParam);
-            WritebackGameFsm(f, gameFsm);
-        }
-
-        public static GameFSM LoadGameFsm(Frame f)
-        {
-            foreach (var (entityRef, gameFsmData) in f.GetComponentIterator<GameFSMData>())
-            {
-                return new GameFSM(gameFsmData.currentState, entityRef);
-            }
-
-            return null;
-        }
-
-        public static void WritebackGameFsm(Frame f, GameFSM gameFsm)
-        {
-            f.Unsafe.TryGetPointer<GameFSMData>(gameFsm.EntityRef, out var gameFsmData);
-            gameFsmData->currentState = (int)gameFsm.Fsm.State();
-        }
-
+        
         private static void IncrementClock(Frame f, EntityRef entityRef)
         {
             f.Unsafe.TryGetPointer<GameFSMData>(entityRef, out var gameFsmData);
             gameFsmData->framesInState++;
         }
 
-        public static GameFSM.State GetGameState(Frame f)
-        {
-            return LoadGameFsm(f).Fsm.State();
-        }
+        // public static GameFSM.State GetGameState(Frame f)
+        // {
+        //     return LoadGameFsm(f).Fsm.State();
+        // }
     }
 }

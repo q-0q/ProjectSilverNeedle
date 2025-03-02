@@ -77,11 +77,14 @@ namespace Quantum
         
         private void OnStateChanged(TriggerParams? triggerParams)
         {
+
             if (triggerParams == null)
             {
                 return;
             }
             var param = (FrameParam)triggerParams;
+            
+            GameFsmLoader.WritebackGameFSM(param.f);
             param.f.Unsafe.TryGetPointer<GameFSMData>(EntityRef, out var gameFsmData);
             gameFsmData->framesInState = 0;
         }

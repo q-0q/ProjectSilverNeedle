@@ -21,11 +21,9 @@ namespace Quantum
             };
             frame.Add(entity, playerLink);
 
-            var gameFsm = GameFSMSystem.LoadGameFsm(frame);
+            var gameFsm = GameFsmLoader.LoadGameFSM(frame);
             FrameParam frameParam = new FrameParam() { f = frame, EntityRef = entity };
             gameFsm.Fsm.Fire(GameFSM.Trigger.PlayerJoin, frameParam);
-            GameFSMSystem.WritebackGameFsm(frame, gameFsm);
-
         }
     }
     
