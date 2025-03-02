@@ -101,12 +101,14 @@ namespace Quantum
         {
             int currentState = PlayerState.StandActionable;
             Fsm = new Machine<int, int>(currentState);
-            ConfigureBaseFsm(Fsm);
         }
 
 
-        public void ConfigureBaseFsm(Machine<int, int> machine)
+        protected override void SetupMachine()
         {
+            base.SetupMachine();
+            
+            var machine = Fsm;
             machine.OnTransitionCompleted(OnStateChanged);
 
             // Ground
@@ -367,8 +369,10 @@ namespace Quantum
                 .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
         }
 
-        protected void SetupStateMaps()
+        protected override void SetupStateMaps()
         {
+            base.SetupStateMaps();
+            
             FighterAnimation = new StateMap<FighterAnimation>();
             Duration = new StateMap<int>();
             Duration.DefaultValue = 0;

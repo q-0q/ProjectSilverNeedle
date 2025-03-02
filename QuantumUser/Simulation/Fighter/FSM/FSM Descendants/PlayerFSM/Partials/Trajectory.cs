@@ -253,14 +253,13 @@ namespace Quantum
 
         private Trajectory GetFlippedTrajectoryFromJumpType(Frame f, JumpType type)
         {
-            Character character = Characters.GetPlayerCharacter(f, EntityRef);
 
             Trajectory trajectory = new Trajectory();
             Trajectory template = type switch
             {
-                JumpType.Forward => character.ForwardJumpTrajectory,
-                JumpType.Backward => character.BackwardJumpTrajectory,
-                _ => character.UpwardJumpTrajectory
+                JumpType.Forward => ForwardJumpTrajectory,
+                JumpType.Backward => BackwardJumpTrajectory,
+                _ => UpwardJumpTrajectory
             };
 
             if (template is null) return null;
