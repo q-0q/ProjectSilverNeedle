@@ -5,4 +5,5 @@ component FSMData
     FP virtualTimeInState;
     int currentCollisionState;
     int collisionFramesInState;
+    int test;
 }

@@ -841,18 +841,20 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct FSMData : Quantum.IComponent {
-    public const Int32 SIZE = 24;
+    public const Int32 SIZE = 32;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(8)]
     public Int32 currentState;
     [FieldOffset(12)]
     public Int32 framesInState;
-    [FieldOffset(16)]
+    [FieldOffset(24)]
     public FP virtualTimeInState;
     [FieldOffset(4)]
     public Int32 currentCollisionState;
     [FieldOffset(0)]
     public Int32 collisionFramesInState;
+    [FieldOffset(16)]
+    public Int32 test;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 8647;
@@ -861,6 +863,7 @@ namespace Quantum {
         hash = hash * 31 + virtualTimeInState.GetHashCode();
         hash = hash * 31 + currentCollisionState.GetHashCode();
         hash = hash * 31 + collisionFramesInState.GetHashCode();
+        hash = hash * 31 + test.GetHashCode();
         return hash;
       }
     }
@@ -870,6 +873,7 @@ namespace Quantum {
         serializer.Stream.Serialize(&p->currentCollisionState);
         serializer.Stream.Serialize(&p->currentState);
         serializer.Stream.Serialize(&p->framesInState);
+        serializer.Stream.Serialize(&p->test);
         FP.Serialize(&p->virtualTimeInState, serializer);
     }
   }
@@ -1227,6 +1231,24 @@ namespace Quantum {
     }
   }
   [StructLayout(LayoutKind.Explicit)]
+  public unsafe partial struct SummonData : Quantum.IComponent {
+    public const Int32 SIZE = 8;
+    public const Int32 ALIGNMENT = 8;
+    [FieldOffset(0)]
+    public EntityRef owner;
+    public override Int32 GetHashCode() {
+      unchecked { 
+        var hash = 4903;
+        hash = hash * 31 + owner.GetHashCode();
+        return hash;
+      }
+    }
+    public static void Serialize(void* ptr, FrameSerializer serializer) {
+        var p = (SummonData*)ptr;
+        EntityRef.Serialize(&p->owner, serializer);
+    }
+  }
+  [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct TrajectoryData : Quantum.IComponent {
     public const Int32 SIZE = 72;
     public const Int32 ALIGNMENT = 8;
@@ -1402,6 +1424,8 @@ namespace Quantum {
       BuildSignalsArrayOnComponentRemoved<Quantum.SlowdownData>();
       BuildSignalsArrayOnComponentAdded<Quantum.StunData>();
       BuildSignalsArrayOnComponentRemoved<Quantum.StunData>();
+      BuildSignalsArrayOnComponentAdded<Quantum.SummonData>();
+      BuildSignalsArrayOnComponentRemoved<Quantum.SummonData>();
       BuildSignalsArrayOnComponentAdded<Quantum.TrajectoryData>();
       BuildSignalsArrayOnComponentRemoved<Quantum.TrajectoryData>();
       BuildSignalsArrayOnComponentAdded<Transform2D>();
@@ -1549,6 +1573,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(SpringJoint), SpringJoint.SIZE);
       typeRegistry.Register(typeof(SpringJoint3D), SpringJoint3D.SIZE);
       typeRegistry.Register(typeof(Quantum.StunData), Quantum.StunData.SIZE);
+      typeRegistry.Register(typeof(Quantum.SummonData), Quantum.SummonData.SIZE);
       typeRegistry.Register(typeof(Quantum.TrajectoryDashType), 4);
       typeRegistry.Register(typeof(Quantum.TrajectoryData), Quantum.TrajectoryData.SIZE);
       typeRegistry.Register(typeof(Transform2D), Transform2D.SIZE);
@@ -1559,7 +1584,7 @@ namespace Quantum {
       typeRegistry.Register(typeof(Quantum._globals_), Quantum._globals_.SIZE);
     }
     static partial void InitComponentTypeIdGen() {
-      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 25)
+      ComponentTypeId.Reset(ComponentTypeId.BuiltInComponentCount + 26)
         .AddBuiltInComponents()
         .Add<Quantum.AnimationData>(Quantum.AnimationData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AnimationEntityData>(Quantum.AnimationEntityData.Serialize, null, null, ComponentFlags.None)
@@ -1584,6 +1609,7 @@ namespace Quantum {
         .Add<Quantum.ScoreData>(Quantum.ScoreData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.SlowdownData>(Quantum.SlowdownData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.StunData>(Quantum.StunData.Serialize, null, null, ComponentFlags.None)
+        .Add<Quantum.SummonData>(Quantum.SummonData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.TrajectoryData>(Quantum.TrajectoryData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.WhiffData>(Quantum.WhiffData.Serialize, null, null, ComponentFlags.None)
         .Finish();
