@@ -15,6 +15,16 @@ namespace Quantum
         public class Trigger : InheritableEnum.InheritableEnum
         {
             public static int Finish;
+            public static int NeutralInput;
+            public static int Down;
+            public static int Forward;
+            public static int Backward;
+            public static int Dash;
+            public static int Backdash;
+            public static int ForwardThrow;
+            public static int BackThrow;
+            public static int ButtonAndDirection;
+            public static int Jump;
         }
         
         public Type AnimationPathsEnum;

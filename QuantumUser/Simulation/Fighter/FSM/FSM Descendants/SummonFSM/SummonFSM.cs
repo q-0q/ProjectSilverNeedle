@@ -42,6 +42,9 @@ namespace Quantum
             Fsm.Configure(SummonState.Pooled)
                 .Permit(SummonTrigger.Summoned, SummonState.Unpooled);
 
+            Fsm.Configure(SummonState.Unpooled)
+                .OnEntry(OnUnpooled);
+
         }
 
         public override void SetupStateMaps()
@@ -53,6 +56,11 @@ namespace Quantum
         public override EntityRef GetPlayer()
         {
             return playerOwnerEntity;
+        }
+
+        private void OnUnpooled(TriggerParams? triggerParams)
+        {
+            Debug.LogError("How did I get unpooled?");
         }
     }
 
