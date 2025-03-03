@@ -23,17 +23,17 @@ namespace Quantum
             p1.SetupMachine();
             p1.SetupStateMaps();
 
-            var summonEntity =CreateSummonEntity(f, 0);
-            var s1 = new Fireball();
-            s1.playerOwnerEntity = Util.GetPlayer(f, 1);
-            s1.SetupMachine();
-            s1.SetupStateMaps();
+            // var summonEntity =CreateSummonEntity(f, 0);
+            // var s1 = new Fireball();
+            // s1.playerOwnerEntity = Util.GetPlayer(f, 1);
+            // s1.SetupMachine();
+            // s1.SetupStateMaps();
 
             FSMs = new Dictionary<EntityRef, FSM>()
             {
                 { Util.GetPlayer(f, 0), p0 },
                 { Util.GetPlayer(f, 1), p1 },
-                { summonEntity, s1 }
+                // { summonEntity, s1 }
             };
             
 
