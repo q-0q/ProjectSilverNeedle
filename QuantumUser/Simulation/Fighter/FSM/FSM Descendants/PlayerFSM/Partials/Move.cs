@@ -37,6 +37,18 @@ namespace Quantum
             return slowdownData->slowdownRemaining <= 0 ? 1 : slowdownData->multiplier;
         }
         
+        protected override void MomentumMove(Frame f)
+        {
+            f.Unsafe.TryGetPointer<MomentumData>(EntityRef, out var momentumData);
+            if (momentumData->framesInMomentum >= _pushbackDuration) return;
+
+            FPVector2 v =
+                new FPVector2(GetMomentumVelocityThisFrame(momentumData->framesInMomentum,
+                    momentumData->momentumAmount), 0);
+
+            ApplyFlippedMovement(f, v, EntityRef);
+        }
+        
         private void OnEnterThrowTech(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;
