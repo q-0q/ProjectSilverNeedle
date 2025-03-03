@@ -48,7 +48,7 @@ namespace Quantum
             //     Debug.Log(slowdownData->slowdownRemaining);
             // }
 
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetSlowdownMod(f, entityRef);
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetFSM(f, entityRef).GetSlowdownMod(f, entityRef);
             
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
