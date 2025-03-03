@@ -20,8 +20,10 @@ namespace Quantum
 
         private void MakeNotWhiffed(Frame f, EntityRef entityRef)
         {
-            f.Unsafe.TryGetPointer<WhiffData>(entityRef, out var whiffData);
-            whiffData->whiffed = false;
+            if (f.Unsafe.TryGetPointer<WhiffData>(entityRef, out var whiffData))
+            {
+                whiffData->whiffed = false;
+            };
             // f.Set(entityRef, *whiffData);
         }
 
