@@ -27,6 +27,7 @@ namespace Quantum
             
             if (fsm.IsOnFirstFrameOfHit(f))
             {
+                Debug.Log("clearing hit entities f: " + f.Number);
                 fsm.ClearHitEntities(f);
             }
             
