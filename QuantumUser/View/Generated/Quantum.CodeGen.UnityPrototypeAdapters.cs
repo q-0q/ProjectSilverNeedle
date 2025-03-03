@@ -129,11 +129,13 @@ namespace Quantum.Prototypes.Unity {
   public unsafe partial class SummonDataPrototype : Quantum.QuantumUnityPrototypeAdapter<Quantum.Prototypes.SummonDataPrototype> {
     public Quantum.QuantumEntityPrototype owner;
     public PlayerRef player;
+    public Int32 counter;
     partial void ConvertUser(Quantum.QuantumEntityPrototypeConverter converter, ref Quantum.Prototypes.SummonDataPrototype prototype);
     public override Quantum.Prototypes.SummonDataPrototype Convert(Quantum.QuantumEntityPrototypeConverter converter) {
       var result = new Quantum.Prototypes.SummonDataPrototype();
       converter.Convert(this.owner, out result.owner);
       converter.Convert(this.player, out result.player);
+      converter.Convert(this.counter, out result.counter);
       ConvertUser(converter, ref result);
       return result;
     }
