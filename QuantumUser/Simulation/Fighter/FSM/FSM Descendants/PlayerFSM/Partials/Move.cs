@@ -31,6 +31,12 @@ namespace Quantum
             base.Move(f);
         }
         
+        public override FP GetSlowdownMod(Frame f, EntityRef entityRef)
+        {
+            f.Unsafe.TryGetPointer<SlowdownData>(entityRef, out var slowdownData);
+            return slowdownData->slowdownRemaining <= 0 ? 1 : slowdownData->multiplier;
+        }
+        
         private void OnEnterThrowTech(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;

@@ -46,7 +46,7 @@ namespace Quantum
         private static EntityRef CreateSummonEntity(Frame f)
         {
             EntityRef entity =
-                f.Create(f.FindAsset<EntityPrototype>("QuantumUser/Resources/Summon"));
+                f.Create(f.FindAsset<EntityPrototype>("QuantumUser/Resources/SummonEntityPrototype"));
             
             return entity;
         }
