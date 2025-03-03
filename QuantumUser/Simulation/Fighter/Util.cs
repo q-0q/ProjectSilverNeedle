@@ -16,7 +16,7 @@ namespace Quantum
     {
         public static FP GroundHeight = FP.FromString("0");
         public static FP FrameLengthInSeconds = FP.FromString("0.016666");
-        public static int CPUPlayerId = 1;
+        public static int CPUPlayerId = 0;
         
         public static FP Min(FP a, FP b)
         {

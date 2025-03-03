@@ -31,13 +31,14 @@ namespace Quantum
         public override void SetupStateMaps()
         {
             base.SetupStateMaps();
+
+            const int lifeSpan = 110;
             
             StateMapConfig.HitSectionGroup.Dictionary[SummonState.Pooled] = new SectionGroup<Hit>()
             {
-                Loop = true,
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new(6, new Hit()
+                    new(lifeSpan, new Hit()
                     {
                         Launches = true,
                         Level = 2,
@@ -45,20 +46,32 @@ namespace Quantum
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                new(0, new CollisionBoxCollection()
+                                new(lifeSpan, new CollisionBoxCollection()
                                 {
                                     CollisionBoxes = new List<CollisionBox>()
                                     {
                                         new CollisionBox()
                                         {
+                                            GrowWidth = false,
+                                            PosX = -9,
+                                            PosY = 2,
                                             Height = 2,
-                                            Width = 2
+                                            Width = 2,
                                         }
                                     }
                                 })
                             }
                         }
                     })
+                }
+            };
+            
+            StateMapConfig.MovementSectionGroup.Dictionary[SummonState.Pooled] = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(80, 0),
+                    new(30, 10),
                 }
             };
             

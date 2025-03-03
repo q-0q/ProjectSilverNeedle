@@ -23,9 +23,6 @@ public class SummonFSMDebug : QuantumEntityViewComponent
         var fsm = FsmLoader.GetFsm(EntityRef);
         if (fsm is null) return;
         var state = fsm.Fsm.State();
-        
-        Debug.Log(InheritableEnum.GetFieldNameByValue(state, fsm.StateType));
-        
         _tmp.text = InheritableEnum.GetFieldNameByValue(state, fsm.StateType) + "\n" + numFrames;
         // _tmp.text = state.ToString();
     }

@@ -212,6 +212,8 @@ namespace Quantum
                     if (!CollisionBoxesOverlap(f, hitboxInternal, hurtboxInternal, out var overlapCenter, out var overlapWidth)) continue;
                     if (!CanBeHitBySource(f, hitboxInternal.source)) continue;
                     
+                    Debug.Log(EntityRef + " can be hit by " + hitboxInternal.source + " f: " + f.Number);
+                    
                     AddMeToSourceHitList(f, hitboxInternal.source);
                     InvokeHitboxHurtboxCollision(f, hurtboxInternal, hitboxInternal, overlapCenter);
                     
@@ -256,6 +258,8 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(source, out var hitEntitiesTracker);
             var hitEntities = f.ResolveList(hitEntitiesTracker->HitEntities);
             hitEntities.Add(EntityRef);
+            
+            Debug.Log("Added " + EntityRef + " to " + source + " f: " + f.Number);
         }
         
         public bool IsOnFirstFrameOfHit(Frame f)
