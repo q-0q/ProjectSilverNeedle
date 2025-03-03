@@ -12,7 +12,7 @@ namespace Quantum
     {
         public class FireballState : SummonState
         {
-
+            
         }
 
         public enum FireballAnimationPath

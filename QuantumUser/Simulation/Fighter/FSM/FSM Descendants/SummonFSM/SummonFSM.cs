@@ -12,6 +12,8 @@ namespace Quantum
 {
     public abstract unsafe partial class SummonFSM : FSM
     {
+        public EntityRef playerOwnerEntity;
+        
         public class SummonState : FSMState
         {
             public static int Pooled;
@@ -46,6 +48,11 @@ namespace Quantum
         {
             base.SetupStateMaps();
 
+        }
+        
+        public override EntityRef GetPlayer()
+        {
+            return playerOwnerEntity;
         }
     }
 

@@ -103,6 +103,8 @@ namespace Quantum
         public virtual void ReportFrameMeterType(Frame f)
         {
         }
+
+        public abstract EntityRef GetPlayer();
         
         public virtual void IncrementClock(Frame f, EntityRef entityRef)
         {

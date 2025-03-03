@@ -88,7 +88,7 @@ namespace Quantum
         {
             if (!GetCpuControllerData(f)->cpuEnabled) return false;
             
-            f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(GetFSM(f, entityRef).GetPlayer(), out var playerLink);
             return ((int)playerLink->Player == CPUPlayerId);
         }
         

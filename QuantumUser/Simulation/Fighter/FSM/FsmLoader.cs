@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public static class FsmLoader
+    public static unsafe class FsmLoader
     {
         public static Dictionary<EntityRef, FSM> FSMs;
         
@@ -23,7 +23,7 @@ namespace Quantum
             p1.SetupMachine();
             p1.SetupStateMaps();
 
-            var summonEntity =CreateSummonEntity(f);
+            var summonEntity =CreateSummonEntity(f, 0);
             var s1 = new Fireball();
             s1.SetupMachine();
             s1.SetupStateMaps();
@@ -43,10 +43,14 @@ namespace Quantum
             return FSMs?[entityRef];
         }
 
-        private static EntityRef CreateSummonEntity(Frame f)
+        private static EntityRef CreateSummonEntity(Frame f, int playerOwner)
         {
             EntityRef entity =
                 f.Create(f.FindAsset<EntityPrototype>("QuantumUser/Resources/SummonEntityPrototype"));
+
+            f.Unsafe.TryGetPointer<SummonData>(entity, out var summonData);
+            summonData->owner = Util.GetPlayer(f, playerOwner);
+            summonData->player = playerOwner;
             
             return entity;
         }

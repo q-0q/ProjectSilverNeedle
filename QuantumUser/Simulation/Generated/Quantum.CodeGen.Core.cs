@@ -1232,19 +1232,23 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct SummonData : Quantum.IComponent {
-    public const Int32 SIZE = 8;
+    public const Int32 SIZE = 16;
     public const Int32 ALIGNMENT = 8;
-    [FieldOffset(0)]
+    [FieldOffset(8)]
     public EntityRef owner;
+    [FieldOffset(0)]
+    public PlayerRef player;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 4903;
         hash = hash * 31 + owner.GetHashCode();
+        hash = hash * 31 + player.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (SummonData*)ptr;
+        PlayerRef.Serialize(&p->player, serializer);
         EntityRef.Serialize(&p->owner, serializer);
     }
   }
