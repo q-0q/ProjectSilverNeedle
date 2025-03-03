@@ -14,7 +14,6 @@ namespace Quantum.InheritableEnum
         static InheritableEnum()
         {
             
-            Debug.Log("hello from inheritable enum static ctor");
             // Get all subclasses of InheritableEnum (excluding abstract classes)
             var subclasses = Assembly.GetExecutingAssembly()
                 .GetTypes()

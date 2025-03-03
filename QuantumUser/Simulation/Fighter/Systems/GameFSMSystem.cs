@@ -5,6 +5,7 @@ using Photon.Deterministic;
 using Quantum.Collections;
 using Quantum.Types;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.Windows;
 using Wasp;
@@ -169,8 +170,6 @@ namespace Quantum
         
         private static void InitializeSummonComponents(Frame f, EntityRef entityRef)
         {
-            
-            Debug.Log("summon component init");
             f.Add(entityRef, new PlayerDirection());
             f.Add(entityRef, new FSMData());
             f.Add(entityRef, new AnimationData()); // This we can get rid of by using state on view to get animation
@@ -188,6 +187,8 @@ namespace Quantum
             fsmData->framesInState = 0;
             fsmData->currentCollisionState = 0;
             fsmData->collisionFramesInState = 0;
+            // force call OnPooled()
+            (Util.GetFSM(f, entityRef) as SummonFSM)?.OnPooled(new FrameParam() { f = f, EntityRef = entityRef});
             
             f.Unsafe.TryGetPointer<AnimationData>(entityRef, out var animationData);
             animationData->path = 0;

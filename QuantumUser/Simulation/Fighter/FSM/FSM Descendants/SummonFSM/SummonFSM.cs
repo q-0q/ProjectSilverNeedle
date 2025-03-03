@@ -40,10 +40,11 @@ namespace Quantum
             base.SetupMachine();
 
             Fsm.Configure(SummonState.Pooled)
-                .Permit(SummonTrigger.Summoned, SummonState.Unpooled);
+                .Permit(SummonTrigger.Summoned, SummonState.Unpooled)
+                .OnEntry(OnPooled);
 
-            Fsm.Configure(SummonState.Unpooled)
-                .OnEntry(Test);
+            // Fsm.Configure(SummonState.Unpooled)
+            //     .OnEntry(Test);
             
         }
 
@@ -58,9 +59,14 @@ namespace Quantum
             return playerOwnerEntity;
         }
 
-        private void Test(TriggerParams? triggerParams)
+        public void OnPooled(TriggerParams? triggerParams)
         {
-            Debug.LogError("How did I get unpooled?");
+            Debug.Log("OnPooled");
+            if (triggerParams is null) return;
+            var frameParam = (FrameParam)triggerParams;
+            var f = frameParam.f;
+            f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+            transform3D->Position = new FPVector2(0, -20).XYO;
         }
     }
 
