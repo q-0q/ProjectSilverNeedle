@@ -103,5 +103,13 @@ namespace Quantum
         public virtual void ReportFrameMeterType(Frame f)
         {
         }
+        
+        public virtual void IncrementClock(Frame f, EntityRef entityRef)
+        {
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetFSM(f, entityRef).GetSlowdownMod(f, entityRef);
+            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
+            playerFsmData->framesInState++;
+            playerFsmData->virtualTimeInState += virtualTimeIncrement;
+        }
     }
 }

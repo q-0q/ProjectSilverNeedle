@@ -31,42 +31,11 @@ namespace Quantum
             fsm.Animation(f);
             fsm.ReportFrameMeterType(f);
             
-            IncrementClock(f, filter.Entity);
+            fsm.IncrementClock(f, filter.Entity);
             Util.WritebackFsm(f, filter.Entity);
         }
         
-        private static void IncrementClock(Frame f, EntityRef entityRef)
-        {
-            f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
-            dramaticData->remaining = Math.Max(dramaticData->remaining - 1, 0);
 
-            f.Unsafe.TryGetPointer<SlowdownData>(entityRef, out var slowdownData);
-            slowdownData->slowdownRemaining--;
-
-            // if (Util.EntityIsCpu(f, entityRef))
-            // {
-            //     Debug.Log(slowdownData->slowdownRemaining);
-            // }
-
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetFSM(f, entityRef).GetSlowdownMod(f, entityRef);
-            
-            
-            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
-            playerFsmData->framesInState++;
-            playerFsmData->virtualTimeInState += virtualTimeIncrement;
-            
-            f.Unsafe.TryGetPointer<PushbackData>(entityRef, out var pushbackData);
-            pushbackData->framesInPushback++;
-            pushbackData->virtualTimeInPushback += virtualTimeIncrement;
-            
-            f.Unsafe.TryGetPointer<MomentumData>(entityRef, out var momentumData);
-            momentumData->framesInMomentum++;
-            momentumData->virtualTimeInMomentum += virtualTimeIncrement;
-            
-            
-            f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
-            trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
-        }
 
 
 
