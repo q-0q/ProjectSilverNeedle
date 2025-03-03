@@ -624,6 +624,31 @@ namespace Quantum
             AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Backdash,
                 transform3D->Position.XY, 0, !IsFacingRight(frameParam.f, EntityRef));
         }
+        
+        public override void IncrementClock(Frame f, EntityRef entityRef)
+        {
+            base.IncrementClock(f, entityRef);
+            
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetFSM(f, entityRef).GetSlowdownMod(f, entityRef);
+            
+            f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
+            dramaticData->remaining = Math.Max(dramaticData->remaining - 1, 0);
+
+            f.Unsafe.TryGetPointer<SlowdownData>(entityRef, out var slowdownData);
+            slowdownData->slowdownRemaining--;
+            
+            f.Unsafe.TryGetPointer<PushbackData>(entityRef, out var pushbackData);
+            pushbackData->framesInPushback++;
+            pushbackData->virtualTimeInPushback += virtualTimeIncrement;
+            
+            f.Unsafe.TryGetPointer<MomentumData>(entityRef, out var momentumData);
+            momentumData->framesInMomentum++;
+            momentumData->virtualTimeInMomentum += virtualTimeIncrement;
+            
+            
+            f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
+            trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
+        }
 
         // FSM helper functions
 
