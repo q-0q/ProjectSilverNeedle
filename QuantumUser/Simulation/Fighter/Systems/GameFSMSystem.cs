@@ -170,6 +170,7 @@ namespace Quantum
         private static void InitializeSummonComponents(Frame f, EntityRef entityRef)
         {
             
+            Debug.Log("summon component init");
             f.Add(entityRef, new PlayerDirection());
             f.Add(entityRef, new FSMData());
             f.Add(entityRef, new AnimationData()); // This we can get rid of by using state on view to get animation

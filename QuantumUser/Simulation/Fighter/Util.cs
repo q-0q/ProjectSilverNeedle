@@ -160,11 +160,7 @@ namespace Quantum
                 > (PlayerFSM.WallHalfLength - 1);
         }
 
-        public static FP GetSlowdownMod(Frame f, EntityRef entityRef)
-        {
-            f.Unsafe.TryGetPointer<SlowdownData>(entityRef, out var slowdownData);
-            return slowdownData->slowdownRemaining <= 0 ? 1 : slowdownData->multiplier;
-        }
+
 
         public static int FramesFromVirtualTime(FP virtualTime)
         {
