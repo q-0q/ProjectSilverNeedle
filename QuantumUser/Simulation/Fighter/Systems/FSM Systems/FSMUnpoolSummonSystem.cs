@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Photon.Deterministic;
 using UnityEngine;
 
 namespace Quantum
 {
-    public unsafe class PlayerFSMSCollisionBoxSystem : SystemMainThreadFilter<PlayerFSMSCollisionBoxSystem.Filter>
+    public unsafe class FSMUnpoolSummonSystem : SystemMainThreadFilter<FSMUnpoolSummonSystem.Filter>
     {
         public struct Filter
         {
@@ -20,22 +21,23 @@ namespace Quantum
 
         private static void AdvanceFsm(Frame f, Filter filter)
         {
-            var fsm = Util.GetFSM(f, filter.Entity);
+            FSM fsm = Util.GetFSM(f, filter.Entity);
             if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
-            if (fsm.IsOnFirstFrameOfHit(f))
-            {
-                fsm.ClearHitEntities(f);
-            }
+            fsm.UpdateDirection(f);
+            fsm.TrajectoryArc(f);
+            fsm.Animation(f);
+            fsm.ReportFrameMeterType(f);
             
-            // Write collision state
-            filter.PlayerFsmData->currentCollisionState = fsm.Fsm.State();
-            filter.PlayerFsmData->collisionFramesInState = fsm.FramesInCurrentState(f);
-            
+            fsm.IncrementClock(f, filter.Entity);
             Util.WritebackFsm(f, filter.Entity);
         }
+        
+
+
+
 
 
         

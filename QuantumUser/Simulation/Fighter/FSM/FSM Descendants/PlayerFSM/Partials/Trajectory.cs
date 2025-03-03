@@ -143,7 +143,6 @@ namespace Quantum
             
             var param = new JumpParam() { f = f, Type = type, EntityRef = EntityRef};
             
-            Debug.Log("firing player trytofirejump");
             Fsm.Fire(PlayerTrigger.Jump, param);
         }
 

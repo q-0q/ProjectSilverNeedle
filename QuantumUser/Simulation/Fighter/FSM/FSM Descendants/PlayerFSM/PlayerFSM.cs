@@ -477,6 +477,8 @@ namespace Quantum
             StateMapConfig.FireReceiverFinishAfter.DefaultValue = 10;
             
             StateMapConfig.InvulnerableBefore.DefaultValue = 0;
+
+            StateMapConfig.UnpoolSummonSectionGroup.DefaultValue = null;
             
             return;
 
