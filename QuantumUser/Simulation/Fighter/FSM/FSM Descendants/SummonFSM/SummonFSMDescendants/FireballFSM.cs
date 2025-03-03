@@ -26,13 +26,14 @@ namespace Quantum
             StateType = typeof(FireballState);
             AnimationPathsEnum = typeof(FireballAnimationPath);
             KinematicAttachPointOffset = FPVector2.Zero;
+            SummonPositionOffset = new FPVector2(2, 3);
         }
 
         public override void SetupStateMaps()
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 110;
+            const int lifeSpan = 30;
             
             StateMapConfig.HitSectionGroup.Dictionary[SummonState.Unpooled] = new SectionGroup<Hit>()
             {
@@ -40,7 +41,7 @@ namespace Quantum
                 {
                     new(lifeSpan, new Hit()
                     {
-                        Launches = true,
+                        // Launches = true,
                         Level = 2,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
@@ -53,8 +54,9 @@ namespace Quantum
                                         new CollisionBox()
                                         {
                                             GrowWidth = false,
-                                            PosX = -9,
-                                            PosY = 2,
+                                            GrowHeight = false,
+                                            PosX = 0,
+                                            PosY = 3,
                                             Height = 2,
                                             Width = 2,
                                         }
@@ -70,18 +72,21 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(80, 0),
-                    new(30, 10),
+                    new(lifeSpan, 10),
                 }
             };
-            
+
+            StateMapConfig.Duration.Dictionary[SummonState.Unpooled] = lifeSpan;
+
         }
 
         public override void SetupMachine()
         {
             base.SetupMachine();
-            
-            
+
+            Fsm.Configure(SummonState.Unpooled)
+                .Permit(Trigger.Finish, SummonState.Pooled);
+
         }
     }
 }
