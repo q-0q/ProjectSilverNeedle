@@ -623,6 +623,26 @@ namespace Quantum
                 }
             };
 
+            var _5MSummon = new SectionGroup<SummonPool>()
+            {
+                Sections = new List<Tuple<int, SummonPool>>()
+                {
+                    new(10, null),
+                    new(3, SummonPools[0]), 
+                    new(10, null)
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(_5MAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
+            StateMapConfig.Duration.Dictionary[StickTwoState._5M] = _5MAnimation.SectionGroup.Duration();
+            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState._5M] = _5MHits;
+            StateMapConfig.CancellableAfter.Dictionary[StickTwoState._5M] = 14;
+            StateMapConfig.WhiffCancellable.Dictionary[StickTwoState._5M] = false;
+            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
+            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtboxes;
+            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[StickTwoState._5M] = _5MSummon;
+            
             Cutscene forwardThrowCutscene = new Cutscene()
             {
                 InitiatorState = StickTwoState.ForwardThrowCutscene,
@@ -658,15 +678,6 @@ namespace Quantum
             };
 
             Cutscenes[PlayerFSM.CutsceneIndexes.BackwardThrow] = backThrowCutscene;
-            
-            Util.AutoSetupFromAnimationPath(_5MAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
-            StateMapConfig.Duration.Dictionary[StickTwoState._5M] = _5MAnimation.SectionGroup.Duration();
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState._5M] = _5MHits;
-            StateMapConfig.CancellableAfter.Dictionary[StickTwoState._5M] = 14;
-            StateMapConfig.WhiffCancellable.Dictionary[StickTwoState._5M] = false;
-            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
-            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtboxes;
             
             
             var _2MAnimation = new FighterAnimation()

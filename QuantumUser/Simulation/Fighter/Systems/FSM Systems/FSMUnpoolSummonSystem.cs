@@ -26,13 +26,7 @@ namespace Quantum
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
-            fsm.UpdateDirection(f);
-            fsm.TrajectoryArc(f);
-            fsm.Animation(f);
-            fsm.ReportFrameMeterType(f);
-            
-            fsm.IncrementClock(f, filter.Entity);
-            Util.WritebackFsm(f, filter.Entity);
+            fsm.UnpoolSummon(f);
         }
         
 
