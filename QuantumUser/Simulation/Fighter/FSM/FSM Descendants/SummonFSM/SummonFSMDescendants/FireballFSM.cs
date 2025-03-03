@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public class Fireball : SummonFSM
+    public class FireballFSM : SummonFSM
     {
         public class FireballState : SummonState
         {
@@ -20,7 +20,7 @@ namespace Quantum
 
         }
         
-        public Fireball()
+        public FireballFSM()
         {
             Name = "Fireball";
             StateType = typeof(FireballState);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Photon.Deterministic;
+using Quantum.QuantumUser.Simulation.Fighter.Types;
 using Quantum.StateMap;
 using Quantum.Types;
 using Quantum.Types.Collision;
@@ -38,6 +39,7 @@ namespace Quantum
         public Type StateType;
         
         public Dictionary<int, Cutscene> Cutscenes;
+        public List<SummonPool> SummonPools;
         
         public enum JumpType
         {

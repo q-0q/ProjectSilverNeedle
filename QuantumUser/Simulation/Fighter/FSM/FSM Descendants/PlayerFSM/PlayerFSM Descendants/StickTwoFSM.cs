@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Photon.Deterministic;
 using Quantum;
+using Quantum.QuantumUser.Simulation.Fighter.Types;
 using Quantum.Types;
 using Quantum.Types.Collision;
 using UnityEngine;
 
 namespace Quantum
 {
-    public class StickTwo : PlayerFSM
+    public class StickTwoFSM : PlayerFSM
     {
         public class StickTwoState : PlayerState
         {
@@ -72,7 +73,7 @@ namespace Quantum
             // public static int Test;
         }
 
-        public StickTwo()
+        public StickTwoFSM()
         {
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
@@ -110,7 +111,16 @@ namespace Quantum
                 TrajectoryXVelocity = jumpBackwardSpeed,
                 TrajectoryHeight = jumpHeight
             };
-            
+
+            SummonPools = new List<SummonPool>()
+            {
+                new()
+                {
+                    Size = 2,
+                    SummonFSMType = typeof(FireballFSM)
+                }
+            };
+
         }
 
         public override void SetupStateMaps()
