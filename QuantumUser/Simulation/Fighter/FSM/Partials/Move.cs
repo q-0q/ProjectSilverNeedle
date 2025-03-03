@@ -122,25 +122,9 @@ namespace Quantum
             opponentPushboxInternal = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, entityRef), CollisionBoxType.Pushbox)?[0];
         }
 
-        private void PushbackMove(Frame f)
-        {
-            f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
-            if (pushbackData->framesInPushback >= _pushbackDuration) return;
-
-            FPVector2 v =
-                new FPVector2(GetPushbackVelocityThisFrame(pushbackData->framesInPushback,
-                    pushbackData->pushbackAmount), 0);
-
-            bool inCorner = Util.IsPlayerInCorner(f, EntityRef);
-            EntityRef entityRef = inCorner ? Util.GetOtherPlayer(f, EntityRef) : EntityRef;
-            if (inCorner) v.X *= FP.Minus_1;
-
-            ApplyFlippedMovement(f, v, entityRef, true);
-        }
-
-
-
-        private FP GetPushbackVelocityThisFrame(int framesInPushback, FP totalDistance)
+        protected virtual void PushbackMove(Frame f) { }
+        
+        protected FP GetPushbackVelocityThisFrame(int framesInPushback, FP totalDistance)
         {
             FP t = (FP)framesInPushback / (FP)_pushbackDuration;
             return SampleCubicCurve(t) * totalDistance / (FP)_pushbackDuration;
