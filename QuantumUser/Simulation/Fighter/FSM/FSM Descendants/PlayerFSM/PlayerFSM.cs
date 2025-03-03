@@ -650,6 +650,11 @@ namespace Quantum
             trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
         }
 
+        public override EntityRef GetPlayer()
+        {
+            return EntityRef;
+        }
+
         // FSM helper functions
 
 

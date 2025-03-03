@@ -564,6 +564,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.SummonData))]
   public unsafe class SummonDataPrototype : ComponentPrototype<Quantum.SummonData> {
     public MapEntityId owner;
+    public PlayerRef player;
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.SummonData component = default;
         Materialize((Frame)f, ref component, in context);
@@ -571,6 +572,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.SummonData result, in PrototypeMaterializationContext context = default) {
         PrototypeValidator.FindMapEntity(this.owner, in context, out result.owner);
+        result.player = this.player;
     }
   }
   [System.SerializableAttribute()]
