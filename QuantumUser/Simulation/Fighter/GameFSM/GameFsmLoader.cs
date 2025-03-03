@@ -27,7 +27,6 @@ namespace Quantum
         public static void WritebackGameFSM(Frame f)
         {
             f.Unsafe.TryGetPointer<GameFSMData>(GameFsmEntityRef, out var gameFsmData);
-            Debug.Log("Writing back: " + GameFsm.Fsm.State());
             gameFsmData->currentState = (int)GameFsm.Fsm.State();
         }
 

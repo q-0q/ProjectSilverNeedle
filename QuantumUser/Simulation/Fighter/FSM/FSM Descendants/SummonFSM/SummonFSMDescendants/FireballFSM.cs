@@ -34,7 +34,7 @@ namespace Quantum
 
             const int lifeSpan = 110;
             
-            StateMapConfig.HitSectionGroup.Dictionary[SummonState.Pooled] = new SectionGroup<Hit>()
+            StateMapConfig.HitSectionGroup.Dictionary[SummonState.Unpooled] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
@@ -66,7 +66,7 @@ namespace Quantum
                 }
             };
             
-            StateMapConfig.MovementSectionGroup.Dictionary[SummonState.Pooled] = new SectionGroup<FP>()
+            StateMapConfig.MovementSectionGroup.Dictionary[SummonState.Unpooled] = new SectionGroup<FP>()
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
