@@ -49,6 +49,22 @@ namespace Quantum
             ApplyFlippedMovement(f, v, EntityRef);
         }
         
+        protected override void PushbackMove(Frame f)
+        {
+            f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
+            if (pushbackData->framesInPushback >= _pushbackDuration) return;
+
+            FPVector2 v =
+                new FPVector2(GetPushbackVelocityThisFrame(pushbackData->framesInPushback,
+                    pushbackData->pushbackAmount), 0);
+
+            bool inCorner = Util.IsPlayerInCorner(f, EntityRef);
+            EntityRef entityRef = inCorner ? Util.GetOtherPlayer(f, EntityRef) : EntityRef;
+            if (inCorner) v.X *= FP.Minus_1;
+
+            ApplyFlippedMovement(f, v, entityRef, true);
+        }
+        
         private void OnEnterThrowTech(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;
