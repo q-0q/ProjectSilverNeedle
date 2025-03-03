@@ -1,4 +1,5 @@
 using Photon.Deterministic;
+using Quantum.QuantumUser.Simulation.Fighter.Types;
 using Quantum.Types;
 using Quantum.Types.Collision;
 
@@ -21,7 +22,7 @@ namespace Quantum.StateMap
         public StateMap<bool> WhiffCancellable;
         public StateMap<int> FireReceiverFinishAfter;
         public StateMap<int> InvulnerableBefore;
-        public StateMap<SectionGroup<int>> UnpoolSummonSectionGroup;
+        public StateMap<SectionGroup<SummonPool>> UnpoolSummonSectionGroup;
 
     }
 }
