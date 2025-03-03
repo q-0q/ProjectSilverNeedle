@@ -25,6 +25,7 @@ namespace Quantum
 
             var summonEntity =CreateSummonEntity(f, 0);
             var s1 = new Fireball();
+            s1.playerOwnerEntity = Util.GetPlayer(f, 0);
             s1.SetupMachine();
             s1.SetupStateMaps();
 

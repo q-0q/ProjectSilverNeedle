@@ -44,7 +44,7 @@ namespace Quantum
 
         private void BufferInputs(Frame f, EntityRef entityRef)
         {
-            f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(Util.GetFSM(f, entityRef).GetPlayer(), out var playerLink);
             f.Unsafe.TryGetPointer<InputBuffer>(entityRef, out var inputBuffer);
             Input input = *f.GetPlayerInput(playerLink->Player);
             
@@ -187,11 +187,11 @@ namespace Quantum
             
             int commandDirection = GetBufferDirection(f, fsm.EntityRef);
             
-            if (InputIsBuffered(InputType.Dash, f, fsm.EntityRef) && (commandDirection is 1 or 4 or 7))
+            if (fsm.InputIsBuffered(InputType.Dash, f, fsm.EntityRef) && (commandDirection is 1 or 4 or 7))
             {
                 fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Backdash, param);
             }
-            else if (InputIsBuffered(InputType.Dash, f, fsm.EntityRef))
+            else if (fsm.InputIsBuffered(InputType.Dash, f, fsm.EntityRef))
             {
                 fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Dash, param);
             }
@@ -242,7 +242,7 @@ namespace Quantum
                 }
             }
             
-            if (InputIsBuffered(InputType.Jump, f, fsm.EntityRef))
+            if (fsm.InputIsBuffered(InputType.Jump, f, fsm.EntityRef))
             {
                 switch (GetBufferDirection(f, fsm.EntityRef))
                 {
@@ -316,7 +316,7 @@ namespace Quantum
         {
             if (Util.EntityIsCpu(f, entityRef)) return 5;
             
-            f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(Util.GetFSM(f, entityRef).GetPlayer(), out var playerLink);
             
             Input input = *f.GetPlayerInput(playerLink->Player);
             
@@ -366,22 +366,11 @@ namespace Quantum
         
         
         
-        public static bool InputIsBuffered(InputType type, Frame f, EntityRef entityRef)
-        {
-            
-            f.Unsafe.TryGetPointer<InputBuffer>(entityRef, out var inputBuffer);
-            
-            if (type == (InputType)inputBuffer->type)
-            {
-                return inputBuffer->length != 0;
-            }
-            
-            return false;
-        }
+
 
         public static bool InputIsDown(string action, Frame f, EntityRef entityRef)
         {
-            f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(Util.GetFSM(f, entityRef).GetPlayer(), out var playerLink);
             Input input = *f.GetPlayerInput(playerLink->Player);
             
             if (action == "P")
