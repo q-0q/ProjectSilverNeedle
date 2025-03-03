@@ -61,7 +61,6 @@ namespace Quantum
 
         public void OnPooled(TriggerParams? triggerParams)
         {
-            Debug.Log("OnPooled");
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
             var f = frameParam.f;

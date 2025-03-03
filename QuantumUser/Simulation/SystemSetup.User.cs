@@ -16,7 +16,7 @@
       systems.Add(new PlayerFSMSMoveSystem());
       systems.Add(new PlayerFSMThrowCollisionSystem());
       systems.Add(new PlayerFSMSCollisionSystem());
-      systems.Add(new SummonFSMSystem());
+      systems.Add(new FSMUnpoolSummonSystem());
       systems.Add(new PlayerFSMSReportSystem());
       systems.Add(new HitstopSystem());
       systems.Add(new AnimationEntitySystem());
