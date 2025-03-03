@@ -13,6 +13,7 @@ namespace Quantum
     public abstract unsafe partial class SummonFSM : FSM
     {
         public EntityRef playerOwnerEntity;
+        public FPVector2 SummonPositionOffset = FPVector2.Zero;
         
         public class SummonState : FSMState
         {
@@ -38,13 +39,16 @@ namespace Quantum
         public override void SetupMachine()
         {
             base.SetupMachine();
+            
+            // Fsm.OnTransitionCompleted(OnStateChanged);
 
             Fsm.Configure(SummonState.Pooled)
                 .Permit(SummonTrigger.Summoned, SummonState.Unpooled)
                 .OnEntry(OnPooled);
 
-            // Fsm.Configure(SummonState.Unpooled)
-            //     .OnEntry(Test);
+            Fsm.Configure(SummonState.Unpooled)
+                .PermitReentry(SummonTrigger.Summoned)
+                .OnEntry(OnUnpooled);
             
         }
 
@@ -58,6 +62,20 @@ namespace Quantum
         {
             return playerOwnerEntity;
         }
+        
+        // protected override void OnStateChanged(TriggerParams? triggerParams)
+        // {
+        //     base.OnStateChanged(triggerParams);
+        //     
+        //     if (triggerParams == null)
+        //     {
+        //         return;
+        //     }
+        //     var param = (FrameParam)triggerParams;
+        //     
+        //     param.f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var fsmData);
+        //     fsmData->currentState = Fsm.State();
+        // }
 
         public void OnPooled(TriggerParams? triggerParams)
         {
@@ -66,6 +84,29 @@ namespace Quantum
             var f = frameParam.f;
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             transform3D->Position = new FPVector2(0, -20).XYO;
+        }
+        
+        public void OnUnpooled(TriggerParams? triggerParams)
+        {
+            Debug.Log("Unpooled " + EntityRef);
+            if (triggerParams is null) return;
+            var frameParam = (FrameParam)triggerParams;
+            var f = frameParam.f;
+            
+            // set direction
+            f.Unsafe.TryGetPointer<PlayerDirection>(EntityRef, out var playerDirection);
+            playerDirection->FacingRight = FSM.IsFacingRight(f, playerOwnerEntity);
+            
+            // set pos
+            f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+            f.Unsafe.TryGetPointer<Transform3D>(playerOwnerEntity, out var playerOwnerTransform3D);
+            var flip = playerDirection->FacingRight ? 1 : -1;
+            var offset = new FPVector2(SummonPositionOffset.X * flip, SummonPositionOffset.Y);
+            transform3D->Position = playerOwnerTransform3D->Position.XYO + offset.XYO;
+            
+            // clear hit entities
+            f.Unsafe.TryGetPointer<HitEntitiesTracker>(EntityRef, out var hitEntitiesTracker);
+            f.ResolveList(hitEntitiesTracker->HitEntities).Clear();
         }
     }
 
