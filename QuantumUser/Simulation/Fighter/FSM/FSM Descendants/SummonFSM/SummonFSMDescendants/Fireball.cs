@@ -32,11 +32,42 @@ namespace Quantum
         {
             base.SetupStateMaps();
             
+            StateMapConfig.HitSectionGroup.Dictionary[SummonState.Pooled] = new SectionGroup<Hit>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new(6, new Hit()
+                    {
+                        Launches = true,
+                        Level = 2,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new(0, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            Height = 2,
+                                            Width = 2
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            };
+            
         }
 
         public override void SetupMachine()
         {
             base.SetupMachine();
+            
             
         }
     }

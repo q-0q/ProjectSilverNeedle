@@ -196,14 +196,14 @@ namespace Quantum
 
             var hurtboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hurtbox);
             
-            // todo:
-            // we need a way of comprehensively getting hitboxes from ALL other FSMs, not just the opponent
-            // otherwise collision will never happen with Summons
-            // Util.GetAllOtherFSMs() -> list of entity refs
-            var hitboxInternals = GetCollisionBoxInternalsOfType(f, Util.GetOtherPlayer(f, EntityRef),
-                CollisionBoxType.Hitbox);
-            
-            
+
+            var hitboxSources = Util.GetOpponentFSMEntities(f, EntityRef);
+            List<CollisionBoxInternal> hitboxInternals = new List<CollisionBoxInternal>();
+            foreach (var entityRef in hitboxSources)
+            {
+                hitboxInternals.AddRange(GetCollisionBoxInternalsOfType(f, entityRef,
+                    CollisionBoxType.Hitbox));
+            }
             
             foreach (var hitboxInternal in hitboxInternals)
             {
