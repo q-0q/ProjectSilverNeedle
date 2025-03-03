@@ -38,7 +38,10 @@ namespace Quantum
         {
             if (GameFsmLoader.LoadGameFSM(f).Fsm.State() != GameFSM.State.Playing) return;
             
-            AdvanceBuffer(filter.InputBuffer);
+            var fsm = Util.GetFSM(f, filter.Entity);
+            if (fsm is null) return;
+                
+            fsm.AdvanceBuffer(filter.InputBuffer);
             BufferInputs(f, filter.Entity);
         }
 
@@ -158,10 +161,10 @@ namespace Quantum
 
         private static void FireHumanButtonAndDirection(Frame f, FSM fsm)
         {
-            if (GetBufferType(f, fsm.EntityRef, out var type))
+            if (fsm.GetBufferType(f, fsm.EntityRef, out var type))
             {
                 if (type == InputType.Jump) return;
-                int commandDirection = GetBufferDirection(f, fsm.EntityRef);
+                int commandDirection = fsm.GetBufferDirection(f, fsm.EntityRef);
                 FireThrowTrigger(f, fsm, type, commandDirection);
                 FireButtonAndDirectionTrigger(f, fsm, type, commandDirection);
             }
@@ -185,7 +188,7 @@ namespace Quantum
             
             // Debug.Log(fsm.EntityRef);
             
-            int commandDirection = GetBufferDirection(f, fsm.EntityRef);
+            int commandDirection = fsm.GetBufferDirection(f, fsm.EntityRef);
             
             if (fsm.InputIsBuffered(InputType.Dash, f, fsm.EntityRef) && (commandDirection is 1 or 4 or 7))
             {
@@ -244,7 +247,7 @@ namespace Quantum
             
             if (fsm.InputIsBuffered(InputType.Jump, f, fsm.EntityRef))
             {
-                switch (GetBufferDirection(f, fsm.EntityRef))
+                switch (fsm.GetBufferDirection(f, fsm.EntityRef))
                 {
                     case 7:
                     {
@@ -402,23 +405,7 @@ namespace Quantum
             return false;
         }
 
-        private void AdvanceBuffer(InputBuffer* inputBuffer)
-        {
-            inputBuffer->length = Math.Max(0, inputBuffer->length - 1);
-        }
-        
-        private static int GetBufferDirection(Frame f, EntityRef entityRef)
-        {
-            f.Unsafe.TryGetPointer<InputBuffer>(entityRef, out var inputBuffer);
-            return inputBuffer->direction;
-        }
-        
-        private static bool GetBufferType(Frame f, EntityRef entityRef, out InputType type)
-        {
-            f.Unsafe.TryGetPointer<InputBuffer>(entityRef, out var inputBuffer);
-            type =  (InputType)inputBuffer->type;
-            return inputBuffer->length != 0;
-        }
+
 
         private static void FireButtonAndDirectionTrigger(Frame f, FSM fsm, InputType type, int commandDirection)
         {
