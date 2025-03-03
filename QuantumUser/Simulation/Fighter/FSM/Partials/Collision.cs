@@ -394,5 +394,6 @@ namespace Quantum
             frameParam.f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
             slowdownData->slowdownRemaining = 0;
         }
+        
     }
 }

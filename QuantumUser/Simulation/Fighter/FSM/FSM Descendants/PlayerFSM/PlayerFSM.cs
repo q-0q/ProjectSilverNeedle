@@ -697,7 +697,7 @@ namespace Quantum
             if (actionConfig.DashCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)
-                    .PermitIf(PlayerFSM.PlayerTrigger.Dash, PlayerFSM.PlayerState.AirActionable, Util.CanCancelNow);
+                    .PermitIf(PlayerFSM.PlayerTrigger.Dash, PlayerFSM.PlayerState.Dash, Util.CanCancelNow);
             }
         }
 
