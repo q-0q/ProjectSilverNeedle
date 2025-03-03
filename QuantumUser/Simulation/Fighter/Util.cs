@@ -50,6 +50,20 @@ namespace Quantum
             
             return opponent;
         }
+        
+        public static List<EntityRef> GetOpponentFSMEntities(Frame f, EntityRef player)
+        {
+            var output = new List<EntityRef>();
+            
+            foreach (var (e, component) in f.GetComponentIterator<FSMData>()) {
+                if (GetFSM(f, e).GetPlayer() != player)
+                {
+                    output.Add(e);
+                }
+            }
+            
+            return output;
+        }
 
         public static EntityRef GetPlayer(Frame f, int player)
         {
