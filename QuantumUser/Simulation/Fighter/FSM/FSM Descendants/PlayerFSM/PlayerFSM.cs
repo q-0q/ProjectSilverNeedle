@@ -69,16 +69,7 @@ namespace Quantum
 
         public class PlayerTrigger : Trigger
         {
-            public static int NeutralInput;
-            public static int Down;
-            public static int Forward;
-            public static int Backward;
-            public static int Dash;
-            public static int Backdash;
-            public static int ForwardThrow;
-            public static int BackThrow;
-            public static int ButtonAndDirection;
-            public static int Jump;
+
             public static int Land;
             public static int HitWall;
             public static int JumpCancel;
