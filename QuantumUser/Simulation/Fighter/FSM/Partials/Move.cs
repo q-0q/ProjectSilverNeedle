@@ -13,8 +13,8 @@ namespace Quantum
     {
         static FP _crossupThreshhold = FP.FromString("0.01");
         private const bool AllowCrossup = false;
-        private static int _pushbackDuration = 23;
-        private static int _momentumDuration = 35;
+        protected static int _pushbackDuration = 23;
+        protected static int _momentumDuration = 35;
         private FP _wallsSkew = FP.FromString("0.99");
 
         private FP _pushboxResistance = FP.FromString("0.3"); // 0 - 1;
@@ -146,7 +146,7 @@ namespace Quantum
             return SampleCubicCurve(t) * totalDistance / (FP)_pushbackDuration;
         }
 
-        private FP GetMomentumVelocityThisFrame(int framesInMomentum, FP totalDistance)
+        protected FP GetMomentumVelocityThisFrame(int framesInMomentum, FP totalDistance)
         {
             FP t = (FP)framesInMomentum / (FP)_momentumDuration;
             return SampleCubicCurve(t) * totalDistance / (FP)_momentumDuration;
@@ -184,21 +184,7 @@ namespace Quantum
                 Util.FrameLengthInSeconds * 60);
             transform3D->Position.X = lerpedX;
         }
-
-
-
-
-
-        private void MomentumMove(Frame f)
-        {
-            f.Unsafe.TryGetPointer<MomentumData>(EntityRef, out var momentumData);
-            if (momentumData->framesInMomentum >= _pushbackDuration) return;
-
-            FPVector2 v =
-                new FPVector2(GetMomentumVelocityThisFrame(momentumData->framesInMomentum,
-                    momentumData->momentumAmount), 0);
-
-            ApplyFlippedMovement(f, v, EntityRef);
-        }
+        
+        protected virtual void MomentumMove(Frame f) { }
     }
 }
