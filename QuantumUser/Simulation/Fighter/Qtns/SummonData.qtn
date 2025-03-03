@@ -2,4 +2,5 @@ component SummonData
 {
     entity_ref owner;
     player_ref player;
+    int counter;
 }

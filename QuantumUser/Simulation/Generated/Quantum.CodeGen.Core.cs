@@ -1236,18 +1236,22 @@ namespace Quantum {
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(8)]
     public EntityRef owner;
-    [FieldOffset(0)]
+    [FieldOffset(4)]
     public PlayerRef player;
+    [FieldOffset(0)]
+    public Int32 counter;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 4903;
         hash = hash * 31 + owner.GetHashCode();
         hash = hash * 31 + player.GetHashCode();
+        hash = hash * 31 + counter.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (SummonData*)ptr;
+        serializer.Stream.Serialize(&p->counter);
         PlayerRef.Serialize(&p->player, serializer);
         EntityRef.Serialize(&p->owner, serializer);
     }

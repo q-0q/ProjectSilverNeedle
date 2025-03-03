@@ -41,7 +41,7 @@ namespace Quantum
             return FSMs?[entityRef];
         }
 
-        private static EntityRef CreateSummonEntity(Frame f, int playerOwner)
+        private static EntityRef CreateSummonEntity(Frame f, int playerOwner, int idInPool)
         {
             EntityRef entity =
                 f.Create(f.FindAsset<EntityPrototype>("QuantumUser/Resources/SummonEntityPrototype"));
@@ -49,6 +49,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<SummonData>(entity, out var summonData);
             summonData->owner = Util.GetPlayer(f, playerOwner);
             summonData->player = playerOwner;
+            summonData->counter = idInPool;
             
             return entity;
         }
@@ -60,9 +61,10 @@ namespace Quantum
 
             foreach (var summonPool in summonPools)
             {
+                summonPool.EntityRefs = new List<EntityRef>();
                 for (int i = 0; i < summonPool.Size; i++)
                 {
-                    var summonEntity = CreateSummonEntity(f, ownerPlayerId);
+                    var summonEntity = CreateSummonEntity(f, ownerPlayerId, i);
                     if (Activator.CreateInstance(summonPool.SummonFSMType) is not SummonFSM summonFsm)
                     {
                         Debug.LogError("You tried to instantiate a SummonFSM pool on a type that is not a SummonFSM");
@@ -73,6 +75,7 @@ namespace Quantum
                     summonFsm.SetupMachine();
                     summonFsm.SetupStateMaps();
                     FSMs[summonEntity] = summonFsm;
+                    summonPool.EntityRefs.Add(summonEntity);
                     Debug.Log("Successfully instantiated player " + ownerPlayerId + " " + summonPool.SummonFSMType + " [" + i + "]");
                 }
             }
