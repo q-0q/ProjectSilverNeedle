@@ -194,8 +194,8 @@ namespace Quantum
                                     GrowHeight = false,
                                     GrowWidth = false,
                                     PosX = 0,
-                                    PosY = 2,
-                                    Height = 6,
+                                    PosY = 4,
+                                    Height = 4,
                                     Width = 7,
                                 }
                             }
