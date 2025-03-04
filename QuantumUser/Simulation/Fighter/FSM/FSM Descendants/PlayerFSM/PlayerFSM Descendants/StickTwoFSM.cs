@@ -627,7 +627,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, SummonPool>>()
                 {
-                    new(10, null),
+                    new(13, null),
                     new(3, SummonPools[0]), 
                     new(10, null)
                 }
