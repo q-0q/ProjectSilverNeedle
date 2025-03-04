@@ -17,23 +17,23 @@ namespace Quantum
 
         public enum FireballAnimationPath
         {
-
+            Alive
         }
         
         public FireballFSM()
         {
-            Name = "Fireball";
+            Name = "StickTwoFireball";
             StateType = typeof(FireballState);
             AnimationPathsEnum = typeof(FireballAnimationPath);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(2, 3);
+            SummonPositionOffset = new FPVector2(3, 2);
         }
 
         public override void SetupStateMaps()
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 30;
+            const int lifeSpan = 50;
             
             StateMapConfig.HitSectionGroup.Dictionary[SummonState.Unpooled] = new SectionGroup<Hit>()
             {
@@ -42,7 +42,7 @@ namespace Quantum
                     new(lifeSpan, new Hit()
                     {
                         // Launches = true,
-                        Level = 2,
+                        Level = 1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -56,7 +56,7 @@ namespace Quantum
                                             GrowWidth = false,
                                             GrowHeight = false,
                                             PosX = 0,
-                                            PosY = 3,
+                                            PosY = 0,
                                             Height = 2,
                                             Width = 2,
                                         }
@@ -77,6 +77,21 @@ namespace Quantum
             };
 
             StateMapConfig.Duration.Dictionary[SummonState.Unpooled] = lifeSpan;
+
+            var aliveAnimation = new FighterAnimation()
+            {
+                Path = (int)FireballAnimationPath.Alive,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    Loop = true,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(aliveAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[SummonState.Unpooled] = aliveAnimation;
+
+            
 
         }
 
