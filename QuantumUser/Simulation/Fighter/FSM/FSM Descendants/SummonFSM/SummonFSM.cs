@@ -88,10 +88,10 @@ namespace Quantum
         
         public void OnUnpooled(TriggerParams? triggerParams)
         {
-            Debug.Log("Unpooled " + EntityRef);
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
             var f = frameParam.f;
+            Debug.Log("Unpooled " + EntityRef + ", frame " + FramesInCurrentState(f, playerOwnerEntity));
             
             // set direction
             f.Unsafe.TryGetPointer<PlayerDirection>(EntityRef, out var playerDirection);
