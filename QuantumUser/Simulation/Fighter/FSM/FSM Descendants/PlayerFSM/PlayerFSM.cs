@@ -259,6 +259,7 @@ namespace Quantum
             machine.Configure(PlayerState.Throw)
                 .SubstateOf(PlayerState.Ground)
                 .SubstateOf(PlayerState.Stand)
+                .OnEntry(InputSystem.ClearBufferParams)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable);
 
             machine.Configure(PlayerState.ForwardThrow)

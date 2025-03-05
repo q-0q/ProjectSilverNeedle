@@ -31,6 +31,7 @@ namespace Quantum
             public static int _JS;
             public static int ForwardThrowCutscene;
             public static int BackThrowCutscene;
+            public static int Fireball;
         }
 
         public enum StickTwoAnimationPath
@@ -66,6 +67,8 @@ namespace Quantum
             _5M,
             _2M,
             _2H,
+            Fireball,
+
         }
         
         public class StickTwoCutscenes : PlayerFSM.CutsceneIndexes
@@ -194,7 +197,31 @@ namespace Quantum
                                     GrowHeight = false,
                                     GrowWidth = false,
                                     PosX = 0,
-                                    PosY = 4,
+                                    PosY = 2,
+                                    Height = 5,
+                                    Width = 7,
+                                }
+                            }
+                        }
+                    )
+                }
+            };
+            
+            var airHurtboxCollection = new SectionGroup<CollisionBoxCollection>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                {
+                    new (10, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new()
+                                {
+                                    GrowHeight = false,
+                                    GrowWidth = false,
+                                    PosX = 0,
+                                    PosY = 3,
                                     Height = 4,
                                     Width = 7,
                                 }
@@ -207,6 +234,7 @@ namespace Quantum
             StateMapConfig.HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Stand] = standHurtboxCollectionSectionGroup;
             StateMapConfig.HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Crouch] = crouchHurtboxCollection;
             StateMapConfig.HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Air] = airHitHurtboxCollection;
+            // StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[PlayerFSM.PlayerState.Air] = airHitHurtboxCollection;
             StateMapConfig.HurtboxCollectionSectionGroup.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitHurtboxCollection;
 
             
@@ -623,15 +651,7 @@ namespace Quantum
                 }
             };
 
-            var _5MSummon = new SectionGroup<SummonPool>()
-            {
-                Sections = new List<Tuple<int, SummonPool>>()
-                {
-                    new(13, null),
-                    new(3, SummonPools[0]), 
-                    new(10, null)
-                }
-            };
+
             
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
@@ -641,7 +661,6 @@ namespace Quantum
             StateMapConfig.WhiffCancellable.Dictionary[StickTwoState._5M] = false;
             StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
             StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtboxes;
-            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[StickTwoState._5M] = _5MSummon;
             
             Cutscene forwardThrowCutscene = new Cutscene()
             {
@@ -912,6 +931,33 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation;
             StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = backThrowCutsceneHits;
             StateMapConfig.Duration.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation.SectionGroup.Duration();
+
+
+
+            var fireballAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.Fireball,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var fireballSummon = new SectionGroup<SummonPool>()
+            {
+                Sections = new List<Tuple<int, SummonPool>>()
+                {
+                    new(19, null),
+                    new(3, SummonPools[0]), 
+                    new(10, null)
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(fireballAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[StickTwoState.Fireball] = fireballAnimation;
+            StateMapConfig.Duration.Dictionary[StickTwoState.Fireball] = fireballAnimation.SectionGroup.Duration();
+            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[StickTwoState.Fireball] = fireballSummon;
+
         }
 
         public override void SetupMachine()
@@ -1004,6 +1050,23 @@ namespace Quantum
             };
             
             ConfigureAction(this, backThrow);
+            
+            
+            ActionConfig fireball = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 4,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                State = StickTwoState.Fireball
+            };
+            
+            ConfigureAction(this, fireball);
         }
     }
 }

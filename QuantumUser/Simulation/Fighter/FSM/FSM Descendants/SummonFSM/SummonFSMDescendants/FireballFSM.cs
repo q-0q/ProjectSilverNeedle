@@ -26,7 +26,7 @@ namespace Quantum
             StateType = typeof(FireballState);
             AnimationPathsEnum = typeof(FireballAnimationPath);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(3, 2);
+            SummonPositionOffset = new FPVector2(5, 5);
         }
 
         public override void SetupStateMaps()
