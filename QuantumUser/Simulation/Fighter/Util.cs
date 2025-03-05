@@ -112,6 +112,7 @@ namespace Quantum
             if (fsm is null) return;
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
+            Debug.Log("WB: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(fsm.Fsm.State(), fsm.StateType));
             playerFsmData->currentState = (int)fsm.Fsm.State();
            
         }

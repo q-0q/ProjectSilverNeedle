@@ -89,7 +89,7 @@ namespace Quantum
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
-            var jumpHeight = FP.FromString("5.5");
+            var jumpHeight = FP.FromString("8");
             var jumpTimeToHeight = 25;
             var jumpForwardSpeed = FP.FromString("10");
             var jumpBackwardSpeed = FP.FromString("-7");
@@ -198,8 +198,8 @@ namespace Quantum
                                     GrowWidth = false,
                                     PosX = 0,
                                     PosY = 2,
-                                    Height = 5,
-                                    Width = 7,
+                                    Height = 4,
+                                    Width = 5,
                                 }
                             }
                         }
@@ -1067,6 +1067,9 @@ namespace Quantum
             };
             
             ConfigureAction(this, fireball);
+            
+            MakeActionCancellable(this, _5M, fireball);
+
         }
     }
 }

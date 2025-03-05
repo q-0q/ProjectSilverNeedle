@@ -25,8 +25,7 @@ namespace Quantum
         public class SummonTrigger : Trigger
         {
             public static int Summoned;
-            public static int HitTarget;
-            public static int GotBlocked;
+            public static int Collided;
             public static int Offscreen;
         }
         
@@ -43,12 +42,11 @@ namespace Quantum
             // Fsm.OnTransitionCompleted(OnStateChanged);
 
             Fsm.Configure(SummonState.Pooled)
-                .Permit(SummonTrigger.Summoned, SummonState.Unpooled)
                 .OnEntry(OnPooled);
 
             Fsm.Configure(SummonState.Unpooled)
                 .PermitReentry(SummonTrigger.Summoned)
-                .OnEntry(OnUnpooled);
+                .OnEntryFrom(SummonTrigger.Summoned, OnUnpooled);
             
         }
 
@@ -108,6 +106,30 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(EntityRef, out var hitEntitiesTracker);
             f.ResolveList(hitEntitiesTracker->HitEntities).Clear();
         }
+
+        public override void HandleCollisionTrigger(Frame f)
+        {
+            var hitboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hitbox);
+            
+
+            var hurtboxSources = Util.GetOpponentFSMEntities(f, EntityRef);
+            List<CollisionBoxInternal> hurtboxInternals = new List<CollisionBoxInternal>();
+            foreach (var entityRef in hurtboxSources)
+            {
+                hurtboxInternals.AddRange(GetCollisionBoxInternalsOfType(f, entityRef,
+                    CollisionBoxType.Hurtbox));
+            }
+            
+            foreach (var hitboxInternal in hurtboxInternals)
+            {
+                foreach (var hurtboxInternal in hitboxInternals)
+                {
+                    if (!CollisionBoxesOverlap(f, hitboxInternal, hurtboxInternal, out var overlapCenter, out var overlapWidth)) continue;
+                    Fsm.Fire(SummonTrigger.Collided, new FrameParam() {f = f, EntityRef = EntityRef});
+                }
+            }
+        }
+
     }
 
 }
