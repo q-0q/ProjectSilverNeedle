@@ -12,12 +12,14 @@ namespace Quantum
     {
         public class FireballState : SummonState
         {
-            
+            public static int Alive;
+            public static int Destroy;
         }
 
         public enum FireballAnimationPath
         {
-            Alive
+            Alive,
+            Destroy
         }
         
         public FireballFSM()
@@ -26,7 +28,7 @@ namespace Quantum
             StateType = typeof(FireballState);
             AnimationPathsEnum = typeof(FireballAnimationPath);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(5, 5);
+            SummonPositionOffset = new FPVector2(5, 4);
         }
 
         public override void SetupStateMaps()
@@ -35,7 +37,7 @@ namespace Quantum
 
             const int lifeSpan = 50;
             
-            StateMapConfig.HitSectionGroup.Dictionary[SummonState.Unpooled] = new SectionGroup<Hit>()
+            StateMapConfig.HitSectionGroup.Dictionary[FireballState.Alive] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
@@ -68,15 +70,15 @@ namespace Quantum
                 }
             };
             
-            StateMapConfig.MovementSectionGroup.Dictionary[SummonState.Unpooled] = new SectionGroup<FP>()
+            StateMapConfig.MovementSectionGroup.Dictionary[FireballState.Alive] = new SectionGroup<FP>()
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(lifeSpan, 10),
+                    new(lifeSpan, 14),
                 }
             };
 
-            StateMapConfig.Duration.Dictionary[SummonState.Unpooled] = lifeSpan;
+            StateMapConfig.Duration.Dictionary[FireballState.Alive] = lifeSpan;
 
             var aliveAnimation = new FighterAnimation()
             {
@@ -89,7 +91,22 @@ namespace Quantum
             };
             
             Util.AutoSetupFromAnimationPath(aliveAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[SummonState.Unpooled] = aliveAnimation;
+            StateMapConfig.FighterAnimation.Dictionary[FireballState.Alive] = aliveAnimation;
+            
+            var destroyAnimation = new FighterAnimation()
+            {
+                Path = (int)FireballAnimationPath.Destroy,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(destroyAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[FireballState.Destroy] = destroyAnimation;
+            StateMapConfig.Duration.Dictionary[FireballState.Destroy] = 20;
+            
+
 
             
 
@@ -99,7 +116,20 @@ namespace Quantum
         {
             base.SetupMachine();
 
-            Fsm.Configure(SummonState.Unpooled)
+            Fsm.Configure(SummonState.Pooled)
+                .Permit(SummonTrigger.Summoned, FireballState.Alive);
+            
+            Fsm.Configure(FireballState.Alive)
+                .SubstateOf(SummonState.Unpooled)
+                .Permit(SummonTrigger.Collided, FireballState.Destroy)
+                .Permit(Trigger.Finish, FireballState.Destroy);
+            
+            Fsm.Configure(FireballState.Destroy)
+                .SubstateOf(SummonState.Unpooled)
+                .OnEntry(_ =>
+                {
+                    Debug.Log("destroy");
+                })
                 .Permit(Trigger.Finish, SummonState.Pooled);
 
         }

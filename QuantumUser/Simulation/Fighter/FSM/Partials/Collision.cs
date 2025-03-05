@@ -221,6 +221,7 @@ namespace Quantum
 
         protected virtual void InvokeHitboxHurtboxCollision(Frame frame, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
 
+        public virtual void HandleCollisionTrigger(Frame f) { }
 
         private static FPVector3 GetCollisionBoxWorldPosition(Frame f, EntityRef source, CollisionBox collisionBox)
         {
@@ -240,7 +241,7 @@ namespace Quantum
         }
         
         
-        private bool CanBeHitBySource(Frame f, EntityRef source)
+        public bool CanBeHitBySource(Frame f, EntityRef source)
         {
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(source, out var hitEntitiesTracker);
             var hitEntities = f.ResolveList(hitEntitiesTracker->HitEntities);
@@ -251,7 +252,7 @@ namespace Quantum
             return true;
         }
 
-        private void AddMeToSourceHitList(Frame f, EntityRef source)
+        public void AddMeToSourceHitList(Frame f, EntityRef source)
         {
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(source, out var hitEntitiesTracker);
             var hitEntities = f.ResolveList(hitEntitiesTracker->HitEntities);
@@ -279,7 +280,7 @@ namespace Quantum
             hitEntities.Clear();
         }
         
-        static bool CollisionBoxesOverlap(Frame f, CollisionBoxInternal boxAInternal, CollisionBoxInternal boxBInternal, out FPVector2 overlapCenter, out FP overlapWidth)
+        public static bool CollisionBoxesOverlap(Frame f, CollisionBoxInternal boxAInternal, CollisionBoxInternal boxBInternal, out FPVector2 overlapCenter, out FP overlapWidth)
         {
             overlapCenter = FPVector2.Zero; // Or any default value indicating no overlap
             overlapWidth = 0;
