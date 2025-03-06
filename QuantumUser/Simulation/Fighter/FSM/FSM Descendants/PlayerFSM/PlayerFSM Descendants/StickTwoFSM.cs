@@ -947,9 +947,46 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, SummonPool>>()
                 {
-                    new(19, null),
+                    new(1, null),
                     new(3, SummonPools[0]), 
                     new(10, null)
+                }
+            };
+
+            var fireballHurtTypes = new SectionGroup<HurtType>()
+            {
+                Sections = new List<Tuple<int, HurtType>>()
+                {
+                    new(30, HurtType.Counter)
+                }
+            };
+
+            var fireballHurtboxes = new SectionGroup<CollisionBoxCollection>()
+            {
+                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                {
+                    new(20, new CollisionBoxCollection()
+                    {
+                        CollisionBoxes = new List<CollisionBox>()
+                        {
+                            standHurtbox
+                        }
+                    }),
+                    new(20, new CollisionBoxCollection()
+                    {
+                        CollisionBoxes = new List<CollisionBox>()
+                        {
+                            standHurtbox,
+                            new CollisionBox()
+                            {
+                                GrowWidth = true,
+                                GrowHeight = false,
+                                Width = 4,
+                                Height = 3,
+                                PosY = 5,
+                            }
+                        }
+                    }),
                 }
             };
             
@@ -957,6 +994,9 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState.Fireball] = fireballAnimation;
             StateMapConfig.Duration.Dictionary[StickTwoState.Fireball] = fireballAnimation.SectionGroup.Duration();
             StateMapConfig.UnpoolSummonSectionGroup.Dictionary[StickTwoState.Fireball] = fireballSummon;
+            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState.Fireball] = fireballHurtTypes;
+            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState.Fireball] = fireballHurtboxes;
+
 
         }
 

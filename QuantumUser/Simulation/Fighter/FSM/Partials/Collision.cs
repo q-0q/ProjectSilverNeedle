@@ -221,7 +221,7 @@ namespace Quantum
 
         protected virtual void InvokeHitboxHurtboxCollision(Frame frame, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
 
-        public virtual void HandleCollisionTrigger(Frame f) { }
+        public virtual void HandleSummonFSMTriggers(Frame f) { }
 
         private static FPVector3 GetCollisionBoxWorldPosition(Frame f, EntityRef source, CollisionBox collisionBox)
         {

@@ -26,6 +26,7 @@ namespace Quantum
         {
             public static int Summoned;
             public static int Collided;
+            public static int OwnerHit;
             public static int Offscreen;
         }
         
@@ -45,7 +46,10 @@ namespace Quantum
                 .OnEntry(OnPooled);
 
             Fsm.Configure(SummonState.Unpooled)
-                .PermitReentry(SummonTrigger.Summoned)
+                .OnEntry(_ =>
+                {
+                    Debug.LogError("unpooled");
+                })
                 .OnEntryFrom(SummonTrigger.Summoned, OnUnpooled);
             
         }
@@ -107,12 +111,13 @@ namespace Quantum
             f.ResolveList(hitEntitiesTracker->HitEntities).Clear();
         }
 
-        public override void HandleCollisionTrigger(Frame f)
+        public override void HandleSummonFSMTriggers(Frame f)
         {
             var hitboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hitbox);
             
 
-            var hurtboxSources = Util.GetOpponentFSMEntities(f, EntityRef);
+            var hurtboxSources = Util.GetOpponentFSMEntities(f, playerOwnerEntity);
+            
             List<CollisionBoxInternal> hurtboxInternals = new List<CollisionBoxInternal>();
             foreach (var entityRef in hurtboxSources)
             {
@@ -120,14 +125,26 @@ namespace Quantum
                     CollisionBoxType.Hurtbox));
             }
             
-            foreach (var hitboxInternal in hurtboxInternals)
+            var triggerParams = new FrameParam() {f = f, EntityRef = EntityRef};
+            
+
+            
+            foreach (var hitboxInternal in hitboxInternals)
             {
-                foreach (var hurtboxInternal in hitboxInternals)
+                foreach (var hurtboxInternal in hurtboxInternals)
                 {
-                    if (!CollisionBoxesOverlap(f, hitboxInternal, hurtboxInternal, out var overlapCenter, out var overlapWidth)) continue;
+                    if (!CollisionBoxesOverlap(f, hurtboxInternal, hitboxInternal, out var overlapCenter, out var overlapWidth)) continue;
+                    Debug.Log("owner: " + playerOwnerEntity + ", hurtbox source: " + hurtboxInternal.source + ", hitbox source: " + hitboxInternal.source + ", me: " + EntityRef);
+
                     Fsm.Fire(SummonTrigger.Collided, new FrameParam() {f = f, EntityRef = EntityRef});
                 }
             }
+
+            if (Util.GetFSM(f, GetPlayer()).Fsm.IsInState(PlayerFSM.PlayerState.Hit))
+            {
+                Fsm.Fire(SummonTrigger.OwnerHit, triggerParams);
+            }
+
         }
 
     }
