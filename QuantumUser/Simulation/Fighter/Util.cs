@@ -16,7 +16,7 @@ namespace Quantum
     {
         public static FP GroundHeight = FP.FromString("0");
         public static FP FrameLengthInSeconds = FP.FromString("0.016666");
-        public static int CPUPlayerId = 0;
+        public static int CPUPlayerId = 1;
         
         public static FP Min(FP a, FP b)
         {
@@ -112,7 +112,7 @@ namespace Quantum
             if (fsm is null) return;
             
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
-            Debug.Log("WB: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(fsm.Fsm.State(), fsm.StateType));
+            // Debug.Log("WB: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(fsm.Fsm.State(), fsm.StateType));
             playerFsmData->currentState = (int)fsm.Fsm.State();
            
         }
@@ -137,6 +137,9 @@ namespace Quantum
             return new InteractionControllerData();
         }
 
+        
+        
+        // Todo: refactor
         public static FSM GetFSM(Frame f, EntityRef entityRef, bool debug=false)
         {
             

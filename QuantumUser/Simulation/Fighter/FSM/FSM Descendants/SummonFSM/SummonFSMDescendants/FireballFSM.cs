@@ -12,12 +12,14 @@ namespace Quantum
     {
         public class FireballState : SummonState
         {
+            public static int Prime;
             public static int Alive;
             public static int Destroy;
         }
 
         public enum FireballAnimationPath
         {
+            Prime,
             Alive,
             Destroy
         }
@@ -28,7 +30,7 @@ namespace Quantum
             StateType = typeof(FireballState);
             AnimationPathsEnum = typeof(FireballAnimationPath);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(5, 4);
+            SummonPositionOffset = new FPVector2(FP.FromString("4.5"), FP.FromString("4.5"));
         }
 
         public override void SetupStateMaps()
@@ -106,9 +108,19 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[FireballState.Destroy] = destroyAnimation;
             StateMapConfig.Duration.Dictionary[FireballState.Destroy] = 20;
             
-
-
+            var primeAnimation = new FighterAnimation()
+            {
+                Path = (int)FireballAnimationPath.Prime,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             
+            Util.AutoSetupFromAnimationPath(primeAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[FireballState.Prime] = primeAnimation;
+            StateMapConfig.Duration.Dictionary[FireballState.Prime] = 20;
+
 
         }
 
@@ -117,7 +129,12 @@ namespace Quantum
             base.SetupMachine();
 
             Fsm.Configure(SummonState.Pooled)
-                .Permit(SummonTrigger.Summoned, FireballState.Alive);
+                .Permit(SummonTrigger.Summoned, FireballState.Prime);
+            
+            Fsm.Configure(FireballState.Prime)
+                .SubstateOf(SummonState.Unpooled)
+                .Permit(SummonTrigger.OwnerHit, SummonState.Unpooled)
+                .Permit(Trigger.Finish, FireballState.Alive);
             
             Fsm.Configure(FireballState.Alive)
                 .SubstateOf(SummonState.Unpooled)
@@ -126,10 +143,6 @@ namespace Quantum
             
             Fsm.Configure(FireballState.Destroy)
                 .SubstateOf(SummonState.Unpooled)
-                .OnEntry(_ =>
-                {
-                    Debug.Log("destroy");
-                })
                 .Permit(Trigger.Finish, SummonState.Pooled);
 
         }

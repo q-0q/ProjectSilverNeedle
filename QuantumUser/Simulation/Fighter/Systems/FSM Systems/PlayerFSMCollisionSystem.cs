@@ -27,7 +27,7 @@ namespace Quantum
             if (HitstopSystem.IsHitstopActive(f)) return;
             
             fsm.HitboxHurtboxCollide(f);
-            fsm.HandleCollisionTrigger(f);
+            fsm.HandleSummonFSMTriggers(f);
             
             Util.WritebackFsm(f, filter.Entity);
         }
