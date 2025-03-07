@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public unsafe class PlayerFSMTransitionSystem : SystemMainThreadFilter<PlayerFSMTransitionSystem.Filter>, ISignalOnComponentAdded<HitEntitiesTracker>, ISignalOnComponentRemoved<HitEntitiesTracker>, ISignalOnComponentAdded<FrameMeterData>, ISignalOnComponentRemoved<FrameMeterData>
+    public unsafe class PlayerFSMTransitionSystem : SystemMainThreadFilter<PlayerFSMTransitionSystem.Filter>
     {
         public struct Filter
         {
@@ -34,32 +34,5 @@ namespace Quantum
             Util.WritebackFsm(f, filter.Entity);
         }
         
-        
-        public void OnAdded(Frame f, EntityRef entity, HitEntitiesTracker* component)
-        {
-            component->HitEntities = f.AllocateList<EntityRef>();
-        }
-
-        public void OnRemoved(Frame f, EntityRef entity, HitEntitiesTracker* component)
-        {
-            f.FreeList(component->HitEntities);
-            component->HitEntities = default;
-        }
-        
-        public void OnAdded(Frame f, EntityRef entity, FrameMeterData* component)
-        {
-            component->types = f.AllocateList<int>();
-            component->frames = f.AllocateList<int>();
-        }
-        
-        public void OnRemoved(Frame f, EntityRef entity, FrameMeterData* component)
-        {
-            f.FreeList(component->types);
-            f.FreeList(component->frames);
-            component->types = default;
-            component->frames = default;
-        }
-
-
     }
 }
