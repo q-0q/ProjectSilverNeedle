@@ -61,6 +61,7 @@ namespace Quantum
             // Clock
             fsm.IncrementClock(f, filter.Entity);
             
+            Debug.LogError("writeback all fsms");
             Util.WritebackFsm(f, fsm.EntityRef);
             
         }
