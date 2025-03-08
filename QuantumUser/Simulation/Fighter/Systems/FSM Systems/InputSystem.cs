@@ -411,7 +411,14 @@ namespace Quantum
         {
             ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
-            fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.ButtonAndDirection, param);
+            try
+            {
+                fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.ButtonAndDirection, param);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
         
         private static void FireThrowTrigger(Frame f, FSM fsm, InputType type, int commandDirection)

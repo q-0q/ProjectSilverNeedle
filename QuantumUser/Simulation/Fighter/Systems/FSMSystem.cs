@@ -14,6 +14,7 @@ namespace Quantum
         
         public override void Update(Frame f, ref Filter filter)
         {
+            FsmLoader.ReadAllFSMsFromNetwork(f);
             FSM fsm = FsmLoader.FSMs[filter.Entity];
             if (fsm is null) return;
             
@@ -61,8 +62,8 @@ namespace Quantum
             // Clock
             fsm.IncrementClock(f, filter.Entity);
             
-            Debug.LogError("writeback all fsms");
-            Util.WritebackFsm(f, fsm.EntityRef);
+            // Done!
+            FsmLoader.WriteAllFSMsToNetwork(f);
             
         }
         
