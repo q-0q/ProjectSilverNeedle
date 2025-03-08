@@ -106,17 +106,6 @@ namespace Quantum
             return ((int)playerLink->Player == CPUPlayerId);
         }
         
-        public static void WritebackFsm(Frame f, EntityRef entityRef)
-        {
-            var fsm = FsmLoader.GetFsm(entityRef);
-            if (fsm is null) return;
-            
-            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
-            // Debug.Log("WB: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(fsm.Fsm.State(), fsm.StateType));
-            playerFsmData->currentState = (int)fsm.Fsm.State();
-           
-        }
-
         public static CpuControllerData* GetCpuControllerData(Frame f)
         {
             foreach (var (_, cpuControllerData) in f.GetComponentIterator<CpuControllerData>())
