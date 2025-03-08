@@ -20,8 +20,7 @@ namespace Quantum
             
             if (HitstopSystem.IsHitstopActive(f)) return;
 
-            // unpool summons
-            fsm.UnpoolSummon(f);
+
             
             // fire transitional triggers
             fsm.DoFinish(f);

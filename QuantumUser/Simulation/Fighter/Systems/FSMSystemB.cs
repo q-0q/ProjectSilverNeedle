@@ -33,6 +33,9 @@ namespace Quantum
             // Report frame meter
             fsm.ReportFrameMeterType(f);
             
+            // unpool summons
+            fsm.UnpoolSummon(f);
+            
             // Clock
             fsm.IncrementClock(f, filter.Entity);
             
