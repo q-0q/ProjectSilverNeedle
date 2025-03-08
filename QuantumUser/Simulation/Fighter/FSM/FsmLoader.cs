@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Quantum.QuantumUser.Simulation.Fighter.Types;
+using Quantum.Types;
+using Quantum.Types.Collision;
 using UnityEngine;
 
 namespace Quantum
@@ -8,11 +10,13 @@ namespace Quantum
     public static unsafe class FsmLoader
     {
         public static Dictionary<EntityRef, FSM> FSMs;
-
-
+        public static List<Hit> HitTable;
+        
         public static void InitFsmLoader()
         {
             FSMs = new Dictionary<EntityRef, FSM>();
+            HitTable = new List<Hit>();
+            Debug.Log("initted hit table");
         }
 
         public static void InitializeFsms(Frame f)
@@ -20,8 +24,7 @@ namespace Quantum
             
             InheritableEnum.InheritableEnum.Initialize();
             
-            // Todo: load player-selected FSM
-            
+            // Setup players
             var p0 = new StickTwoFSM();
             p0.SetupMachine();
             p0.SetupStateMaps();
@@ -38,8 +41,15 @@ namespace Quantum
                 { Util.GetPlayer(f, 1), p1 },
             };
             
+            // Setup summons
             InitializeSummonPools(f, p0, 0);
             InitializeSummonPools(f, p1, 1);
+            
+            // Fill in HitTable
+            foreach (var (_, fsm) in FSMs)
+            {
+                FillHitTableFromFSM(f, fsm);
+            }
 
         }
 
@@ -106,6 +116,46 @@ namespace Quantum
             {
                 f.Unsafe.TryGetPointer<FSMData>(entityRef, out var fsmData);
                 fsmData->currentState = fsm.Fsm.State();
+            }
+        }
+
+        private static void FillHitTableFromFSM(Frame f, FSM fsm)
+        {
+            var stateMapConfig = fsm.StateMapConfig;
+            var hitSectionGroup = stateMapConfig?.HitSectionGroup;
+            if (hitSectionGroup is null) return;
+            
+            foreach (var (_, sectionGroup) in hitSectionGroup.Dictionary)
+            {
+                FillHitTableFromSectionGroup(sectionGroup);
+            }
+            
+            foreach (var (_, sectionGroup) in hitSectionGroup.SuperDictionary)
+            {
+                FillHitTableFromSectionGroup(sectionGroup);
+            }
+            
+            foreach (var (_, func) in hitSectionGroup.FuncDictionary)
+            {
+                FillHitTableFromSectionGroup(func(new FrameParam() { f = f, EntityRef = fsm.EntityRef }));
+            }
+            
+            foreach (var (_, func) in hitSectionGroup.SuperFuncDictionary)
+            {
+                FillHitTableFromSectionGroup(func(new FrameParam() { f = f, EntityRef = fsm.EntityRef }));
+            }
+        }
+        
+        private static void FillHitTableFromSectionGroup(SectionGroup<Hit> sectionGroup)
+        {
+            if (sectionGroup.Sections is null) return;
+            
+            foreach (var (_, hit) in sectionGroup.Sections)
+            {
+                if (hit is null) continue;
+                Debug.Log("Filling hit table: " + HitTable.Count);
+                hit.LookupId = HitTable.Count;
+                HitTable.Add(hit);
             }
         }
         

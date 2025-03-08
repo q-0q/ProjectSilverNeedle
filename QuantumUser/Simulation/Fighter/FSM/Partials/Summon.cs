@@ -16,7 +16,6 @@ namespace Quantum
             if (!unpoolSummonSectionGroup.IsOnFirstFrameOfSection(f, this)) return;
             var summonPool = unpoolSummonSectionGroup.GetCurrentItem(f, this);
             if (summonPool is null) return;
-            Debug.Log("Successfully invoked unpool on " + summonPool.SummonFSMType + ", " + FramesInCurrentState(f) + " frames in state");
             
             EntityRef summonToUnpool = EntityRef.None;
             foreach (var summonEntity in summonPool.EntityRefs)
