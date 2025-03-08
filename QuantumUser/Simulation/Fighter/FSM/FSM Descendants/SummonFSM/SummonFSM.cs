@@ -141,7 +141,9 @@ namespace Quantum
                 }
             }
 
-            if (FsmLoader.FSMs[GetPlayer()].Fsm.IsInState(PlayerFSM.PlayerState.Hit))
+            var fsm = FsmLoader.FSMs[GetPlayer()].Fsm;
+            if (fsm.IsInState(PlayerFSM.PlayerState.Hit) || fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor) || 
+                fsm.IsInState(PlayerFSM.PlayerState.DeadFromGround) || fsm.IsInState(PlayerFSM.PlayerState.DeadFromAir))
             {
                 Fsm.Fire(SummonTrigger.OwnerHit, triggerParams);
             }

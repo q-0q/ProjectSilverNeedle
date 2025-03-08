@@ -46,5 +46,8 @@ namespace Quantum.Types.Collision
         public SectionGroup<CollisionBoxCollection> HitboxCollections;
 
         public int TriggerCutscene = -1;
+
+        // dont manually set this, it gets set and managed by fsmloader
+        public int LookupId = -1;
     }
 }
