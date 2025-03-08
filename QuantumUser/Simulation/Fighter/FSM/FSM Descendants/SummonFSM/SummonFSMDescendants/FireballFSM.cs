@@ -133,7 +133,7 @@ namespace Quantum
             
             Fsm.Configure(FireballState.Prime)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(SummonTrigger.OwnerHit, SummonState.Unpooled)
+                .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
                 .Permit(Trigger.Finish, FireballState.Alive);
             
             Fsm.Configure(FireballState.Alive)

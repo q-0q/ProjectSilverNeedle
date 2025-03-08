@@ -11,7 +11,8 @@
       systems.Add(new GameSetupSystem());
       systems.Add(new GameFSMSystem());
       systems.Add(new SpawnSystem());
-      systems.Add(new FSMSystem());
+      systems.Add(new FSMSystemA());
+      systems.Add(new FSMSystemB());
       // systems.Add(new FSMUnpoolSummonSystem());
       // systems.Add(new PlayerFSMTransitionSystem());
       // systems.Add(new PlayerFSMSCollisionBoxSystem());

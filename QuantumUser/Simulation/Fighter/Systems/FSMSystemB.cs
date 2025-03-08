@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public unsafe class FSMSystem : SystemMainThreadFilter<FSMSystem.Filter>, ISignalOnComponentAdded<HitEntitiesTracker>, ISignalOnComponentRemoved<HitEntitiesTracker>, ISignalOnComponentAdded<FrameMeterData>, ISignalOnComponentRemoved<FrameMeterData>
+    public unsafe class FSMSystemB : SystemMainThreadFilter<FSMSystemB.Filter>, ISignalOnComponentAdded<HitEntitiesTracker>, ISignalOnComponentRemoved<HitEntitiesTracker>, ISignalOnComponentAdded<FrameMeterData>, ISignalOnComponentRemoved<FrameMeterData>
     {
         public struct Filter
         {
@@ -19,39 +19,13 @@ namespace Quantum
             if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
-
-            // unpool summons
-            fsm.UnpoolSummon(f);
             
-            // fire transitional triggers
-            fsm.DoFinish(f);
-            fsm.CheckForLand(f);
-            InputSystem.FireFsmFromInput(f, fsm);
-            
-            // clear hit entities
-            if (fsm.IsOnFirstFrameOfHit(f))
-            {
-                fsm.ClearHitEntities(f);
-            }
-            
-            // Capture collision snapshot
-            filter.FsmData->currentCollisionState = fsm.Fsm.State();
-            filter.FsmData->collisionFramesInState = fsm.FramesInCurrentState(f);
-
-            // Generic move
-            fsm.Move(f);
             
             // Receive collisions
             fsm.HitboxHurtboxCollide(f);
 
             // Fire summon triggers
             fsm.HandleSummonFSMTriggers(f);
-            
-            // Update direction
-            fsm.UpdateDirection(f);
-            
-            // Trajectory move
-            fsm.TrajectoryArc(f);
             
             // Animation
             fsm.Animation(f);
