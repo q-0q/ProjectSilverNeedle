@@ -622,7 +622,7 @@ namespace Quantum
         {
             base.IncrementClock(f, entityRef);
             
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetFSM(f, entityRef).GetSlowdownMod(f, entityRef);
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * GetSlowdownMod(f, entityRef);
             
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->remaining = Math.Max(dramaticData->remaining - 1, 0);

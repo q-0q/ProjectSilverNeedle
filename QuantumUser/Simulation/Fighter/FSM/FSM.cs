@@ -91,6 +91,7 @@ namespace Quantum
 
         public int FramesInCurrentState(Frame f)
         {
+            // if (EntityRef == EntityRef.None) return 0;
             f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
         }
@@ -121,7 +122,8 @@ namespace Quantum
         
         public virtual void IncrementClock(Frame f, EntityRef entityRef)
         {
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * Util.GetFSM(f, entityRef).GetSlowdownMod(f, entityRef);
+            // if (EntityRef == EntityRef.None) return;
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * GetSlowdownMod(f, entityRef);
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
             playerFsmData->framesInState++;
             playerFsmData->virtualTimeInState += virtualTimeIncrement;

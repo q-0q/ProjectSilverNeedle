@@ -81,7 +81,7 @@ namespace Quantum
             int collisionState = fsmData->currentCollisionState;
             int collisionStateFrames = fsmData->collisionFramesInState;
             
-            var fsm = Util.GetFSM(f, source);
+            var fsm = FsmLoader.FSMs[source];
             
             
             if (type == CollisionBoxType.Pushbox)
@@ -211,7 +211,6 @@ namespace Quantum
                 {
                     if (!CollisionBoxesOverlap(f, hitboxInternal, hurtboxInternal, out var overlapCenter, out var overlapWidth)) continue;
                     if (!CanBeHitBySource(f, hitboxInternal.source)) continue;
-                    Debug.Log(EntityRef + " can be hit be " + hitboxInternal.source);
                     
                     AddMeToSourceHitList(f, hitboxInternal.source);
                     InvokeHitboxHurtboxCollision(f, hurtboxInternal, hitboxInternal, overlapCenter);
@@ -258,11 +257,6 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(source, out var hitEntitiesTracker);
             var hitEntities = f.ResolveList(hitEntitiesTracker->HitEntities);
             hitEntities.Add(EntityRef);
-            
-            Debug.Log("====================================");
-            Debug.Log("Added: " + EntityRef);
-            Debug.Log("New size: " + hitEntities.Count);
-            Debug.Log("Hit entity for " + source + ": " + hitEntities.ToList()[0]);
         }
         
         public bool IsOnFirstFrameOfHit(Frame f)

@@ -38,7 +38,7 @@ namespace Quantum
         {
             if (GameFsmLoader.LoadGameFSM(f).Fsm.State() != GameFSM.State.Playing) return;
             
-            var fsm = Util.GetFSM(f, filter.Entity);
+            var fsm = FsmLoader.FSMs[filter.Entity];
             if (fsm is null) return;
                 
             fsm.AdvanceBuffer(filter.InputBuffer);
@@ -47,7 +47,7 @@ namespace Quantum
 
         private void BufferInputs(Frame f, EntityRef entityRef)
         {
-            f.Unsafe.TryGetPointer<PlayerLink>(Util.GetFSM(f, entityRef).GetPlayer(), out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(FsmLoader.FSMs[entityRef].GetPlayer(), out var playerLink);
             f.Unsafe.TryGetPointer<InputBuffer>(entityRef, out var inputBuffer);
             Input input = *f.GetPlayerInput(playerLink->Player);
             
@@ -319,7 +319,7 @@ namespace Quantum
         {
             if (Util.EntityIsCpu(f, entityRef)) return 5;
             
-            f.Unsafe.TryGetPointer<PlayerLink>(Util.GetFSM(f, entityRef).GetPlayer(), out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(FsmLoader.FSMs[entityRef].GetPlayer(), out var playerLink);
             
             Input input = *f.GetPlayerInput(playerLink->Player);
             
@@ -373,7 +373,7 @@ namespace Quantum
 
         public static bool InputIsDown(string action, Frame f, EntityRef entityRef)
         {
-            f.Unsafe.TryGetPointer<PlayerLink>(Util.GetFSM(f, entityRef).GetPlayer(), out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(FsmLoader.FSMs[entityRef].GetPlayer(), out var playerLink);
             Input input = *f.GetPlayerInput(playerLink->Player);
             
             if (action == "P")

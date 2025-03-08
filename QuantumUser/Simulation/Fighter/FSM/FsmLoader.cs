@@ -8,7 +8,12 @@ namespace Quantum
     public static unsafe class FsmLoader
     {
         public static Dictionary<EntityRef, FSM> FSMs;
-        
+
+
+        public static void InitFsmLoader()
+        {
+            FSMs = new Dictionary<EntityRef, FSM>();
+        }
 
         public static void InitializeFsms(Frame f)
         {
@@ -20,10 +25,12 @@ namespace Quantum
             var p0 = new StickTwoFSM();
             p0.SetupMachine();
             p0.SetupStateMaps();
+            p0.EntityRef = Util.GetPlayer(f, 0);
             
             var p1 = new StickTwoFSM();
             p1.SetupMachine();
             p1.SetupStateMaps();
+            p1.EntityRef = Util.GetPlayer(f, 1);
             
             FSMs = new Dictionary<EntityRef, FSM>()
             {
@@ -51,6 +58,7 @@ namespace Quantum
             summonData->player = playerOwner;
             summonData->counter = idInPool;
             
+            f.Unsafe.TryGetPointer<Transform3D>(entity, out var transform3D);
             return entity;
         }
 
@@ -72,6 +80,7 @@ namespace Quantum
                     }
 
                     summonFsm.playerOwnerEntity = Util.GetPlayer(f, ownerPlayerId);
+                    summonFsm.EntityRef = summonEntity;
                     summonFsm.SetupMachine();
                     summonFsm.SetupStateMaps();
                     FSMs[summonEntity] = summonFsm;
@@ -79,8 +88,6 @@ namespace Quantum
                     Debug.Log("Successfully instantiated player " + ownerPlayerId + " " + summonPool.SummonFSMType + " [" + i + "]");
                 }
             }
-            
-
         }
         
     }

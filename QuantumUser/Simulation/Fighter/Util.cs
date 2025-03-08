@@ -56,7 +56,7 @@ namespace Quantum
             var output = new List<EntityRef>();
             
             foreach (var (e, component) in f.GetComponentIterator<FSMData>()) {
-                if (GetFSM(f, e).GetPlayer() != player)
+                if (FsmLoader.FSMs[e].GetPlayer() != player)
                 {
                     output.Add(e);
                 }
@@ -102,7 +102,7 @@ namespace Quantum
         {
             if (!GetCpuControllerData(f)->cpuEnabled) return false;
             
-            f.Unsafe.TryGetPointer<PlayerLink>(GetFSM(f, entityRef).GetPlayer(), out var playerLink);
+            f.Unsafe.TryGetPointer<PlayerLink>(FsmLoader.FSMs[entityRef].GetPlayer(), out var playerLink);
             return ((int)playerLink->Player == CPUPlayerId);
         }
         
@@ -140,20 +140,20 @@ namespace Quantum
         
         
         // Todo: refactor
-        public static FSM GetFSM(Frame f, EntityRef entityRef, bool debug=false)
-        {
-            
-            var fsm = FsmLoader.GetFsm(entityRef);
-            if (fsm is null) return null;
-            
-            f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
-            fsm.EntityRef = entityRef;
-            
-            
-            fsm.Fsm.Assume(playerFsmData->currentState);
-            
-            return fsm;
-        }
+        // public static FSM GetFSM(Frame f, EntityRef entityRef, bool debug=false)
+        // {
+        //     
+        //     var fsm = FsmLoader.GetFsm(entityRef);
+        //     if (fsm is null) return null;
+        //     
+        //     f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
+        //     fsm.EntityRef = entityRef;
+        //     
+        //     
+        //     fsm.Fsm.Assume(playerFsmData->currentState);
+        //     
+        //     return fsm;
+        // }
 
         public static void StartDramatic(Frame f, EntityRef entityRef, int duration)
         {
@@ -227,7 +227,7 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<CutsceneData>(entityRef, out var cutsceneData);
             var index = cutsceneData->cutsceneIndex;
-            var fsm = Util.GetFSM(f, entityRef);
+            var fsm = FsmLoader.FSMs[entityRef];
             
             try
             {
@@ -249,7 +249,7 @@ namespace Quantum
             var f = frameParam.f;
             var entityRef = frameParam.EntityRef;
 
-            if (GetFSM(f, entityRef) is not PlayerFSM fsm)
+            if (FsmLoader.FSMs[entityRef] is not PlayerFSM fsm)
             {
                 Debug.LogError("Something went really wrong, you tried to check CanCancelNow on a non-Player FSM");
                 return false;

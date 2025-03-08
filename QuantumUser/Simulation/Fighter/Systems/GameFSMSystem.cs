@@ -177,6 +177,8 @@ namespace Quantum
             {
                 HitEntities = new QListPtr<EntityRef>()
             });
+
+            f.Unsafe.TryGetPointer<Transform3D>(entityRef, out var transform3D);
             ResetSummonFSMData(f, entityRef);
         }
 
@@ -188,7 +190,8 @@ namespace Quantum
             fsmData->currentCollisionState = 0;
             fsmData->collisionFramesInState = 0;
             // force call OnPooled()
-            (Util.GetFSM(f, entityRef) as SummonFSM)?.OnPooled(new FrameParam() { f = f, EntityRef = entityRef});
+            var fsm = (FsmLoader.FSMs[entityRef] as SummonFSM);
+            fsm?.OnPooled(new FrameParam() { f = f, EntityRef = entityRef});
             
             f.Unsafe.TryGetPointer<AnimationData>(entityRef, out var animationData);
             animationData->path = 0;
@@ -200,7 +203,7 @@ namespace Quantum
 
         private static void ResetPlayerFSMData(Frame f, EntityRef entityRef)
         {
-            if (Util.GetFSM(f, entityRef) is not PlayerFSM fsm) return;
+            if (FsmLoader.FSMs[entityRef] is not PlayerFSM fsm) return;
             
             f.Unsafe.TryGetPointer<HealthData>(entityRef, out var healthData);
             healthData->health = 500;

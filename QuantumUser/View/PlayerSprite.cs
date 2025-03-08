@@ -27,7 +27,7 @@ public class PlayerSprite : QuantumEntityViewComponent
     public override void OnUpdateView()
     {
         
-        FSM fsm = Util.GetFSM(PredictedFrame, EntityRef);
+        FSM fsm = FsmLoader.GetFsm(EntityRef);
         
         if (!PredictedFrame.Has<AnimationData>(EntityRef)) return;
 

@@ -14,7 +14,7 @@ namespace Quantum
         
         public override void Update(Frame f, ref Filter filter)
         {
-            FSM fsm = Util.GetFSM(f, filter.Entity);
+            FSM fsm = FsmLoader.FSMs[filter.Entity];
             if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;

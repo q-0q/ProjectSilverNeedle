@@ -20,6 +20,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<GameFSMData>(gameFsmEntity, out var gameFsmData);
             gameFsmData->currentState = (int)GameFSM.State.Waiting;
             gameFsmData->framesInState = 0;
+            FsmLoader.InitFsmLoader();
             GameFsmLoader.InitializeGameFsm(gameFsmEntity);
 
 

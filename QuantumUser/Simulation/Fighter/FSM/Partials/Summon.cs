@@ -36,7 +36,7 @@ namespace Quantum
                 return;
             }
             
-            if (Util.GetFSM(f, summonToUnpool) is not SummonFSM fsm)
+            if (FsmLoader.FSMs[summonToUnpool] is not SummonFSM fsm)
             {
                 Debug.LogError("Found a summon entity to unpool, but it is not a SummonFSM");
                 return;

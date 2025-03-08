@@ -24,6 +24,7 @@ namespace Quantum
 
         public static bool IsFacingRight(Frame f, EntityRef entityRef)
         {
+            // if (entityRef == EntityRef.None) return true;
             f.Unsafe.TryGetPointer<PlayerDirection>(entityRef, out var playerDirection);
             return playerDirection->FacingRight;
         }
