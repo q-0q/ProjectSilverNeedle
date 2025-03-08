@@ -76,7 +76,7 @@ namespace Quantum
             }
             
             f.Unsafe.TryGetPointer<Transform3D>(entityRef, out var transform3D);
-            FP slowdownMod = Util.GetFSM(f, entityRef).GetSlowdownMod(f, entityRef);
+            FP slowdownMod = FsmLoader.FSMs[entityRef].GetSlowdownMod(f, entityRef);
 
 
             transform3D->Position += (v.XYO * slowdownMod);

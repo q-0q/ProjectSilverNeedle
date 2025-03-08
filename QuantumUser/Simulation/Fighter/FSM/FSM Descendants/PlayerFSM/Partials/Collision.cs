@@ -156,8 +156,8 @@ namespace Quantum
             Debug.Log(border);
             Debug.Log("Cutscene " + cutsceneIndex + " triggered frame " + f.Number);
             
-            var hurtboxPlayerFsm = Util.GetFSM(f, hurtboxInternal.source);
-            var hitboxPlayerFsm = Util.GetFSM(f, hitboxInternal.source);
+            var hurtboxPlayerFsm = FsmLoader.FSMs[hurtboxInternal.source];
+            var hitboxPlayerFsm = FsmLoader.FSMs[hitboxInternal.source];
 
             Cutscene cutscene;
             

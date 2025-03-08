@@ -46,10 +46,10 @@ namespace Quantum
                 .OnEntry(OnPooled);
 
             Fsm.Configure(SummonState.Unpooled)
-                .OnEntry(_ =>
-                {
-                    Debug.LogError("unpooled");
-                })
+                // .OnEntry(_ =>
+                // {
+                //     Debug.LogError("unpooled");
+                // })
                 .OnEntryFrom(SummonTrigger.Summoned, OnUnpooled);
             
         }
@@ -81,6 +81,7 @@ namespace Quantum
 
         public void OnPooled(TriggerParams? triggerParams)
         {
+            // if (EntityRef == EntityRef.None) return;
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
             var f = frameParam.f;
@@ -134,13 +135,13 @@ namespace Quantum
                 foreach (var hurtboxInternal in hurtboxInternals)
                 {
                     if (!CollisionBoxesOverlap(f, hurtboxInternal, hitboxInternal, out var overlapCenter, out var overlapWidth)) continue;
-                    Debug.Log("owner: " + playerOwnerEntity + ", hurtbox source: " + hurtboxInternal.source + ", hitbox source: " + hitboxInternal.source + ", me: " + EntityRef);
+                    // Debug.Log("owner: " + playerOwnerEntity + ", hurtbox source: " + hurtboxInternal.source + ", hitbox source: " + hitboxInternal.source + ", me: " + EntityRef);
 
                     Fsm.Fire(SummonTrigger.Collided, new FrameParam() {f = f, EntityRef = EntityRef});
                 }
             }
 
-            if (Util.GetFSM(f, GetPlayer()).Fsm.IsInState(PlayerFSM.PlayerState.Hit))
+            if (FsmLoader.FSMs[GetPlayer()].Fsm.IsInState(PlayerFSM.PlayerState.Hit))
             {
                 Fsm.Fire(SummonTrigger.OwnerHit, triggerParams);
             }
