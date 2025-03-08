@@ -89,6 +89,25 @@ namespace Quantum
                 }
             }
         }
+
+
+        public static void ReadAllFSMsFromNetwork(Frame f)
+        {
+            foreach (var (entityRef, fsm) in FSMs)
+            {
+                f.Unsafe.TryGetPointer<FSMData>(entityRef, out var fsmData);
+                FSMs[entityRef].Fsm.Assume(fsmData->currentState);
+            }
+        }
+        
+        public static void WriteAllFSMsToNetwork(Frame f)
+        {
+            foreach (var (entityRef, fsm) in FSMs)
+            {
+                f.Unsafe.TryGetPointer<FSMData>(entityRef, out var fsmData);
+                fsmData->currentState = fsm.Fsm.State();
+            }
+        }
         
     }
 }

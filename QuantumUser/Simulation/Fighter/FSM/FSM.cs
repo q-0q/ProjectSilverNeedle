@@ -79,7 +79,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var param = (FrameParam)triggerParams;
             ResetStateEnteredFrame(param.f);
-            Util.WritebackFsm(param.f, EntityRef);
+            // Util.WritebackFsm(param.f, EntityRef);
         }
 
         protected void ResetStateEnteredFrame(Frame f)

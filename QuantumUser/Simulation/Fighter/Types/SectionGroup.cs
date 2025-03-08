@@ -40,7 +40,16 @@ namespace Quantum.Types
         public T GetItemFromIndex(int index)
         {
             int duration = Duration();
-            if (Loop) index %= duration;
+
+            try
+            {
+                if (Loop) index %= duration;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
             int counter = 0;
             for (int i = 0; i < Sections.Count; i++)

@@ -185,7 +185,7 @@ namespace Quantum
             cutsceneData->initiatorFacingRight = IsFacingRight(f, hitboxInternal.source);
             
             // Let's remember this, hopefully it wont give any weird issues.
-            Util.WritebackFsm(f, hitboxInternal.source);
+            // Util.WritebackFsm(f, hitboxInternal.source);
         }
 
 
