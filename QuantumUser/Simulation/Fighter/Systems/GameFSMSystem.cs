@@ -153,7 +153,10 @@ namespace Quantum
             f.Add(entityRef, new SlowdownData());
             f.Add(entityRef, new PushbackData());
             f.Add(entityRef, new MomentumData());
-            f.Add(entityRef, new ComboData());
+            f.Add(entityRef, new ComboData()
+            {
+                hitCounts = new QDictionaryPtr<int, int>()
+            });
             f.Add(entityRef, new WhiffData());
             f.Add(entityRef, new KinematicsData());
             f.Add(entityRef, new FrameMeterData()
@@ -253,6 +256,7 @@ namespace Quantum
             comboData->length = 0;
             comboData->damageScaling = 1;
             comboData->gravityScaling = 1;
+            f.ResolveDictionary(comboData->hitCounts).Clear();
             
             f.Unsafe.TryGetPointer<WhiffData>(entityRef, out var whiffData);
             whiffData->whiffed = true;
