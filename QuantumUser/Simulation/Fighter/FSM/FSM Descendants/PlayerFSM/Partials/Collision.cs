@@ -104,10 +104,12 @@ namespace Quantum
             f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
 
             var damage = hurtType is HurtType.Counter ? hitboxData.damage * CounterHitDamageMultiplier : hitboxData.damage;
+            
             var damageScaling = hurtType is HurtType.Counter ? CounterHitComboScaling : hitboxData.damageScaling;
             var gravityScaling =  hurtType is HurtType.Counter ? hitboxData.gravityScaling * CounterHitGravityScalingMultiplier : hitboxData.gravityScaling;
             healthData->health -= (damage * comboData->damageScaling * GlobalDamageModifier);
-            
+
+            int hitTableId = hurtboxData.lookupId;
             IncrementCombo(f, gravityScaling, damageScaling);
             
             

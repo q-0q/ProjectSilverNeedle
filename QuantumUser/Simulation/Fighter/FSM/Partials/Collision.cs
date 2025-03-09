@@ -51,6 +51,8 @@ namespace Quantum
 
             public int cutsceneIndex;
 
+            public int lookupId = -1;
+
 
         }
 
@@ -178,7 +180,9 @@ namespace Quantum
                         groundBounce = hit.GroundBounce,
                         wallBounce = hit.WallBounce,
                         
-                        cutsceneIndex = hit.TriggerCutscene
+                        cutsceneIndex = hit.TriggerCutscene,
+                        
+                        lookupId = hit.LookupId
                     };
                     
                     hitboxInternals.Add(_internal);
