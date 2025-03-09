@@ -18,6 +18,7 @@ namespace Quantum
             public static int _5M;
             public static int _2M;
             public static int _5H;
+            public static int _4H;
             public static int _2H;
             public static int _5S1;
             public static int _5S2;
@@ -64,8 +65,12 @@ namespace Quantum
             Landsquat,
             ThrowTech,
             
+            _5P,
+            _2P,
             _5M,
             _2M,
+            _4H,
+            _5H,
             _2H,
             Fireball,
 
@@ -947,7 +952,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, SummonPool>>()
                 {
-                    new(1, null),
+                    new(0, null),
                     new(3, SummonPools[0]), 
                     new(10, null)
                 }
@@ -989,6 +994,39 @@ namespace Quantum
                     }),
                 }
             };
+
+            var fireBallHitboxes = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new(19, null),
+                    new(2, new Hit()
+                    {
+                        Level = 1,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new (3, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowHeight = false,
+                                            GrowWidth = true,
+                                            PosY = 5,
+                                            Width = 4,
+                                            Height = 2
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    new(19, null),
+                }
+            };
             
             Util.AutoSetupFromAnimationPath(fireballAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState.Fireball] = fireballAnimation;
@@ -996,7 +1034,105 @@ namespace Quantum
             StateMapConfig.UnpoolSummonSectionGroup.Dictionary[StickTwoState.Fireball] = fireballSummon;
             StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState.Fireball] = fireballHurtTypes;
             StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState.Fireball] = fireballHurtboxes;
+            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.Fireball] = fireBallHitboxes;
 
+
+            {
+                int startup = 5;
+                int active = 2;
+                int path = (int)StickTwoAnimationPath._5P;
+                int state = StickTwoState._5L;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox,
+                                new CollisionBox()
+                                {
+                                    Height = 2,
+                                    Width = 5,
+                                    GrowWidth = true,
+                                    GrowHeight = false,
+                                    PosY = 6,
+                                    PosX = 0
+                                }
+                            }
+                        })
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            new CollisionBox()
+                                            {
+                                                Height = 1,
+                                                Width = 4,
+                                                GrowWidth = true,
+                                                GrowHeight = false,
+                                                PosY = 6,
+                                                PosX = 0
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                
+            }
+            
 
         }
 
@@ -1019,22 +1155,6 @@ namespace Quantum
             };
             
             ConfigureAction(this, _5M);
-            
-            ActionConfig heatKnuckle = new ActionConfig()
-            {
-                Aerial = false,
-                AirOk = false,
-                CommandDirection = 5,
-                Crouching = false,
-                DashCancellable = true,
-                GroundOk = true,
-                InputType = InputSystem.InputType.K,
-                JumpCancellable = true,
-                InputWeight = 0,
-                RawOk = true,
-            };
-            
-            ConfigureAction(this, heatKnuckle);
             
             ActionConfig _2M = new ActionConfig()
             {
@@ -1109,6 +1229,26 @@ namespace Quantum
             ConfigureAction(this, fireball);
             
             MakeActionCancellable(this, _5M, fireball);
+            
+            
+            ActionConfig _5L = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.P,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                State = StickTwoState._5L
+            };
+            
+            ConfigureAction(this, _5L);
+            
+            
 
         }
     }

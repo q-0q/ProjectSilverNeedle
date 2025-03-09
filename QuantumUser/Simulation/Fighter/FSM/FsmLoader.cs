@@ -55,7 +55,9 @@ namespace Quantum
 
         public static FSM GetFsm(EntityRef entityRef)
         {
-            return FSMs?[entityRef];
+            if (FSMs is null) return null;
+            if (FSMs.ContainsKey(entityRef)) return FSMs?[entityRef];
+            return null;
         }
 
         private static EntityRef CreateSummonEntity(Frame f, int playerOwner, int idInPool)
