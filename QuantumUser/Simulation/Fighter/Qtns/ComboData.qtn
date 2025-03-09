@@ -1,6 +1,8 @@
 component ComboData
 {
     int length;
+    dictionary<int, int> hitCounts;
+
     FP gravityScaling;
     FP damageScaling;
 }
