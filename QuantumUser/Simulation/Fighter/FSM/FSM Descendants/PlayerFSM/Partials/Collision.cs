@@ -113,14 +113,16 @@ namespace Quantum
             comboData->damageScaling *= rawDamageScaling;
             
             
-            // var rawGravityScaling =  hurtType is HurtType.Counter ? hitboxData.gravityScaling * CounterHitGravityScalingMultiplier : hitboxData.gravityScaling;
             var d = f.ResolveDictionary(comboData->hitCounts);
             int hitTableId = hitboxData.lookupId;
             Debug.Log(hitTableId);
             d.TryAdd(hitTableId, 0);
-            d[hitTableId] += 1;
-            // comboData->gravityScaling;
+            var hitGravityScaling = Util.Pow(hitboxData.gravityScaling, d[hitTableId]);
+            var rawGravityScaling =  hurtType is HurtType.Counter ? hitGravityScaling * CounterHitGravityScalingMultiplier : hitGravityScaling;
+            comboData->gravityScaling *= rawGravityScaling;
+            Debug.Log("hit scaling: " + hitGravityScaling);
             comboData->length++;
+            d[hitTableId] += 1;
             
             
             var stun = Fsm.IsInState(PlayerState.Crouch)

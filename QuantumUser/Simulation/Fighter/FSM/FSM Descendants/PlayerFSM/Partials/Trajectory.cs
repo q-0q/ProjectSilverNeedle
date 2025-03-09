@@ -176,7 +176,7 @@ namespace Quantum
         private void StartTrajectoryWithGravityScaling(Frame f, FP xVelocity, FP trajectoryHeight, bool groundBounces, bool wallBounces)
         {
             f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
-            var gravityScaling = comboData->gravityScaling * comboData->gravityScaling * GlobalGravityScalingMod;
+            var gravityScaling = comboData->gravityScaling;
             var height = trajectoryHeight / gravityScaling;
             var fallSpeed = UniversalJuggleFallSpeed * gravityScaling;
             var timeToTrajectoryHeight = ((FP)GetJuggleTimeToHeight(trajectoryHeight) / gravityScaling).AsInt;
