@@ -51,7 +51,6 @@ namespace Quantum
             };
             
             MakeNotWhiffed(f, hitboxData.source);
-            Fsm.Fire(trigger, juggleParam);
 
             //Fsm.IsInState(State.Ground) || Util.IsPlayerInCorner(f, EntityRef)
             if (true) {
@@ -77,6 +76,8 @@ namespace Quantum
             {
                 InvokeDamagingCollisionCore(f, hurtboxData, hitboxData, hurtType, location);
             }
+            
+            Fsm.Fire(trigger, juggleParam);
         }
         
         private void StartPushback(Frame f, FP totalDistance)
@@ -103,14 +104,23 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
 
-            var damage = hurtType is HurtType.Counter ? hitboxData.damage * CounterHitDamageMultiplier : hitboxData.damage;
             
-            var damageScaling = hurtType is HurtType.Counter ? CounterHitComboScaling : hitboxData.damageScaling;
-            var gravityScaling =  hurtType is HurtType.Counter ? hitboxData.gravityScaling * CounterHitGravityScalingMultiplier : hitboxData.gravityScaling;
-            healthData->health -= (damage * comboData->damageScaling * GlobalDamageModifier);
-
-            int hitTableId = hurtboxData.lookupId;
-            IncrementCombo(f, gravityScaling, damageScaling);
+            
+            
+            var rawDamage = hurtType is HurtType.Counter ? hitboxData.damage * CounterHitDamageMultiplier : hitboxData.damage;
+            var rawDamageScaling = hurtType is HurtType.Counter ? CounterHitDamageScaling : hitboxData.damageScaling;
+            healthData->health -= (rawDamage * comboData->damageScaling * GlobalDamageModifier);
+            comboData->damageScaling *= rawDamageScaling;
+            
+            
+            // var rawGravityScaling =  hurtType is HurtType.Counter ? hitboxData.gravityScaling * CounterHitGravityScalingMultiplier : hitboxData.gravityScaling;
+            var d = f.ResolveDictionary(comboData->hitCounts);
+            int hitTableId = hitboxData.lookupId;
+            Debug.Log(hitTableId);
+            d.TryAdd(hitTableId, 0);
+            d[hitTableId] += 1;
+            // comboData->gravityScaling;
+            comboData->length++;
             
             
             var stun = Fsm.IsInState(PlayerState.Crouch)

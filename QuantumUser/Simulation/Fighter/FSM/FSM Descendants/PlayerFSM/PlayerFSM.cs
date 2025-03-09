@@ -504,10 +504,7 @@ namespace Quantum
 
         private void IncrementCombo(Frame f, FP gravityScaling, FP damageScaling, int hitTableId)
         {
-            f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
-            comboData->length++;
-            comboData->gravityScaling *= gravityScaling;
-            comboData->damageScaling *= damageScaling;
+
         }
 
         private bool IsCollisionHitParamLauncher(TriggerParams? triggerParams)
