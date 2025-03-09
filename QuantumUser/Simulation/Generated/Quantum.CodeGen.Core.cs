@@ -729,6 +729,8 @@ namespace Quantum {
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(0)]
     public Int32 length;
+    [FieldOffset(4)]
+    public QDictionaryPtr<Int32, Int32> hitCounts;
     [FieldOffset(16)]
     public FP gravityScaling;
     [FieldOffset(8)]
@@ -737,14 +739,23 @@ namespace Quantum {
       unchecked { 
         var hash = 13171;
         hash = hash * 31 + length.GetHashCode();
+        hash = hash * 31 + hitCounts.GetHashCode();
         hash = hash * 31 + gravityScaling.GetHashCode();
         hash = hash * 31 + damageScaling.GetHashCode();
         return hash;
       }
     }
+    public void ClearPointers(FrameBase f, EntityRef entity) {
+      hitCounts = default;
+    }
+    public static void OnRemoved(FrameBase frame, EntityRef entity, void* ptr) {
+      var p = (Quantum.ComboData*)ptr;
+      p->ClearPointers((Frame)frame, entity);
+    }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (ComboData*)ptr;
         serializer.Stream.Serialize(&p->length);
+        QDictionary.Serialize(&p->hitCounts, serializer, Statics.SerializeInt32, Statics.SerializeInt32);
         FP.Serialize(&p->damageScaling, serializer);
         FP.Serialize(&p->gravityScaling, serializer);
     }
@@ -1597,7 +1608,7 @@ namespace Quantum {
         .Add<Quantum.AnimationData>(Quantum.AnimationData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.AnimationEntityData>(Quantum.AnimationEntityData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.CollisionBoxDatax>(Quantum.CollisionBoxDatax.Serialize, null, null, ComponentFlags.None)
-        .Add<Quantum.ComboData>(Quantum.ComboData.Serialize, null, null, ComponentFlags.None)
+        .Add<Quantum.ComboData>(Quantum.ComboData.Serialize, null, Quantum.ComboData.OnRemoved, ComponentFlags.None)
         .Add<Quantum.CpuControllerData>(Quantum.CpuControllerData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.CutsceneData>(Quantum.CutsceneData.Serialize, null, null, ComponentFlags.None)
         .Add<Quantum.DramaticData>(Quantum.DramaticData.Serialize, null, null, ComponentFlags.None)

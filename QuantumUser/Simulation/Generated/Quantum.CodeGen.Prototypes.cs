@@ -50,6 +50,12 @@ namespace Quantum.Prototypes {
   #endif //;
   
   [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(System.Collections.Generic.KeyValuePair<Int32, Int32>))]
+  public unsafe class DictionaryEntry_Int32_Int32 : Quantum.Prototypes.DictionaryEntry {
+    public Int32 Key;
+    public Int32 Value;
+  }
+  [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.AnimationData))]
   public unsafe partial class AnimationDataPrototype : ComponentPrototype<Quantum.AnimationData> {
     public Int32 frame;
@@ -146,6 +152,9 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.ComboData))]
   public unsafe partial class ComboDataPrototype : ComponentPrototype<Quantum.ComboData> {
     public Int32 length;
+    [DictionaryAttribute()]
+    [DynamicCollectionAttribute()]
+    public DictionaryEntry_Int32_Int32[] hitCounts = {};
     public FP gravityScaling;
     public FP damageScaling;
     partial void MaterializeUser(Frame frame, ref Quantum.ComboData result, in PrototypeMaterializationContext context);
@@ -156,6 +165,18 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.ComboData result, in PrototypeMaterializationContext context = default) {
         result.length = this.length;
+        if (this.hitCounts.Length == 0) {
+          result.hitCounts = default;
+        } else {
+          var dict = frame.AllocateDictionary(out result.hitCounts, this.hitCounts.Length);
+          for (int i = 0; i < this.hitCounts.Length; ++i) {
+            Int32 tmpKey = default;
+            Int32 tmpValue = default;
+            tmpKey = this.hitCounts[i].Key;
+            tmpValue = this.hitCounts[i].Value;
+            PrototypeValidator.AddToDictionary(dict, tmpKey, tmpValue, in context);
+          }
+        }
         result.gravityScaling = this.gravityScaling;
         result.damageScaling = this.damageScaling;
         MaterializeUser(frame, ref result, in context);

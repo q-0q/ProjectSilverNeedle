@@ -4,7 +4,10 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public unsafe class FSMSystemA : SystemMainThreadFilter<FSMSystemA.Filter>, ISignalOnComponentAdded<HitEntitiesTracker>, ISignalOnComponentRemoved<HitEntitiesTracker>, ISignalOnComponentAdded<FrameMeterData>, ISignalOnComponentRemoved<FrameMeterData>
+    public unsafe class FSMSystemA : SystemMainThreadFilter<FSMSystemA.Filter>, 
+        ISignalOnComponentAdded<HitEntitiesTracker>, ISignalOnComponentRemoved<HitEntitiesTracker>, 
+        ISignalOnComponentAdded<FrameMeterData>, ISignalOnComponentRemoved<FrameMeterData>,
+        ISignalOnComponentAdded<ComboData>, ISignalOnComponentRemoved<ComboData>
     {
         public struct Filter
         {
@@ -74,6 +77,17 @@ namespace Quantum
             f.FreeList(component->frames);
             component->types = default;
             component->frames = default;
+        }
+        
+        public void OnAdded(Frame f, EntityRef entity, ComboData* component)
+        {
+            component->hitCounts = f.AllocateDictionary<int, int>();
+        }
+        
+        public void OnRemoved(Frame f, EntityRef entity, ComboData* component)
+        {
+            f.FreeDictionary(component->hitCounts);
+            component->hitCounts = default;
         }
     }
 }
