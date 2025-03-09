@@ -38,7 +38,7 @@ namespace Quantum.Types.Collision
         
         public bool HardKnockdown = false;
         public FP VisualAngle = 0;
-        public FP GravityScaling = FP.FromString("1.04");
+        public FP GravityScaling = FP.FromString("1.25");
         public FP DamageScaling = FP.FromString("0.85");
         public FP Damage = 20;
         

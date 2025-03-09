@@ -20,19 +20,28 @@ namespace Quantum
         
         public static FP Min(FP a, FP b)
         {
-            if (a > b) return b;
-            return a;
+            return a > b ? b : a;
         }
         public static FP Max(FP a, FP b)
         {
-            if (a < b) return b;
-            return a;
+            return a < b ? b : a;
         }
 
         public static FP Abs(FP fp)
         {
             if (fp > 0) return fp;
             return fp * FP.Minus_1;
+        }
+        
+        public static FP Pow(FP fp, int pow)
+        {
+            FP o = 1;
+            for (int i = 0; i < pow; i++)
+            {
+                o *= fp;
+            }
+
+            return o;
         }
         
         public static EntityRef GetOtherPlayer(Frame f, EntityRef player)
