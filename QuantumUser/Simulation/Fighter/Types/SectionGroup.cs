@@ -127,7 +127,6 @@ namespace Quantum.Types
             {
                 duration += GetSectionDuration(i);
             }
-
             return duration;
         }
 
