@@ -502,7 +502,7 @@ namespace Quantum
         }
 
 
-        private void IncrementCombo(Frame f, FP gravityScaling, FP damageScaling)
+        private void IncrementCombo(Frame f, FP gravityScaling, FP damageScaling, int hitTableId)
         {
             f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
             comboData->length++;
@@ -548,6 +548,7 @@ namespace Quantum
             comboData->length = 0;
             comboData->gravityScaling = 1;
             comboData->damageScaling = 1;
+            f.ResolveDictionary(comboData->hitCounts).Clear();
         }
 
         protected override void OnStateChanged(TriggerParams? triggerParams)
