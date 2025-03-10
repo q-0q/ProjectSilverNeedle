@@ -130,8 +130,8 @@ namespace Quantum
             // var angle = transform3D->Position.X < 0 ? 90 : -90;
             // AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.GroundBounce, transform3D->Position.XY, angle, false);
             
-            StartTrajectoryWithGravityScaling(frameParam.f, trajectoryData->xVelocity * -1 * FP.FromString("0.2"),
-                5, false, false);
+            StartTrajectoryWithGravityScaling(frameParam.f, trajectoryData->xVelocity * -1 * FP.FromString("0.5"),
+                1, false, false);
             
         }
 
