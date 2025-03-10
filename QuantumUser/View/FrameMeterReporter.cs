@@ -86,7 +86,7 @@ public class FrameMeterReporter : QuantumEntityViewComponent
                 var img = obj.GetComponent<Image>();
                 obj.GetComponentInChildren<TextMeshProUGUI>().text = frames[i].ToString();
                 var c = FrameColor(types[i]);
-                c.a = 0.35f;
+                c.a = 0.85f;
                 img.color = c;
                 obj.SetActive(true);
             }
