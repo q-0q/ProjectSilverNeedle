@@ -519,7 +519,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
 
-            FP amount = IsFacingRight(frameParam.f, EntityRef) ? 4 : -4;
+            FP amount = IsFacingRight(frameParam.f, EntityRef) ? 3 : -3;
             StartMomentum(frameParam.f, amount);
 
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
