@@ -18,7 +18,7 @@ public class CameraTargetController : MonoBehaviour
     public bool Player1Dramatic = false;
     
     private float _baseYPos;
-    private float _yPulldown = 4f;
+    private float _yPulldown = 4.5f;
 
     private void Awake()
     {
@@ -57,6 +57,6 @@ public class CameraTargetController : MonoBehaviour
         x = Mathf.Clamp(x, -_cameraXPan, _cameraXPan);
         float y = Mathf.Clamp((Mathf.Max(_player0Pos.y - _yPulldown, _player1Pos.y - _yPulldown)), 0f, 1000f);
         transform.position =
-            new Vector3(Mathf.Lerp(transform.position.x, x, Time.deltaTime * 6f), Mathf.Lerp(transform.position.y, y + _baseYPos, Time.deltaTime * 15f), transform.position.z);
+            new Vector3(Mathf.Lerp(transform.position.x, x, Time.deltaTime * 6f), Mathf.Lerp(transform.position.y, y + _baseYPos, Time.deltaTime * 20f), transform.position.z);
     }
 }

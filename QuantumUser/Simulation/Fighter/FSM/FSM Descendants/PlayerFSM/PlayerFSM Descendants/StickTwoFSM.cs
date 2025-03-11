@@ -583,7 +583,7 @@ namespace Quantum
                     new Tuple<int, Hit>(10, null),
                     new Tuple<int, Hit>(5, new Hit()
                     {
-                        Level = 0,
+                        Level = 1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -822,10 +822,10 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new Tuple<int, Hit>(16, null),
-                    new Tuple<int, Hit>(14, new Hit()
+                    new Tuple<int, Hit>(13, null),
+                    new Tuple<int, Hit>(4, new Hit()
                     {
-                        Level = 4,
+                        Level = 3,
                         Type = Hit.HitType.Mid,
                         Launches = true,
                         TrajectoryHeight = 6,
@@ -833,7 +833,7 @@ namespace Quantum
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                new Tuple<int, CollisionBoxCollection>(8, new CollisionBoxCollection()
+                                new Tuple<int, CollisionBoxCollection>(2, new CollisionBoxCollection()
                                 {
                                     CollisionBoxes = new List<CollisionBox>()
                                     {
@@ -841,7 +841,22 @@ namespace Quantum
                                         {
                                             GrowHeight = false,
                                             GrowWidth = false,
-                                            Width = 1,
+                                            Width = 2,
+                                            Height = 5,
+                                            PosX = 1,
+                                            PosY = 3,
+                                        }
+                                    }
+                                }),
+                                new Tuple<int, CollisionBoxCollection>(2, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowHeight = false,
+                                            GrowWidth = false,
+                                            Width = 2,
                                             Height = 4,
                                             PosX = 0,
                                             PosY = 6
@@ -993,7 +1008,8 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, HurtType>>()
                 {
-                    new(30, HurtType.Counter)
+                    new(24, HurtType.Counter),
+                    new(24, HurtType.Punish)
                 }
             };
 
@@ -1169,6 +1185,8 @@ namespace Quantum
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
+                
             }
             
             {
@@ -1272,6 +1290,7 @@ namespace Quantum
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
             }
             
             
@@ -1298,6 +1317,7 @@ namespace Quantum
                         new(6, FP.FromString("0.5")),
                         new(5, 0),
                         new(4, 2),
+                        new (6, FP.FromString("0.5")),
                         new (10, 0)
                     }
                 };
@@ -1320,11 +1340,11 @@ namespace Quantum
                                 standHurtbox,
                                 new CollisionBox()
                                 {
-                                    Height = 3,
-                                    Width = 6,
+                                    Height = FP.FromString("3.5"),
+                                    Width = FP.FromString("5.5"),
                                     GrowWidth = true,
-                                    GrowHeight = true,
-                                    PosY = 5,
+                                    GrowHeight = false,
+                                    PosY = FP.FromString("4.75"),
                                     PosX = 0
                                 }
                             }
@@ -1350,6 +1370,8 @@ namespace Quantum
                             TrajectoryHeight = 1,
                             TrajectoryXVelocity = 30,
                             WallBounce = true,
+                            BlockPushback = FP.FromString("3.5"),
+                            HitPushback = FP.FromString("3.5"),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1360,11 +1382,11 @@ namespace Quantum
                                         {
                                             new CollisionBox()
                                             {
-                                                Height = 2,
+                                                Height = 3,
                                                 Width = 5,
                                                 GrowWidth = true,
-                                                GrowHeight = true,
-                                                PosY = 5,
+                                                GrowHeight = false,
+                                                PosY = FP.FromString("4.75"),
                                                 PosX = 0
                                             }
                                         }
@@ -1392,6 +1414,124 @@ namespace Quantum
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
+            }
+            
+            {
+                int startup = 6;
+                int active = 6;
+                int hurtboxDuration = 15;
+                int path = (int)StickTwoAnimationPath._4H;
+                int state = StickTwoState._4H;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var move = new SectionGroup<FP>()
+                {
+                    Sections = new List<Tuple<int, FP>>()
+                    {
+                        new(4, 0),
+                        new(2, FP.FromString("-0.75")),
+                        new(4, 0)
+                    }
+                };
+                
+
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                        new(hurtboxDuration, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox,
+                                new CollisionBox()
+                                {
+                                    Height = 7,
+                                    Width = 3,
+                                    GrowWidth = true,
+                                    GrowHeight = true,
+                                    PosY = 0,
+                                    PosX = 0
+                                }
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            Level = 3,
+                            BonusBlockstun = 6,
+                            GravityScaling = FP.FromString("1.175"),
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            new CollisionBox()
+                                            {
+                                                Height = 3,
+                                                Width = FP.FromString("2.5"),
+                                                GrowWidth = true,
+                                                GrowHeight = true,
+                                                PosY = 4,
+                                                PosX = 0
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                // StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
             }
             
 
@@ -1454,6 +1594,7 @@ namespace Quantum
             
             ConfigureAction(this, _2H);
 
+
             ActionConfig frontThrow = new ActionConfig()
             {
                 Aerial = false,
@@ -1508,6 +1649,9 @@ namespace Quantum
             };
             
             ConfigureAction(this, _5L);
+
+
+
             
             ActionConfig _2L = new ActionConfig()
             {
@@ -1525,6 +1669,12 @@ namespace Quantum
             };
             
             ConfigureAction(this, _2L);
+            MakeActionCancellable(this, _5L, _5L);
+            MakeActionCancellable(this, _5L, _2L);
+            MakeActionCancellable(this, _2L, _5L);
+            MakeActionCancellable(this, _2L, _2L);
+
+
             
             ActionConfig _5H = new ActionConfig()
             {
@@ -1542,7 +1692,29 @@ namespace Quantum
             };
             
             ConfigureAction(this, _5H);
+            MakeActionCancellable(this, _5H, fireball);
             
+            ActionConfig _4H = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 4,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.H,
+                JumpCancellable = false,
+                InputWeight = 3,
+                RawOk = true,
+                State = StickTwoState._4H
+            };
+            
+            ConfigureAction(this, _4H);
+            MakeActionCancellable(this, _4H, fireball);
+            MakeActionCancellable(this, _4H, _5H);
+            MakeActionCancellable(this, _4H, _2H);
+
+
             
 
         }
