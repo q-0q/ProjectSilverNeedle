@@ -584,6 +584,7 @@ namespace Quantum
                     new Tuple<int, Hit>(5, new Hit()
                     {
                         Level = 1,
+                        GravityScaling = FP.FromString("1"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -829,6 +830,7 @@ namespace Quantum
                         Type = Hit.HitType.Mid,
                         Launches = true,
                         TrajectoryHeight = 6,
+                        GravityScaling = 1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1144,6 +1146,9 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
+                            BlockPushback = 3,
+                            HitPushback = 2,
+                            GravityScaling = FP.FromString("1.3"),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1249,6 +1254,9 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
+                            BlockPushback = 3,
+                            HitPushback = 2,
+                            GravityScaling = FP.FromString("1.3"),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1372,6 +1380,8 @@ namespace Quantum
                             WallBounce = true,
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("3.5"),
+                            GravityScaling = FP.FromString("1"),
+                            GravityProration = FP.FromString("1.2"),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1489,7 +1499,8 @@ namespace Quantum
                         {
                             Level = 3,
                             BonusBlockstun = 6,
-                            GravityScaling = FP.FromString("1.175"),
+                            GravityScaling = FP.FromString("1"),
+                            GravityProration = FP.FromString("1.2"),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()

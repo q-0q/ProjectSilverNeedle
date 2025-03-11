@@ -41,6 +41,7 @@ namespace Quantum
             public FP visualAngle;
             public FP trajectoryHeight;
             public FP trajectoryXVelocity;
+            public FP gravityProration;
             public FP gravityScaling;
             public FP damageScaling;
             public FP damage;
@@ -172,6 +173,7 @@ namespace Quantum
                         visualAngle = hit.VisualAngle,
                         trajectoryHeight = hit.TrajectoryHeight,
                         trajectoryXVelocity = hit.TrajectoryXVelocity,
+                        gravityProration = hit.GravityProration,
                         gravityScaling = hit.GravityScaling,
                         damageScaling = hit.DamageScaling,
                         damage = hit.Damage,
