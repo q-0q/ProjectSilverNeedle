@@ -52,13 +52,18 @@ namespace Quantum
             
             MakeNotWhiffed(f, hitboxData.source);
 
-            //Fsm.IsInState(State.Ground) || Util.IsPlayerInCorner(f, EntityRef)
-            if (true) {
-                FP pushback = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
-                FP pushbackDistance = pushback;
-                if (IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
-                StartPushback(f, pushbackDistance);
+            
+            FP pushbackDistance;
+            if (Fsm.IsInState(PlayerState.Ground) || Util.IsPlayerInCorner(f, EntityRef)) {
+                pushbackDistance = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
             }
+            else
+            {
+                // universal air pushback
+                pushbackDistance = isBlocking ? 2 : 1;
+            }
+            if (IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
+            StartPushback(f, pushbackDistance);
             
             if (isBlocking)
             {
@@ -117,7 +122,7 @@ namespace Quantum
             int hitTableId = hitboxData.lookupId;
             Debug.Log(hitTableId);
             d.TryAdd(hitTableId, 0);
-            var hitGravityScaling = Util.Pow(hitboxData.gravityScaling, d[hitTableId]);
+            var hitGravityScaling = d[hitTableId] == 0 ? hitboxData.gravityScaling : Util.Pow(hitboxData.gravityProration, d[hitTableId]);
             var rawGravityScaling =  hurtType is HurtType.Counter ? hitGravityScaling * CounterHitGravityScalingMultiplier : hitGravityScaling;
             comboData->gravityScaling *= rawGravityScaling;
             Debug.Log("hit scaling: " + hitGravityScaling);
