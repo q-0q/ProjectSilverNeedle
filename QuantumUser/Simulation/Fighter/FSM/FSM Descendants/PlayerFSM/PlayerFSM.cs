@@ -726,18 +726,18 @@ namespace Quantum
         protected void MakeActionCancellable(PlayerFSM fsm, ActionConfig source,
             ActionConfig destination)
         {
-            // if (source == destination)
-            // {
-            //     fsm.Fsm.Configure(source.State)
-            //         .AllowReentry(PlayerFSM.Trigger.ButtonAndDirection);
-            // }
+            if (source == destination)
+            {
+                fsm.Fsm.Configure(source.State)
+                    .AllowReentry(PlayerFSM.Trigger.ButtonAndDirection);
+            }
             
             fsm.Fsm.Configure(source.State)
                 .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
                     destination.State,
                     param =>
                         (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)),
-                    destination.InputWeight + 1);
+                    destination.InputWeight);
         }
     }
 }
