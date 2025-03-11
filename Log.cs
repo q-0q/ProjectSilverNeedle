@@ -19,17 +19,13 @@ public class ZzzLog : MonoBehaviour
     }
 
     void HandleLog(string logString, string stackTrace, LogType type) {
-        if ((myLogQueue.Count < qsize))
+        
+        if (type == LogType.Exception)
         {
             myLogQueue.Enqueue("[" + type + "] : " + logString);
-            if (type == LogType.Exception)
-                myLogQueue.Enqueue(stackTrace);
+            myLogQueue.Enqueue(stackTrace);
         }
-                
-            // myLogQueue.Enqueue(stackTrace);
-        // while (myLogQueue.Count > qsize)
-        //     return;
-        //     // myLogQueue.Dequeue();
+        
     }
 
     void OnGUI() {

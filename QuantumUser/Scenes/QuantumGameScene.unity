@@ -326,7 +326,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prototype:
     cpuEnabled:
-      Value: 1
+      Value: 0
     forceCounter:
       Value: 0
     doAction:
@@ -761,7 +761,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 204152357}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2668bf5e0a844483bec00c9713bb63f, type: 3}
   m_Name: 
