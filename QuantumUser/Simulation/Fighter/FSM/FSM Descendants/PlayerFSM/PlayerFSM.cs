@@ -193,32 +193,38 @@ namespace Quantum
 
             machine.Configure(PlayerState.StandHitHigh)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
-                .PermitReentry(PlayerTrigger.HitHigh)
+                .AllowReentry(PlayerTrigger.HitHigh)
+                .Permit(PlayerTrigger.HitHigh, PlayerState.StandHitHigh)
                 .SubstateOf(PlayerState.Hit)
                 .SubstateOf(PlayerState.Stand);
 
             machine.Configure(PlayerState.StandHitLow)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
-                .PermitReentry(PlayerTrigger.HitLow)
+                .AllowReentry(PlayerTrigger.HitLow)
+                .Permit(PlayerTrigger.HitLow, PlayerState.StandHitLow)
                 .SubstateOf(PlayerState.Hit)
                 .SubstateOf(PlayerState.Stand);
 
             machine.Configure(PlayerState.CrouchHit)
                 .Permit(PlayerTrigger.Finish, PlayerState.CrouchActionable)
-                .PermitReentry(PlayerTrigger.HitHigh)
-                .PermitReentry(PlayerTrigger.HitLow)
+                .AllowReentry(PlayerTrigger.HitHigh)
+                .AllowReentry(PlayerTrigger.HitLow)
+                .Permit(PlayerTrigger.HitHigh, PlayerState.CrouchHit)
+                .Permit(PlayerTrigger.HitLow, PlayerState.CrouchHit)
                 .SubstateOf(PlayerState.Hit)
                 .SubstateOf(PlayerState.Crouch);
 
             machine.Configure(PlayerState.StandBlock)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
-                .PermitReentry(PlayerTrigger.BlockHigh)
+                .AllowReentry(PlayerTrigger.BlockHigh)
+                .Permit(PlayerTrigger.BlockHigh, PlayerState.StandBlock)
                 .SubstateOf(PlayerState.GroundBlock)
                 .SubstateOf(PlayerState.Stand);
 
             machine.Configure(PlayerState.CrouchBlock)
                 .Permit(PlayerTrigger.Finish, PlayerState.CrouchActionable)
-                .PermitReentry(PlayerTrigger.BlockLow)
+                .AllowReentry(PlayerTrigger.BlockLow)
+                .Permit(PlayerTrigger.BlockLow, PlayerState.CrouchBlock)
                 .SubstateOf(PlayerState.GroundBlock)
                 .SubstateOf(PlayerState.Crouch);
 
@@ -280,7 +286,8 @@ namespace Quantum
                 .Permit(PlayerTrigger.Dash, PlayerState.AirDash)
                 .Permit(PlayerTrigger.Backdash, PlayerState.AirBackdash)
                 .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
-                .PermitReentry(PlayerTrigger.Jump)
+                .AllowReentry(PlayerTrigger.Jump)
+                .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -1)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.AirBlock, _ => true, -1)
                 .OnEntry(ResetCombo)
@@ -320,8 +327,10 @@ namespace Quantum
             machine.Configure(PlayerState.AirBlock)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.AirBlock, _ => true, -2)
-                .PermitReentry(PlayerTrigger.BlockHigh)
-                .PermitReentry(PlayerTrigger.BlockLow)
+                .AllowReentry(PlayerTrigger.BlockHigh)
+                .AllowReentry(PlayerTrigger.BlockLow)
+                .Permit(PlayerTrigger.BlockHigh, PlayerState.AirBlock)
+                .Permit(PlayerTrigger.BlockLow, PlayerState.AirBlock)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirActionable)
                 .SubstateOf(PlayerState.Air)
                 .SubstateOf(PlayerState.Block);
@@ -340,9 +349,12 @@ namespace Quantum
                 .PermitIf(PlayerTrigger.Land, PlayerState.HardKnockdown, InHardKnockdown, 2)
                 .PermitIf(PlayerTrigger.Land, PlayerState.SoftKnockdown, _ => true, 1)
                 .OnExitFrom(PlayerTrigger.Land, OnExitAirHitFromLand)
-                .PermitReentry(PlayerTrigger.HitHigh)
-                .PermitReentry(PlayerTrigger.HitLow)
-                .PermitReentry(PlayerTrigger.Land);
+                .AllowReentry(PlayerTrigger.HitHigh)
+                .AllowReentry(PlayerTrigger.HitLow)
+                .AllowReentry(PlayerTrigger.Land)
+                .Permit(PlayerTrigger.HitHigh, PlayerState.AirHit)
+                .Permit(PlayerTrigger.HitLow, PlayerState.AirHit)
+                .Permit(PlayerTrigger.Land, PlayerState.AirHit);
 
             machine.Configure(PlayerState.AirHitPostGroundBounce)
                 .OnEntry(OnGroundBounce)
@@ -714,11 +726,11 @@ namespace Quantum
         protected void MakeActionCancellable(PlayerFSM fsm, ActionConfig source,
             ActionConfig destination)
         {
-            if (source == destination)
-            {
-                fsm.Fsm.Configure(source.State)
-                    .PermitReentry(PlayerFSM.Trigger.ButtonAndDirection);
-            }
+            // if (source == destination)
+            // {
+            //     fsm.Fsm.Configure(source.State)
+            //         .AllowReentry(PlayerFSM.Trigger.ButtonAndDirection);
+            // }
             
             fsm.Fsm.Configure(source.State)
                 .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
