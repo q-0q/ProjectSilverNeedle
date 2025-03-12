@@ -36,6 +36,7 @@ namespace Quantum
             public static int DeadFromGround;
             public static int ForwardThrow;
             public static int Backthrow;
+            
 
             // Air
             public static int AirDash;
@@ -59,6 +60,7 @@ namespace Quantum
             public static int Block;
             public static int Throw;
             public static int CutsceneReactor;
+            public static int DirectionLocked;
         }
 
         public class CutsceneIndexes : InheritableEnum.InheritableEnum
@@ -121,15 +123,15 @@ namespace Quantum
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.GroundActionable)
-                .Permit(PlayerTrigger.NeutralInput, PlayerState.StandActionable)
-                .Permit(PlayerTrigger.Down, PlayerState.CrouchActionable)
-                .Permit(PlayerTrigger.Forward, PlayerState.WalkForward)
-                .Permit(PlayerTrigger.Backward, PlayerState.WalkBackward)
-                .Permit(PlayerTrigger.Dash, PlayerState.Dash)
-                .Permit(PlayerTrigger.Backdash, PlayerState.Backdash)
-                .Permit(PlayerTrigger.Jump, PlayerState.AirActionable)
-                .Permit(PlayerTrigger.ForwardThrow, PlayerState.ForwardThrow)
-                .Permit(PlayerTrigger.BackThrow, PlayerState.Backthrow)
+                .Permit(Trigger.NeutralInput, PlayerState.StandActionable)
+                .Permit(Trigger.Down, PlayerState.CrouchActionable)
+                .Permit(Trigger.Forward, PlayerState.WalkForward)
+                .Permit(Trigger.Backward, PlayerState.WalkBackward)
+                .Permit(Trigger.Dash, PlayerState.Dash)
+                .Permit(Trigger.Backdash, PlayerState.Backdash)
+                .Permit(Trigger.Jump, PlayerState.AirActionable)
+                .Permit(Trigger.ForwardThrow, PlayerState.ForwardThrow)
+                .Permit(Trigger.BackThrow, PlayerState.Backthrow)
                 // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
                 // .Permit(Trigger.BackThrow, State.ThrowBackStartup)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
@@ -174,6 +176,7 @@ namespace Quantum
                 // .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .SubstateOf(PlayerState.Stand)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.Backdash)
@@ -181,6 +184,7 @@ namespace Quantum
                 .OnEntry(OnBackdash)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .SubstateOf(PlayerState.Stand)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.GroundAction)
@@ -189,6 +193,7 @@ namespace Quantum
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
                 .SubstateOf(PlayerState.Action)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.StandHitHigh)
@@ -239,6 +244,7 @@ namespace Quantum
                 .OnEntry(OnHKD)
                 .OnEntry(EndSlowdown)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.SoftKnockdown)
@@ -249,10 +255,12 @@ namespace Quantum
             machine.Configure(PlayerState.DeadFromAir)
                 .OnEntry(DoImpactVibrate)
                 .OnEntry(EndSlowdown)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.DeadFromGround)
                 .OnEntry(EndSlowdown)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.Landsquat)
@@ -307,6 +315,7 @@ namespace Quantum
                 .OnEntry(InputSystem.ClearBufferParams)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.AirBlock, _ => true, -2)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Air);
 
             machine.Configure(PlayerState.AirBackdash)
@@ -314,14 +323,17 @@ namespace Quantum
                 .OnEntry(OnBackdash)
                 .OnEntry(OnAirBackdash)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirActionable)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Air);
 
             machine.Configure(PlayerState.AirAction)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirActionable)
                 .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
                 .SubstateOf(PlayerState.Action)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Air);
 
             machine.Configure(PlayerState.AirBlock)
@@ -366,10 +378,12 @@ namespace Quantum
 
 
             // General
-            machine.Configure(PlayerState.Hit);
+            machine.Configure(PlayerState.Hit)
+                .SubstateOf(PlayerState.DirectionLocked);
             machine.Configure(PlayerState.Any);
 
             machine.Configure(PlayerState.CutsceneReactor)
+                .SubstateOf(PlayerState.DirectionLocked)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
             
             machine.Assume(PlayerState.StandActionable);

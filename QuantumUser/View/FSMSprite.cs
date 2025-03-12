@@ -10,10 +10,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using LayerMask = UnityEngine.LayerMask;
 
-public class PlayerSprite : QuantumEntityViewComponent
+public class FSMSprite : QuantumEntityViewComponent
 {
     private SpriteRenderer _renderer;
     private SpriteRenderer _shadowCasterRenderer;
+    private Color _color;
     
     public override void OnInitialize()
     {
@@ -23,7 +24,7 @@ public class PlayerSprite : QuantumEntityViewComponent
         QuantumEvent.Subscribe(listener: this, handler: (EventEntityVibrate e) => PlayerVibrate(e.entityRef, e.strength, e.duration, e.vibrato));
 
     }
-
+    
     public override void OnUpdateView()
     {
         

@@ -19,8 +19,8 @@ MonoBehaviour:
   UserAsset:
     Id:
       Value: 0
-  Scene: QuantumGameScene
-  ScenePath: Assets/QuantumUser/Scenes/QuantumGameScene.unity
+  Scene: PROJECT
+  ScenePath: Assets/QuantumUser/Scenes/PROJECT.unity
   SceneGuid: 3c6df3c4a625f45b3890b336e44610ab
   WorldSize: 256
   BucketsCount: 16
@@ -52,7 +52,7 @@ MonoBehaviour:
       type: {class: CpuControllerDataPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:
         cpuEnabled:
-          Value: 0
+          Value: 1
         forceCounter:
           Value: 0
         doAction:
