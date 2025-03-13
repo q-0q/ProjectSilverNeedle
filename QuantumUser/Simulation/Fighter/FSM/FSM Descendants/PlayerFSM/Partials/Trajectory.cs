@@ -103,12 +103,14 @@ namespace Quantum
             comboData->gravityScaling *= GroundBounceGravityScaling;
             
             frameParam.f.Events.EntityVibrate(EntityRef, FP.FromString("0.4"), FP.FromString("0.4"), 40);
-            HitstopSystem.EnqueueHitstop(frameParam.f, 10);
+            HitstopSystem.EnqueueHitstop(frameParam.f, 12);
             
             // AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.GroundBounce, transform3D->Position.XY, 0, false);
             
+            
+            // multiply height by (4/5) == 0.8 to make the popup time off a ground bounce slightly faster than a normal launch would
             StartNewTrajectory(frameParam.f, trajectoryData->trajectoryHeight, 
-                trajectoryData->timeToTrajectoryHeight, trajectoryData->xVelocity, 
+                trajectoryData->timeToTrajectoryHeight * 4 / 5, trajectoryData->xVelocity, 
                 trajectoryData->fallSpeed, trajectoryData->timeToFallSpeed, false);
         }
 
@@ -124,7 +126,7 @@ namespace Quantum
             
             frameParam.f.Events.EntityVibrate(EntityRef, FP.FromString("0.6"), FP.FromString("0.5"), 40);
 
-            HitstopSystem.EnqueueHitstop(frameParam.f, 15);
+            HitstopSystem.EnqueueHitstop(frameParam.f, 12);
             
             
             // var angle = transform3D->Position.X < 0 ? 90 : -90;

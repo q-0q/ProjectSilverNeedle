@@ -54,6 +54,8 @@ namespace Quantum
             StandHitLow,
             CrouchHit,
             AirHit,
+            WallBounce,
+            GroundBounce,
             StandBlock,
             CrouchBlock,
             AirBlock,
@@ -391,6 +393,24 @@ namespace Quantum
                 }
             };
             
+            var wallBounceAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.WallBounce,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var groundBounceAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.GroundBounce,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var standBlockAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.StandBlock,
@@ -492,6 +512,12 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = airHitAnimation;
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitAnimation;
+            
+            Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostWallBounce] = wallBounceAnimation;
+            
+            Util.AutoSetupFromAnimationPath(groundBounceAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = groundBounceAnimation;
             
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandBlock] = standBlockAnimation;
@@ -830,6 +856,7 @@ namespace Quantum
                         Type = Hit.HitType.Mid,
                         Launches = true,
                         TrajectoryHeight = 6,
+                        TrajectoryXVelocity = 4,
                         GravityScaling = 1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
@@ -1471,7 +1498,7 @@ namespace Quantum
                                 standHurtbox,
                                 new CollisionBox()
                                 {
-                                    Height = 7,
+                                    Height = FP.FromString("8.5"),
                                     Width = 3,
                                     GrowWidth = true,
                                     GrowHeight = true,
@@ -1501,7 +1528,8 @@ namespace Quantum
                             BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.2"),
-                            TrajectoryHeight = 1,
+                            TrajectoryHeight = 4,
+                            // GroundBounce = true,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1512,7 +1540,7 @@ namespace Quantum
                                         {
                                             new CollisionBox()
                                             {
-                                                Height = 3,
+                                                Height = FP.FromString("4.5"),
                                                 Width = FP.FromString("2.5"),
                                                 GrowWidth = true,
                                                 GrowHeight = true,
