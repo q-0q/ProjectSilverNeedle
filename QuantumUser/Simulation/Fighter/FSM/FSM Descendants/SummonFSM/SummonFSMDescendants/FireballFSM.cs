@@ -47,6 +47,7 @@ namespace Quantum
                     {
                         // Launches = true,
                         Level = 1,
+                        Projectile = true,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()

@@ -49,6 +49,7 @@ namespace Quantum
             public bool hardKnockdown;
             public bool groundBounce;
             public bool wallBounce;
+            public bool projectile;
 
             public int cutsceneIndex;
 
@@ -181,6 +182,8 @@ namespace Quantum
                         hardKnockdown = hit.HardKnockdown,
                         groundBounce = hit.GroundBounce,
                         wallBounce = hit.WallBounce,
+                        projectile = hit.Projectile,
+                        
                         
                         cutsceneIndex = hit.TriggerCutscene,
                         
