@@ -15,11 +15,12 @@ public class FSMSprite : QuantumEntityViewComponent
     private SpriteRenderer _renderer;
     private SpriteRenderer _shadowCasterRenderer;
     private Color _color;
-    
+    private Camera _camera;
     public override void OnInitialize()
     {
         _renderer = GetComponent<SpriteRenderer>();
         _shadowCasterRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        _camera = Camera.main;
         
         QuantumEvent.Subscribe(listener: this, handler: (EventEntityVibrate e) => PlayerVibrate(e.entityRef, e.strength, e.duration, e.vibrato));
 
@@ -31,6 +32,9 @@ public class FSMSprite : QuantumEntityViewComponent
         FSM fsm = FsmLoader.GetFsm(EntityRef);
         
         if (!PredictedFrame.Has<AnimationData>(EntityRef)) return;
+
+        // Vector3 target = (transform.position - _camera.transform.position) + transform.position;
+        // transform.LookAt(target);
 
         string characterName = fsm.Name;
         int frame = PredictedFrame.Get<AnimationData>(EntityRef).frame + 1;
