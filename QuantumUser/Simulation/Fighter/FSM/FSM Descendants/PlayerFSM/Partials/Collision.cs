@@ -26,6 +26,13 @@ namespace Quantum
             HandleCutsceneTrigger(f, hurtboxData, hitboxData);
         }
 
+        private bool IsProjectileInvulnerable(Frame f)
+        {
+            var sectionGroup = StateMapConfig.ProjectileInvulnerable?.Get(this, new FrameParam() { f = f, EntityRef = EntityRef });
+            if (sectionGroup is null) return false;
+            return sectionGroup.GetCurrentItem(f, this);
+        }
+
         private void InvokeNonThrowCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData,
             FPVector2 location)
         {
@@ -35,6 +42,12 @@ namespace Quantum
             var trigger = GetCollisionTrigger(f, hitType, isBlocking);
             
             InvokeCollisionVibrate(f, trigger);
+
+            if (IsProjectileInvulnerable(f) && hitboxData.projectile)
+            {
+                HitstopSystem.EnqueueHitstop(f, 8);
+                return;
+            }
 
             var xVelocity = hitboxData.trajectoryXVelocity;
             if (!IsFacingRight(f, hitboxData.source))

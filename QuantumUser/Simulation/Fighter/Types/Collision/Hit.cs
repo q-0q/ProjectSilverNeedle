@@ -22,6 +22,8 @@ namespace Quantum.Types.Collision
             Throw
         }
 
+        public bool Projectile = false;
+
         public int Level = 0;
         public int BonusBlockstun = 0;
         public int BonusHitstun = 0;

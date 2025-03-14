@@ -65,6 +65,7 @@ namespace Quantum
             StateMapConfig.WhiffCancellable = new StateMap<bool>();
             StateMapConfig.FireReceiverFinishAfter = new StateMap<int>();
             StateMapConfig.InvulnerableBefore = new StateMap<int>();
+            StateMapConfig.ProjectileInvulnerable = new StateMap<SectionGroup<bool>>();
             StateMapConfig.UnpoolSummonSectionGroup = new StateMap<SectionGroup<SummonPool>>();
             Cutscenes = new Dictionary<int, Cutscene>();
         }

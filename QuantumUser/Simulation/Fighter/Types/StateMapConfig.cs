@@ -22,6 +22,7 @@ namespace Quantum.StateMap
         public StateMap<bool> WhiffCancellable;
         public StateMap<int> FireReceiverFinishAfter;
         public StateMap<int> InvulnerableBefore;
+        public StateMap<SectionGroup<bool>> ProjectileInvulnerable;
         public StateMap<SectionGroup<SummonPool>> UnpoolSummonSectionGroup;
 
     }

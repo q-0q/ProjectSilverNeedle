@@ -610,6 +610,7 @@ namespace Quantum
                         Level = 1,
                         GravityScaling = FP.FromString("1"),
                         TrajectoryXVelocity = 13,
+                        TrajectoryHeight = FP.FromString("1.75"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -854,7 +855,7 @@ namespace Quantum
                         Level = 3,
                         Type = Hit.HitType.Mid,
                         Launches = true,
-                        TrajectoryHeight = 6,
+                        TrajectoryHeight = 4,
                         TrajectoryXVelocity = 4,
                         GravityScaling = 1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -1078,6 +1079,7 @@ namespace Quantum
                     new(2, new Hit()
                     {
                         Level = 1,
+                        Projectile = true,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1595,8 +1597,8 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(17, 0),
-                        new(3, 2),
+                        new(15, 0),
+                        new(4, 3),
                         new(4, 0),
                     }
                 };
@@ -1636,6 +1638,15 @@ namespace Quantum
                                 standHurtbox
                             }
                         }),
+                    }
+                };
+
+                var projectileInvuln = new SectionGroup<bool>()
+                {
+                    Sections = new List<Tuple<int, bool>>()
+                    {
+                        new(startup, true),
+                        new(50, false),
                     }
                 };
                 
@@ -1695,6 +1706,7 @@ namespace Quantum
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
+                StateMapConfig.ProjectileInvulnerable.Dictionary[state] = projectileInvuln;
             }
             
 
