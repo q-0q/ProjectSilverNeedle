@@ -16,7 +16,7 @@ public class SummonFSMDebug : QuantumEntityViewComponent
 
     public override void OnUpdateView()
     {
-        
+        return;
         if (!PredictedFrame.Has<FSMData>(EntityRef)) return;
         int numFrames = PredictedFrame.Get<FSMData>(EntityRef).framesInState;
 
