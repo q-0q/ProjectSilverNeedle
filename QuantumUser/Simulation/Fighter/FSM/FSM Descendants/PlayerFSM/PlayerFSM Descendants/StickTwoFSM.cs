@@ -1645,7 +1645,7 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, bool>>()
                     {
-                        new(startup, true),
+                        new(startup + active, true),
                         new(50, false),
                     }
                 };
@@ -1661,8 +1661,9 @@ namespace Quantum
                             BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.2"),
-                            TrajectoryHeight = FP.FromString("2.5"),
+                            TrajectoryHeight = FP.FromString("3"),
                             TrajectoryXVelocity = FP.FromString("3"),
+                            Launches = true,
                             // GroundBounce = true,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
