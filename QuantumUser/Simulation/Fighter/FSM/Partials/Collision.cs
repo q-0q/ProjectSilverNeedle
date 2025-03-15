@@ -388,6 +388,7 @@ namespace Quantum
 
         public void StartSlowdown(Frame f, int duration, FP multiplier)
         {
+            Debug.Log("Start slowdown");
             f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
             slowdownData->slowdownRemaining = duration;
             slowdownData->multiplier = multiplier;
@@ -397,6 +398,7 @@ namespace Quantum
         {
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
+            Debug.Log("End slowdown");
             frameParam.f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
             slowdownData->slowdownRemaining = 0;
         }

@@ -45,7 +45,7 @@ namespace Quantum
 
             if (IsProjectileInvulnerable(f) && hitboxData.projectile)
             {
-                HitstopSystem.EnqueueHitstop(f, 8);
+                HitstopSystem.EnqueueHitstop(f, 12);
                 return;
             }
 
@@ -157,7 +157,7 @@ namespace Quantum
                 InputSystem.ClearBuffer(f, Util.GetOtherPlayer(f, EntityRef));
                 stop = AttackLevelCounterHitstop[hitboxData.level];
                 
-                if (Fsm.IsInState(PlayerFSM.PlayerState.Air))
+                if (Fsm.IsInState(PlayerFSM.PlayerState.Air) || hitboxData.launches)
                 {
                     StartSlowdown(f, AttackLevelCounterSlowdownDuration[hitboxData.level], CounterSlowdownMultiplier);
                 }
