@@ -1,10 +1,10 @@
 input
 {
-    button P;
-    button K;
-    button S;
+    button L;
+    button M;
     button H;
-    button D;
+    button S;
+    button T;
     button Jump;
     button Dash;
     button Backdash;

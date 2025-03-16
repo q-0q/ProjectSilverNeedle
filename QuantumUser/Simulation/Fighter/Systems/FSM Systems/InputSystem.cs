@@ -16,11 +16,11 @@ namespace Quantum
 
         public enum InputType
         {
-            P,
-            K,
-            S,
+            L,
+            M,
             H,
-            D,
+            S,
+            T,
             Jump,
             Dash
             
@@ -53,14 +53,14 @@ namespace Quantum
             
             
             bool resetBufferLength = false;
-            if (input.P.WasPressed)
+            if (input.L.WasPressed)
             {
-                inputBuffer->type = (int)InputType.P;
+                inputBuffer->type = (int)InputType.L;
                 resetBufferLength = true;
             }
-            if (input.K.WasPressed)
+            if (input.M.WasPressed)
             {
-                inputBuffer->type = (int)InputType.K;
+                inputBuffer->type = (int)InputType.M;
                 resetBufferLength = true;
             }
             if (input.S.WasPressed)
@@ -73,9 +73,9 @@ namespace Quantum
                 inputBuffer->type = (int)InputType.H;
                 resetBufferLength = true;
             }
-            if (input.D.WasPressed)
+            if (input.T.WasPressed)
             {
-                inputBuffer->type = (int)InputType.D;
+                inputBuffer->type = (int)InputType.T;
                 resetBufferLength = true;
             }
             if (input.Jump.WasPressed)
@@ -368,45 +368,6 @@ namespace Quantum
             }
         }
         
-        
-        
-
-
-        public static bool InputIsDown(string action, Frame f, EntityRef entityRef)
-        {
-            f.Unsafe.TryGetPointer<PlayerLink>(FsmLoader.FSMs[entityRef].GetPlayer(), out var playerLink);
-            Input input = *f.GetPlayerInput(playerLink->Player);
-            
-            if (action == "P")
-            {
-                return input.P.IsDown;
-            }
-            if (action == "K")
-            {
-                return input.K.IsDown;
-            }
-            if (action == "S")
-            {
-                return input.S.IsDown;
-            }
-            if (action == "H")
-            {
-                return input.H.IsDown;
-            }
-            if (action == "D")
-            {
-                return input.D.IsDown;
-            }
-                
-            if (action == Numpad(f, entityRef).ToString())
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-
 
         private static void FireButtonAndDirectionTrigger(Frame f, FSM fsm, InputType type, int commandDirection)
         {
@@ -424,7 +385,7 @@ namespace Quantum
         
         private static void FireThrowTrigger(Frame f, FSM fsm, InputType type, int commandDirection)
         {
-            if (type != InputType.D) return;
+            if (type != InputType.T) return;
             
             ButtonAndDirectionParam param = new ButtonAndDirectionParam() { f = f, Type = type, CommandDirection = commandDirection, EntityRef = fsm.EntityRef};
 
