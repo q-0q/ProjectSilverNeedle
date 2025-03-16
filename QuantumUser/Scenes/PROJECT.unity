@@ -338,7 +338,7 @@ MonoBehaviour:
     dash:
       Value: 0
     inputType: 2
-    commandDirection: 4
+    commandDirection: 6
 --- !u!114 &147541240
 MonoBehaviour:
   m_ObjectHideFlags: 0
