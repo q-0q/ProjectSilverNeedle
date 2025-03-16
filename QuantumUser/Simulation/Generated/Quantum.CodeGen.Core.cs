@@ -66,11 +66,11 @@ namespace Quantum {
   }
   [System.FlagsAttribute()]
   public enum InputButtons : int {
-    P = 1 << 0,
-    K = 1 << 1,
-    S = 1 << 2,
-    H = 1 << 3,
-    D = 1 << 4,
+    L = 1 << 0,
+    M = 1 << 1,
+    H = 1 << 2,
+    S = 1 << 3,
+    T = 1 << 4,
     Jump = 1 << 5,
     Dash = 1 << 6,
     Backdash = 1 << 7,
@@ -426,19 +426,19 @@ namespace Quantum {
   public unsafe partial struct Input {
     public const Int32 SIZE = 100;
     public const Int32 ALIGNMENT = 4;
-    [FieldOffset(76)]
-    public Button P;
-    [FieldOffset(64)]
-    public Button K;
-    [FieldOffset(88)]
-    public Button S;
-    [FieldOffset(40)]
-    public Button H;
-    [FieldOffset(16)]
-    public Button D;
     [FieldOffset(52)]
-    public Button Jump;
+    public Button L;
+    [FieldOffset(64)]
+    public Button M;
     [FieldOffset(28)]
+    public Button H;
+    [FieldOffset(76)]
+    public Button S;
+    [FieldOffset(88)]
+    public Button T;
+    [FieldOffset(40)]
+    public Button Jump;
+    [FieldOffset(16)]
     public Button Dash;
     [FieldOffset(4)]
     public Button Backdash;
@@ -447,11 +447,11 @@ namespace Quantum {
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 19249;
-        hash = hash * 31 + P.GetHashCode();
-        hash = hash * 31 + K.GetHashCode();
-        hash = hash * 31 + S.GetHashCode();
+        hash = hash * 31 + L.GetHashCode();
+        hash = hash * 31 + M.GetHashCode();
         hash = hash * 31 + H.GetHashCode();
-        hash = hash * 31 + D.GetHashCode();
+        hash = hash * 31 + S.GetHashCode();
+        hash = hash * 31 + T.GetHashCode();
         hash = hash * 31 + Jump.GetHashCode();
         hash = hash * 31 + Dash.GetHashCode();
         hash = hash * 31 + Backdash.GetHashCode();
@@ -464,11 +464,11 @@ namespace Quantum {
     }
     public Boolean IsDown(InputButtons button) {
       switch (button) {
-        case InputButtons.P: return P.IsDown;
-        case InputButtons.K: return K.IsDown;
-        case InputButtons.S: return S.IsDown;
+        case InputButtons.L: return L.IsDown;
+        case InputButtons.M: return M.IsDown;
         case InputButtons.H: return H.IsDown;
-        case InputButtons.D: return D.IsDown;
+        case InputButtons.S: return S.IsDown;
+        case InputButtons.T: return T.IsDown;
         case InputButtons.Jump: return Jump.IsDown;
         case InputButtons.Dash: return Dash.IsDown;
         case InputButtons.Backdash: return Backdash.IsDown;
@@ -477,11 +477,11 @@ namespace Quantum {
     }
     public Boolean WasPressed(InputButtons button) {
       switch (button) {
-        case InputButtons.P: return P.WasPressed;
-        case InputButtons.K: return K.WasPressed;
-        case InputButtons.S: return S.WasPressed;
+        case InputButtons.L: return L.WasPressed;
+        case InputButtons.M: return M.WasPressed;
         case InputButtons.H: return H.WasPressed;
-        case InputButtons.D: return D.WasPressed;
+        case InputButtons.S: return S.WasPressed;
+        case InputButtons.T: return T.WasPressed;
         case InputButtons.Jump: return Jump.WasPressed;
         case InputButtons.Dash: return Dash.WasPressed;
         case InputButtons.Backdash: return Backdash.WasPressed;
@@ -492,13 +492,13 @@ namespace Quantum {
         var p = (Input*)ptr;
         serializer.Stream.Serialize(&p->UnflippedNumpadDirection);
         Button.Serialize(&p->Backdash, serializer);
-        Button.Serialize(&p->D, serializer);
         Button.Serialize(&p->Dash, serializer);
         Button.Serialize(&p->H, serializer);
         Button.Serialize(&p->Jump, serializer);
-        Button.Serialize(&p->K, serializer);
-        Button.Serialize(&p->P, serializer);
+        Button.Serialize(&p->L, serializer);
+        Button.Serialize(&p->M, serializer);
         Button.Serialize(&p->S, serializer);
+        Button.Serialize(&p->T, serializer);
     }
   }
   [StructLayout(LayoutKind.Explicit)]
@@ -1461,11 +1461,11 @@ namespace Quantum {
     partial void SetPlayerInputCodeGen(PlayerRef player, Input input) {
       if ((int)player >= (int)_globals->input.Length) { throw new System.ArgumentOutOfRangeException("player"); }
       var i = _globals->input.GetPointer(player);
-      i->P = i->P.Update(this.Number, input.P);
-      i->K = i->K.Update(this.Number, input.K);
-      i->S = i->S.Update(this.Number, input.S);
+      i->L = i->L.Update(this.Number, input.L);
+      i->M = i->M.Update(this.Number, input.M);
       i->H = i->H.Update(this.Number, input.H);
-      i->D = i->D.Update(this.Number, input.D);
+      i->S = i->S.Update(this.Number, input.S);
+      i->T = i->T.Update(this.Number, input.T);
       i->Jump = i->Jump.Update(this.Number, input.Jump);
       i->Dash = i->Dash.Update(this.Number, input.Dash);
       i->Backdash = i->Backdash.Update(this.Number, input.Backdash);

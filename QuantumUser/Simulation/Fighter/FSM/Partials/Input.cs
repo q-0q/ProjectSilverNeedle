@@ -18,7 +18,7 @@ namespace Quantum
         
         public virtual bool GetBufferType(Frame f, EntityRef entityRef, out InputSystem.InputType type)
         {
-            type = InputSystem.InputType.P;
+            type = InputSystem.InputType.L;
             return false;
         }
     }

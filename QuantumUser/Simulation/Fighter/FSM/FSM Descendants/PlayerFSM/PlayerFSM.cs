@@ -678,7 +678,7 @@ namespace Quantum
         public class ActionConfig
         {
             public int State = -1;
-            public InputSystem.InputType InputType = InputSystem.InputType.P;
+            public InputSystem.InputType InputType = InputSystem.InputType.L;
             public int CommandDirection = 5;
             public bool JumpCancellable = false;
             public bool DashCancellable = false;
@@ -689,6 +689,11 @@ namespace Quantum
             public bool Aerial = false;
             public int InputWeight = 0;
             public bool IsCutscene = false;
+            public string FlavorText = "No flavortext provided, overwrite with \"\" to omit";
+            public string Description = "No description provided, overwrite with \"\" to omit";
+            public int MinFrameAdvantage;
+            public  int MaxFrameAdvantage;
+            
         }
 
         protected void ConfigureAction(PlayerFSM fsm, ActionConfig actionConfig)
@@ -725,7 +730,23 @@ namespace Quantum
                 fsm.Fsm.Configure(actionConfig.State)
                     .PermitIf(PlayerFSM.PlayerTrigger.Dash, PlayerFSM.PlayerState.Dash, Util.CanCancelNow);
             }
+            
+            
+            // Compute frame advantage
+            // var hitSectionGroup = fsm.StateMapConfig.HitSectionGroup.Lookup(actionConfig.State, fsm);
+            // Hit prevHit = null;
+            // for (int i = 0; i < hitSectionGroup.Duration(); i++)
+            // {
+            //     Hit currentHit = hitSectionGroup.GetItemFromIndex(i);
+            //     if (prevHit is null)
+            //     {
+            //         actionConfig.MinFrameAdvantage = 
+            //     }
+            // }
+
         }
+        
+        // private static int ComputeAdvantageFromFrameIndex()
 
         private static void AllowRawFromState(PlayerFSM fsm, ActionConfig actionConfig, int state)
         {

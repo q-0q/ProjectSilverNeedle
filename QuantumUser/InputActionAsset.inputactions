@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "P",
+                    "name": "L",
                     "type": "Button",
                     "id": "306bcd7a-85fd-4366-a9e1-8e96dd384a3e",
                     "expectedControlType": "Button",
@@ -24,7 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "K",
+                    "name": "M",
                     "type": "Button",
                     "id": "097fcbfe-e137-4ca2-8e62-ba26b980cda1",
                     "expectedControlType": "Button",
@@ -51,7 +51,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "D",
+                    "name": "T",
                     "type": "Button",
                     "id": "6168560f-c629-4055-a1f3-30907db2b8e4",
                     "expectedControlType": "Button",
@@ -154,7 +154,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "P",
+                    "action": "L",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -165,7 +165,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "P",
+                    "action": "L",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -176,7 +176,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "K",
+                    "action": "M",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -187,14 +187,14 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "K",
+                    "action": "M",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "051e8a5a-50b6-422d-b809-79679ecc9634",
-                    "path": "<Keyboard>/o",
+                    "path": "<Keyboard>/j",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -216,7 +216,7 @@
                 {
                     "name": "",
                     "id": "ea8086e3-d053-423c-9027-b3223cf60904",
-                    "path": "<Keyboard>/j",
+                    "path": "<Keyboard>/o",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -242,7 +242,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "D",
+                    "action": "T",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -253,7 +253,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "D",
+                    "action": "T",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

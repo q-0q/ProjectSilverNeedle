@@ -380,22 +380,22 @@ namespace Quantum.Prototypes {
   [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.Input))]
   public unsafe partial class InputPrototype : StructPrototype {
-    public Button P;
-    public Button K;
-    public Button S;
+    public Button L;
+    public Button M;
     public Button H;
-    public Button D;
+    public Button S;
+    public Button T;
     public Button Jump;
     public Button Dash;
     public Button Backdash;
     public Int32 UnflippedNumpadDirection;
     partial void MaterializeUser(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context);
     public void Materialize(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context = default) {
-        result.P = this.P;
-        result.K = this.K;
-        result.S = this.S;
+        result.L = this.L;
+        result.M = this.M;
         result.H = this.H;
-        result.D = this.D;
+        result.S = this.S;
+        result.T = this.T;
         result.Jump = this.Jump;
         result.Dash = this.Dash;
         result.Backdash = this.Backdash;

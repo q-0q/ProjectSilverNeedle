@@ -32,11 +32,11 @@ public class UnityInput : MonoBehaviour
         int uN = GetUnflippedNumpadDirection();
         input.UnflippedNumpadDirection = uN;
         
-        input.P =  _playerInput.actions["P"].IsPressed();
-        input.K =  _playerInput.actions["K"].IsPressed();
-        input.S =  _playerInput.actions["S"].IsPressed();
+        input.L =  _playerInput.actions["L"].IsPressed();
+        input.M =  _playerInput.actions["M"].IsPressed();
         input.H =  _playerInput.actions["H"].IsPressed();
-        input.D =  _playerInput.actions["D"].IsPressed();
+        input.S =  _playerInput.actions["S"].IsPressed();
+        input.T =  _playerInput.actions["T"].IsPressed();
         input.Dash =  _playerInput.actions["Dash"].IsPressed();
 
         input.Jump = _playerInput.actions["Direction"].IsPressed() && (uN == 7 || uN == 8 || uN == 9);
