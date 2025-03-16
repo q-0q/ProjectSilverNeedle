@@ -21,6 +21,8 @@ namespace Quantum
             public static int _4H;
             public static int _2H;
             public static int Rekka1;
+            public static int Rekka2A;
+            public static int Rekka2B;
             public static int _2S_ground;
             public static int _2S_air;
             public static int _JL;
@@ -73,6 +75,8 @@ namespace Quantum
             _2H,
             Fireball,
             Rekka1,
+            Rekka2A,
+            Rekka2B,
 
         }
         
@@ -1406,7 +1410,7 @@ namespace Quantum
                             TrajectoryHeight = 1,
                             TrajectoryXVelocity = 30,
                             WallBounce = true,
-                            BlockPushback = FP.FromString("3.5"),
+                            BlockPushback = FP.FromString("4.5"),
                             HitPushback = FP.FromString("3.5"),
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.2"),
@@ -1660,10 +1664,11 @@ namespace Quantum
                             Level = 3,
                             BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.2"),
-                            TrajectoryHeight = FP.FromString("3"),
+                            GravityProration = FP.FromString("1.6"),
+                            TrajectoryHeight = FP.FromString("2.5"),
                             TrajectoryXVelocity = FP.FromString("3"),
-                            Launches = true,
+                            BlockPushback = 4, 
+                            // Launches = true,
                             // GroundBounce = true,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
@@ -1680,6 +1685,302 @@ namespace Quantum
                                                 GrowWidth = true,
                                                 GrowHeight = true,
                                                 PosY = 2,
+                                                PosX = 0
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
+                StateMapConfig.ProjectileInvulnerable.Dictionary[state] = projectileInvuln;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 6;
+
+            }
+            
+            
+            {
+                int startup = 19;
+                int active = 2;
+                int hurtboxDuration = 15;
+                int path = (int)StickTwoAnimationPath.Rekka2A;
+                int state = StickTwoState.Rekka2A;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var move = new SectionGroup<FP>()
+                {
+                    Sections = new List<Tuple<int, FP>>()
+                    {
+                        new(startup - 2, 0),
+                        new(2, FP.FromString("4.5")),
+                        new(4, 0),
+                    }
+                };
+                
+
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                        new(hurtboxDuration, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox,
+                                new CollisionBox()
+                                {
+                                    Height = FP.FromString("8.5"),
+                                    Width = 3,
+                                    GrowWidth = true,
+                                    GrowHeight = true,
+                                    PosY = 0,
+                                    PosX = 0
+                                }
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                    }
+                };
+
+                var projectileInvuln = new SectionGroup<bool>()
+                {
+                    Sections = new List<Tuple<int, bool>>()
+                    {
+                        new(startup + active, true),
+                        new(50, false),
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            Level = 3,
+                            BonusBlockstun = 6,
+                            GravityScaling = FP.FromString("1"),
+                            GravityProration = FP.FromString("1.6"),
+                            TrajectoryHeight = FP.FromString("4.25"),
+                            TrajectoryXVelocity = FP.FromString("3"),
+                            Launches = true,
+                            GroundBounce = true,
+                            Type = Hit.HitType.High,
+                            BlockPushback = FP.FromString("0.5"),
+                            VisualAngle = 70,
+                            // GroundBounce = true,
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            new CollisionBox()
+                                            {
+                                                Height = FP.FromString("4.0"),
+                                                Width = FP.FromString("5.5"),
+                                                GrowWidth = true,
+                                                GrowHeight = true,
+                                                PosY = FP.FromString("2.5"),
+                                                PosX = 0
+                                            },
+                                            new CollisionBox()
+                                            {
+                                                Height = FP.FromString("3.5"),
+                                                Width = FP.FromString("6.75"),
+                                                GrowWidth = true,
+                                                GrowHeight = true,
+                                                PosY = 0,
+                                                PosX = 0
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
+                StateMapConfig.ProjectileInvulnerable.Dictionary[state] = projectileInvuln;
+            }
+            
+            
+            {
+                int startup = 10;
+                int active = 2;
+                int hurtboxDuration = 15;
+                int path = (int)StickTwoAnimationPath.Rekka2B;
+                int state = StickTwoState.Rekka2B;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var move = new SectionGroup<FP>()
+                {
+                    Sections = new List<Tuple<int, FP>>()
+                    {
+                        new(startup - 2, 0),
+                        new(2, FP.FromString("4.5")),
+                        new(4, 0),
+                    }
+                };
+                
+
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                        new(hurtboxDuration, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox,
+                                new CollisionBox()
+                                {
+                                    Height = FP.FromString("8.5"),
+                                    Width = 3,
+                                    GrowWidth = true,
+                                    GrowHeight = true,
+                                    PosY = 0,
+                                    PosX = 0
+                                }
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                    }
+                };
+
+                var projectileInvuln = new SectionGroup<bool>()
+                {
+                    Sections = new List<Tuple<int, bool>>()
+                    {
+                        new(startup + active, true),
+                        new(50, false),
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            Level = 3,
+                            BonusBlockstun = 6,
+                            GravityScaling = FP.FromString("1"),
+                            GravityProration = FP.FromString("1.6"),
+                            TrajectoryHeight = FP.FromString("4.25"),
+                            TrajectoryXVelocity = FP.FromString("3"),
+                            Launches = true,
+                            GroundBounce = true,
+                            Type = Hit.HitType.High,
+                            BlockPushback = FP.FromString("0.5"),
+                            VisualAngle = 70,
+                            // GroundBounce = true,
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            new CollisionBox()
+                                            {
+                                                Height = FP.FromString("4.0"),
+                                                Width = FP.FromString("5.5"),
+                                                GrowWidth = true,
+                                                GrowHeight = true,
+                                                PosY = FP.FromString("2.5"),
+                                                PosX = 0
+                                            },
+                                            new CollisionBox()
+                                            {
+                                                Height = FP.FromString("3.5"),
+                                                Width = FP.FromString("6.75"),
+                                                GrowWidth = true,
+                                                GrowHeight = true,
+                                                PosY = 0,
                                                 PosX = 0
                                             }
                                         }
@@ -1910,6 +2211,42 @@ namespace Quantum
             MakeActionCancellable(this, _5H, Rekka1);
             MakeActionCancellable(this, _5M, Rekka1);
             MakeActionCancellable(this, _2M, Rekka1);
+            
+            ActionConfig Rekka2A = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 6,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 3,
+                RawOk = false,
+                State = StickTwoState.Rekka2A
+            };
+            
+            ConfigureAction(this, Rekka2A);
+            MakeActionCancellable(this, Rekka1, Rekka2A);
+            
+            ActionConfig Rekka2B = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 4,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 3,
+                RawOk = false,
+                State = StickTwoState.Rekka2B
+            };
+            
+            ConfigureAction(this, Rekka2B);
+            MakeActionCancellable(this, Rekka1, Rekka2B);
 
 
 
