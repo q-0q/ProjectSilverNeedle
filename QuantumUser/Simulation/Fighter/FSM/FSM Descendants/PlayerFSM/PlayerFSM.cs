@@ -90,11 +90,14 @@ namespace Quantum
         public Trajectory ForwardJumpTrajectory;
         public Trajectory BackwardJumpTrajectory;
 
+        public List<ActionConfig> MoveList;
+
 
         public PlayerFSM()
         {
             int currentState = PlayerState.StandActionable;
             Fsm = new Machine<int, int>(currentState);
+            MoveList = new List<ActionConfig>();
         }
 
 
@@ -733,6 +736,7 @@ namespace Quantum
             
             
             // Compute frame advantage
+            MoveList.Add(actionConfig);
             // var hitSectionGroup = fsm.StateMapConfig.HitSectionGroup.Lookup(actionConfig.State, fsm);
             // Hit prevHit = null;
             // for (int i = 0; i < hitSectionGroup.Duration(); i++)

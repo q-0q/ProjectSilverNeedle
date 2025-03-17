@@ -22,3 +22,8 @@ event ResetUnityView
 {
     
 }
+
+event GameFinishLoading
+{
+
+}
