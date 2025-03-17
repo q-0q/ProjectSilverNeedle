@@ -11,7 +11,6 @@ namespace Quantum.Types
 
         public virtual void SetAnimationPathForFsm(Frame f, FSM fsm)
         {
-            Debug.Log(Enum.ToObject(fsm.AnimationPathsEnum, Path).ToString());
             int frame = SectionGroup.GetCurrentItem(f, fsm);
             f.Unsafe.TryGetPointer<AnimationData>(fsm.EntityRef, out var animationData);
             animationData->frame = frame;

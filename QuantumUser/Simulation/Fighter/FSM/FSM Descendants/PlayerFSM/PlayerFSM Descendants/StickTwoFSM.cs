@@ -2370,7 +2370,10 @@ namespace Quantum
             };
             
             ConfigureAction(this, dp);
-
+            MakeActionCancellable(this, _4H, dp);
+            MakeActionCancellable(this, _5H, dp);
+            MakeActionCancellable(this, _5M, dp);
+            MakeActionCancellable(this, _2M, dp);
             
 
         }

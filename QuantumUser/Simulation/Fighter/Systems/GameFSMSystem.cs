@@ -88,7 +88,9 @@ namespace Quantum
             {
                 InitializeSummonComponents(frame, entityRef);
             }
-            
+
+            frame.Events.GameFinishLoading();
+
         }
         
         public static void OnCountdown(TriggerParams? triggerParams)
