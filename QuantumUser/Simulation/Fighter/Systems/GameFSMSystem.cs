@@ -89,7 +89,7 @@ namespace Quantum
                 InitializeSummonComponents(frame, entityRef);
             }
 
-            frame.Events.GameFinishLoading();
+            frame.Events.GameFinishLoading(frame);
 
         }
         

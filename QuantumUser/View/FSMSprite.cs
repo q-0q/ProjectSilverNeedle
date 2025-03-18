@@ -43,6 +43,7 @@ public class FSMSprite : QuantumEntityViewComponent
         string stringPath = Enum.ToObject(pathEnum, path).ToString();
         string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/" + stringPath + "_" + frame;
         Sprite sprite = Resources.Load<Sprite>(fullPath);
+        _renderer.sprite = sprite;
 
         
         // offense / defense sorting
@@ -50,7 +51,6 @@ public class FSMSprite : QuantumEntityViewComponent
         bool back = fsm.Fsm.IsInState(PlayerFSM.PlayerState.Block) || fsm.Fsm.IsInState(PlayerFSM.PlayerState.Hit) || fsm.Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor);
         gameObject.layer = back ? LayerMask.NameToLayer("PlayerBack") : LayerMask.NameToLayer("PlayerFront");
         
-        _renderer.sprite = sprite;
         _shadowCasterRenderer.sprite = sprite;
         var flip = !PredictedFrame.Get<PlayerDirection>(EntityRef).FacingRight;
         _renderer.flipX = flip;

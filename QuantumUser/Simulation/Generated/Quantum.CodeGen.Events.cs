@@ -89,8 +89,9 @@ namespace Quantum {
         _f.AddEvent(ev);
         return ev;
       }
-      public EventGameFinishLoading GameFinishLoading() {
+      public EventGameFinishLoading GameFinishLoading(Frame f) {
         var ev = _f.Context.AcquireEvent<EventGameFinishLoading>(EventGameFinishLoading.ID);
+        ev.f = f;
         _f.AddEvent(ev);
         return ev;
       }
@@ -179,6 +180,7 @@ namespace Quantum {
   }
   public unsafe partial class EventGameFinishLoading : EventBase {
     public new const Int32 ID = 4;
+    public Frame f;
     protected EventGameFinishLoading(Int32 id, EventFlags flags) : 
         base(id, flags) {
     }
@@ -196,6 +198,7 @@ namespace Quantum {
     public override Int32 GetHashCode() {
       unchecked {
         var hash = 53;
+        hash = hash * 31 + f.GetHashCode();
         return hash;
       }
     }

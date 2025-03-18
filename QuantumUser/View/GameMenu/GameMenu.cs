@@ -25,7 +25,7 @@ public class GameMenu : MonoBehaviour
         _canvas = transform.Find("MainCanvas").GetComponent<Canvas>();
         _tabList = transform.Find("MainCanvas").Find("MainPanel").Find("TabList").gameObject;
         
-        QuantumEvent.Subscribe(listener: this, handler: (EventGameFinishLoading e) => PopulateMoveList());
+        QuantumEvent.Subscribe(listener: this, handler: (EventGameFinishLoading e) => PopulateMoveList(e.f));
 
     }
 
@@ -69,10 +69,25 @@ public class GameMenu : MonoBehaviour
         transform.Find("MainCanvas").Find("MainPanel").Find("ContentPanel").Find("CurrentTabTitle").GetComponent<TextMeshProUGUI>().text = tab.TabName;
     }
 
-    private void PopulateMoveList()
+    private void PopulateMoveList(Frame f)
     {
+        
         int playerId = 0; //todo
         
+        if (FsmLoader.FSMs[Util.GetPlayer(f, playerId)] is not PlayerFSM fsm)
+        {
+            Debug.LogError("Tried to PopulateMoveList from a non-Player FSM");
+            return;
+        }
+
+        foreach (var move in fsm.MoveList)
+        {
+            var obj = Instantiate(MoveListEntryPrefab,
+                transform.Find("MainCanvas").Find("MainPanel").Find("ContentPanel").Find("CurrentTabContent")
+                    .Find("MoveList").Find("ScrollContent"));
+            
+            obj.GetComponent<MoveListEntry>().UpdateActionConfig(move, fsm);
+        }
         
     }
 }

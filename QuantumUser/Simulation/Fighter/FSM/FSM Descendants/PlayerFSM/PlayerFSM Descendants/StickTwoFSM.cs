@@ -2134,7 +2134,10 @@ namespace Quantum
                 JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState._5M
+                State = StickTwoState._5M,
+                
+                Name = "Standing medium",
+                AnimationDisplayFrameIndex = 11
             };
             
             ConfigureAction(this, _5M);
@@ -2151,7 +2154,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 2,
                 RawOk = true,
-                State = StickTwoState._2M
+                State = StickTwoState._2M,
+                
+                Name = "Crouching medium",
+                AnimationDisplayFrameIndex = 11
             };
             
             ConfigureAction(this, _2M);
@@ -2171,7 +2177,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 1,
                 RawOk = true,
-                State = StickTwoState._2H
+                State = StickTwoState._2H,
+                
+                Name = "Crouching heavy",
+                AnimationDisplayFrameIndex = 17
             };
             
             ConfigureAction(this, _2H);
@@ -2181,7 +2190,9 @@ namespace Quantum
             {
                 Aerial = false,
                 State = StickTwoState.ForwardThrowCutscene,
-                IsCutscene = true
+                IsCutscene = true,
+                
+                Name = "Forward throw"
             };
             
             ConfigureAction(this, frontThrow);
@@ -2190,7 +2201,9 @@ namespace Quantum
             {
                 Aerial = false,
                 State = StickTwoState.BackThrowCutscene,
-                IsCutscene = true
+                IsCutscene = true,
+                
+                Name = "Backward throw"
             };
             
             ConfigureAction(this, backThrow);
@@ -2207,7 +2220,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 1,
                 RawOk = true,
-                State = StickTwoState.Fireball
+                State = StickTwoState.Fireball,
+                
+                Name = "Breath",
+                AnimationDisplayFrameIndex = 20
             };
             
             ConfigureAction(this, fireball);
@@ -2227,7 +2243,9 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState._5L
+                State = StickTwoState._5L,
+                
+                Name = "Standing light"
             };
             
             ConfigureAction(this, _5L);
@@ -2247,7 +2265,9 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 1,
                 RawOk = true,
-                State = StickTwoState._2L
+                State = StickTwoState._2L,
+                
+                Name = "Crouching light"
             };
             
             ConfigureAction(this, _2L);
@@ -2270,7 +2290,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState._5H
+                State = StickTwoState._5H,
+                
+                Name = "Standing heavy",
+                AnimationDisplayFrameIndex = 13
             };
             
             ConfigureAction(this, _5H);
@@ -2288,7 +2311,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 3,
                 RawOk = true,
-                State = StickTwoState._4H
+                State = StickTwoState._4H,
+                
+                Name = "Back heavy",
+                AnimationDisplayFrameIndex = 7
             };
             
             ConfigureAction(this, _4H);
@@ -2308,7 +2334,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 3,
                 RawOk = true,
-                State = StickTwoState.Rekka1
+                State = StickTwoState.Rekka1,
+                
+                Name = "Ki Dipper",
+                AnimationDisplayFrameIndex = 20
             };
             
             ConfigureAction(this, Rekka1);
@@ -2329,7 +2358,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 3,
                 RawOk = false,
-                State = StickTwoState.Rekka2A
+                State = StickTwoState.Rekka2A,
+                
+                Name = "Falling Water",
+                AnimationDisplayFrameIndex = 20
             };
             
             ConfigureAction(this, Rekka2A);
@@ -2347,7 +2379,10 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 3,
                 RawOk = false,
-                State = StickTwoState.Rekka2B
+                State = StickTwoState.Rekka2B,
+                
+                Name = "Resolution",
+                AnimationDisplayFrameIndex = 11
             };
             
             ConfigureAction(this, Rekka2B);
@@ -2366,7 +2401,9 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 5,
                 RawOk = true,
-                State = StickTwoState.DP
+                State = StickTwoState.DP,
+                
+                Name = "Rising Water"
             };
             
             ConfigureAction(this, dp);
