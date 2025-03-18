@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 3972614546582390722}
   - component: {fileID: 5567488090625616444}
   - component: {fileID: 1662081993998441011}
+  - component: {fileID: 4268439377070569898}
   m_Layer: 5
   m_Name: MenuTabButton
   m_TagString: Untagged
@@ -255,3 +256,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4268439377070569898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4688503006458917190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d157b2fa71e6f4898890e8eb1373f433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameMenuTab: {fileID: 0}
