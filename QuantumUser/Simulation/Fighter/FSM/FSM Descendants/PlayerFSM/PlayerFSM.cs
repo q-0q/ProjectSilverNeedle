@@ -692,8 +692,11 @@ namespace Quantum
             public bool Aerial = false;
             public int InputWeight = 0;
             public bool IsCutscene = false;
+
+            public string Name = "No name provided";
             public string FlavorText = "No flavortext provided, overwrite with \"\" to omit";
             public string Description = "No description provided, overwrite with \"\" to omit";
+            public int AnimationDisplayFrameIndex = 5;
             public int MinFrameAdvantage;
             public  int MaxFrameAdvantage;
             
