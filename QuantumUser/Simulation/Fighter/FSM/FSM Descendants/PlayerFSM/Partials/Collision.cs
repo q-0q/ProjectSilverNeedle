@@ -81,8 +81,8 @@ namespace Quantum
             if (isBlocking)
             {
                 var stun = Fsm.IsInState(PlayerState.Air)
-                    ? Hit.AttackLevelAirBlockstun[hitboxData.level]
-                    : Hit.AttackLevelGroundBlockstun[hitboxData.level];
+                    ? Hit.AttackLevelAirBlockstun[hitboxData.level] + hitboxData.bonusBlockStun
+                    : Hit.AttackLevelGroundBlockstun[hitboxData.level] + hitboxData.bonusBlockStun;
                 var stop = Hit.AttackLevelHitstop[hitboxData.level];
                 InvokeStun(f, stun);
                 HitstopSystem.EnqueueHitstop(f, stop);
@@ -144,8 +144,8 @@ namespace Quantum
             
             
             var stun = Fsm.IsInState(PlayerState.Crouch)
-                ? Hit.AttackLevelCrouchHitstun[hitboxData.level]
-                : Hit.AttackLevelStandHitstun[hitboxData.level];
+                ? Hit.AttackLevelCrouchHitstun[hitboxData.level] + hitboxData.bonusHitStun
+                : Hit.AttackLevelStandHitstun[hitboxData.level] + hitboxData.bonusHitStun;
             
             var stop = Hit.AttackLevelHitstop[hitboxData.level];
             

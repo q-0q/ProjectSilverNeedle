@@ -693,12 +693,24 @@ namespace Quantum
             public int InputWeight = 0;
             public bool IsCutscene = false;
 
+            // non-authoritative fields for MoveList rendering
             public string Name = "No name provided";
-            public string FlavorText = "No flavortext provided, overwrite with \"\" to omit";
-            public string Description = "No description provided, overwrite with \"\" to omit";
+            public string FlavorText = "";
+            public string Description = "";
             public int AnimationDisplayFrameIndex = 5;
-            public int MinFrameAdvantage;
-            public  int MaxFrameAdvantage;
+            public ActionConfig WhileIn = null;
+            
+            public int MinStandHitFrameAdvantage;
+            public int MaxStandHitFrameAdvantage;
+            
+            public int MinCrouchHitFrameAdvantage;
+            public int MaxCrouchHitFrameAdvantage;
+            
+            public int MinGroundBlockFrameAdvantage;
+            public int MaxGroundBlockFrameAdvantage;
+            
+            public int MinAirBlockFrameAdvantage;
+            public int MaxAirBlockFrameAdvantage;
             
         }
 
@@ -740,16 +752,45 @@ namespace Quantum
             
             // Compute frame advantage
             MoveList.Add(actionConfig);
-            // var hitSectionGroup = fsm.StateMapConfig.HitSectionGroup.Lookup(actionConfig.State, fsm);
-            // Hit prevHit = null;
-            // for (int i = 0; i < hitSectionGroup.Duration(); i++)
-            // {
-            //     Hit currentHit = hitSectionGroup.GetItemFromIndex(i);
-            //     if (prevHit is null)
-            //     {
-            //         actionConfig.MinFrameAdvantage = 
-            //     }
-            // }
+            var sectionGroup = fsm.StateMapConfig.HitSectionGroup;
+            if (sectionGroup is null) return;
+            var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
+            Hit prevHit = null;
+            int d = fsm.StateMapConfig.Duration.Lookup(actionConfig.State, fsm);
+
+            for (int i = 0; i < hitSectionGroup.Duration(); i++)
+            {
+                Hit currentHit = hitSectionGroup.GetItemFromIndex(i); ;
+                if (prevHit is null && currentHit is not null)
+                {
+                    if (actionConfig.State == StickTwoFSM.StickTwoState._4H)
+                    {
+                        var b = Hit.AttackLevelGroundBlockstun[currentHit.Level] + currentHit.BonusBlockstun;
+                        Debug.Log("D: " + d + ", i: " + i + ", b: " + b);
+                    }
+                    actionConfig.MinStandHitFrameAdvantage =
+                        (Hit.AttackLevelStandHitstun[currentHit.Level] + currentHit.BonusHitstun) - (d - i);
+                    actionConfig.MinCrouchHitFrameAdvantage =
+                        (Hit.AttackLevelCrouchHitstun[currentHit.Level] + currentHit.BonusHitstun) - (d - i);
+                    actionConfig.MinGroundBlockFrameAdvantage =
+                        (Hit.AttackLevelGroundBlockstun[currentHit.Level] + currentHit.BonusBlockstun) - (d - i);
+                    actionConfig.MinAirBlockFrameAdvantage =
+                        (Hit.AttackLevelAirBlockstun[currentHit.Level] + currentHit.BonusBlockstun) - (d - i);
+                }
+                if (currentHit is null && prevHit is not null)
+                {
+                    actionConfig.MaxStandHitFrameAdvantage =
+                        (Hit.AttackLevelStandHitstun[prevHit.Level] + prevHit.BonusHitstun) - (d - i);
+                    actionConfig.MaxCrouchHitFrameAdvantage =
+                        (Hit.AttackLevelCrouchHitstun[prevHit.Level] + prevHit.BonusHitstun) - (d - i);
+                    actionConfig.MaxGroundBlockFrameAdvantage =
+                        (Hit.AttackLevelGroundBlockstun[prevHit.Level] + prevHit.BonusBlockstun) - (d - i);
+                    actionConfig.MaxAirBlockFrameAdvantage =
+                        (Hit.AttackLevelAirBlockstun[prevHit.Level] + prevHit.BonusBlockstun) - (d - i);
+                }
+
+                prevHit = currentHit;
+            }
 
         }
         

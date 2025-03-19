@@ -43,7 +43,6 @@ public class GameMenu : MonoBehaviour
         } 
         
         UpdateCurrentTab(_defaultTab);
-        _canvas.gameObject.SetActive(false);
     }
 
     void Update()

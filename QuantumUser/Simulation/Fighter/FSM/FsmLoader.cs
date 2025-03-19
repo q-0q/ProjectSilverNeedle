@@ -26,13 +26,13 @@ namespace Quantum
             
             // Setup players
             var p0 = new StickTwoFSM();
-            p0.SetupMachine();
             p0.SetupStateMaps();
+            p0.SetupMachine();
             p0.EntityRef = Util.GetPlayer(f, 0);
             
             var p1 = new StickTwoFSM();
-            p1.SetupMachine();
             p1.SetupStateMaps();
+            p1.SetupMachine();
             p1.EntityRef = Util.GetPlayer(f, 1);
             
             FSMs = new Dictionary<EntityRef, FSM>()
@@ -93,8 +93,8 @@ namespace Quantum
 
                     summonFsm.playerOwnerEntity = Util.GetPlayer(f, ownerPlayerId);
                     summonFsm.EntityRef = summonEntity;
-                    summonFsm.SetupMachine();
                     summonFsm.SetupStateMaps();
+                    summonFsm.SetupMachine();
                     FSMs[summonEntity] = summonFsm;
                     summonPool.EntityRefs.Add(summonEntity);
                     Debug.Log("Successfully instantiated player " + ownerPlayerId + " " + summonPool.SummonFSMType + " [" + i + "]");

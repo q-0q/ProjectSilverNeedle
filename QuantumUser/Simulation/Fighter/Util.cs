@@ -203,11 +203,6 @@ namespace Quantum
             var sprites = Resources.LoadAll<Sprite>(fullPath);  // Assuming you are working with Sprite assets
     
             // Return the count of loaded sprites (this represents the number of PNG files)
-            if (path == 0)
-            {
-                Debug.Log(fullPath);
-                Debug.Log(sprites.Length);
-            }
             return sprites.Length;
         }
         

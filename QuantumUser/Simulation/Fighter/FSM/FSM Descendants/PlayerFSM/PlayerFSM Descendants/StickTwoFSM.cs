@@ -1532,7 +1532,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 3,
-                            BonusBlockstun = 6,
+                            // BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.09"),
                             TrajectoryHeight = FP.FromString("0.5"),
@@ -1664,7 +1664,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 3,
-                            BonusBlockstun = 6,
+                            // BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.6"),
                             TrajectoryHeight = FP.FromString("2.5"),
@@ -1803,7 +1803,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 3,
-                            BonusBlockstun = 6,
+                            // BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.6"),
                             TrajectoryHeight = FP.FromString("4.25"),
@@ -1934,7 +1934,7 @@ namespace Quantum
                             Level = 2,
                             GravityScaling = FP.FromString("0.925"),
                             GravityProration = FP.FromString("1.6"),
-                            TrajectoryHeight = FP.FromString("2.5"),
+                            TrajectoryHeight = FP.FromString("3.25"),
                             TrajectoryXVelocity = FP.FromString("10"),
                             BlockPushback = FP.FromString("3"),
                             HitPushback = 3,
@@ -2122,6 +2122,55 @@ namespace Quantum
         public override void SetupMachine()
         {
             base.SetupMachine();
+            
+            ActionConfig _5L = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.L,
+                JumpCancellable = false,
+                InputWeight = 0,
+                RawOk = true,
+                State = StickTwoState._5L,
+                
+                Name = "Standing light",
+                Description = "A fast jab, good at breaking out of pressure."
+            };
+            
+            ConfigureAction(this, _5L);
+
+
+
+            
+            ActionConfig _2L = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 2,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.L,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                State = StickTwoState._2L,
+                
+                Name = "Crouching light",
+                Description = "A fast jab, good at breaking out of pressure."
+            };
+            
+            ConfigureAction(this, _2L);
+            MakeActionCancellable(this, _5L, _5L);
+            MakeActionCancellable(this, _5L, _2L);
+            MakeActionCancellable(this, _2L, _5L);
+            MakeActionCancellable(this, _2L, _2L);
+
+            
             ActionConfig _5M = new ActionConfig()
             {
                 Aerial = false,
@@ -2137,7 +2186,8 @@ namespace Quantum
                 State = StickTwoState._5M,
                 
                 Name = "Standing medium",
-                AnimationDisplayFrameIndex = 11
+                AnimationDisplayFrameIndex = 11,
+                Description = "A quick mid-ranged poke."
             };
             
             ConfigureAction(this, _5M);
@@ -2157,12 +2207,57 @@ namespace Quantum
                 State = StickTwoState._2M,
                 
                 Name = "Crouching medium",
+                Description = "A quick, low, mid-ranged poke.",
                 AnimationDisplayFrameIndex = 11
             };
             
             ConfigureAction(this, _2M);
             
             MakeActionCancellable(this, _5M, _2M);
+            
+            
+            ActionConfig _5H = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.H,
+                JumpCancellable = false,
+                InputWeight = 0,
+                RawOk = true,
+                State = StickTwoState._5H,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, _5H);
+            
+            ActionConfig _4H = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 4,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.H,
+                JumpCancellable = false,
+                InputWeight = 3,
+                RawOk = true,
+                State = StickTwoState._4H,
+                
+                Name = "Back heavy",
+                Description = "A potent close-ranged elbow, great for starting offense and stringing together combos.",
+                AnimationDisplayFrameIndex = 7
+            };
+            ConfigureAction(this, _4H);
+            MakeActionCancellable(this, _4H, _5H);
+
             
             
             ActionConfig _2H = new ActionConfig()
@@ -2180,12 +2275,14 @@ namespace Quantum
                 State = StickTwoState._2H,
                 
                 Name = "Crouching heavy",
+                Description = "A powerful, upwards kick that launches grounded opponents into the air.",
                 AnimationDisplayFrameIndex = 17
             };
             
             ConfigureAction(this, _2H);
+            MakeActionCancellable(this, _4H, _2H);
 
-
+            
             ActionConfig frontThrow = new ActionConfig()
             {
                 Aerial = false,
@@ -2209,6 +2306,11 @@ namespace Quantum
             ConfigureAction(this, backThrow);
             
             
+
+
+
+            
+
             ActionConfig fireball = new ActionConfig()
             {
                 Aerial = false,
@@ -2218,115 +2320,28 @@ namespace Quantum
                 GroundOk = true,
                 InputType = InputSystem.InputType.S,
                 JumpCancellable = false,
-                InputWeight = 1,
+                InputWeight = 4,
                 RawOk = true,
                 State = StickTwoState.Fireball,
                 
                 Name = "Breath",
+                Description = "A concentrated ball of ki that travels forward, great for controlling space and keeping opponents out.",
+                // FlavorText = "Few monks in the Temple's history have attained the ability to manifest their ki into tangible power.",
                 AnimationDisplayFrameIndex = 20
             };
             
             ConfigureAction(this, fireball);
             
             MakeActionCancellable(this, _5M, fireball);
-            
-            
-            ActionConfig _5L = new ActionConfig()
-            {
-                Aerial = false,
-                AirOk = false,
-                CommandDirection = 5,
-                Crouching = false,
-                DashCancellable = false,
-                GroundOk = true,
-                InputType = InputSystem.InputType.L,
-                JumpCancellable = false,
-                InputWeight = 0,
-                RawOk = true,
-                State = StickTwoState._5L,
-                
-                Name = "Standing light"
-            };
-            
-            ConfigureAction(this, _5L);
-
-
-
-            
-            ActionConfig _2L = new ActionConfig()
-            {
-                Aerial = false,
-                AirOk = false,
-                CommandDirection = 2,
-                Crouching = false,
-                DashCancellable = false,
-                GroundOk = true,
-                InputType = InputSystem.InputType.L,
-                JumpCancellable = false,
-                InputWeight = 1,
-                RawOk = true,
-                State = StickTwoState._2L,
-                
-                Name = "Crouching light"
-            };
-            
-            ConfigureAction(this, _2L);
-            MakeActionCancellable(this, _5L, _5L);
-            MakeActionCancellable(this, _5L, _2L);
-            MakeActionCancellable(this, _2L, _5L);
-            MakeActionCancellable(this, _2L, _2L);
-
-
-            
-            ActionConfig _5H = new ActionConfig()
-            {
-                Aerial = false,
-                AirOk = false,
-                CommandDirection = 5,
-                Crouching = false,
-                DashCancellable = false,
-                GroundOk = true,
-                InputType = InputSystem.InputType.H,
-                JumpCancellable = false,
-                InputWeight = 0,
-                RawOk = true,
-                State = StickTwoState._5H,
-                
-                Name = "Standing heavy",
-                AnimationDisplayFrameIndex = 13
-            };
-            
-            ConfigureAction(this, _5H);
             MakeActionCancellable(this, _5H, fireball);
-            
-            ActionConfig _4H = new ActionConfig()
-            {
-                Aerial = false,
-                AirOk = false,
-                CommandDirection = 4,
-                Crouching = false,
-                DashCancellable = false,
-                GroundOk = true,
-                InputType = InputSystem.InputType.H,
-                JumpCancellable = false,
-                InputWeight = 3,
-                RawOk = true,
-                State = StickTwoState._4H,
-                
-                Name = "Back heavy",
-                AnimationDisplayFrameIndex = 7
-            };
-            
-            ConfigureAction(this, _4H);
             MakeActionCancellable(this, _4H, fireball);
-            MakeActionCancellable(this, _4H, _5H);
-            MakeActionCancellable(this, _4H, _2H);
 
+            
             ActionConfig Rekka1 = new ActionConfig()
             {
                 Aerial = false,
                 AirOk = false,
-                CommandDirection = 6,
+                CommandDirection = 5,
                 Crouching = true,
                 DashCancellable = false,
                 GroundOk = true,
@@ -2337,6 +2352,8 @@ namespace Quantum
                 State = StickTwoState.Rekka1,
                 
                 Name = "Ki Dipper",
+                Description = "A striking, projectile-invulnerable lunge that can be chained into 2 follow-ups. This move can be cancelled early and cancelled on whiff.",
+                FlavorText = "\"Flesh and soul are water.\" - Founder Win, 1st Histories of the Dridegion",
                 AnimationDisplayFrameIndex = 20
             };
             
@@ -2361,7 +2378,10 @@ namespace Quantum
                 State = StickTwoState.Rekka2A,
                 
                 Name = "Falling Water",
-                AnimationDisplayFrameIndex = 20
+                Description = "A teleporting strike that must be blocked standing. It ground-bounces opponents into the air.",
+                // FlavorText = "Snap.",
+                AnimationDisplayFrameIndex = 20,
+                WhileIn = Rekka1
             };
             
             ConfigureAction(this, Rekka2A);
@@ -2377,12 +2397,15 @@ namespace Quantum
                 GroundOk = true,
                 InputType = InputSystem.InputType.S,
                 JumpCancellable = false,
-                InputWeight = 3,
+                InputWeight = 5,
                 RawOk = false,
                 State = StickTwoState.Rekka2B,
                 
                 Name = "Resolution",
-                AnimationDisplayFrameIndex = 11
+                Description = "A fast, long range kick, great for ending pressure sequences safely.",
+                FlavorText = "Frost snaps the verdant fields.",
+                AnimationDisplayFrameIndex = 11,
+                WhileIn = Rekka1
             };
             
             ConfigureAction(this, Rekka2B);
@@ -2402,8 +2425,8 @@ namespace Quantum
                 InputWeight = 5,
                 RawOk = true,
                 State = StickTwoState.DP,
-                
-                Name = "Rising Water"
+                Description = "A rising multi-hit attack that is invincible on startup, but leaves you highly exposed when blocked. Great as a defensive option.",
+                Name = "Fountain"
             };
             
             ConfigureAction(this, dp);
