@@ -16,6 +16,7 @@ public class GameMenu : MonoBehaviour
     private GameMenuTab _currentTab;
     public GameObject MoveListEntryPrefab;
 
+    private bool _enqueueDisabled = false;
     
     // Start is called before the first frame update
     private void Awake()
@@ -47,7 +48,13 @@ public class GameMenu : MonoBehaviour
 
     void Update()
     {
+        if (_enqueueDisabled)
+        {
+            _canvas.gameObject.SetActive(false);
+            _enqueueDisabled = false;
+        }
         if (Input.GetKeyDown(KeyCode.Escape)) _canvas.gameObject.SetActive(!_canvas.gameObject.activeInHierarchy);
+        
     }
     
     private void OnEnable()
@@ -87,6 +94,9 @@ public class GameMenu : MonoBehaviour
             
             obj.GetComponent<MoveListEntry>().UpdateActionConfig(move, fsm);
         }
-        
+
+        _enqueueDisabled = true;
+
+
     }
 }
