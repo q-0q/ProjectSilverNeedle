@@ -55,6 +55,8 @@ namespace Quantum
             public static int Air;
             public static int Any;
             public static int Action;
+            public static int AirSpecial;
+            public static int GroundSpecial;
             public static int Stand;
             public static int Crouch;
             public static int Block;
@@ -388,6 +390,12 @@ namespace Quantum
             machine.Configure(PlayerState.CutsceneReactor)
                 .SubstateOf(PlayerState.DirectionLocked)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
+
+            machine.Configure(PlayerState.AirSpecial)
+                .SubstateOf(PlayerState.Action);
+            
+            machine.Configure(PlayerState.GroundSpecial)
+                .SubstateOf(PlayerState.Action);
             
             machine.Assume(PlayerState.StandActionable);
         }
@@ -685,6 +693,8 @@ namespace Quantum
             public int CommandDirection = 5;
             public bool JumpCancellable = false;
             public bool DashCancellable = false;
+            public bool SpecialCancellable = true;
+            public bool IsSpecial = false;
             public bool GroundOk = true;
             public bool AirOk = false;
             public bool RawOk = true;
@@ -719,7 +729,7 @@ namespace Quantum
             fsm.Fsm.Configure(actionConfig.State)
                 .SubstateOf(actionConfig.Crouching ? PlayerFSM.PlayerState.Crouch : PlayerFSM.PlayerState.Stand)
                 .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirAction : PlayerFSM.PlayerState.GroundAction);
-
+            
             if (actionConfig.IsCutscene) return;
 
             if (actionConfig.RawOk)
@@ -747,6 +757,14 @@ namespace Quantum
             {
                 fsm.Fsm.Configure(actionConfig.State)
                     .PermitIf(PlayerFSM.PlayerTrigger.Dash, PlayerFSM.PlayerState.Dash, Util.CanCancelNow);
+            }
+            
+
+
+            if (actionConfig.IsSpecial)
+            {            
+                fsm.Fsm.Configure(actionConfig.State)
+                    .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirSpecial : PlayerFSM.PlayerState.GroundSpecial);
             }
             
             
@@ -815,11 +833,17 @@ namespace Quantum
                     .AllowReentry(PlayerFSM.Trigger.ButtonAndDirection);
             }
             
+            Func<TriggerParams,bool> clause = param =>
+                (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param));
+            PermitActionCancelIf(fsm, source, destination, clause);
+        }
+
+        private static void PermitActionCancelIf(PlayerFSM fsm, ActionConfig source, ActionConfig destination, Func<TriggerParams,bool> clause)
+        {
             fsm.Fsm.Configure(source.State)
                 .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
                     destination.State,
-                    param =>
-                        (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)),
+                    clause,
                     destination.InputWeight);
         }
     }
