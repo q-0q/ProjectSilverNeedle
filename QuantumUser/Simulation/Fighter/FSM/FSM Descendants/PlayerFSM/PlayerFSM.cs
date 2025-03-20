@@ -93,6 +93,7 @@ namespace Quantum
         public Trajectory BackwardJumpTrajectory;
 
         public List<ActionConfig> NormalMoveList;
+        public List<ActionConfig> CommandNormalMoveList;
         public List<ActionConfig> SpecialMoveList;
         public List<ActionConfig> SuperMoveList;
 
@@ -102,6 +103,7 @@ namespace Quantum
             int currentState = PlayerState.StandActionable;
             Fsm = new Machine<int, int>(currentState);
             NormalMoveList = new List<ActionConfig>();
+            CommandNormalMoveList = new List<ActionConfig>();
             SpecialMoveList = new List<ActionConfig>();
             SuperMoveList = new List<ActionConfig>();
         }
@@ -776,7 +778,10 @@ namespace Quantum
             }
             else
             {
-                NormalMoveList.Add(actionConfig);
+                if (actionConfig.CommandDirection is 5 or 2)
+                    NormalMoveList.Add(actionConfig);
+                else
+                    CommandNormalMoveList.Add(actionConfig);
             }
             
             
