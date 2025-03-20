@@ -833,17 +833,11 @@ namespace Quantum
                     .AllowReentry(PlayerFSM.Trigger.ButtonAndDirection);
             }
             
-            Func<TriggerParams,bool> clause = param =>
-                (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param));
-            PermitActionCancelIf(fsm, source, destination, clause);
-        }
-
-        private static void PermitActionCancelIf(PlayerFSM fsm, ActionConfig source, ActionConfig destination, Func<TriggerParams,bool> clause)
-        {
             fsm.Fsm.Configure(source.State)
                 .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
                     destination.State,
-                    clause,
+                    param =>
+                        (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)),
                     destination.InputWeight);
         }
     }
