@@ -86,7 +86,7 @@ public class GameMenu : MonoBehaviour
             return;
         }
 
-        foreach (var move in fsm.MoveList)
+        foreach (var move in fsm.NormalMoveList)
         {
             var obj = Instantiate(MoveListEntryPrefab,
                 transform.Find("MainCanvas").Find("MainPanel").Find("ContentPanel").Find("CurrentTabContent")

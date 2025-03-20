@@ -92,14 +92,18 @@ namespace Quantum
         public Trajectory ForwardJumpTrajectory;
         public Trajectory BackwardJumpTrajectory;
 
-        public List<ActionConfig> MoveList;
+        public List<ActionConfig> NormalMoveList;
+        public List<ActionConfig> SpecialMoveList;
+        public List<ActionConfig> SuperMoveList;
 
 
         public PlayerFSM()
         {
             int currentState = PlayerState.StandActionable;
             Fsm = new Machine<int, int>(currentState);
-            MoveList = new List<ActionConfig>();
+            NormalMoveList = new List<ActionConfig>();
+            SpecialMoveList = new List<ActionConfig>();
+            SuperMoveList = new List<ActionConfig>();
         }
 
 
@@ -764,10 +768,19 @@ namespace Quantum
                 fsm.Fsm.Configure(actionConfig.State)
                     .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirSpecialCancellable : PlayerFSM.PlayerState.GroundSpecialCancellable);
             }
+
+            if (actionConfig.IsSpecial)
+            {
+                MakeSpecialAction(fsm, actionConfig);
+                SpecialMoveList.Add(actionConfig);
+            }
+            else
+            {
+                NormalMoveList.Add(actionConfig);
+            }
             
             
             // Compute frame advantage
-            MoveList.Add(actionConfig);
             var sectionGroup = fsm.StateMapConfig.HitSectionGroup;
             if (sectionGroup is null) return;
             var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
@@ -841,12 +854,29 @@ namespace Quantum
 
         protected void MakeSpecialAction(PlayerFSM fsm, ActionConfig actionConfig)
         {
-            fsm.Fsm.Configure(source.State)
-                .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
-                    destination.State,
-                    param =>
-                        (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)),
-                    destination.InputWeight);
+            if (!actionConfig.RawOk) return;
+
+            if (actionConfig.GroundOk)
+            {
+                fsm.Fsm.Configure(PlayerState.GroundSpecialCancellable)
+                    .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
+                        actionConfig.State,
+                        param =>
+                            (Util.CanCancelNow(param) && Util.DoesInputMatch(actionConfig, param)),
+                        actionConfig.InputWeight);
+            }
+            
+            if (actionConfig.AirOk)
+            {
+                fsm.Fsm.Configure(PlayerState.AirSpecialCancellable)
+                    .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
+                        actionConfig.State,
+                        param =>
+                            (Util.CanCancelNow(param) && Util.DoesInputMatch(actionConfig, param)),
+                        actionConfig.InputWeight);
+            }
+            
+            
         }
     }
 }

@@ -2323,6 +2323,8 @@ namespace Quantum
                 InputWeight = 4,
                 RawOk = true,
                 State = StickTwoState.Fireball,
+                IsSpecial = true,
+                SpecialCancellable = false,
                 
                 Name = "Breath",
                 Description = "A concentrated ball of ki that travels forward, great for controlling space and keeping opponents out.",
@@ -2332,9 +2334,9 @@ namespace Quantum
             
             ConfigureAction(this, fireball);
             
-            MakeActionCancellable(this, _5M, fireball);
-            MakeActionCancellable(this, _5H, fireball);
-            MakeActionCancellable(this, _4H, fireball);
+            // MakeActionCancellable(this, _5M, fireball);
+            // MakeActionCancellable(this, _5H, fireball);
+            // MakeActionCancellable(this, _4H, fireball);
 
             
             ActionConfig Rekka1 = new ActionConfig()
@@ -2350,6 +2352,8 @@ namespace Quantum
                 InputWeight = 3,
                 RawOk = true,
                 State = StickTwoState.Rekka1,
+                IsSpecial = true,
+                SpecialCancellable = false,
                 
                 Name = "Ki Dipper",
                 Description = "A striking, projectile-invulnerable lunge that can be chained into 2 follow-ups. This move can be cancelled early and cancelled on whiff.",
@@ -2358,10 +2362,10 @@ namespace Quantum
             };
             
             ConfigureAction(this, Rekka1);
-            MakeActionCancellable(this, _4H, Rekka1);
-            MakeActionCancellable(this, _5H, Rekka1);
-            MakeActionCancellable(this, _5M, Rekka1);
-            MakeActionCancellable(this, _2M, Rekka1);
+            // MakeActionCancellable(this, _4H, Rekka1);
+            // MakeActionCancellable(this, _5H, Rekka1);
+            // MakeActionCancellable(this, _5M, Rekka1);
+            // MakeActionCancellable(this, _2M, Rekka1);
             
             ActionConfig Rekka2A = new ActionConfig()
             {
@@ -2376,6 +2380,8 @@ namespace Quantum
                 InputWeight = 3,
                 RawOk = false,
                 State = StickTwoState.Rekka2A,
+                IsSpecial = true,
+                SpecialCancellable = false,
                 
                 Name = "Falling Water",
                 Description = "A teleporting strike that must be blocked standing. It ground-bounces opponents into the air.",
@@ -2400,6 +2406,8 @@ namespace Quantum
                 InputWeight = 5,
                 RawOk = false,
                 State = StickTwoState.Rekka2B,
+                IsSpecial = true,
+                SpecialCancellable = false,
                 
                 Name = "Resolution",
                 Description = "A fast, long range kick, great for ending pressure sequences safely.",
@@ -2425,15 +2433,18 @@ namespace Quantum
                 InputWeight = 5,
                 RawOk = true,
                 State = StickTwoState.DP,
+                IsSpecial = true,
+                SpecialCancellable = false,
+                
                 Description = "A rising multi-hit attack that is invincible on startup, but leaves you highly exposed when blocked. Great as a defensive option.",
                 Name = "Fountain"
             };
             
             ConfigureAction(this, dp);
-            MakeActionCancellable(this, _4H, dp);
-            MakeActionCancellable(this, _5H, dp);
-            MakeActionCancellable(this, _5M, dp);
-            MakeActionCancellable(this, _2M, dp);
+            // MakeActionCancellable(this, _4H, dp);
+            // MakeActionCancellable(this, _5H, dp);
+            // MakeActionCancellable(this, _5M, dp);
+            // MakeActionCancellable(this, _2M, dp);
             
 
         }
