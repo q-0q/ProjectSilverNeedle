@@ -9,6 +9,8 @@ using UnityEngine.UI;
 public class MoveListEntry : MonoBehaviour
 {
     private PlayerFSM.ActionConfig _actionConfig;
+    public GameObject MoveListTagPrefab;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -101,5 +103,10 @@ public class MoveListEntry : MonoBehaviour
         }
 
         return s_min + " - " + s_max + "\n";
+    }
+
+    private void AddTag()
+    {
+        
     }
 }
