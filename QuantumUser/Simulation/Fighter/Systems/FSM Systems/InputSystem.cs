@@ -394,6 +394,13 @@ namespace Quantum
                 : PlayerFSM.PlayerTrigger.ForwardThrow;
             
             fsm.Fsm.Fire(trigger, param);
+            
+            if (!fsm.Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor)) return;
+            var cutscene = Util.GetActiveCutscene(f, fsm.EntityRef);
+            if (!cutscene.Techable) return;
+            fsm.Fsm.Fire(FSM.Trigger.Tech, param);
+            f.Unsafe.TryGetPointer<CutsceneData>(fsm.EntityRef, out var cutsceneData);
+            FsmLoader.FSMs[cutsceneData->initiator].Fsm.Fire(FSM.Trigger.Tech, param);
         }
 
         public static void ClearBufferParams(TriggerParams? triggerParams)
