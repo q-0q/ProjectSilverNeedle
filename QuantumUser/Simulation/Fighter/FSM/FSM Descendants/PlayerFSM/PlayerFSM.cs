@@ -55,8 +55,8 @@ namespace Quantum
             public static int Air;
             public static int Any;
             public static int Action;
-            public static int AirSpecial;
-            public static int GroundSpecial;
+            public static int AirSpecialCancellable;
+            public static int GroundSpecialCancellable;
             public static int Stand;
             public static int Crouch;
             public static int Block;
@@ -391,10 +391,10 @@ namespace Quantum
                 .SubstateOf(PlayerState.DirectionLocked)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
 
-            machine.Configure(PlayerState.AirSpecial)
+            machine.Configure(PlayerState.AirSpecialCancellable)
                 .SubstateOf(PlayerState.Action);
             
-            machine.Configure(PlayerState.GroundSpecial)
+            machine.Configure(PlayerState.GroundSpecialCancellable)
                 .SubstateOf(PlayerState.Action);
             
             machine.Assume(PlayerState.StandActionable);
@@ -759,12 +759,10 @@ namespace Quantum
                     .PermitIf(PlayerFSM.PlayerTrigger.Dash, PlayerFSM.PlayerState.Dash, Util.CanCancelNow);
             }
             
-
-
-            if (actionConfig.IsSpecial)
+            if (actionConfig.SpecialCancellable)
             {            
                 fsm.Fsm.Configure(actionConfig.State)
-                    .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirSpecial : PlayerFSM.PlayerState.GroundSpecial);
+                    .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirSpecialCancellable : PlayerFSM.PlayerState.GroundSpecialCancellable);
             }
             
             
@@ -833,6 +831,16 @@ namespace Quantum
                     .AllowReentry(PlayerFSM.Trigger.ButtonAndDirection);
             }
             
+            fsm.Fsm.Configure(source.State)
+                .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
+                    destination.State,
+                    param =>
+                        (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)),
+                    destination.InputWeight);
+        }
+
+        protected void MakeSpecialAction(PlayerFSM fsm, ActionConfig actionConfig)
+        {
             fsm.Fsm.Configure(source.State)
                 .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
                     destination.State,
