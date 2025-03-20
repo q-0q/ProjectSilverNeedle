@@ -704,6 +704,7 @@ namespace Quantum
             {
                 InitiatorState = StickTwoState.ForwardThrowCutscene,
                 ReactorDuration = 33,
+                Techable = true,
                 ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
                 {
                     Sections = new List<Tuple<int, FPVector2>>()
@@ -722,6 +723,7 @@ namespace Quantum
             {
                 InitiatorState = StickTwoState.BackThrowCutscene,
                 ReactorDuration = 55,
+                Techable = true,
                 ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
                 {
                     Sections = new List<Tuple<int, FPVector2>>()

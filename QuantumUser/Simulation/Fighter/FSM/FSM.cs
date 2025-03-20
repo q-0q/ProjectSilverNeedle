@@ -24,6 +24,7 @@ namespace Quantum
             public static int Backdash;
             public static int ForwardThrow;
             public static int BackThrow;
+            public static int Tech;
             public static int ButtonAndDirection;
             public static int Jump;
         }

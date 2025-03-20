@@ -36,6 +36,7 @@ namespace Quantum
             public static int DeadFromGround;
             public static int ForwardThrow;
             public static int Backthrow;
+            public static int Tech;
             
 
             // Air
@@ -61,7 +62,9 @@ namespace Quantum
             public static int Crouch;
             public static int Block;
             public static int Throw;
+            public static int Cutscene;
             public static int CutsceneReactor;
+            // public static int TechableCutsceneReactor;
             public static int DirectionLocked;
         }
 
@@ -73,7 +76,6 @@ namespace Quantum
 
         public class PlayerTrigger : Trigger
         {
-
             public static int Land;
             public static int HitWall;
             public static int JumpCancel;
@@ -293,6 +295,9 @@ namespace Quantum
             machine.Configure(PlayerState.Backthrow)
                 .SubstateOf(PlayerState.Throw);
 
+            machine.Configure(PlayerState.Tech)
+                .SubstateOf(PlayerState.Ground);
+
             // Air
             machine.Configure(PlayerState.Air)
                 .Permit(PlayerTrigger.Land, PlayerState.Landsquat)
@@ -393,9 +398,13 @@ namespace Quantum
                 .SubstateOf(PlayerState.DirectionLocked);
             machine.Configure(PlayerState.Any);
 
+            machine.Configure(PlayerState.Cutscene)
+                .Permit(Trigger.Tech, PlayerState.Tech);
+            
             machine.Configure(PlayerState.CutsceneReactor)
                 .SubstateOf(PlayerState.DirectionLocked)
-                .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
+                .Permit(PlayerTrigger.Finish, PlayerState.AirHit)
+                .Permit(Trigger.Tech, PlayerState.Tech);;
 
             machine.Configure(PlayerState.AirSpecialCancellable)
                 .SubstateOf(PlayerState.Action);
@@ -420,6 +429,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = 50;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = 20;
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 20;
 
             
             
