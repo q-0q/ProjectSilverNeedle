@@ -464,14 +464,14 @@ MonoBehaviour:
     forceCounter:
       Value: 0
     doAction:
-      Value: 0
+      Value: 1
     doJump:
       Value: 0
     block:
       Value: 0
     dash:
       Value: 0
-    inputType: 2
+    inputType: 4
     commandDirection: 2
 --- !u!114 &147541240
 MonoBehaviour:
