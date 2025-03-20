@@ -296,7 +296,7 @@ namespace Quantum
                 .SubstateOf(PlayerState.Throw);
 
             machine.Configure(PlayerState.Tech)
-                .SubstateOf(PlayerState.Ground);
+                .SubstateOf(PlayerState.GroundAction);
 
             // Air
             machine.Configure(PlayerState.Air)
