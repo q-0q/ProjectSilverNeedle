@@ -14,7 +14,10 @@ public class GameMenu : MonoBehaviour
     private GameObject _tabList;
     private GameMenuTab _defaultTab;
     private GameMenuTab _currentTab;
+    
+    
     public GameObject MoveListEntryPrefab;
+    public GameObject MoveListSectionHeaderPrefab;
 
     private bool _enqueueDisabled = false;
     
@@ -25,7 +28,6 @@ public class GameMenu : MonoBehaviour
         _currentTab = null;
         _canvas = transform.Find("MainCanvas").GetComponent<Canvas>();
         _tabList = transform.Find("MainCanvas").Find("MainPanel").Find("TabList").gameObject;
-        
         QuantumEvent.Subscribe(listener: this, handler: (EventGameFinishLoading e) => PopulateMoveList(e.f));
 
     }
@@ -86,12 +88,35 @@ public class GameMenu : MonoBehaviour
             return;
         }
 
+        var scrollContent = transform.Find("MainCanvas").Find("MainPanel").Find("ContentPanel").Find("CurrentTabContent")
+            .Find("MoveList").Find("ScrollContent");
+
+        var normHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
+        normHeader.GetComponent<TextMeshProUGUI>().text = "Normal moves";
         foreach (var move in fsm.NormalMoveList)
         {
             var obj = Instantiate(MoveListEntryPrefab,
-                transform.Find("MainCanvas").Find("MainPanel").Find("ContentPanel").Find("CurrentTabContent")
-                    .Find("MoveList").Find("ScrollContent"));
-            
+                scrollContent);
+            obj.GetComponent<MoveListEntry>().UpdateActionConfig(move, fsm);
+        }
+        
+        var commandHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
+        commandHeader.GetComponent<TextMeshProUGUI>().text = "Command normals";
+        foreach (var move in fsm.CommandNormalMoveList)
+        {
+            var obj = Instantiate(MoveListEntryPrefab,
+                scrollContent);
+            obj.GetComponent<MoveListEntry>().UpdateActionConfig(move, fsm);
+        }
+
+        _enqueueDisabled = true;
+        
+        var specialHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
+        specialHeader.GetComponent<TextMeshProUGUI>().text = "Special moves";
+        foreach (var move in fsm.SpecialMoveList)
+        {
+            var obj = Instantiate(MoveListEntryPrefab,
+                scrollContent);
             obj.GetComponent<MoveListEntry>().UpdateActionConfig(move, fsm);
         }
 

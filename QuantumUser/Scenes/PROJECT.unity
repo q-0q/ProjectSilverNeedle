@@ -468,7 +468,7 @@ MonoBehaviour:
     doJump:
       Value: 0
     block:
-      Value: 1
+      Value: 0
     dash:
       Value: 0
     inputType: 2
@@ -1072,7 +1072,7 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 0
+    m_Top: 25
     m_Bottom: 0
   m_ChildAlignment: 1
   m_Spacing: 30.6
@@ -8558,6 +8558,8 @@ MonoBehaviour:
   MenuTabButtonPrefab: {fileID: 4688503006458917190, guid: b7095308d465c4ebda67406895632341,
     type: 3}
   MoveListEntryPrefab: {fileID: 3083172420348120969, guid: 515eda78ce0304eadbfdda34e4bdd566,
+    type: 3}
+  MoveListSectionHeaderPrefab: {fileID: 7981367476595574291, guid: 3d0e06df65b7c4a77a6f72f94734c045,
     type: 3}
 --- !u!1001 &2063300141
 PrefabInstance:
