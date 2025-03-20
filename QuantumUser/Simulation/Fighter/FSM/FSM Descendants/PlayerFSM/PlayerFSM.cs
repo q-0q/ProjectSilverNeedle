@@ -746,7 +746,12 @@ namespace Quantum
                 .SubstateOf(actionConfig.Crouching ? PlayerFSM.PlayerState.Crouch : PlayerFSM.PlayerState.Stand)
                 .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirAction : PlayerFSM.PlayerState.GroundAction);
             
-            if (actionConfig.IsCutscene) return;
+            if (actionConfig.IsCutscene)
+            {
+                fsm.Fsm.Configure(actionConfig.State)
+                    .SubstateOf(PlayerState.Cutscene);
+                return;
+            }
 
             if (actionConfig.RawOk)
             {
