@@ -41,8 +41,6 @@ namespace Quantum
                 return;
             }
             
-            Debug.Log(EntityRef + " unpooled a summon with owner " + fsm.playerOwnerEntity);
-            
             fsm.Fsm.Fire(SummonFSM.SummonTrigger.Summoned, new FrameParam() {f = f, EntityRef = summonToUnpool});
         }
         

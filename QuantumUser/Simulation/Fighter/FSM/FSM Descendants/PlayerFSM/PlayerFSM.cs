@@ -880,7 +880,6 @@ namespace Quantum
                     if (actionConfig.State == StickTwoFSM.StickTwoState._4H)
                     {
                         var b = Hit.AttackLevelGroundBlockstun[currentHit.Level] + currentHit.BonusBlockstun;
-                        Debug.Log("D: " + d + ", i: " + i + ", b: " + b);
                     }
                     actionConfig.MinStandHitFrameAdvantage =
                         (Hit.AttackLevelStandHitstun[currentHit.Level] + currentHit.BonusHitstun) - (d - i);
