@@ -63,6 +63,7 @@ namespace Quantum
             SoftKnockdown,
             DeadFromGround,
             DeadFromAir,
+            Jumpsquat,
             
             Landsquat,
             ThrowTech,
@@ -480,6 +481,15 @@ namespace Quantum
                 }
             };
             
+            var jumpsquatAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.Jumpsquat,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             Util.AutoSetupFromAnimationPath(standAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandActionable] = standAnimation;
 
@@ -546,6 +556,9 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(throwAnimation, this);
             StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Throw] = throwAnimation;
+            
+            Util.AutoSetupFromAnimationPath(jumpsquatAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = jumpsquatAnimation;
             
             // Basic movement
             

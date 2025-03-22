@@ -311,13 +311,11 @@ namespace Quantum
                 .Permit(PlayerTrigger.Land, PlayerState.Landsquat)
                 .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHit, _ => true, -1)
                 .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHit, _ => true, -1)
-                .OnEntryFrom(PlayerTrigger.Finish, InputSystem.ClearBufferParams)
                 .SubstateOf(PlayerState.Any);
 
             machine.Configure(PlayerState.AirActionable)
                 .Permit(PlayerTrigger.Dash, PlayerState.AirDash)
                 .Permit(PlayerTrigger.Backdash, PlayerState.AirBackdash)
-                .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
                 .AllowReentry(PlayerTrigger.Jump)
                 .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -1)
@@ -401,7 +399,11 @@ namespace Quantum
                 .SubstateOf(PlayerState.AirHit);
 
             machine.Configure(PlayerState.Jumpsquat)
-                .SubstateOf(PlayerState.Air)
+                .SubstateOf(PlayerState.Ground)
+                .OnEntryFrom(Trigger.Jump, InputSystem.ClearBufferParams)
+                .OnEntryFrom(PlayerTrigger.Finish, StartNewJump)
+                .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
+                .OnEntryFrom(PlayerTrigger.JumpCancel, StartNewJump)
                 .Permit(Trigger.Finish, PlayerState.AirActionable);
 
 
@@ -449,6 +451,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = 20;
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 23;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
 
             
             
@@ -750,6 +753,7 @@ namespace Quantum
             protectionData->virtualTimeSinceCrossupProtectionStart += virtualTimeIncrement;
             protectionData->virtualTimeSinceThrowProtectionStart += virtualTimeIncrement;
             
+            if (Fsm.IsInState(PlayerState.Jumpsquat)) return;
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
             trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
         }
