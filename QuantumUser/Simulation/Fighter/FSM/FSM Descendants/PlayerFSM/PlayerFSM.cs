@@ -454,14 +454,14 @@ namespace Quantum
                 }
             };
 
-            
 
+            var throwActiveFrames = 1;
             StateMapConfig.HitSectionGroup.SuperDictionary[PlayerFSM.PlayerState.ForwardThrow] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
                     new(ThrowStartupDuration, null),
-                    new(2, new Hit()
+                    new(throwActiveFrames, new Hit()
                     {
                         Type = Hit.HitType.Throw,
                         TriggerCutscene = PlayerFSM.CutsceneIndexes.ForwardThrow,
@@ -469,7 +469,7 @@ namespace Quantum
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                new(2, new CollisionBoxCollection()
+                                new(throwActiveFrames, new CollisionBoxCollection()
                                 {
                                     CollisionBoxes = new List<CollisionBox>()
                                     {
@@ -495,7 +495,7 @@ namespace Quantum
                 Sections = new List<Tuple<int, Hit>>()
                 {
                     new(ThrowStartupDuration, null),
-                    new(2, new Hit()
+                    new(throwActiveFrames, new Hit()
                     {
                         Type = Hit.HitType.Throw,
                         TriggerCutscene = PlayerFSM.CutsceneIndexes.BackwardThrow,
@@ -503,7 +503,7 @@ namespace Quantum
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                new(2, new CollisionBoxCollection()
+                                new(throwActiveFrames, new CollisionBoxCollection()
                                 {
                                     CollisionBoxes = new List<CollisionBox>()
                                     {
