@@ -321,16 +321,17 @@ namespace Quantum
         }
 
 
-
-        private bool CanTechThrow(TriggerParams? triggerParams)
+        private int GetFramesSinceThrowProtectionStart(Frame f)
         {
-            // TODO: need some kind of check to determine whether the kinematicreceiver state
-            // came from a throw, otherwise you can tech out of any kinematicreceiver situation
-            
-            if (triggerParams is null) return false;
-            var frameParam = (FrameParam)triggerParams;
-            return FramesInCurrentState(frameParam.f) < ThrowTechWindowSize;
+            f.Unsafe.TryGetPointer<ProtectionData>(EntityRef, out var protectionData);
+            return Util.FramesFromVirtualTime(protectionData->virtualTimeSinceThrowProtectionStart);
         }
         
+        private int GetFramesSinceCrossupProtectionStart(Frame f)
+        {
+            f.Unsafe.TryGetPointer<ProtectionData>(EntityRef, out var protectionData);
+            return Util.FramesFromVirtualTime(protectionData->virtualTimeSinceCrossupProtectionStart);
+        }
+
     }
 }

@@ -19,7 +19,14 @@ namespace Quantum
         public static void ForceUpdatePlayerDirection(Frame f, EntityRef entityRef)
         {
             f.Unsafe.TryGetPointer<PlayerDirection>(entityRef, out var playerDirection);
-            playerDirection->FacingRight = IsOnLeft(f, entityRef);
+
+            var isOnLeft = IsOnLeft(f, entityRef);
+            if (playerDirection->FacingRight != isOnLeft)
+            {
+                f.Unsafe.TryGetPointer<ProtectionData>(entityRef, out var protectionData);
+                protectionData->virtualTimeSinceCrossupProtectionStart = 0;
+            }
+            playerDirection->FacingRight = isOnLeft;
         }
     }
 }

@@ -253,17 +253,20 @@ namespace Quantum
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -3)
                 .SubstateOf(PlayerState.Ground)
                 .SubstateOf(PlayerState.Block);
+            
 
             machine.Configure(PlayerState.HardKnockdown)
                 .OnEntry(DoImpactVibrate)
                 .OnEntry(OnHKD)
                 .OnEntry(EndSlowdown)
+                .OnExitFrom(Trigger.Finish, StartThrowProtection)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
                 .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.SoftKnockdown)
                 .OnEntry(EndSlowdown)
+                .OnExitFrom(Trigger.Finish, StartThrowProtection)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
                 .SubstateOf(PlayerState.Ground);
 
@@ -398,7 +401,11 @@ namespace Quantum
 
             // General
             machine.Configure(PlayerState.Hit)
-                .SubstateOf(PlayerState.DirectionLocked);
+                .SubstateOf(PlayerState.DirectionLocked)
+                .OnExitFrom(Trigger.Finish, StartThrowProtection);
+            machine.Configure(PlayerState.Block)
+                .OnExitFrom(Trigger.Finish, StartThrowProtection);
+            
             machine.Configure(PlayerState.Any);
 
             machine.Configure(PlayerState.Cutscene)
@@ -645,6 +652,15 @@ namespace Quantum
             ForceUpdatePlayerDirection(param.f, EntityRef);
         }
 
+        protected void StartThrowProtection(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return;
+            var param = (FrameParam)triggerParams;
+            
+            param.f.Unsafe.TryGetPointer<ProtectionData>(param.EntityRef, out var protectionData);
+            protectionData->virtualTimeSinceThrowProtectionStart = 0;
+        }
+
         private void DoImpactVibrate(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;
@@ -724,6 +740,9 @@ namespace Quantum
             momentumData->framesInMomentum++;
             momentumData->virtualTimeInMomentum += virtualTimeIncrement;
             
+            f.Unsafe.TryGetPointer<ProtectionData>(entityRef, out var protectionData);
+            protectionData->virtualTimeSinceCrossupProtectionStart += virtualTimeIncrement;
+            protectionData->virtualTimeSinceThrowProtectionStart += virtualTimeIncrement;
             
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
             trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
