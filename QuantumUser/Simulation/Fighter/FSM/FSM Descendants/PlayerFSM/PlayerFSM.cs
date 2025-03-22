@@ -48,6 +48,7 @@ namespace Quantum
             public static int AirBlock;
             public static int AirHitPostGroundBounce;
             public static int AirHitPostWallBounce;
+            public static int Jumpsquat;
 
 
             // General
@@ -93,6 +94,7 @@ namespace Quantum
         public Trajectory UpwardJumpTrajectory;
         public Trajectory ForwardJumpTrajectory;
         public Trajectory BackwardJumpTrajectory;
+        public int JumpsquatDuration;
 
         public List<ActionConfig> NormalMoveList;
         public List<ActionConfig> CommandNormalMoveList;
@@ -144,7 +146,7 @@ namespace Quantum
                 .Permit(Trigger.Backward, PlayerState.WalkBackward)
                 .Permit(Trigger.Dash, PlayerState.Dash)
                 .Permit(Trigger.Backdash, PlayerState.Backdash)
-                .Permit(Trigger.Jump, PlayerState.AirActionable)
+                .Permit(Trigger.Jump, PlayerState.Jumpsquat)
                 .Permit(Trigger.ForwardThrow, PlayerState.ForwardThrow)
                 .Permit(Trigger.BackThrow, PlayerState.Backthrow)
                 // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
@@ -172,7 +174,7 @@ namespace Quantum
 
             machine.Configure(PlayerState.Dash)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
-                .Permit(PlayerTrigger.Jump, PlayerState.AirActionable)
+                .Permit(PlayerTrigger.Jump, PlayerState.Jumpsquat)
                 // .Permit(Trigger.Backward, State.WalkBackward)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
@@ -204,7 +206,7 @@ namespace Quantum
 
             machine.Configure(PlayerState.GroundAction)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
-                .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
+                .Permit(PlayerTrigger.JumpCancel, PlayerState.Jumpsquat)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
                 .SubstateOf(PlayerState.Action)
@@ -309,7 +311,7 @@ namespace Quantum
                 .Permit(PlayerTrigger.Land, PlayerState.Landsquat)
                 .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHit, _ => true, -1)
                 .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHit, _ => true, -1)
-                .OnEntryFrom(PlayerTrigger.Jump, InputSystem.ClearBufferParams)
+                .OnEntryFrom(PlayerTrigger.Finish, InputSystem.ClearBufferParams)
                 .SubstateOf(PlayerState.Any);
 
             machine.Configure(PlayerState.AirActionable)
@@ -397,6 +399,10 @@ namespace Quantum
             machine.Configure(PlayerState.AirHitPostWallBounce)
                 .OnEntry(OnWallBounce)
                 .SubstateOf(PlayerState.AirHit);
+
+            machine.Configure(PlayerState.Jumpsquat)
+                .SubstateOf(PlayerState.Air)
+                .Permit(Trigger.Finish, PlayerState.AirActionable);
 
 
             // General
