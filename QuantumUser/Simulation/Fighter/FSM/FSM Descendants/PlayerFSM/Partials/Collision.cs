@@ -13,6 +13,7 @@ namespace Quantum
 
         public const int CrossupProtectionDuration = 4;
         public const int ThrowProtectionDuration = 6;
+        public static FP MaxThrowDistance = FP.FromString("3.5");
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -22,6 +23,7 @@ namespace Quantum
             }
             else
             {
+                if (GetXDistance(f,hitboxData.source, hurtboxData.source) > MaxThrowDistance) return;
                 if (GetFramesSinceThrowProtectionStart(f) < ThrowProtectionDuration) return;
                 if (Fsm.IsInState(PlayerState.Air) || Fsm.IsInState(PlayerState.Backdash) ||
                     Fsm.IsInState(PlayerState.Hit) || Fsm.IsInState(PlayerState.Block)) return;
@@ -35,6 +37,16 @@ namespace Quantum
             var sectionGroup = StateMapConfig.ProjectileInvulnerable?.Get(this, new FrameParam() { f = f, EntityRef = EntityRef });
             if (sectionGroup is null) return false;
             return sectionGroup.GetCurrentItem(f, this);
+        }
+
+        private FP GetXDistance(Frame f, EntityRef a, EntityRef b)
+        {
+            f.Unsafe.TryGetPointer<Transform3D>(a, out var transformA);
+            f.Unsafe.TryGetPointer<Transform3D>(b, out var transformB);
+
+            var xDistance = Util.Abs(transformA->Position.X - transformB->Position.X);
+            Debug.Log("xDistance: " + xDistance);
+            return xDistance;
         }
 
         private void InvokeNonThrowCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData,
