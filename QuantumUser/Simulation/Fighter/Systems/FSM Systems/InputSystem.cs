@@ -399,6 +399,7 @@ namespace Quantum
             if (!fsm.Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor)) return;
             var cutscene = Util.GetActiveCutscene(f, fsm.EntityRef);
             if (!cutscene.Techable) return;
+            if (fsm.FramesInCurrentState(f) > 7) return;
             fsm.Fsm.Fire(FSM.Trigger.Tech, param);
             f.Unsafe.TryGetPointer<CutsceneData>(fsm.EntityRef, out var cutsceneData);
             FsmLoader.FSMs[cutsceneData->initiator].Fsm.Fire(FSM.Trigger.Tech, param);
