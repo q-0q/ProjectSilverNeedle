@@ -27,8 +27,15 @@ namespace Quantum
         public override void Move(Frame f)
         {
             CutsceneReactorMove(f);
-            
+            SnapToGround(f);
             base.Move(f);
+        }
+        
+        private void SnapToGround(Frame f)
+        {
+            if (!Fsm.IsInState(PlayerFSM.PlayerState.Ground)) return;
+            f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+            transform3D->Position.Y = 0;
         }
         
         public override FP GetSlowdownMod(Frame f, EntityRef entityRef)

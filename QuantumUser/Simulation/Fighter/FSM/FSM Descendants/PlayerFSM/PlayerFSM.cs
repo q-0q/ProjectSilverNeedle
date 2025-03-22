@@ -176,16 +176,16 @@ namespace Quantum
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
                 .Permit(PlayerTrigger.ForwardThrow, PlayerState.ForwardThrow)
                 .Permit(PlayerTrigger.BackThrow, PlayerState.Backthrow)
-                .OnExitFrom(PlayerTrigger.ForwardThrow, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.BackThrow, StartMomentumCallback)
+                .OnExitFrom(PlayerTrigger.ForwardThrow, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.BackThrow, DashMomentumCallback)
                 // .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.ButtonAndDirection, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.Jump, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.JumpCancel, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.HitHigh, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.HitLow, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.BlockHigh, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.BlockLow, StartMomentumCallback)
+                .OnExitFrom(PlayerTrigger.ButtonAndDirection, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.Jump, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.JumpCancel, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.HitHigh, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.HitLow, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.BlockHigh, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.BlockLow, DashMomentumCallback)
                 // .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .SubstateOf(PlayerState.Stand)
@@ -296,6 +296,7 @@ namespace Quantum
                 .SubstateOf(PlayerState.Throw);
 
             machine.Configure(PlayerState.Tech)
+                .OnEntry(OnEnterTech)
                 .SubstateOf(PlayerState.GroundAction);
 
             // Air
@@ -320,13 +321,13 @@ namespace Quantum
 
             machine.Configure(PlayerState.AirDash)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirActionable)
-                .OnExitFrom(PlayerTrigger.ButtonAndDirection, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.Jump, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.JumpCancel, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.HitHigh, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.HitLow, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.BlockHigh, StartMomentumCallback)
-                .OnExitFrom(PlayerTrigger.BlockLow, StartMomentumCallback)
+                .OnExitFrom(PlayerTrigger.ButtonAndDirection, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.Jump, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.JumpCancel, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.HitHigh, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.HitLow, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.BlockHigh, DashMomentumCallback)
+                .OnExitFrom(PlayerTrigger.BlockLow, DashMomentumCallback)
                 .OnEntry(OnAirdash)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -2)
@@ -429,7 +430,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = 50;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = 20;
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 20;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 23;
 
             
             
@@ -567,7 +568,7 @@ namespace Quantum
             return param.Launches || Fsm.IsInState(PlayerState.Backdash);
         }
 
-        private void StartMomentumCallback(TriggerParams? triggerParams)
+        private void DashMomentumCallback(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
@@ -587,6 +588,32 @@ namespace Quantum
             pushbackData->framesInMomentum = 0;
             pushbackData->momentumAmount = totalDistance;
         }
+        
+        private void OnEnterTech(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return;
+            var frameParam = (FrameParam)triggerParams;
+
+            var isFacingRight = IsFacingRight(frameParam.f, EntityRef);
+            
+            FP pushback = isFacingRight ? -4 : 4;
+            FP momentum = isFacingRight ? -2 : 2;
+            StartPushback(frameParam.f, pushback);
+            StartMomentum(frameParam.f, momentum);
+
+            frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+
+            if (Util.GetPlayerId(frameParam.f, EntityRef) == 0)
+            {
+                AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Tech,
+                    new FPVector2(transform3D->Position.X, 5), 0, true);
+            }
+            
+            // AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Backdash,
+            //     new FPVector2(transform3D->Position.X, 0), 0, isFacingRight);
+        }
+        
+        
 
         public void ResetCombo(TriggerParams? triggerParams)
         {
@@ -743,8 +770,13 @@ namespace Quantum
         protected void ConfigureAction(PlayerFSM fsm, ActionConfig actionConfig)
         {
             fsm.Fsm.Configure(actionConfig.State)
-                .SubstateOf(actionConfig.Crouching ? PlayerFSM.PlayerState.Crouch : PlayerFSM.PlayerState.Stand)
                 .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirAction : PlayerFSM.PlayerState.GroundAction);
+
+            if (!actionConfig.Aerial)
+            {
+                fsm.Fsm.Configure(actionConfig.State)
+                    .SubstateOf(actionConfig.Crouching ? PlayerFSM.PlayerState.Crouch : PlayerFSM.PlayerState.Stand);
+            }
             
             if (actionConfig.IsCutscene)
             {

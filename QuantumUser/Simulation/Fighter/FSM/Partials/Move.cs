@@ -35,6 +35,8 @@ namespace Quantum
             ClampPosToWall(f);
         }
 
+
+
         private FPVector2 ComputeMovementThisFrame(Frame f)
         {
             FP xMoveAmount = GetXMovementFromMovementSectionGroup(f, StateMapConfig.MovementSectionGroup.Get(this));
