@@ -16,7 +16,6 @@ namespace Quantum
         {
             FSMs = new Dictionary<EntityRef, FSM>();
             HitTable = new List<Hit>();
-            Debug.Log("initted hit table");
         }
 
         public static void InitializeFsms(Frame f)
@@ -97,7 +96,7 @@ namespace Quantum
                     summonFsm.SetupMachine();
                     FSMs[summonEntity] = summonFsm;
                     summonPool.EntityRefs.Add(summonEntity);
-                    Debug.Log("Successfully instantiated player " + ownerPlayerId + " " + summonPool.SummonFSMType + " [" + i + "]");
+                    // Debug.Log("Successfully instantiated player " + ownerPlayerId + " " + summonPool.SummonFSMType + " [" + i + "]");
                 }
             }
         }
@@ -155,7 +154,6 @@ namespace Quantum
             foreach (var (_, hit) in sectionGroup.Sections)
             {
                 if (hit is null) continue;
-                Debug.Log("Filling hit table: " + HitTable.Count);
                 hit.LookupId = HitTable.Count;
                 HitTable.Add(hit);
             }

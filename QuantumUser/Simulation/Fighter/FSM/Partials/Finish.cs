@@ -9,12 +9,22 @@ namespace Quantum
     {
         public void DoFinish(Frame f)
         {
+            GameFSM gameFsm = GameFsmLoader.LoadGameFSM(f);
+            if (!gameFsm.Fsm.IsInState(GameFSM.State.Playing)) return;
+                
             var frameParam = new FrameParam()
             {
                 f = f,
                 EntityRef = EntityRef,
             };
             int duration = StateMapConfig.Duration.Get(this, frameParam);
+            
+            // if (duration <= 0)
+            // {
+            //     Debug.LogError("State " + InheritableEnum.InheritableEnum.GetFieldNameByValue(Fsm.State(), 
+            //         StateType) + " has duration " + duration);
+            // }
+            
             if (FramesInCurrentState(f) >= duration)
             {
                 var param = new CollisionHitParams() { f = f, EntityRef = EntityRef };
@@ -22,19 +32,5 @@ namespace Quantum
                 Fsm.Fire(PlayerFSM.PlayerTrigger.Finish, param);
             }
         }
-        
-        // public void CheckForOpponentThrowTech(Frame f)
-        // {
-        //     EntityRef otherPlayerEntityRef = Util.GetOtherPlayer(f, EntityRef);
-        //     var opponentFsm = Util.GetPlayerFSM(f, otherPlayerEntityRef);
-        //     if (opponentFsm is null) return;
-        //
-        //     if (opponentFsm.Fsm.IsInState(State.ThrowTech))
-        //     {
-        //         var frameParam = new FrameParam() { f = f, EntityRef = EntityRef };
-        //         Fsm.Fire(Trigger.ThrowTech, frameParam);
-        //     }
-        //
-        // }
     }
 }

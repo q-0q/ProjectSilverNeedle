@@ -28,6 +28,7 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
         int crossup = fsm.GetFramesSinceCrossupProtectionStart(PredictedFrame);
         int throww = fsm.GetFramesSinceThrowProtectionStart(PredictedFrame);
 
-        _tmp.text = "Crossup: " + crossup + "\nThrow: " + throww;
+        _tmp.text = InheritableEnum.GetFieldNameByValue(fsm.Fsm.State(), fsm.AnimationPathsEnum) + 
+                    " " + fsm.FramesInCurrentState(PredictedFrame);
     }
 }

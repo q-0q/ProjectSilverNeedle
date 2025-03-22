@@ -45,7 +45,6 @@ namespace Quantum
             f.Unsafe.TryGetPointer<Transform3D>(b, out var transformB);
 
             var xDistance = Util.Abs(transformA->Position.X - transformB->Position.X);
-            Debug.Log("xDistance: " + xDistance);
             return xDistance;
         }
 
@@ -149,12 +148,10 @@ namespace Quantum
             
             var d = f.ResolveDictionary(comboData->hitCounts);
             int hitTableId = hitboxData.lookupId;
-            Debug.Log(hitTableId);
             d.TryAdd(hitTableId, 0);
             var hitGravityScaling = d[hitTableId] == 0 ? hitboxData.gravityScaling : Util.Pow(hitboxData.gravityProration, d[hitTableId]);
             var rawGravityScaling =  hurtType is HurtType.Counter ? hitGravityScaling * CounterHitGravityScalingMultiplier : hitGravityScaling;
             comboData->gravityScaling *= rawGravityScaling;
-            Debug.Log("hit scaling: " + hitGravityScaling);
             comboData->length++;
             d[hitTableId] += 1;
             
@@ -232,7 +229,6 @@ namespace Quantum
             if ((actionable || hurtboxPlayerFsm.Fsm.IsInState(PlayerState.Throw)) &&
                 (hurtboxPlayerFsm.FramesInCurrentState(f) <= ThrowStartupDuration))
             {
-                Debug.Log(hurtboxPlayerFsm.FramesInCurrentState(f));
                 hurtboxPlayerFsm.Fsm.Jump(PlayerState.Tech, hurtboxParam);
                 hitboxPlayerFsm.Fsm.Jump(PlayerState.Tech, hitboxParam);
                 return;
