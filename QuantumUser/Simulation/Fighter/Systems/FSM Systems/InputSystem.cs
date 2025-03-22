@@ -151,7 +151,6 @@ namespace Quantum
             foreach (var (_, cpuControllerData) in f.GetComponentIterator<CpuControllerData>())
             {
                 if (!cpuControllerData.doAction) return;
-                Debug.Log("fire cpu action");
                 var type = (InputType)cpuControllerData.inputType;
                 var commandDirection = cpuControllerData.commandDirection;
                 FireThrowTrigger(f, fsm, type, commandDirection);
