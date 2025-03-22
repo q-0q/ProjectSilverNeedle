@@ -64,7 +64,7 @@ namespace Quantum
             public static int Throw;
             public static int Cutscene;
             public static int CutsceneReactor;
-            // public static int TechableCutsceneReactor;
+            public static int TechableCutsceneReactor;
             public static int DirectionLocked;
         }
 
@@ -404,8 +404,11 @@ namespace Quantum
             
             machine.Configure(PlayerState.CutsceneReactor)
                 .SubstateOf(PlayerState.DirectionLocked)
-                .Permit(PlayerTrigger.Finish, PlayerState.AirHit)
-                .Permit(Trigger.Tech, PlayerState.Tech);;
+                .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
+                
+            machine.Configure(PlayerState.TechableCutsceneReactor)
+                .SubstateOf(PlayerState.CutsceneReactor)
+                .Permit(Trigger.Tech, PlayerState.Tech);
 
             machine.Configure(PlayerState.AirSpecialCancellable)
                 .SubstateOf(PlayerState.Action);
@@ -593,6 +596,9 @@ namespace Quantum
         {
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
+            
+            frameParam.f.Unsafe.TryGetPointer<CutsceneData>(EntityRef, out var cutsceneData);
+            FsmLoader.FSMs[Util.GetOtherPlayer(frameParam.f, EntityRef)].Fsm.Fire(FSM.Trigger.Tech, frameParam);
 
             var isFacingRight = IsFacingRight(frameParam.f, EntityRef);
             
