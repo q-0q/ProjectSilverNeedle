@@ -1,0 +1,5 @@
+component ProtectionData
+{
+    FP virtualTimeSinceThrowProtectionStart;
+    FP virtualTimeSinceCrossupProtectionStart;
+}

@@ -152,6 +152,7 @@ namespace Quantum
                 HitEntities = new QListPtr<EntityRef>()
             });
             f.Add(entityRef, new StunData());
+            f.Add(entityRef, new ProtectionData());
             f.Add(entityRef, new SlowdownData());
             f.Add(entityRef, new PushbackData());
             f.Add(entityRef, new MomentumData());
@@ -241,6 +242,12 @@ namespace Quantum
 
             f.Unsafe.TryGetPointer<StunData>(entityRef, out var stunData);
             stunData->stun = 0;
+
+            f.Unsafe.TryGetPointer<ProtectionData>(entityRef, out var protectionData);
+            
+            //TODO assign from duration vars
+            protectionData->virtualTimeSinceCrossupProtectionStart = 1;
+            protectionData->virtualTimeSinceThrowProtectionStart = 1;
             
             f.Unsafe.TryGetPointer<SlowdownData>(entityRef, out var slowdownData);
             slowdownData->slowdownRemaining = 0;

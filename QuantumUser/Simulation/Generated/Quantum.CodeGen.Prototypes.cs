@@ -516,6 +516,23 @@ namespace Quantum.Prototypes {
     }
   }
   [System.SerializableAttribute()]
+  [Quantum.Prototypes.Prototype(typeof(Quantum.ProtectionData))]
+  public unsafe partial class ProtectionDataPrototype : ComponentPrototype<Quantum.ProtectionData> {
+    public FP virtualTimeSinceThrowProtectionStart;
+    public FP virtualTimeSinceCrossupProtectionStart;
+    partial void MaterializeUser(Frame frame, ref Quantum.ProtectionData result, in PrototypeMaterializationContext context);
+    public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
+        Quantum.ProtectionData component = default;
+        Materialize((Frame)f, ref component, in context);
+        return f.Set(entity, component) == SetResult.ComponentAdded;
+    }
+    public void Materialize(Frame frame, ref Quantum.ProtectionData result, in PrototypeMaterializationContext context = default) {
+        result.virtualTimeSinceThrowProtectionStart = this.virtualTimeSinceThrowProtectionStart;
+        result.virtualTimeSinceCrossupProtectionStart = this.virtualTimeSinceCrossupProtectionStart;
+        MaterializeUser(frame, ref result, in context);
+    }
+  }
+  [System.SerializableAttribute()]
   [Quantum.Prototypes.Prototype(typeof(Quantum.PushbackData))]
   public unsafe partial class PushbackDataPrototype : ComponentPrototype<Quantum.PushbackData> {
     public FP virtualTimeInPushback;
