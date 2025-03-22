@@ -205,10 +205,25 @@ namespace Quantum
 
             // Util.StartDramatic(f, EntityRef, 30);
 
-            bool techable = hurtboxPlayerFsm.Fsm.IsInState(PlayerState.GroundActionable) ||
+            bool actionable = hurtboxPlayerFsm.Fsm.IsInState(PlayerState.GroundActionable) ||
                             hurtboxPlayerFsm.Fsm.IsInState(PlayerState.AirActionable);
-            hurtboxPlayerFsm.Fsm.Jump(techable? PlayerState.TechableCutsceneReactor : PlayerState.CutsceneReactor, new FrameParam() { f = f, EntityRef = hurtboxInternal.source } );
-            hitboxPlayerFsm.Fsm.Jump(cutscene.InitiatorState, new FrameParam() { f = f, EntityRef = hitboxInternal.source } );
+            
+            
+            var hurtboxParam = new FrameParam() { f = f, EntityRef = hurtboxInternal.source };
+            var hitboxParam = new FrameParam() { f = f, EntityRef = hitboxInternal.source };
+            
+            // handle throw vs throw startup collision auto-tech (ie, early tech)
+            if ((actionable || hurtboxPlayerFsm.Fsm.IsInState(PlayerState.Throw)) &&
+                (hurtboxPlayerFsm.FramesInCurrentState(f) <= ThrowStartupDuration))
+            {
+                Debug.Log(hurtboxPlayerFsm.FramesInCurrentState(f));
+                hurtboxPlayerFsm.Fsm.Jump(PlayerState.Tech, hurtboxParam);
+                hitboxPlayerFsm.Fsm.Jump(PlayerState.Tech, hitboxParam);
+                return;
+            }
+
+            hurtboxPlayerFsm.Fsm.Jump(actionable? PlayerState.TechableCutsceneReactor : PlayerState.CutsceneReactor, hurtboxParam );
+            hitboxPlayerFsm.Fsm.Jump(cutscene.InitiatorState, hitboxParam );
 
             
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);

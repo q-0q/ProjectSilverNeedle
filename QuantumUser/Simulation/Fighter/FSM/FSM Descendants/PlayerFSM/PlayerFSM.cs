@@ -99,6 +99,8 @@ namespace Quantum
         public List<ActionConfig> SpecialMoveList;
         public List<ActionConfig> SuperMoveList;
 
+        public static readonly int ThrowStartupDuration = 4;
+
 
         public PlayerFSM()
         {
@@ -451,7 +453,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new(4, null),
+                    new(ThrowStartupDuration, null),
                     new(2, new Hit()
                     {
                         Type = Hit.HitType.Throw,
@@ -485,7 +487,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new(4, null),
+                    new(ThrowStartupDuration, null),
                     new(2, new Hit()
                     {
                         Type = Hit.HitType.Throw,
