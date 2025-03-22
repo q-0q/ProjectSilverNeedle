@@ -525,6 +525,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandBlock] = standBlockAnimation;
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Tech] = standBlockAnimation;
 
             Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchBlock] = crouchBlockAnimation;

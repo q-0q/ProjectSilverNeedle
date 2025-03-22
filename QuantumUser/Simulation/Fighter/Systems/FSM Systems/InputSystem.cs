@@ -395,6 +395,7 @@ namespace Quantum
             
             fsm.Fsm.Fire(trigger, param);
             
+            // THROW TECHING
             if (!fsm.Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor)) return;
             var cutscene = Util.GetActiveCutscene(f, fsm.EntityRef);
             if (!cutscene.Techable) return;
