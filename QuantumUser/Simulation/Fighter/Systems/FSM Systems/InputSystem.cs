@@ -401,8 +401,8 @@ namespace Quantum
             if (!cutscene.Techable) return;
             if (fsm.FramesInCurrentState(f) > 7) return;
             fsm.Fsm.Fire(FSM.Trigger.Tech, param);
-            f.Unsafe.TryGetPointer<CutsceneData>(fsm.EntityRef, out var cutsceneData);
-            FsmLoader.FSMs[cutsceneData->initiator].Fsm.Fire(FSM.Trigger.Tech, param);
+            // f.Unsafe.TryGetPointer<CutsceneData>(fsm.EntityRef, out var cutsceneData);
+            // FsmLoader.FSMs[cutsceneData->initiator].Fsm.Fire(FSM.Trigger.Tech, param);
         }
 
         public static void ClearBufferParams(TriggerParams? triggerParams)

@@ -16,7 +16,7 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
 
     public override void OnUpdateView()
     {
-        return;
+        // return;
         if (!PredictedFrame.Has<FSMData>(EntityRef)) return;
 
         // PlayerFSM.State state = (PlayerFSM.State)PredictedFrame.Get<PlayerFSMData>(EntityRef).currentState;
@@ -29,6 +29,6 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
         var state = fsm.Fsm.State();
         
         _tmp.text = InheritableEnum.GetFieldNameByValue(state, fsm.StateType) + "\n" + numFrames;
-        // _tmp.text = state.ToString();
+        _tmp.text = state.ToString();
     }
 }

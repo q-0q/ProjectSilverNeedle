@@ -204,7 +204,10 @@ namespace Quantum
             }
 
             // Util.StartDramatic(f, EntityRef, 30);
-            hurtboxPlayerFsm.Fsm.Jump(PlayerState.CutsceneReactor, new FrameParam() { f = f, EntityRef = hurtboxInternal.source } );
+
+            bool techable = hurtboxPlayerFsm.Fsm.IsInState(PlayerState.GroundActionable) ||
+                            hurtboxPlayerFsm.Fsm.IsInState(PlayerState.AirActionable);
+            hurtboxPlayerFsm.Fsm.Jump(techable? PlayerState.TechableCutsceneReactor : PlayerState.CutsceneReactor, new FrameParam() { f = f, EntityRef = hurtboxInternal.source } );
             hitboxPlayerFsm.Fsm.Jump(cutscene.InitiatorState, new FrameParam() { f = f, EntityRef = hitboxInternal.source } );
 
             
