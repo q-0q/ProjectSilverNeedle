@@ -10,6 +10,9 @@ namespace Quantum
     public unsafe partial class PlayerFSM
 
     {
+
+        public const int CrossupProtectionDuration = 4;
+        public const int ThrowProtectionDuration = 6;
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -19,6 +22,7 @@ namespace Quantum
             }
             else
             {
+                if (GetFramesSinceThrowProtectionStart(f) < ThrowProtectionDuration) return;
                 if (Fsm.IsInState(PlayerState.Air) || Fsm.IsInState(PlayerState.Backdash) ||
                     Fsm.IsInState(PlayerState.Hit) || Fsm.IsInState(PlayerState.Block)) return;
             }
@@ -312,6 +316,17 @@ namespace Quantum
             
             var numpad = InputSystem.Numpad(f, EntityRef);
 
+            if (GetFramesSinceCrossupProtectionStart(f) < CrossupProtectionDuration)
+            {
+                if (Fsm.IsInState(PlayerState.Air)) return (numpad is not (2 or 5 or 8)) && (GetFramesInTrajectory(f) > NumNonBlockingJumpFrames);
+                if (type == Hit.HitType.High) return numpad is 4 or 7 or 6 or 9;
+                if (type == Hit.HitType.Mid) return numpad is not (2 or 5 or 8);
+                if (type == Hit.HitType.Low) return numpad is 1 or 3;
+
+                return false;
+            }
+
+            // todo: jumpsquat
             if (Fsm.IsInState(PlayerState.Air)) return (numpad is 1 or 4 or 7) && (GetFramesInTrajectory(f) > NumNonBlockingJumpFrames);
             if (type == Hit.HitType.High) return numpad is 4 or 7;
             if (type == Hit.HitType.Mid) return numpad is 1 or 4 or 7;
@@ -321,13 +336,13 @@ namespace Quantum
         }
 
 
-        private int GetFramesSinceThrowProtectionStart(Frame f)
+        public int GetFramesSinceThrowProtectionStart(Frame f)
         {
             f.Unsafe.TryGetPointer<ProtectionData>(EntityRef, out var protectionData);
             return Util.FramesFromVirtualTime(protectionData->virtualTimeSinceThrowProtectionStart);
         }
         
-        private int GetFramesSinceCrossupProtectionStart(Frame f)
+        public int GetFramesSinceCrossupProtectionStart(Frame f)
         {
             f.Unsafe.TryGetPointer<ProtectionData>(EntityRef, out var protectionData);
             return Util.FramesFromVirtualTime(protectionData->virtualTimeSinceCrossupProtectionStart);

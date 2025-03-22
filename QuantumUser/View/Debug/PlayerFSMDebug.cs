@@ -22,13 +22,12 @@ public class PlayerFSMDebug : QuantumEntityViewComponent
         // PlayerFSM.State state = (PlayerFSM.State)PredictedFrame.Get<PlayerFSMData>(EntityRef).currentState;
         // int numFrames = PredictedFrame.Get<FSMData>(EntityRef).framesInState;
         
-        var fsm = FsmLoader.GetFsm(EntityRef);
-        if (fsm is null) return;
+         
+        if (FsmLoader.GetFsm(EntityRef) is not PlayerFSM fsm) return;
 
-        int numFrames = fsm.FramesInCurrentState(PredictedFrame);
-        var state = fsm.Fsm.State();
-        
-        _tmp.text = InheritableEnum.GetFieldNameByValue(state, fsm.StateType) + "\n" + numFrames;
-        _tmp.text = state.ToString();
+        int crossup = fsm.GetFramesSinceCrossupProtectionStart(PredictedFrame);
+        int throww = fsm.GetFramesSinceThrowProtectionStart(PredictedFrame);
+
+        _tmp.text = "Crossup: " + crossup + "\nThrow: " + throww;
     }
 }
