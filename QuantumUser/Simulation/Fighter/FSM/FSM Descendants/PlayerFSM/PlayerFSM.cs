@@ -322,7 +322,8 @@ namespace Quantum
 
             // Air
             machine.Configure(PlayerState.Air)
-                .Permit(PlayerTrigger.Land, PlayerState.Landsquat)
+                .PermitIf(PlayerTrigger.Land, PlayerState.EmptyLandsquat, IsTrajectoryEmpty)
+                .PermitIf(PlayerTrigger.Land, PlayerState.FullLandsquat, x => !IsTrajectoryEmpty(x))
                 .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHit, _ => true, -1)
                 .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHit, _ => true, -1)
                 .SubstateOf(PlayerState.Any);
@@ -348,6 +349,7 @@ namespace Quantum
                 .OnExitFrom(PlayerTrigger.BlockHigh, DashMomentumCallback)
                 .OnExitFrom(PlayerTrigger.BlockLow, DashMomentumCallback)
                 .OnEntry(OnAirdash)
+                .OnEntry(MakeTrajectoryFull)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.AirBlock, _ => true, -2)
@@ -358,6 +360,7 @@ namespace Quantum
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(OnBackdash)
                 .OnEntry(OnAirBackdash)
+                .OnEntry(MakeTrajectoryFull)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirActionable)
                 .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Air);
@@ -368,6 +371,7 @@ namespace Quantum
                 .SubstateOf(PlayerState.DirectionLocked)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
+                .OnEntry(MakeTrajectoryFull)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)
                 .SubstateOf(PlayerState.Air);
@@ -419,6 +423,7 @@ namespace Quantum
                 .OnEntryFrom(PlayerTrigger.Finish, StartNewJump)
                 .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
                 .OnEntryFrom(PlayerTrigger.JumpCancel, StartNewJump)
+                .OnEntry(MakeTrajectoryEmpty)
                 .Permit(Trigger.Finish, PlayerState.AirActionable);
 
 
@@ -469,7 +474,7 @@ namespace Quantum
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 23;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Landsquat] = 6;
+            StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Landsquat] = 6;
 
             
             
