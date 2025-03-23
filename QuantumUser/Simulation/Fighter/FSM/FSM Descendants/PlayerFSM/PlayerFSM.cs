@@ -32,6 +32,9 @@ namespace Quantum
             public static int HardKnockdown;
             public static int SoftKnockdown;
             public static int Landsquat;
+            public static int EmptyLandsquat;
+            public static int FullLandsquat;
+            public static int BlockLandsquat;
             public static int DeadFromAir;
             public static int DeadFromGround;
             public static int ForwardThrow;
@@ -247,7 +250,6 @@ namespace Quantum
                 .Permit(PlayerTrigger.Finish, PlayerState.CrouchActionable)
                 .AllowReentry(PlayerTrigger.BlockLow)
                 .Permit(PlayerTrigger.BlockLow, PlayerState.CrouchBlock)
-                .OnEntryFrom(PlayerTrigger.Land, InvokeLandingRecoveryBlockstun)
                 .SubstateOf(PlayerState.GroundBlock)
                 .SubstateOf(PlayerState.Crouch);
 
@@ -286,10 +288,21 @@ namespace Quantum
 
             machine.Configure(PlayerState.Landsquat)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
-                .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
-                .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
                 .SubstateOf(PlayerState.Crouch)
                 .SubstateOf(PlayerState.Ground);
+
+            machine.Configure(PlayerState.EmptyLandsquat)
+                .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
+                .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
+                .SubstateOf(PlayerState.Landsquat);
+            
+            machine.Configure(PlayerState.FullLandsquat)
+                .SubstateOf(PlayerState.Landsquat);
+            
+            machine.Configure(PlayerState.BlockLandsquat)
+                .SubstateOf(PlayerState.GroundBlock)
+                .OnEntry(InvokeLandingRecoveryBlockstun)
+                .SubstateOf(PlayerState.Landsquat);
 
             machine.Configure(PlayerState.Throw)
                 .SubstateOf(PlayerState.Ground)
@@ -362,7 +375,7 @@ namespace Quantum
             machine.Configure(PlayerState.AirBlock)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.AirBlock, _ => true, -2)
-                .PermitIf(PlayerTrigger.Land, PlayerState.CrouchBlock, _ => true, 3)
+                .PermitIf(PlayerTrigger.Land, PlayerState.BlockLandsquat, _ => true, 3)
                 .AllowReentry(PlayerTrigger.BlockHigh)
                 .AllowReentry(PlayerTrigger.BlockLow)
                 .Permit(PlayerTrigger.BlockHigh, PlayerState.AirBlock)

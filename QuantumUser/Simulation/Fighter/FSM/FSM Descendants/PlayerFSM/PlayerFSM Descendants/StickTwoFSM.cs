@@ -569,7 +569,7 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = jumpsquatAnimation;
             
             Util.AutoSetupFromAnimationPath(landsquatAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Landsquat] = landsquatAnimation;
+            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Landsquat] = landsquatAnimation;
             
             // Basic movement
             
