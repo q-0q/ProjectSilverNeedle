@@ -489,6 +489,15 @@ namespace Quantum
                 }
             };
             
+            var landsquatAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.Landsquat,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             Util.AutoSetupFromAnimationPath(standAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandActionable] = standAnimation;
 
@@ -558,7 +567,9 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(jumpsquatAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = jumpsquatAnimation;
-            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Landsquat] = jumpsquatAnimation;
+            
+            Util.AutoSetupFromAnimationPath(landsquatAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Landsquat] = landsquatAnimation;
             
             // Basic movement
             

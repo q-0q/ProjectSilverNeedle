@@ -12,6 +12,7 @@ namespace Quantum.Types.Collision
         public static List<int> AttackLevelCrouchHitstun = new() { 13, 15, 17, 20, 22 };
         public static List<int> AttackLevelGroundBlockstun = new() { 9, 11, 13, 16, 18 };
         public static List<int> AttackLevelAirBlockstun = new() { 1000, 1000, 1000, 1000, 1000 };
+        public static int LandingRecoveryBlockstun = 19;
         
         public enum HitType
         {
