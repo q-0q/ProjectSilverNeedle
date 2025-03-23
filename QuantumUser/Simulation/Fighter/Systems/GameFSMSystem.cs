@@ -222,6 +222,7 @@ namespace Quantum
             trajectoryData->hardKnockdown = false;
             trajectoryData->groundBounce = false;
             trajectoryData->dashType = TrajectoryDashType.None;
+            trajectoryData->empty = true;
 
             f.Unsafe.TryGetPointer<InputBuffer>(entityRef, out var inputBuffer);
             inputBuffer->length = 0;

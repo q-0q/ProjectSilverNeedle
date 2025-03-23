@@ -1291,33 +1291,35 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct TrajectoryData : Quantum.IComponent {
-    public const Int32 SIZE = 72;
+    public const Int32 SIZE = 80;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(4)]
     public Int32 jumpsRemaining;
     [FieldOffset(0)]
     public Int32 framesInTrajectory;
-    [FieldOffset(56)]
-    public FP virtualTimeInTrajectory;
     [FieldOffset(64)]
+    public FP virtualTimeInTrajectory;
+    [FieldOffset(72)]
     public FP xVelocity;
-    [FieldOffset(40)]
-    public FP startingTrajectoryHeight;
     [FieldOffset(48)]
+    public FP startingTrajectoryHeight;
+    [FieldOffset(56)]
     public FP trajectoryHeight;
     [FieldOffset(12)]
     public Int32 timeToTrajectoryHeight;
-    [FieldOffset(32)]
+    [FieldOffset(40)]
     public FP fallSpeed;
     [FieldOffset(8)]
     public Int32 timeToFallSpeed;
-    [FieldOffset(20)]
+    [FieldOffset(24)]
     public QBoolean hardKnockdown;
     [FieldOffset(16)]
+    public QBoolean empty;
+    [FieldOffset(20)]
     public QBoolean groundBounce;
-    [FieldOffset(24)]
-    public QBoolean wallBounce;
     [FieldOffset(28)]
+    public QBoolean wallBounce;
+    [FieldOffset(32)]
     public TrajectoryDashType dashType;
     public override Int32 GetHashCode() {
       unchecked { 
@@ -1332,6 +1334,7 @@ namespace Quantum {
         hash = hash * 31 + fallSpeed.GetHashCode();
         hash = hash * 31 + timeToFallSpeed.GetHashCode();
         hash = hash * 31 + hardKnockdown.GetHashCode();
+        hash = hash * 31 + empty.GetHashCode();
         hash = hash * 31 + groundBounce.GetHashCode();
         hash = hash * 31 + wallBounce.GetHashCode();
         hash = hash * 31 + (Int32)dashType;
@@ -1344,6 +1347,7 @@ namespace Quantum {
         serializer.Stream.Serialize(&p->jumpsRemaining);
         serializer.Stream.Serialize(&p->timeToFallSpeed);
         serializer.Stream.Serialize(&p->timeToTrajectoryHeight);
+        QBoolean.Serialize(&p->empty, serializer);
         QBoolean.Serialize(&p->groundBounce, serializer);
         QBoolean.Serialize(&p->hardKnockdown, serializer);
         QBoolean.Serialize(&p->wallBounce, serializer);
