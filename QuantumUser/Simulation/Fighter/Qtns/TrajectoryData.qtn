@@ -10,6 +10,7 @@ component TrajectoryData
     FP fallSpeed;
     int timeToFallSpeed;
     bool hardKnockdown;
+    bool empty;
     
     bool groundBounce;
     bool wallBounce;

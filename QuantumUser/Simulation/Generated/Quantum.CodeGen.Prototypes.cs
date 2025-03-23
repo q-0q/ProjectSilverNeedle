@@ -628,6 +628,7 @@ namespace Quantum.Prototypes {
     public FP fallSpeed;
     public Int32 timeToFallSpeed;
     public QBoolean hardKnockdown;
+    public QBoolean empty;
     public QBoolean groundBounce;
     public QBoolean wallBounce;
     public Quantum.QEnum32<TrajectoryDashType> dashType;
@@ -648,6 +649,7 @@ namespace Quantum.Prototypes {
         result.fallSpeed = this.fallSpeed;
         result.timeToFallSpeed = this.timeToFallSpeed;
         result.hardKnockdown = this.hardKnockdown;
+        result.empty = this.empty;
         result.groundBounce = this.groundBounce;
         result.wallBounce = this.wallBounce;
         result.dashType = this.dashType;
