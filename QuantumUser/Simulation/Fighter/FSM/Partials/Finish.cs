@@ -10,7 +10,7 @@ namespace Quantum
         public void DoFinish(Frame f)
         {
             GameFSM gameFsm = GameFsmLoader.LoadGameFSM(f);
-            if (!gameFsm.Fsm.IsInState(GameFSM.State.Playing)) return;
+            if (!gameFsm.Fsm.IsInState(GameFSM.State.Playing) && !gameFsm.Fsm.IsInState(GameFSM.State.RoundEnd)) return;
                 
             var frameParam = new FrameParam()
             {

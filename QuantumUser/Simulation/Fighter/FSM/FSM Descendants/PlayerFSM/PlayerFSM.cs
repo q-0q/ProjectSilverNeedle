@@ -399,7 +399,7 @@ namespace Quantum
                 .SubstateOf(PlayerState.AirHit);
 
             machine.Configure(PlayerState.Jumpsquat)
-                .SubstateOf(PlayerState.Ground)
+                .SubstateOf(PlayerState.Stand)
                 .OnEntryFrom(Trigger.Jump, InputSystem.ClearBufferParams)
                 .OnEntryFrom(PlayerTrigger.Finish, StartNewJump)
                 .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
@@ -452,6 +452,7 @@ namespace Quantum
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 23;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Landsquat] = JumpsquatDuration;
 
             
             
@@ -586,7 +587,7 @@ namespace Quantum
         {
             if (triggerParams is null) return false;
             var param = (CollisionHitParams)triggerParams;
-            return param.Launches || Fsm.IsInState(PlayerState.Backdash);
+            return param.Launches || Fsm.IsInState(PlayerState.Backdash) || Fsm.IsInState(PlayerState.Jumpsquat);
         }
 
         private void DashMomentumCallback(TriggerParams? triggerParams)
