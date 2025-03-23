@@ -21,6 +21,7 @@ public class PlayerSpriteColor : QuantumEntityViewComponent
     
     public override void OnInitialize()
     {
+        return;
         _renderer = GetComponent<SpriteRenderer>();
         _colorA = new Color(1, saturation, saturation);
         _colorB = new Color(saturation, saturation, 1);
@@ -28,7 +29,7 @@ public class PlayerSpriteColor : QuantumEntityViewComponent
     
     public override void OnUpdateView()
     {
-        
+        return;
         _renderer.color = PredictedFrame.Get<PlayerLink>(EntityRef).Player == 0 ? _colorA  :  _colorB;
     }
 }
