@@ -247,6 +247,7 @@ namespace Quantum
                 .Permit(PlayerTrigger.Finish, PlayerState.CrouchActionable)
                 .AllowReentry(PlayerTrigger.BlockLow)
                 .Permit(PlayerTrigger.BlockLow, PlayerState.CrouchBlock)
+                .OnEntryFrom(PlayerTrigger.Land, InvokeLandingRecoveryBlockstun)
                 .SubstateOf(PlayerState.GroundBlock)
                 .SubstateOf(PlayerState.Crouch);
 
@@ -361,6 +362,7 @@ namespace Quantum
             machine.Configure(PlayerState.AirBlock)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.AirBlock, _ => true, -2)
+                .PermitIf(PlayerTrigger.Land, PlayerState.CrouchBlock, _ => true, 3)
                 .AllowReentry(PlayerTrigger.BlockHigh)
                 .AllowReentry(PlayerTrigger.BlockLow)
                 .Permit(PlayerTrigger.BlockHigh, PlayerState.AirBlock)
@@ -436,6 +438,8 @@ namespace Quantum
             machine.Assume(PlayerState.StandActionable);
         }
 
+
+
         public override void SetupStateMaps()
         {
             base.SetupStateMaps();
@@ -452,7 +456,7 @@ namespace Quantum
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 23;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Landsquat] = JumpsquatDuration;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Landsquat] = 6;
 
             
             
@@ -636,6 +640,15 @@ namespace Quantum
             
             // AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Backdash,
             //     new FPVector2(transform3D->Position.X, 0), 0, isFacingRight);
+        }
+        
+        private void InvokeLandingRecoveryBlockstun(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return;
+            var param = (FrameParam)triggerParams;
+            Frame f = param.f;
+            
+            InvokeStun(f, Hit.LandingRecoveryBlockstun);
         }
         
         
