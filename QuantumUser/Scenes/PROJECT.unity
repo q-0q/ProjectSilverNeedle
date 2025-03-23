@@ -23,7 +23,7 @@ RenderSettings:
   m_AmbientSkyColor: {r: 2, g: 0.22131509, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 0.4
+  m_AmbientIntensity: 2.5
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0, g: 0, b: 0, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 04cf11858848f440bb4dfe7ce7c73ceb, type: 2}
@@ -464,15 +464,15 @@ MonoBehaviour:
     forceCounter:
       Value: 0
     doAction:
-      Value: 0
+      Value: 1
     doJump:
       Value: 0
     block:
-      Value: 1
+      Value: 0
     dash:
       Value: 0
-    inputType: 1
-    commandDirection: 5
+    inputType: 2
+    commandDirection: 4
 --- !u!114 &147541240
 MonoBehaviour:
   m_ObjectHideFlags: 0

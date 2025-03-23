@@ -326,7 +326,7 @@ namespace Quantum
 
             if (GetFramesSinceCrossupProtectionStart(f) < CrossupProtectionDuration)
             {
-                if (Fsm.IsInState(PlayerState.Air)) return (numpad is not (2 or 5 or 8)) && (GetFramesInTrajectory(f) > NumNonBlockingJumpFrames);
+                if (Fsm.IsInState(PlayerState.Air)) return (numpad is not (2 or 5 or 8));
                 if (type == Hit.HitType.High) return numpad is 4 or 7 or 6 or 9;
                 if (type == Hit.HitType.Mid) return numpad is not (2 or 5 or 8);
                 if (type == Hit.HitType.Low) return numpad is 1 or 3;
@@ -335,7 +335,7 @@ namespace Quantum
             }
 
             // todo: jumpsquat
-            if (Fsm.IsInState(PlayerState.Air)) return (numpad is 1 or 4 or 7) && (GetFramesInTrajectory(f) > NumNonBlockingJumpFrames);
+            if (Fsm.IsInState(PlayerState.Air)) return (numpad is 1 or 4 or 7);
             if (type == Hit.HitType.High) return numpad is 4 or 7;
             if (type == Hit.HitType.Mid) return numpad is 1 or 4 or 7;
             if (type == Hit.HitType.Low) return numpad is 1;

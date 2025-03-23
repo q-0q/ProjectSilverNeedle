@@ -558,6 +558,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(jumpsquatAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = jumpsquatAnimation;
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Landsquat] = jumpsquatAnimation;
             
             // Basic movement
             
@@ -1548,7 +1549,7 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
-                            Level = 3,
+                            Level = 2,
                             // BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.09"),
