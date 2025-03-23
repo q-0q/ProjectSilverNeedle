@@ -162,9 +162,31 @@ namespace Quantum
             param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             trajectoryData->jumpsRemaining--;
         }
-        
-        
 
+        private bool IsTrajectoryEmpty(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return false;
+            var param = (FrameParam)triggerParams;
+            param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
+            return trajectoryData->empty;
+        }
+
+        private void MakeTrajectoryEmpty(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return;
+            var param = (FrameParam)triggerParams;
+            param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
+            trajectoryData->empty = true;
+        }
+        
+        private void MakeTrajectoryFull(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return;
+            var param = (FrameParam)triggerParams;
+            param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
+            trajectoryData->empty = false;
+        }
+        
         private void StartNewJuggle(TriggerParams? triggerParams)
         {
             if (triggerParams is null) return;
