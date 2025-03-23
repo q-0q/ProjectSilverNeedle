@@ -474,7 +474,8 @@ namespace Quantum
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 23;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
-            StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Landsquat] = 6;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 6;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 3;
 
             
             
