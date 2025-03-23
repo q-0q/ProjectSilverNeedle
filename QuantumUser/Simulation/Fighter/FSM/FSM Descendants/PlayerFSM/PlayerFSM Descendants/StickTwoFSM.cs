@@ -341,7 +341,6 @@ namespace Quantum
                 Path = (int)StickTwoAnimationPath.Jump,
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 2,
                     AutoFromAnimationPath = true
                 }
             };
