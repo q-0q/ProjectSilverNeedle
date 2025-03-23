@@ -63,8 +63,8 @@ MonoBehaviour:
           Value: 0
         dash:
           Value: 0
-        inputType: 1
-        commandDirection: 5
+        inputType: 3
+        commandDirection: 4
     - rid: 5002722801950392320
       type: {class: InteractionControllerDataPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:

@@ -97,7 +97,7 @@ namespace Quantum
             JumpCount = 2;
 
             FallSpeed = FP.FromString("50");
-            FallTimeToSpeed = 20;
+            FallTimeToSpeed = 16;
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
