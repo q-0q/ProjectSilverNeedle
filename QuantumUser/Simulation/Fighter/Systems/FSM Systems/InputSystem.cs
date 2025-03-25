@@ -196,6 +196,7 @@ namespace Quantum
             }
             else if (fsm.InputIsBuffered(InputType.Dash, f, fsm.EntityRef))
             {
+                Debug.Log(InheritableEnum.InheritableEnum.GetFieldNameByValue(fsm.Fsm.State(), fsm.StateType));
                 fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Dash, param);
             }
         }
