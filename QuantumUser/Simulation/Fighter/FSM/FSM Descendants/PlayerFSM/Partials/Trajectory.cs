@@ -344,6 +344,7 @@ namespace Quantum
         
         private void OnAirdash(TriggerParams? triggerParams)
         {
+            Debug.Log("AIRDASH");
             if (triggerParams is null) return;
             var param = (FrameParam)triggerParams;
             

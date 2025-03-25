@@ -127,7 +127,7 @@ namespace Quantum
                 TrajectoryHeight = jumpHeight
             };
 
-            JumpsquatDuration = 5;
+            JumpsquatDuration = 6;
 
             SummonPools = new List<SummonPool>()
             {
@@ -298,7 +298,7 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 2,
+                    LengthScalar = 4,
                     AutoFromAnimationPath = true
                 }
             };
@@ -2064,8 +2064,8 @@ namespace Quantum
                     Level = 0,
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1"),
-                    TrajectoryHeight = FP.FromString("2.5"),
-                    TrajectoryXVelocity = FP.FromString("10"),
+                    TrajectoryHeight = FP.FromString("2.25"),
+                    TrajectoryXVelocity = FP.FromString("12"),
                     BlockPushback = FP.FromString("3"),
                     HitPushback = 3,
                     VisualAngle = -70,
@@ -2128,7 +2128,7 @@ namespace Quantum
                         new(10, new Trajectory()
                         {
                             TimeToTrajectoryHeight = 30,
-                            TrajectoryHeight = 6,
+                            TrajectoryHeight = 5,
                             TrajectoryXVelocity = 0
                         })
                     } 

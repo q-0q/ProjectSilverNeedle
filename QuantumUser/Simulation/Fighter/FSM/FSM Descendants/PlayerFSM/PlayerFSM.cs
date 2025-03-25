@@ -335,8 +335,8 @@ namespace Quantum
                 .SubstateOf(PlayerState.Any);
 
             machine.Configure(PlayerState.AirActionable)
-                .Permit(PlayerTrigger.Dash, PlayerState.AirDash)
-                .Permit(PlayerTrigger.Backdash, PlayerState.AirBackdash)
+                // .Permit(PlayerTrigger.Dash, PlayerState.AirDash)
+                // .Permit(PlayerTrigger.Backdash, PlayerState.AirBackdash)
                 .AllowReentry(PlayerTrigger.Jump)
                 .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -1)
@@ -424,14 +424,13 @@ namespace Quantum
                 .SubstateOf(PlayerState.AirHit);
 
             machine.Configure(PlayerState.Jumpsquat)
-                .SubstateOf(PlayerState.Stand)
-                .OnEntryFrom(Trigger.Jump, InputSystem.ClearBufferParams)
+                .SubstateOf(PlayerState.Crouch)
+                .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntryFrom(PlayerTrigger.Finish, StartNewJump)
                 .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
                 .OnEntryFrom(PlayerTrigger.JumpCancel, StartNewJump)
                 .OnEntry(MakeTrajectoryEmpty)
                 .Permit(Trigger.Finish, PlayerState.AirActionable);
-
 
             // General
             machine.Configure(PlayerState.Hit)
@@ -480,8 +479,8 @@ namespace Quantum
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Throw] = 40;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Tech] = 23;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 6;
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 3;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
 
             
             
