@@ -56,15 +56,15 @@ MonoBehaviour:
         forceCounter:
           Value: 0
         doAction:
-          Value: 1
+          Value: 0
         doJump:
           Value: 0
         block:
           Value: 0
         dash:
           Value: 0
-        inputType: 3
-        commandDirection: 4
+        inputType: 0
+        commandDirection: 5
     - rid: 5002722801950392320
       type: {class: InteractionControllerDataPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:
