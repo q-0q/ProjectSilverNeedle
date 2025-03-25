@@ -23,6 +23,7 @@ namespace Quantum
             public static int Backdash;
             public static int GroundAction;
             public static int GroundActionable;
+            public static int GroundMoveable;
             public static int StandHitHigh;
             public static int StandHitLow;
             public static int CrouchHit;
@@ -143,13 +144,6 @@ namespace Quantum
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.GroundActionable)
-                .Permit(Trigger.NeutralInput, PlayerState.StandActionable)
-                .Permit(Trigger.Down, PlayerState.CrouchActionable)
-                .Permit(Trigger.Forward, PlayerState.WalkForward)
-                .Permit(Trigger.Backward, PlayerState.WalkBackward)
-                .Permit(Trigger.Dash, PlayerState.Dash)
-                .Permit(Trigger.Backdash, PlayerState.Backdash)
-                .Permit(Trigger.Jump, PlayerState.Jumpsquat)
                 .Permit(Trigger.ForwardThrow, PlayerState.ForwardThrow)
                 .Permit(Trigger.BackThrow, PlayerState.Backthrow)
                 // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
@@ -161,12 +155,22 @@ namespace Quantum
                 .OnEntry(ResetCombo)
                 .SubstateOf(PlayerState.Ground);
 
+            machine.Configure(PlayerState.GroundMoveable)
+                .Permit(Trigger.NeutralInput, PlayerState.StandActionable)
+                .Permit(Trigger.Down, PlayerState.CrouchActionable)
+                .Permit(Trigger.Forward, PlayerState.WalkForward)
+                .Permit(Trigger.Backward, PlayerState.WalkBackward)
+                .Permit(Trigger.Dash, PlayerState.Dash)
+                .Permit(Trigger.Backdash, PlayerState.Backdash)
+                .Permit(Trigger.Jump, PlayerState.Jumpsquat)
+                .SubstateOf(PlayerState.GroundActionable);
+
             machine.Configure(PlayerState.StandActionable)
-                .SubstateOf(PlayerState.GroundActionable)
+                .SubstateOf(PlayerState.GroundMoveable)
                 .SubstateOf(PlayerState.Stand);
 
             machine.Configure(PlayerState.CrouchActionable)
-                .SubstateOf(PlayerState.GroundActionable)
+                .SubstateOf(PlayerState.GroundMoveable)
                 .SubstateOf(PlayerState.Crouch);
 
             machine.Configure(PlayerState.WalkForward)
@@ -294,6 +298,8 @@ namespace Quantum
             machine.Configure(PlayerState.EmptyLandsquat)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
+                .SubstateOf(PlayerState.GroundActionable)
+                .Permit(Trigger.Backdash, PlayerState.Backdash)
                 .SubstateOf(PlayerState.Landsquat);
             
             machine.Configure(PlayerState.FullLandsquat)
@@ -873,7 +879,7 @@ namespace Quantum
             if (actionConfig.JumpCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)
-                    .PermitIf(PlayerFSM.PlayerTrigger.Jump, PlayerFSM.PlayerState.AirActionable, Util.CanCancelNow);
+                    .PermitIf(PlayerFSM.PlayerTrigger.Jump, PlayerFSM.PlayerState.Jumpsquat, Util.CanCancelNow);
             }
 
             if (actionConfig.DashCancellable)

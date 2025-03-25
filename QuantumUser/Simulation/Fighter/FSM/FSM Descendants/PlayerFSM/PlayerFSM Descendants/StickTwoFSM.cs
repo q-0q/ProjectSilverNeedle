@@ -1964,7 +1964,7 @@ namespace Quantum
                             GravityScaling = FP.FromString("0.925"),
                             GravityProration = FP.FromString("1.6"),
                             TrajectoryHeight = FP.FromString("3.25"),
-                            TrajectoryXVelocity = FP.FromString("10"),
+                            TrajectoryXVelocity = FP.FromString("9"),
                             BlockPushback = FP.FromString("3"),
                             HitPushback = 3,
                             VisualAngle = -30,
@@ -2035,9 +2035,10 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(startup - 3, 0),
+                        new(startup - 3, 2),
                         new(3, FP.FromString("1")),
-                        new(4, 0),
+                        new(50, 4),
+                        new(5, 0),
                     }
                 };
                 
