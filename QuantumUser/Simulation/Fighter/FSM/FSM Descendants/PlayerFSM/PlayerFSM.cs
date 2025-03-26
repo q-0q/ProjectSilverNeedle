@@ -296,8 +296,8 @@ namespace Quantum
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.EmptyLandsquat)
-                .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
-                .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
+                .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -3)
+                .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -3)
                 .SubstateOf(PlayerState.GroundActionable)
                 .Permit(Trigger.Backdash, PlayerState.Backdash)
                 .SubstateOf(PlayerState.Landsquat);
