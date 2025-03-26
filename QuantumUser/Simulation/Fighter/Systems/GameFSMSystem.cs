@@ -126,6 +126,7 @@ namespace Quantum
             var frameParam = (FrameParam)triggerParams;
             var frame = frameParam.f;
             
+            HitstopSystem.EnqueueHitstop(frame, 25);
             AnimationEntitySystem.Create(frame, AnimationEntities.AnimationEntityEnum.KO, FPVector2.Zero, 0, false);
         }
         

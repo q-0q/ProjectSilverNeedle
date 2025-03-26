@@ -11,7 +11,7 @@ namespace Quantum
         {
             FighterAnimation currentAnimation = StateMapConfig.FighterAnimation.Get(this);
             if (currentAnimation is null) return;
-            currentAnimation.SetAnimationPathForFsm(f, this);
+            currentAnimation.SetAnimationFrameForFsm(f, this);
         }
     }
 }
