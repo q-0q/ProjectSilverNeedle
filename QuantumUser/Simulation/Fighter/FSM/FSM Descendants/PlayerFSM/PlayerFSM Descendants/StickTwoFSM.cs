@@ -33,6 +33,8 @@ namespace Quantum
             public static int BackThrowCutscene;
             public static int Fireball;
             public static int DP;
+
+            public static int JL;
         }
 
         public enum StickTwoAnimationPath
@@ -42,6 +44,7 @@ namespace Quantum
             WalkForward,
             WalkBackward,
             Jump,
+            AfterAirAction,
             Dash,
             Backdash,
             Airdash,
@@ -80,6 +83,8 @@ namespace Quantum
             Rekka2A,
             Rekka2B,
             DP,
+            
+            JL,
 
         }
         
@@ -196,7 +201,16 @@ namespace Quantum
                     )
                 }
             };
-            
+
+            var airHurtbox = new CollisionBox()
+            {
+                GrowHeight = false,
+                GrowWidth = false,
+                PosX = 0,
+                PosY = 2,
+                Height = 5,
+                Width = 6,
+            };
             var airHitHurtboxCollection = new SectionGroup<CollisionBoxCollection>()
             {
                 Loop = true,
@@ -206,15 +220,7 @@ namespace Quantum
                         {
                             CollisionBoxes = new List<CollisionBox>()
                             {
-                                new()
-                                {
-                                    GrowHeight = false,
-                                    GrowWidth = false,
-                                    PosX = 0,
-                                    PosY = 2,
-                                    Height = 5,
-                                    Width = 6,
-                                }
+                                airHurtbox
                             }
                         }
                     )
@@ -339,6 +345,15 @@ namespace Quantum
             var jumpingAnimation = new FighterAnimation()
             {
                 Path = (int)StickTwoAnimationPath.Jump,
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+
+            var afterAirActionAnimation = new FighterAnimation()
+            {
+                Path = (int)StickTwoAnimationPath.AfterAirAction,
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -512,6 +527,9 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionable] = jumpingAnimation;
+            
+            Util.AutoSetupFromAnimationPath(afterAirActionAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionableAfterAction] = afterAirActionAnimation;
             
             Util.AutoSetupFromAnimationPath(dashAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Dash] = dashAnimation;
@@ -2157,6 +2175,123 @@ namespace Quantum
             
             
             
+            
+            {
+                int startup = 7;
+                int active = 2;
+                int hurtboxDuration = 5;
+                int path = (int)StickTwoAnimationPath.JL;
+                int state = StickTwoState.JL;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                airHurtbox
+                            }
+                        }),
+                        new(hurtboxDuration, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                airHurtbox,
+                                new CollisionBox()
+                                {
+                                    Height = 4,
+                                    Width = 3,
+                                    GrowWidth = true,
+                                    GrowHeight = false,
+                                    PosY = -2,
+                                    PosX = 0
+                                }
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                airHurtbox
+                            }
+                        }),
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            BlockPushback = 3,
+                            HitPushback = 2,
+                            GravityScaling = FP.FromString("1.2"),
+                            GravityProration = FP.FromString("1"),
+                            Type = Hit.HitType.High,
+                            GroundBounce = true,
+                            TrajectoryHeight = 4,
+                            Level = 2,
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            new CollisionBox()
+                                            {
+                                                Height = 4,
+                                                Width = 3,
+                                                GrowWidth = true,
+                                                GrowHeight = false,
+                                                PosY = -2,
+                                                PosX = 0
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
+                
+            }
+            
+            
+            
+            
 
         }
 
@@ -2235,12 +2370,12 @@ namespace Quantum
             
             ActionConfig _2M = new ActionConfig()
             {
-                Aerial = true,
-                AirOk = true,
+                Aerial = false,
+                AirOk = false,
                 CommandDirection = 2,
                 Crouching = true,
                 DashCancellable = false,
-                GroundOk = false,
+                GroundOk = true,
                 InputType = InputSystem.InputType.M,
                 JumpCancellable = false,
                 InputWeight = 2,
@@ -2322,6 +2457,27 @@ namespace Quantum
             
             ConfigureAction(this, _2H);
             MakeActionCancellable(this, _4H, _2H);
+            
+            
+            ActionConfig JL = new ActionConfig()
+            {
+                Aerial = true,
+                AirOk = true,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = false,
+                InputType = InputSystem.InputType.L,
+                JumpCancellable = false,
+                InputWeight = 0,
+                RawOk = true,
+                State = StickTwoState.JL,
+                
+                Name = "Jumping light",
+                Description = "A downwards kick that can be used as an instant overhead."
+            };
+            
+            ConfigureAction(this, JL);
 
             
             ActionConfig frontThrow = new ActionConfig()

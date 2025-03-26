@@ -48,6 +48,7 @@ namespace Quantum
             public static int AirBackdash;
             public static int AirAction;
             public static int AirActionable;
+            public static int AirActionableAfterAction;
             public static int AirHit;
             public static int AirBlock;
             public static int AirHitPostGroundBounce;
@@ -345,6 +346,9 @@ namespace Quantum
                 .OnEntry(EndSlowdown)
                 .SubstateOf(PlayerState.Air);
 
+            machine.Configure(PlayerState.AirActionableAfterAction)
+                .SubstateOf(PlayerState.AirActionable);
+
             machine.Configure(PlayerState.AirDash)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirActionable)
                 .OnExitFrom(PlayerTrigger.ButtonAndDirection, DashMomentumCallback)
@@ -372,7 +376,7 @@ namespace Quantum
                 .SubstateOf(PlayerState.Air);
 
             machine.Configure(PlayerState.AirAction)
-                .Permit(PlayerTrigger.Finish, PlayerState.AirActionable)
+                .Permit(PlayerTrigger.Finish, PlayerState.AirActionableAfterAction)
                 .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
                 .SubstateOf(PlayerState.DirectionLocked)
                 .OnEntry(InputSystem.ClearBufferParams)
