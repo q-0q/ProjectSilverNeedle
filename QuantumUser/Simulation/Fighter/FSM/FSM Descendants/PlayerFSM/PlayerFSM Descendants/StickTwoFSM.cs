@@ -212,8 +212,8 @@ namespace Quantum
                                     GrowWidth = false,
                                     PosX = 0,
                                     PosY = 2,
-                                    Height = 4,
-                                    Width = 5,
+                                    Height = 5,
+                                    Width = 6,
                                 }
                             }
                         }
@@ -578,7 +578,7 @@ namespace Quantum
                 Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 3))
+                    (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 4))
                 }
             };
             
@@ -587,7 +587,7 @@ namespace Quantum
                 Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -2))
+                    (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -3))
                 }
             };
 
@@ -784,6 +784,7 @@ namespace Quantum
                     {
                         Level = 2,
                         Type = Hit.HitType.Low,
+                        GravityScaling = 1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -879,6 +880,15 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
+
+            var _2HMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(1, 1),
+                    new(1, 0)
+                }
+            };
             
             var _2HHits = new SectionGroup<Hit>()
             {
@@ -938,6 +948,7 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState._2H] = _2HAnimation;
             StateMapConfig.Duration.Dictionary[StickTwoState._2H] = _2HAnimation.SectionGroup.Duration();
             StateMapConfig.HitSectionGroup.Dictionary[StickTwoState._2H] = _2HHits;
+            StateMapConfig.MovementSectionGroup.Dictionary[StickTwoState._2H] = _2HMovement;
 
             var frontThrowCutsceneAnimation = new FighterAnimation()
             {
@@ -2224,12 +2235,12 @@ namespace Quantum
             
             ActionConfig _2M = new ActionConfig()
             {
-                Aerial = false,
-                AirOk = false,
+                Aerial = true,
+                AirOk = true,
                 CommandDirection = 2,
                 Crouching = true,
                 DashCancellable = false,
-                GroundOk = true,
+                GroundOk = false,
                 InputType = InputSystem.InputType.M,
                 JumpCancellable = false,
                 InputWeight = 2,
@@ -2276,7 +2287,7 @@ namespace Quantum
                 DashCancellable = false,
                 GroundOk = true,
                 InputType = InputSystem.InputType.H,
-                JumpCancellable = false,
+                JumpCancellable = true,
                 InputWeight = 3,
                 RawOk = true,
                 State = StickTwoState._4H,
