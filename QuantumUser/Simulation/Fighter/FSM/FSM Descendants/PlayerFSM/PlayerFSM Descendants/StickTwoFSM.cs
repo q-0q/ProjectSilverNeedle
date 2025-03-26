@@ -37,56 +37,53 @@ namespace Quantum
             public static int JL;
         }
 
-        public enum StickTwoAnimationPath
-        {
-            StandActionable,
-            CrouchActionable,
-            WalkForward,
-            WalkBackward,
-            Jump,
-            AfterAirAction,
-            Dash,
-            Backdash,
-            Airdash,
-            AirBackdash,
-            Throw,
-            ForwardThrowCutscene,
-            BackThrowCutscene,
-
-            StandHitHigh,
-            StandHitLow,
-            CrouchHit,
-            AirHit,
-            WallBounce,
-            GroundBounce,
-            StandBlock,
-            CrouchBlock,
-            AirBlock,
-            HardKnockdown,
-            SoftKnockdown,
-            DeadFromGround,
-            DeadFromAir,
-            Jumpsquat,
-            
-            Landsquat,
-            ThrowTech,
-            
-            _5P,
-            _2P,
-            _5M,
-            _2M,
-            _4H,
-            _5H,
-            _2H,
-            Fireball,
-            Rekka1,
-            Rekka2A,
-            Rekka2B,
-            DP,
-            
-            JL,
-
-        }
+        
+            // "StandActionable",
+            // "CrouchActionable",
+            // "WalkForward",
+            // "WalkBackward",
+            // "Jump",
+            // "AfterAirAction",
+            // "Dash",
+            // "Backdash",
+            // "Airdash",
+            // "AirBackdash",
+            // "Throw",
+            // "ForwardThrowCutscene",
+            // "BackThrowCutscene",
+            //
+            // "StandHitHigh",
+            // "StandHitLow",
+            // "CrouchHit",
+            // "AirHit",
+            // "WallBounce",
+            // "GroundBounce",
+            // "StandBlock",
+            // "CrouchBlock",
+            // "AirBlock",
+            // "HardKnockdown",
+            // "SoftKnockdown",
+            // "DeadFromGround",
+            // "DeadFromAir",
+            // "Jumpsquat",
+            //
+            // "Landsquat",
+            // "ThrowTech",
+            //
+            // "_5P",
+            // "_2P",
+            // "_5M",
+            // "_2M",
+            // "_4H",
+            // "_5H",
+            // "_2H",
+            // "Fireball",
+            // "Rekka1",
+            // "Rekka2A",
+            // "Rekka2B",
+            // "DP",
+            //
+            // "JL",
         
         public class StickTwoCutscenes : PlayerFSM.CutsceneIndexes
         {
@@ -97,8 +94,6 @@ namespace Quantum
         {
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
-            AnimationPathsEnum = typeof(StickTwoAnimationPath);
-            
             JumpCount = 2;
 
             FallSpeed = FP.FromString("50");
@@ -300,7 +295,7 @@ namespace Quantum
             
             var standAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.StandActionable,
+                Path = "StandActionable",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
@@ -311,7 +306,7 @@ namespace Quantum
             
             var crouchAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.CrouchActionable,
+                Path = "CrouchActionable",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
@@ -322,7 +317,7 @@ namespace Quantum
             
             var walkForwardAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.WalkForward,
+                Path = "WalkForward",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
@@ -333,7 +328,7 @@ namespace Quantum
             
             var walkBackwardAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.WalkBackward,
+                Path = "WalkBackward",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
@@ -344,7 +339,7 @@ namespace Quantum
             
             var jumpingAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.Jump,
+                Path = "Jump",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -353,7 +348,7 @@ namespace Quantum
 
             var afterAirActionAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.AfterAirAction,
+                Path = "AfterAirAction",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -362,7 +357,7 @@ namespace Quantum
 
             var dashAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.Dash,
+                Path = "Dash",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -371,7 +366,7 @@ namespace Quantum
             
             var backdashAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.Backdash,
+                Path = "Backdash",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -380,7 +375,7 @@ namespace Quantum
 
             var standHitHighAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.StandHitHigh,
+                Path = "StandHitHigh",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -389,7 +384,7 @@ namespace Quantum
             
             var standHitLowAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.StandHitLow,
+                Path = "StandHitLow",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -398,7 +393,7 @@ namespace Quantum
             
             var crouchHitAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.CrouchHit,
+                Path = "CrouchHit",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -407,7 +402,7 @@ namespace Quantum
             
             var airHitAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.AirHit,
+                Path = "AirHit",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -416,7 +411,7 @@ namespace Quantum
             
             var wallBounceAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.WallBounce,
+                Path = "WallBounce",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -425,7 +420,7 @@ namespace Quantum
             
             var groundBounceAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.GroundBounce,
+                Path = "GroundBounce",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -434,7 +429,7 @@ namespace Quantum
             
             var standBlockAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.StandBlock,
+                Path = "StandBlock",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -443,7 +438,7 @@ namespace Quantum
             
             var crouchBlockAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.CrouchBlock,
+                Path = "CrouchBlock",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -452,7 +447,7 @@ namespace Quantum
             
             var airBlockAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.AirBlock,
+                Path = "AirBlock",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -461,7 +456,7 @@ namespace Quantum
             
             var hardKnockdownAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.HardKnockdown,
+                Path = "HardKnockdown",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -470,7 +465,7 @@ namespace Quantum
             
             var softKnockdownAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.SoftKnockdown,
+                Path = "SoftKnockdown",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -479,7 +474,7 @@ namespace Quantum
             
             var deadFromGroundAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.DeadFromGround,
+                Path = "DeadFromGround",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -488,7 +483,7 @@ namespace Quantum
 
             var throwAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.Throw,
+                Path = "Throw",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -497,7 +492,7 @@ namespace Quantum
             
             var jumpsquatAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.Jumpsquat,
+                Path = "Jumpsquat",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -506,7 +501,7 @@ namespace Quantum
             
             var landsquatAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.Landsquat,
+                Path = "Landsquat",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -644,7 +639,7 @@ namespace Quantum
             
             var _5MAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath._5M,
+                Path = "_5M",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -786,7 +781,7 @@ namespace Quantum
             
             var _2MAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath._2M,
+                Path = "_2M",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -892,7 +887,7 @@ namespace Quantum
 
             var _2HAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath._2H,
+                Path = "_2H",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -970,7 +965,7 @@ namespace Quantum
 
             var frontThrowCutsceneAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.ForwardThrowCutscene,
+                Path = "ForwardThrowCutscene",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -1025,7 +1020,7 @@ namespace Quantum
             
             var backThrowCutsceneAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.BackThrowCutscene,
+                Path = "BackThrowCutscene",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -1080,7 +1075,7 @@ namespace Quantum
 
             var fireballAnimation = new FighterAnimation()
             {
-                Path = (int)StickTwoAnimationPath.Fireball,
+                Path = "Fireball",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -1182,7 +1177,7 @@ namespace Quantum
                 int startup = 5;
                 int active = 2;
                 int hurtboxDuration = 3;
-                int path = (int)StickTwoAnimationPath._5P;
+                string path = "_5P";
                 int state = StickTwoState._5L;
                 
                 var animation = new FighterAnimation()
@@ -1290,7 +1285,7 @@ namespace Quantum
                 int startup = 5;
                 int active = 2;
                 int hurtboxDuration = 3;
-                int path = (int)StickTwoAnimationPath._2P;
+                string path = "_2P";
                 int state = StickTwoState._2L;
                 
                 var animation = new FighterAnimation()
@@ -1398,7 +1393,7 @@ namespace Quantum
                 int startup = 12;
                 int active = 2;
                 int hurtboxDuration = 15;
-                int path = (int)StickTwoAnimationPath._5H;
+                string path = "_5H";
                 int state = StickTwoState._5H;
                 
                 var animation = new FighterAnimation()
@@ -1522,7 +1517,7 @@ namespace Quantum
                 int startup = 6;
                 int active = 6;
                 int hurtboxDuration = 15;
-                int path = (int)StickTwoAnimationPath._4H;
+                string path = "_4H";
                 int state = StickTwoState._4H;
                 
                 var animation = new FighterAnimation()
@@ -1645,7 +1640,7 @@ namespace Quantum
                 int startup = 19;
                 int active = 2;
                 int hurtboxDuration = 15;
-                int path = (int)StickTwoAnimationPath.Rekka1;
+                string path = "Rekka1";
                 int state = StickTwoState.Rekka1;
                 
                 var animation = new FighterAnimation()
@@ -1784,7 +1779,7 @@ namespace Quantum
                 int startup = 19;
                 int active = 2;
                 int hurtboxDuration = 15;
-                int path = (int)StickTwoAnimationPath.Rekka2A;
+                string path = "Rekka2A";
                 int state = StickTwoState.Rekka2A;
                 
                 var animation = new FighterAnimation()
@@ -1921,7 +1916,7 @@ namespace Quantum
                 int startup = 10;
                 int active = 2;
                 int hurtboxDuration = 15;
-                int path = (int)StickTwoAnimationPath.Rekka2B;
+                string path = "Rekka2B";
                 int state = StickTwoState.Rekka2B;
                 
                 var animation = new FighterAnimation()
@@ -2048,7 +2043,7 @@ namespace Quantum
                 int startup = 5;
                 int active = 2;
                 int hurtboxDuration = 15;
-                int path = (int)StickTwoAnimationPath.DP;
+                string path = "DP";
                 int state = StickTwoState.DP;
                 
                 var animation = new FighterAnimation()
@@ -2180,7 +2175,7 @@ namespace Quantum
                 int startup = 7;
                 int active = 2;
                 int hurtboxDuration = 5;
-                int path = (int)StickTwoAnimationPath.JL;
+                string path = "JL";
                 int state = StickTwoState.JL;
                 
                 var animation = new FighterAnimation()
@@ -2244,6 +2239,7 @@ namespace Quantum
                             GroundBounce = true,
                             TrajectoryHeight = 4,
                             Level = 2,
+                            VisualAngle = 70,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()

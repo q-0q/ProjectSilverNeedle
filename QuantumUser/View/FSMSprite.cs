@@ -38,10 +38,8 @@ public class FSMSprite : QuantumEntityViewComponent
 
         string characterName = fsm.Name;
         int frame = PredictedFrame.Get<AnimationData>(EntityRef).frame + 1;
-        int path = PredictedFrame.Get<AnimationData>(EntityRef).path;
-        var pathEnum = fsm.AnimationPathsEnum;
-        string stringPath = Enum.ToObject(pathEnum, path).ToString();
-        string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/" + stringPath + "_" + frame;
+        string path = fsm.StateMapConfig.FighterAnimation.Get(fsm, null).Path;
+        string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + path + "/" + path + "_" + frame;
         Sprite sprite = Resources.Load<Sprite>(fullPath);
         _renderer.sprite = sprite;
 

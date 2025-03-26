@@ -29,7 +29,6 @@ namespace Quantum
             public static int Jump;
         }
         
-        public Type AnimationPathsEnum;
         public FPVector2 KinematicAttachPointOffset;
         public string Name;
 

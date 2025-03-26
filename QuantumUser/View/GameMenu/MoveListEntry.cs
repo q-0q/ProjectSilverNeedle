@@ -68,10 +68,8 @@ public class MoveListEntry : MonoBehaviour
 
         string characterName = fsm.Name;
         int frame = actionConfig.AnimationDisplayFrameIndex;
-        int path = fsm.StateMapConfig.FighterAnimation.Lookup(actionConfig.State, fsm).Path;
-        var pathEnum = fsm.AnimationPathsEnum;
-        string stringPath = Enum.ToObject(pathEnum, path).ToString();
-        string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + stringPath + "/" + stringPath + "_" + frame;
+        string path = fsm.StateMapConfig.FighterAnimation.Get(fsm, null).Path;
+        string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + path + "/" + path + "_" + frame;
         Sprite sprite = Resources.Load<Sprite>(fullPath);
         Image image = transform.Find("Panel").transform.Find("Image").GetComponent<Image>();
         image.sprite = sprite;

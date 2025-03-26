@@ -16,19 +16,11 @@ namespace Quantum
             public static int Alive;
             public static int Destroy;
         }
-
-        public enum FireballAnimationPath
-        {
-            Prime,
-            Alive,
-            Destroy
-        }
         
         public FireballFSM()
         {
             Name = "StickTwoFireball";
             StateType = typeof(FireballState);
-            AnimationPathsEnum = typeof(FireballAnimationPath);
             KinematicAttachPointOffset = FPVector2.Zero;
             SummonPositionOffset = new FPVector2(FP.FromString("4.5"), FP.FromString("4.5"));
         }
@@ -85,7 +77,7 @@ namespace Quantum
 
             var aliveAnimation = new FighterAnimation()
             {
-                Path = (int)FireballAnimationPath.Alive,
+                Path = "Alive",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
@@ -98,7 +90,7 @@ namespace Quantum
             
             var destroyAnimation = new FighterAnimation()
             {
-                Path = (int)FireballAnimationPath.Destroy,
+                Path = "Destroy",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -111,7 +103,7 @@ namespace Quantum
             
             var primeAnimation = new FighterAnimation()
             {
-                Path = (int)FireballAnimationPath.Prime,
+                Path = "Prime",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true

@@ -190,14 +190,12 @@ namespace Quantum
         }
 
 
-        public static int GetAnimationPathLength(FSM fsm, int path)
+        public static int GetAnimationPathLength(FSM fsm, string path)
         {
-            var pathEnum = fsm.AnimationPathsEnum;
             var fsmName = fsm.Name;
-            string stringPath = Enum.ToObject(pathEnum, path).ToString();
     
             // Building the path within the Resources folder
-            string fullPath = "Sprites/Characters/" + fsmName + "/FrameGroups/" + stringPath;
+            string fullPath = "Sprites/Characters/" + fsmName + "/FrameGroups/" + path;
     
             // Load all PNG files from the Resources path
             var sprites = Resources.LoadAll<Sprite>(fullPath);  // Assuming you are working with Sprite assets
