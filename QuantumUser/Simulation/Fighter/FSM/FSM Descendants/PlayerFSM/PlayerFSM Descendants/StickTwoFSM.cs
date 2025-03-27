@@ -36,54 +36,6 @@ namespace Quantum
 
             public static int JL;
         }
-
-        
-            // "StandActionable",
-            // "CrouchActionable",
-            // "WalkForward",
-            // "WalkBackward",
-            // "Jump",
-            // "AfterAirAction",
-            // "Dash",
-            // "Backdash",
-            // "Airdash",
-            // "AirBackdash",
-            // "Throw",
-            // "ForwardThrowCutscene",
-            // "BackThrowCutscene",
-            //
-            // "StandHitHigh",
-            // "StandHitLow",
-            // "CrouchHit",
-            // "AirHit",
-            // "WallBounce",
-            // "GroundBounce",
-            // "StandBlock",
-            // "CrouchBlock",
-            // "AirBlock",
-            // "HardKnockdown",
-            // "SoftKnockdown",
-            // "DeadFromGround",
-            // "DeadFromAir",
-            // "Jumpsquat",
-            //
-            // "Landsquat",
-            // "ThrowTech",
-            //
-            // "_5P",
-            // "_2P",
-            // "_5M",
-            // "_2M",
-            // "_4H",
-            // "_5H",
-            // "_2H",
-            // "Fireball",
-            // "Rekka1",
-            // "Rekka2A",
-            // "Rekka2B",
-            // "DP",
-            //
-            // "JL",
         
         public class StickTwoCutscenes : PlayerFSM.CutsceneIndexes
         {
@@ -143,6 +95,8 @@ namespace Quantum
         public override void SetupStateMaps()
         {
             base.SetupStateMaps();
+            
+            Debug.Log("Setting up player state maps");
             
             CollisionBox standHurtbox = new()
             {
