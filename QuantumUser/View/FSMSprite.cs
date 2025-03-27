@@ -31,14 +31,20 @@ public class FSMSprite : QuantumEntityViewComponent
         
         FSM fsm = FsmLoader.GetFsm(EntityRef);
         
-        if (!PredictedFrame.Has<AnimationData>(EntityRef)) return;
+        if (GameFsmLoader.LoadGameFSM(PredictedFrame).Fsm.IsInState(GameFSM.State.Loading)) return;
 
         // Vector3 target = (transform.position - _camera.transform.position) + transform.position;
         // transform.LookAt(target);
 
         string characterName = fsm.Name;
         int frame = PredictedFrame.Get<AnimationData>(EntityRef).frame + 1;
-        string path = fsm.StateMapConfig.FighterAnimation.Get(fsm, null).Path;
+        var fighterAnimation = fsm.StateMapConfig.FighterAnimation;
+        if (fighterAnimation is null) return;
+
+        var fighterAnimation1 = fighterAnimation.Get(fsm, null);
+        
+        if (fighterAnimation1 is null) return;
+        string path = fighterAnimation1.Path;
         string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + path + "/" + path + "_" + frame;
         Sprite sprite = Resources.Load<Sprite>(fullPath);
         _renderer.sprite = sprite;
