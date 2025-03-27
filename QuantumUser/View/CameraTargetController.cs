@@ -19,6 +19,7 @@ public class CameraTargetController : MonoBehaviour
     
     private float _baseYPos;
     private float _yPulldown = 4.5f;
+    private float groundBounceTimer;
 
     private void Awake()
     {
@@ -37,26 +38,38 @@ public class CameraTargetController : MonoBehaviour
 
     }
 
-    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining)
+    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, bool groundBounce)
     {
         if (playerId == 0)
         {
             _player0Pos = pos;
             Player0Dramatic = dramaticRemaining > 0;
+            if (groundBounce) groundBounceTimer = 0;
         }
         else
         {
             _player1Pos = pos;
             Player1Dramatic = dramaticRemaining > 0;
+            if (groundBounce) groundBounceTimer = 0;
         }
+    }
+
+    private float GetGroundBouncePulldown()
+    {
+        var groundBouncePulldown = Mathf.Clamp(Mathf.InverseLerp(0.75f, 0.25f, groundBounceTimer), 0, 1) * 2;
+        Debug.Log(groundBouncePulldown);
+        return groundBouncePulldown;
     }
 
     private void Update()
     {
+        groundBounceTimer += Time.deltaTime;
         float x = (_player0Pos.x + _player1Pos.x) / 2;
         x = Mathf.Clamp(x, -_cameraXPan, _cameraXPan);
-        float y = Mathf.Clamp((Mathf.Max(_player0Pos.y - _yPulldown, _player1Pos.y - _yPulldown)), 0f, 1000f);
+        var yPulldown = _yPulldown + GetGroundBouncePulldown();
+        float y = Mathf.Clamp((Mathf.Max(_player0Pos.y - yPulldown, _player1Pos.y - yPulldown)), 0f, 1000f);
         transform.position =
             new Vector3(Mathf.Lerp(transform.position.x, x, Time.deltaTime * 6f), Mathf.Lerp(transform.position.y, y + _baseYPos, Time.deltaTime * 20f), transform.position.z);
     }
+    
 }
