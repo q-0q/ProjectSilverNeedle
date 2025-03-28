@@ -45,6 +45,7 @@ namespace Quantum.Types.Collision
         public FP GravityProration = FP.FromString("1.45");
         public FP DamageScaling = FP.FromString("0.85");
         public FP Damage = 20;
+        public FP ProxBlockDistance = 6;
         
         public HitType Type = HitType.Mid;
         public SectionGroup<CollisionBoxCollection> HitboxCollections;

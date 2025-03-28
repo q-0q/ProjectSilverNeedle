@@ -370,7 +370,8 @@ namespace Quantum
         private bool OpponentThreateningProxBlock(Frame f)
         {
             int Lookahead = 13;
-            var opponentFsm = FsmLoader.GetFsm(Util.GetOtherPlayer(f, EntityRef));
+            var opponentEntity = Util.GetOtherPlayer(f, EntityRef);
+            var opponentFsm = FsmLoader.GetFsm(opponentEntity);
             var hitSectionGroup = opponentFsm.StateMapConfig.HitSectionGroup.
                 Get(opponentFsm, new FrameParam() {f = f, EntityRef = opponentFsm.EntityRef});
             if (hitSectionGroup is null) return false;
@@ -381,6 +382,8 @@ namespace Quantum
             {
                 var hit = hitSectionGroup.GetItemFromIndex(i);
                 if (hit is null) continue;
+                var distance = GetXDistance(f, EntityRef, opponentEntity);
+                if (distance >= hit.ProxBlockDistance) continue;
                 return true;
             }
 
