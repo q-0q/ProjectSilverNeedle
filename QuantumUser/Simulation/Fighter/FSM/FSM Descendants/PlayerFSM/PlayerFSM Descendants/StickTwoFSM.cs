@@ -534,13 +534,15 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Tech] = standBlockAnimation;
             
             Util.AutoSetupFromAnimationPath(proxStandBlockAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = proxStandBlockAnimation;            
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = proxStandBlockAnimation;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = 100;
 
             Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchBlock] = crouchBlockAnimation;
             
             Util.AutoSetupFromAnimationPath(proxCrouchBlockAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = proxCrouchBlockAnimation;      
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = proxCrouchBlockAnimation;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = 100;
             
             Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirBlock] = airBlockAnimation;
@@ -895,6 +897,7 @@ namespace Quantum
                         TrajectoryHeight = 6,
                         TrajectoryXVelocity = 4,
                         GravityScaling = 1,
+                        GravityProration = FP.FromString("2"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()

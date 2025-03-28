@@ -358,13 +358,33 @@ namespace Quantum
         protected override void HandleProxBlock(Frame frame)
         {
             var numpad = InputSystem.Numpad(frame, EntityRef);
-            var proxBlockIsActive = InputSystem.NumpadMatchesNumpad(numpad, 4) && 
-                                    FsmLoader.GetFsm(Util.GetOtherPlayer(frame, EntityRef))
-                                        .Fsm.IsInState(PlayerState.Action);
+            
+            var proxBlockIsActive = InputSystem.NumpadMatchesNumpad(numpad, 4) &&
+                                     OpponentThreateningProxBlock(frame);
             Fsm.Fire(proxBlockIsActive ? (InputSystem.NumpadMatchesNumpad(numpad, 2)
                 ? PlayerTrigger.ProxBlockLow : PlayerTrigger.ProxBlockHigh)
                 : PlayerTrigger.EndProxBlock,
                 new FrameParam() {f = frame, EntityRef = EntityRef});
+        }
+
+        private bool OpponentThreateningProxBlock(Frame f)
+        {
+            int Lookahead = 13;
+            var opponentFsm = FsmLoader.GetFsm(Util.GetOtherPlayer(f, EntityRef));
+            var hitSectionGroup = opponentFsm.StateMapConfig.HitSectionGroup.
+                Get(opponentFsm, new FrameParam() {f = f, EntityRef = opponentFsm.EntityRef});
+            if (hitSectionGroup is null) return false;
+            
+            // walk forward Lookahead # of frames to find the next hit
+            var framesInCurrentState = opponentFsm.FramesInCurrentState(f);
+            for (int i = framesInCurrentState; i < framesInCurrentState + Lookahead; i++)
+            {
+                var hit = hitSectionGroup.GetItemFromIndex(i);
+                if (hit is null) continue;
+                return true;
+            }
+
+            return false;
         }
     }
 }

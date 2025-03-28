@@ -282,7 +282,7 @@ namespace Quantum
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -3)
                 .SubstateOf(PlayerState.GroundActionable)
                 .Permit(Trigger.NeutralInput, PlayerState.StandActionable)
-                .Permit(Trigger.Down, PlayerState.CrouchActionable)
+                // .Permit(Trigger.Down, PlayerState.CrouchActionable)
                 .Permit(Trigger.Forward, PlayerState.WalkForward)
                 .Permit(Trigger.Dash, PlayerState.Dash)
                 .Permit(Trigger.Backdash, PlayerState.Backdash)
@@ -293,11 +293,13 @@ namespace Quantum
                 .SubstateOf(PlayerState.ProxBlock)
                 .SubstateOf(PlayerState.Stand)
                 .Permit(PlayerTrigger.EndProxBlock, PlayerState.StandActionable);
-            
+
             machine.Configure(PlayerState.ProxCrouchBlock)
                 .SubstateOf(PlayerState.ProxBlock)
                 .SubstateOf(PlayerState.Crouch)
-                .Permit(PlayerTrigger.EndProxBlock, PlayerState.CrouchActionable);
+                .Permit(PlayerTrigger.EndProxBlock, PlayerState.CrouchActionable)
+                .OnEntry(_ => Debug.Log("Enter prox crouch"))
+                .OnExit(_ => Debug.Log("Exit prox crouch"));
                 
             
             machine.Configure(PlayerState.HardKnockdown)
