@@ -391,9 +391,27 @@ namespace Quantum
                 }
             };
             
+            var proxStandBlockAnimation = new FighterAnimation()
+            {
+                Path = "ProxStandBlock",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var crouchBlockAnimation = new FighterAnimation()
             {
                 Path = "CrouchBlock",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var proxCrouchBlockAnimation = new FighterAnimation()
+            {
+                Path = "ProxCrouchBlock",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -514,9 +532,15 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandBlock] = standBlockAnimation;
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Tech] = standBlockAnimation;
+            
+            Util.AutoSetupFromAnimationPath(proxStandBlockAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = proxStandBlockAnimation;            
 
             Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchBlock] = crouchBlockAnimation;
+            
+            Util.AutoSetupFromAnimationPath(proxCrouchBlockAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = proxCrouchBlockAnimation;      
             
             Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirBlock] = airBlockAnimation;

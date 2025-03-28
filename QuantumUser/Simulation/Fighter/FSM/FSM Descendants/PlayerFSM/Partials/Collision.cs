@@ -357,7 +357,14 @@ namespace Quantum
 
         protected override void HandleProxBlock(Frame frame)
         {
-            Debug.Log("Hello from HandleProxBlock");
+            var numpad = InputSystem.Numpad(frame, EntityRef);
+            var proxBlockIsActive = InputSystem.NumpadMatchesNumpad(numpad, 4) && 
+                                    FsmLoader.GetFsm(Util.GetOtherPlayer(frame, EntityRef))
+                                        .Fsm.IsInState(PlayerState.Action);
+            Fsm.Fire(proxBlockIsActive ? (InputSystem.NumpadMatchesNumpad(numpad, 2)
+                ? PlayerTrigger.ProxBlockLow : PlayerTrigger.ProxBlockHigh)
+                : PlayerTrigger.EndProxBlock,
+                new FrameParam() {f = frame, EntityRef = EntityRef});
         }
     }
 }
