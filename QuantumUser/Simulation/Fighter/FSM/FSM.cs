@@ -61,6 +61,8 @@ namespace Quantum
             StateMapConfig.MovementSectionGroup = new StateMap<SectionGroup<FP>>();
             StateMapConfig.AllowCrossupSectionGroup = new StateMap<SectionGroup<bool>>();
             StateMapConfig.TrajectorySectionGroup = new StateMap<SectionGroup<Trajectory>>();
+            StateMapConfig.TrajectoryYVelocityMod = new StateMap<SectionGroup<FP>>();
+            StateMapConfig.TrajectoryXVelocityMod = new StateMap<SectionGroup<FP>>();
             StateMapConfig.CancellableAfter = new StateMap<int>();
             StateMapConfig.WhiffCancellable = new StateMap<bool>();
             StateMapConfig.FireReceiverFinishAfter = new StateMap<int>();

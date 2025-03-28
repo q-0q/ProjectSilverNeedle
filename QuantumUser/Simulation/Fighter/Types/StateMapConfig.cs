@@ -16,6 +16,8 @@ namespace Quantum.StateMap
         public StateMap<SectionGroup<FP>> MovementSectionGroup;
         public StateMap<SectionGroup<bool>> AllowCrossupSectionGroup;
         public StateMap<SectionGroup<Trajectory>> TrajectorySectionGroup;
+        public StateMap<SectionGroup<FP>> TrajectoryYVelocityMod;
+        public StateMap<SectionGroup<FP>> TrajectoryXVelocityMod;
         // public StateMap<InputSystem.InputType> InputTypes;
         // public StateMap<int> CommandDirection;
         public StateMap<int> CancellableAfter;
