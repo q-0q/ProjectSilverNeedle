@@ -523,7 +523,11 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
 
+            var oneSectionGroup = new SectionGroup<FP>()
+                { Sections = new List<Tuple<int, FP>>() { new(1, 1) } };
             
+            StateMapConfig.TrajectoryYVelocityMod.DefaultValue = oneSectionGroup;
+            StateMapConfig.TrajectoryXVelocityMod.DefaultValue = oneSectionGroup;
             
             StateMapConfig.HurtTypeSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Throw] = new SectionGroup<PlayerFSM.HurtType>()
             {
@@ -834,7 +838,9 @@ namespace Quantum
             
             if (Fsm.IsInState(PlayerState.Jumpsquat)) return;
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
-            trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
+            var yMod = StateMapConfig.TrajectoryYVelocityMod
+                .Get(this, new FrameParam() { f = f, EntityRef = EntityRef }).GetCurrentItem(f, this);
+            trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement * yMod);
         }
 
         public override EntityRef GetPlayer()
