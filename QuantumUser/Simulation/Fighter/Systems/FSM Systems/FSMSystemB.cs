@@ -20,7 +20,6 @@ namespace Quantum
             
             if (HitstopSystem.IsHitstopActive(f)) return;
             
-            
             // Receive collisions
             fsm.HitboxHurtboxCollide(f);
 
