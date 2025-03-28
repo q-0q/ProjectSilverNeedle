@@ -28,7 +28,10 @@ namespace Quantum
             public static int StandHitLow;
             public static int CrouchHit;
             public static int StandBlock;
+            public static int ProxBlock;
+            public static int ProxStandBlock;
             public static int CrouchBlock;
+            public static int ProxCrouchBlock;
             public static int GroundBlock;
             public static int HardKnockdown;
             public static int SoftKnockdown;
@@ -89,6 +92,9 @@ namespace Quantum
             public static int HitLow;
             public static int BlockHigh;
             public static int BlockLow;
+            public static int ProxBlockHigh;
+            public static int ProxBlockLow;
+            public static int EndProxBlock;
             public static int Die;
         }
 
@@ -263,8 +269,31 @@ namespace Quantum
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -3)
                 .SubstateOf(PlayerState.Ground)
                 .SubstateOf(PlayerState.Block);
-            
 
+
+            machine.Configure(PlayerState.ProxBlock)
+                .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -3)
+                .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -3)
+                .SubstateOf(PlayerState.GroundActionable)
+                .Permit(Trigger.NeutralInput, PlayerState.StandActionable)
+                .Permit(Trigger.Down, PlayerState.CrouchActionable)
+                .Permit(Trigger.Forward, PlayerState.WalkForward)
+                .Permit(Trigger.Dash, PlayerState.Dash)
+                .Permit(Trigger.Backdash, PlayerState.Backdash)
+                .Permit(Trigger.Jump, PlayerState.Jumpsquat);
+
+
+            machine.Configure(PlayerState.ProxStandBlock)
+                .SubstateOf(PlayerState.ProxBlock)
+                .SubstateOf(PlayerState.Stand)
+                .Permit(PlayerTrigger.EndProxBlock, PlayerState.StandActionable);
+            
+            machine.Configure(PlayerState.ProxCrouchBlock)
+                .SubstateOf(PlayerState.ProxBlock)
+                .SubstateOf(PlayerState.Crouch)
+                .Permit(PlayerTrigger.EndProxBlock, PlayerState.CrouchActionable);
+                
+            
             machine.Configure(PlayerState.HardKnockdown)
                 .OnEntry(DoImpactVibrate)
                 .OnEntry(OnHKD)

@@ -203,6 +203,8 @@ namespace Quantum
         public void HitboxHurtboxCollide(Frame f)
         {
 
+            HandleProxBlock(f);
+            
             var hurtboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hurtbox);
             
 
@@ -229,7 +231,10 @@ namespace Quantum
         }
 
         protected virtual void InvokeHitboxHurtboxCollision(Frame frame, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
-
+        
+        protected virtual void HandleProxBlock(Frame frame) {}
+        
+        
         public virtual void HandleSummonFSMTriggers(Frame f) { }
 
         private static FPVector3 GetCollisionBoxWorldPosition(Frame f, EntityRef source, CollisionBox collisionBox)

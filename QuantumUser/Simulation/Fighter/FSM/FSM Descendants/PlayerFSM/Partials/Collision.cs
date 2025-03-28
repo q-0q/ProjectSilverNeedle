@@ -334,7 +334,6 @@ namespace Quantum
                 return false;
             }
 
-            // todo: jumpsquat
             if (Fsm.IsInState(PlayerState.Air)) return (numpad is 1 or 4 or 7);
             if (type == Hit.HitType.High) return numpad is 4 or 7;
             if (type == Hit.HitType.Mid) return numpad is 1 or 4 or 7;
@@ -356,5 +355,9 @@ namespace Quantum
             return Util.FramesFromVirtualTime(protectionData->virtualTimeSinceCrossupProtectionStart);
         }
 
+        protected override void HandleProxBlock(Frame frame)
+        {
+            Debug.Log("Hello from HandleProxBlock");
+        }
     }
 }
