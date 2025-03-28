@@ -69,7 +69,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(lifeSpan, 20),
+                    new(lifeSpan, 28),
                 }
             };
 
