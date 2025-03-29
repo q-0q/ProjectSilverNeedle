@@ -2322,17 +2322,12 @@ namespace Quantum
                     }
                 };
                 
-                var trajectory = new SectionGroup<Trajectory>()
+                var trajectoryYMod = new SectionGroup<FP>()
                 {
-                    Sections = new List<Tuple<int, Trajectory>>()
+                    Sections = new List<Tuple<int, FP>>()
                     {
-                        new(startup, new Trajectory()
-                        {
-                            TimeToTrajectoryHeight = startup,
-                            TrajectoryHeight = FP.FromString("0.1"),
-                            TrajectoryXVelocity = 3
-                        }),
-                        new(10, null)
+                        new(10, FP.FromString("0.5")),
+                        new(10, 1),
                     } 
                 };
 
@@ -2431,7 +2426,7 @@ namespace Quantum
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
-                // StateMapConfig.TrajectorySectionGroup.Dictionary[state] = trajectory;
+                StateMapConfig.TrajectoryYVelocityMod.Dictionary[state] = trajectoryYMod;
 
             }
             
