@@ -838,9 +838,8 @@ namespace Quantum
             
             if (Fsm.IsInState(PlayerState.Jumpsquat)) return;
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
-            var yMod = StateMapConfig.TrajectoryYVelocityMod
-                .Get(this, new FrameParam() { f = f, EntityRef = EntityRef }).GetCurrentItem(f, this);
-            trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement * yMod);
+
+            trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
         }
 
         public override EntityRef GetPlayer()

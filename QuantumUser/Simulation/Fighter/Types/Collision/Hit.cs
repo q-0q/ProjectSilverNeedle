@@ -7,7 +7,8 @@ namespace Quantum.Types.Collision
     public class Hit
     {
 
-        public static List<int> AttackLevelHitstop = new() { 7, 12, 13, 14, 15 };
+        // public static List<int> AttackLevelHitstop = new() { 7, 12, 13, 14, 15 };
+        public static List<int> AttackLevelHitstop = new() { 6, 11, 12, 13, 14 };
         public static List<int> AttackLevelStandHitstun = new() { 12, 14, 16, 19, 21 };
         public static List<int> AttackLevelCrouchHitstun = new() { 13, 15, 17, 20, 22 };
         public static List<int> AttackLevelGroundBlockstun = new() { 9, 11, 13, 16, 18 };
