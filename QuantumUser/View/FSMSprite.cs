@@ -32,7 +32,8 @@ public class FSMSprite : QuantumEntityViewComponent
         FSM fsm = FsmLoader.GetFsm(EntityRef);
         
         if (GameFsmLoader.LoadGameFSM(PredictedFrame).Fsm.IsInState(GameFSM.State.Loading)) return;
-
+        if (GameFsmLoader.LoadGameFSM(PredictedFrame).Fsm.IsInState(GameFSM.State.Waiting)) return; 
+        
         // Vector3 target = (transform.position - _camera.transform.position) + transform.position;
         // transform.LookAt(target);
 
