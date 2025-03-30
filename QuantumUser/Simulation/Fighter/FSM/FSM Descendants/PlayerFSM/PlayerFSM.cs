@@ -6,6 +6,7 @@ using Quantum.Types;
 using Quantum.Types.Collision;
 using UnityEngine;
 using Wasp;
+using Random = UnityEngine.Random;
 
 
 namespace Quantum
@@ -522,6 +523,8 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
+
+            // StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[PlayerState.Cutscene] = null;
 
             var oneSectionGroup = new SectionGroup<FP>()
                 { Sections = new List<Tuple<int, FP>>() { new(1, 1) } };
