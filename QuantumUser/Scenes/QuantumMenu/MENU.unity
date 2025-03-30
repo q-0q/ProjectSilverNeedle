@@ -848,6 +848,11 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.047169805
       objectReference: {fileID: 0}
+    - target: {fileID: 3204266722487017877, guid: 7d78f8a9ae2bcc1408312ef78f87bdf0,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3409366690421426758, guid: 7d78f8a9ae2bcc1408312ef78f87bdf0,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -1240,7 +1245,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'v0.0.2
+  m_text: 'v0.3.0
 
 
     by Jack Withers'

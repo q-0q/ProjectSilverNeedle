@@ -755,7 +755,7 @@ namespace Quantum
             Cutscene backThrowCutscene = new Cutscene()
             {
                 InitiatorState = StickTwoState.BackThrowCutscene,
-                ReactorDuration = 55,
+                ReactorDuration = 45,
                 Techable = true,
                 ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
                 {
@@ -763,7 +763,7 @@ namespace Quantum
                     {
                         new (8, new FPVector2(FP.FromString("2.5"), FP.FromString("7.5"))),
                         new (20, new FPVector2(FP.FromString("2.5"), 8)),
-                        new (13, new FPVector2(FP.FromString("0.1"), FP.FromString("7.5"))),
+                        new (15, new FPVector2(FP.FromString("0.1"), FP.FromString("7.5"))),
                         new (15, new FPVector2(-4, 0)),
                     }
                 }
@@ -1082,17 +1082,18 @@ namespace Quantum
                 Sections = new List<Tuple<int, Hit>>()
                 {
                     new Tuple<int, Hit>(15, null),
-                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
-                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
-                    new Tuple<int, Hit>(2, frontThrowCutsceneHit),
+                    new Tuple<int, Hit>(2, backThrowCutsceneHit),
+                    new Tuple<int, Hit>(2, null),
+                    new Tuple<int, Hit>(2, backThrowCutsceneHit),
                     new Tuple<int, Hit>(20, null)
                 }
             };
             
             Util.AutoSetupFromAnimationPath(backThrowCutsceneAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation;
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = backThrowCutsceneHits;
+            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneHits;
             StateMapConfig.Duration.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation.SectionGroup.Duration();
+
 
 
 
