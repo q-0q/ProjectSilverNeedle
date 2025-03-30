@@ -689,6 +689,8 @@ namespace Quantum
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
             
+            Debug.Log("OnEnterTech");
+            
             frameParam.f.Unsafe.TryGetPointer<CutsceneData>(EntityRef, out var cutsceneData);
             FsmLoader.FSMs[Util.GetOtherPlayer(frameParam.f, EntityRef)].Fsm.Fire(FSM.Trigger.Tech, frameParam);
 
