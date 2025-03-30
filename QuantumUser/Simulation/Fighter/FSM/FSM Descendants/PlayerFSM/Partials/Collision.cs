@@ -130,6 +130,9 @@ namespace Quantum
                 : AnimationEntities.AnimationEntityEnum.Hit;
             AnimationEntitySystem.Create(f, animationEntityEnum, location, hitboxData.visualAngle, 
                 !IsFacingRight(f, hitboxData.source));
+            
+            f.Events.PlayerHit(location, hitboxData.visualAngle);
+
 
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             trajectoryData->hardKnockdown = hitboxData.hardKnockdown;
