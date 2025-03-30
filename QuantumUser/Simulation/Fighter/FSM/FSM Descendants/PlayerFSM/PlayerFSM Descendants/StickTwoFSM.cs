@@ -927,6 +927,7 @@ namespace Quantum
                         GravityScaling = 1,
                         GravityProration = FP.FromString("2"),
                         Damage = highDamage,
+                        VisualAngle = -80,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -2489,7 +2490,6 @@ namespace Quantum
                     Type = Hit.HitType.High,
                     TrajectoryHeight = 2,
                     Level = 2,
-                    VisualAngle = 70,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                     {
                         Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -2523,7 +2523,6 @@ namespace Quantum
                     TrajectoryHeight = 2,
                     TrajectoryXVelocity = 3,
                     Level = 2,
-                    VisualAngle = 70,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                     {
                         Sections = new List<Tuple<int, CollisionBoxCollection>>()
