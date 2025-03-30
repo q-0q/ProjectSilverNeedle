@@ -2186,36 +2186,21 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, CollisionBoxCollection>>()
                     {
-                        new(startup, new CollisionBoxCollection()
+                        new(40, new CollisionBoxCollection()
                         {
                             CollisionBoxes = new List<CollisionBox>()
                             {
-                                airHurtbox
-                            }
-                        }),
-                        new(hurtboxDuration, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                airHurtbox,
                                 new CollisionBox()
                                 {
-                                    Height = 4,
-                                    Width = 3,
-                                    GrowWidth = true,
                                     GrowHeight = false,
-                                    PosY = -2,
-                                    PosX = 0
+                                    GrowWidth = false,
+                                    PosX = -1,
+                                    PosY = 2,
+                                    Height = 5,
+                                    Width = 4,
                                 }
                             }
-                        }),
-                        new(20, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                airHurtbox
-                            }
-                        }),
+                        })
                     }
                 };
                 
@@ -2399,7 +2384,7 @@ namespace Quantum
                 int startup = 11;
                 int active = 2;
                 int gap = 2;
-                int hurtboxDuration = 5;
+                int hurtboxDuration = 13;
                 string path = "JM";
                 int state = StickTwoState.JM;
                 
@@ -2431,10 +2416,10 @@ namespace Quantum
                                 new CollisionBox()
                                 {
                                     Height = 4,
-                                    Width = 3,
+                                    Width = 6,
                                     GrowWidth = true,
                                     GrowHeight = false,
-                                    PosY = -2,
+                                    PosY = 2,
                                     PosX = 0
                                 }
                             }
