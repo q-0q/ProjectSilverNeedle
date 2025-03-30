@@ -92,7 +92,7 @@ public class GameMenu : MonoBehaviour
             .Find("MoveList").Find("ScrollContent");
 
         var normHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
-        normHeader.GetComponent<TextMeshProUGUI>().text = "Normal moves";
+        normHeader.GetComponent<TextMeshProUGUI>().text = "Grounded normals";
         foreach (var move in fsm.NormalMoveList)
         {
             var obj = Instantiate(MoveListEntryPrefab,
@@ -101,15 +101,22 @@ public class GameMenu : MonoBehaviour
         }
         
         var commandHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
-        commandHeader.GetComponent<TextMeshProUGUI>().text = "Command normals";
+        commandHeader.GetComponent<TextMeshProUGUI>().text = "Grounded command normals";
         foreach (var move in fsm.CommandNormalMoveList)
         {
             var obj = Instantiate(MoveListEntryPrefab,
                 scrollContent);
             obj.GetComponent<MoveListEntry>().UpdateActionConfig(move, fsm);
         }
-
-        _enqueueDisabled = true;
+        
+        var airHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
+        airHeader.GetComponent<TextMeshProUGUI>().text = "Air normals";
+        foreach (var move in fsm.AirNormalMoveList)
+        {
+            var obj = Instantiate(MoveListEntryPrefab,
+                scrollContent);
+            obj.GetComponent<MoveListEntry>().UpdateActionConfig(move, fsm);
+        }
         
         var specialHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
         specialHeader.GetComponent<TextMeshProUGUI>().text = "Special moves";

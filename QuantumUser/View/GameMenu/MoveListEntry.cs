@@ -68,12 +68,18 @@ public class MoveListEntry : MonoBehaviour
 
         string characterName = fsm.Name;
         int frame = actionConfig.AnimationDisplayFrameIndex;
-        string path = fsm.StateMapConfig.FighterAnimation.Get(fsm, null).Path;
+        string path = fsm.StateMapConfig.FighterAnimation.Lookup(actionConfig.State, fsm, null).Path;
         string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + path + "/" + path + "_" + frame;
         Sprite sprite = Resources.Load<Sprite>(fullPath);
         Image image = transform.Find("Panel").transform.Find("Image").GetComponent<Image>();
         image.sprite = sprite;
         image.SetNativeSize();
+        if (actionConfig.Aerial)
+        {
+            var anchoredPosition = image.GetComponent<RectTransform>().anchoredPosition;
+            image.GetComponent<RectTransform>().anchoredPosition =
+                new Vector2(anchoredPosition.x, anchoredPosition.y + 70);
+        }
     }
 
     private string GetRangeString(int min, int max)

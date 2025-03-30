@@ -109,6 +109,7 @@ namespace Quantum
         public int JumpsquatDuration;
 
         public List<ActionConfig> NormalMoveList;
+        public List<ActionConfig> AirNormalMoveList;
         public List<ActionConfig> CommandNormalMoveList;
         public List<ActionConfig> SpecialMoveList;
         public List<ActionConfig> SuperMoveList;
@@ -121,6 +122,7 @@ namespace Quantum
             int currentState = PlayerState.StandActionable;
             Fsm = new Machine<int, int>(currentState);
             NormalMoveList = new List<ActionConfig>();
+            AirNormalMoveList = new List<ActionConfig>();
             CommandNormalMoveList = new List<ActionConfig>();
             SpecialMoveList = new List<ActionConfig>();
             SuperMoveList = new List<ActionConfig>();
@@ -944,6 +946,8 @@ namespace Quantum
                     .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirSpecialCancellable : PlayerFSM.PlayerState.GroundSpecialCancellable);
             }
 
+            
+            // Movelist stuff
             if (actionConfig.IsSpecial)
             {
                 MakeSpecialAction(fsm, actionConfig);
@@ -951,7 +955,9 @@ namespace Quantum
             }
             else
             {
-                if (actionConfig.CommandDirection is 5 or 2)
+                if (actionConfig.Aerial)
+                    AirNormalMoveList.Add(actionConfig);
+                else if (actionConfig.CommandDirection is 5 or 2)
                     NormalMoveList.Add(actionConfig);
                 else
                     CommandNormalMoveList.Add(actionConfig);
