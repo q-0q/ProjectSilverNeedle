@@ -2343,7 +2343,7 @@ namespace Quantum
                             Type = Hit.HitType.High,
                             TrajectoryHeight = FP.FromString("0"),
                             TrajectoryXVelocity = 12,
-                            Level = 1,
+                            Level = 3,
                             VisualAngle = 70,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
@@ -2781,7 +2781,7 @@ namespace Quantum
                 State = StickTwoState.JH,
                 
                 Name = "Jumping heavy",
-                Description = "A downwards kick that can be used as an instant overhead."
+                Description = "A downwards kick that can be used to deter approaching opponents."
             };
             
             ConfigureAction(this, JH);

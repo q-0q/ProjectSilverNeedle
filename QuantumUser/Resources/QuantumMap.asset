@@ -52,13 +52,13 @@ MonoBehaviour:
       type: {class: CpuControllerDataPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:
         cpuEnabled:
-          Value: 0
+          Value: 1
         forceCounter:
           Value: 0
         doAction:
-          Value: 1
+          Value: 0
         doJump:
-          Value: 1
+          Value: 0
         block:
           Value: 0
         dash:
