@@ -2916,7 +2916,6 @@ namespace Quantum
                 
                 Name = "Resolution",
                 Description = "A fast, long range kick, great for ending pressure sequences safely.",
-                FlavorText = "Frost snaps the verdant fields.",
                 AnimationDisplayFrameIndex = 11,
                 WhileIn = Rekka1
             };

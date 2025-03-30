@@ -52,7 +52,7 @@ MonoBehaviour:
       type: {class: CpuControllerDataPrototype, ns: Quantum.Prototypes, asm: Quantum.Simulation}
       data:
         cpuEnabled:
-          Value: 1
+          Value: 0
         forceCounter:
           Value: 0
         doAction:
