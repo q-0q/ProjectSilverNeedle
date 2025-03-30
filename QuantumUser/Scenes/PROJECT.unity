@@ -5361,7 +5361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prototype:
     cpuEnabled:
-      Value: 1
+      Value: 0
     forceCounter:
       Value: 0
     doAction:
