@@ -226,7 +226,7 @@ namespace Quantum
             var hitboxParam = new FrameParam() { f = f, EntityRef = hitboxInternal.source };
             
             // handle throw vs throw startup collision auto-tech (ie, early tech)
-            if ((actionable || hurtboxPlayerFsm.Fsm.IsInState(PlayerState.Throw)) &&
+            if ((hurtboxPlayerFsm.Fsm.IsInState(PlayerState.Throw)) &&
                 (hurtboxPlayerFsm.FramesInCurrentState(f) <= ThrowStartupDuration))
             {
                 hurtboxPlayerFsm.Fsm.Jump(PlayerState.Tech, hurtboxParam);
