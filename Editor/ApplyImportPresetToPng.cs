@@ -24,7 +24,7 @@ public class ApplyImportSettingsFromReference : EditorWindow
         Debug.Log($"Reference Texture Settings: Readable={referenceTextureImporter.isReadable}, FilterMode={referenceTextureImporter.filterMode}, WrapMode={referenceTextureImporter.wrapMode}, Compression={referenceTextureImporter.textureCompression}, MipmapEnabled={referenceTextureImporter.mipmapEnabled}, MaxTextureSize={referenceTextureImporter.maxTextureSize}, SpriteMode={referenceTextureImporter.spriteImportMode}");
 
         // Directory to scan for PNG files
-        string directoryPath = "Assets/Resources/Sprites/Characters/StickTwo/FrameGroups/ProxCrouchBlock";
+        string directoryPath = "Assets/Resources/Sprites/Characters/StickTwo/FrameGroups/DP";
         // string directoryPath = "Assets/Resources/Sprites/Characters/StickTwo";
         
         string[] pngFiles = Directory.GetFiles(directoryPath, "*.png", SearchOption.AllDirectories);

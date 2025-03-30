@@ -1915,7 +1915,9 @@ namespace Quantum
                     Sections = new List<Tuple<int, FP>>()
                     {
                         new(startup - 3, 0),
-                        new(3, FP.FromString("1")),
+                        new(3, FP.FromString("2")),
+                        new(4, 0),
+                        new(8, FP.FromString("-1.25")),
                         new(4, 0),
                     }
                 };
@@ -1966,7 +1968,7 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
-                            Level = 2,
+                            Level = 3,
                             GravityScaling = FP.FromString("0.925"),
                             GravityProration = FP.FromString("1.6"),
                             TrajectoryHeight = FP.FromString("3.25"),
@@ -2107,8 +2109,8 @@ namespace Quantum
                     {
                         new(startup, null),
                         new(active, hit),
-                        new(active, hit),
-                        new(active, hit),
+                        // new(active, hit),
+                        // new(active, hit),
                         new (20, null)
                     }
                 };
@@ -2326,7 +2328,7 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(10, FP.FromString("0.5")),
+                        new(10, FP.FromString("0.8")),
                         new(10, 1),
                     } 
                 };
@@ -2338,7 +2340,7 @@ namespace Quantum
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1.3"),
                     Type = Hit.HitType.High,
-                    TrajectoryHeight = 3,
+                    TrajectoryHeight = 2,
                     Level = 2,
                     VisualAngle = 70,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -2356,7 +2358,7 @@ namespace Quantum
                                         GrowWidth = true,
                                         GrowHeight = false,
                                         PosY = 3,
-                                        PosX = 0
+                                        PosX = 1
                                     }
                                 }
                             })
@@ -2371,7 +2373,7 @@ namespace Quantum
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1.3"),
                     Type = Hit.HitType.High,
-                    TrajectoryHeight = 3,
+                    TrajectoryHeight = 2,
                     TrajectoryXVelocity = 3,
                     Level = 2,
                     VisualAngle = 70,
@@ -2386,11 +2388,11 @@ namespace Quantum
                                     new CollisionBox()
                                     {
                                         Height = 1,
-                                        Width = FP.FromString("4.5"),
+                                        Width = FP.FromString("3"),
                                         GrowWidth = true,
                                         GrowHeight = false,
                                         PosY = 2,
-                                        PosX = 0
+                                        PosX = FP.FromString("2.25")
                                     }
                                 }
                             })
@@ -2426,7 +2428,7 @@ namespace Quantum
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
-                StateMapConfig.TrajectoryYVelocityMod.Dictionary[state] = trajectoryYMod;
+                // StateMapConfig.TrajectoryYVelocityMod.Dictionary[state] = trajectoryYMod;
 
             }
             

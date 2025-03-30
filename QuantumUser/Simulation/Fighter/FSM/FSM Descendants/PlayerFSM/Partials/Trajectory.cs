@@ -46,14 +46,28 @@ namespace Quantum
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
-            
             int framesInTrajectory = GetFramesInTrajectory(f);
             xMoveAmount = trajectoryData->xVelocity;
             FP trajectoryHeight = trajectoryData->trajectoryHeight;
             int timeToTrajectoryHeight = trajectoryData->timeToTrajectoryHeight;
             FP fallSpeed = trajectoryData->fallSpeed;
             int timeToFallSpeed = trajectoryData->timeToFallSpeed;
+
+            // New multiplier retrieval (you can change the logic or source of this value)
+            var yMod = StateMapConfig.TrajectoryYVelocityMod
+                .Get(this, new FrameParam() { f = f, EntityRef = EntityRef }).GetCurrentItem(f, this);
+
+            // Calculate a factor or multiplier to apply to the y velocity
+            FP yVelocityMultiplier = 1; // Default is no change
+
+            // For example, apply the multiplier if the virtual time in trajectory is within a specific range
+            // if (trajectoryData->virtualTimeInTrajectory > certainThresholdStart && 
+            //     trajectoryData->virtualTimeInTrajectory < certainThresholdEnd)
+            // {
+            //     
+            // }
             
+            yVelocityMultiplier = yMod; // Use the multiplier during this time
 
             if (trajectoryData->groundBounce)
             {
@@ -77,7 +91,8 @@ namespace Quantum
                 }
             }
 
-
+            // Apply the multiplier to the vertical movement (yMoveAmount)
+            yMoveAmount *= yVelocityMultiplier;
             
             return new FPVector2(xMoveAmount, yMoveAmount);
         }
