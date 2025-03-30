@@ -6,6 +6,12 @@ event EntityVibrate
     int vibrato;
 }
 
+event PlayerHit
+{
+    FPVector2 position;
+    FP angle;
+}
+
 enum GameEventType {
     Counter,
     Punish,
