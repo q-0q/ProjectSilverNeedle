@@ -382,6 +382,7 @@ namespace Quantum
             {
                 var hit = hitSectionGroup.GetItemFromIndex(i);
                 if (hit is null) continue;
+                if (hit.Type is Hit.HitType.Throw) continue;
                 var distance = GetXDistance(f, EntityRef, opponentEntity);
                 if (distance >= hit.ProxBlockDistance) continue;
                 return true;
