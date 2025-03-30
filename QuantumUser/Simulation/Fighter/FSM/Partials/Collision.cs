@@ -118,6 +118,11 @@ namespace Quantum
                 if (hurtBoxCollectionSectionGroup is null) return new List<CollisionBoxInternal>();
                 var hurtboxCollection = hurtBoxCollectionSectionGroup.GetItemFromIndex(collisionStateFrames);
                 if (hurtboxCollection is null) return new List<CollisionBoxInternal>();
+                
+                
+                // TODO: once we have priority implemented for StateMap Get, we can remove this check
+                if (fsm is PlayerFSM && fsm.Fsm.IsInState(PlayerFSM.PlayerState.Cutscene))
+                    return new List<CollisionBoxInternal>();
 
 
                 var hurtboxInternals = new List<CollisionBoxInternal>();
