@@ -57,8 +57,8 @@ public class MoveListEntry : MonoBehaviour
                 GetRangeString(actionConfig.MinStandHitFrameAdvantage, actionConfig.MaxStandHitFrameAdvantage);
         data += "Crouching hit:  " +
                 GetRangeString(actionConfig.MinCrouchHitFrameAdvantage, actionConfig.MaxCrouchHitFrameAdvantage);
-        data += "Air block:      " +
-                GetRangeString(actionConfig.MinAirBlockFrameAdvantage, actionConfig.MaxAirBlockFrameAdvantage);
+        // data += "Air block:      " +
+        //         GetRangeString(actionConfig.MinAirBlockFrameAdvantage, actionConfig.MaxAirBlockFrameAdvantage);
         
         transform.Find("Panel").Find("Text").Find("Data").GetComponent<TextMeshProUGUI>().text
             = data;
