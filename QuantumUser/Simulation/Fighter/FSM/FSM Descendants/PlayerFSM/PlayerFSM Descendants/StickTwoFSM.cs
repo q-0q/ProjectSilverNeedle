@@ -773,7 +773,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new Tuple<int, Hit>(10, null),
+                    new Tuple<int, Hit>(9, null),
                     new Tuple<int, Hit>(5, new Hit()
                     {
                         Level = 2,
@@ -809,18 +809,34 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
                 {
-                    new(10, new CollisionBoxCollection()
+                    new(9, new CollisionBoxCollection()
                     {
                         CollisionBoxes = new List<CollisionBox>()
                         {
-                            crouchHurtbox
+                            new()
+                            {
+                                GrowHeight = true,
+                                GrowWidth = false,
+                                PosX = 0,
+                                PosY = 0,
+                                Height = 3,
+                                Width = 3,
+                            }
                         }
                     }),
                     new(20, new CollisionBoxCollection()
                     {
                         CollisionBoxes = new List<CollisionBox>()
                         {
-                            crouchHurtbox,
+                            new()
+                            {
+                                GrowHeight = true,
+                                GrowWidth = false,
+                                PosX = 0,
+                                PosY = 0,
+                                Height = 3,
+                                Width = 3,
+                            },
                             new CollisionBox()
                             {
                                 GrowHeight = false,
@@ -850,7 +866,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
                 {
-                    new(21, PlayerFSM.HurtType.Counter),
+                    new(20, PlayerFSM.HurtType.Counter),
                     new(20, PlayerFSM.HurtType.Punish)
                 }
             };
@@ -862,7 +878,7 @@ namespace Quantum
             StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState._2M] = _2MHurtboxes;
             StateMapConfig.CancellableAfter.Dictionary[StickTwoState._2M] = 16;
             StateMapConfig.WhiffCancellable.Dictionary[StickTwoState._2M] = false;
-            StateMapConfig.MovementSectionGroup.Dictionary[StickTwoState._2M] = _2MMovement;
+            // StateMapConfig.MovementSectionGroup.Dictionary[StickTwoState._2M] = _2MMovement;
             StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._2M] = _2MHurtTypes;
 
 
@@ -2043,7 +2059,7 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(startup - 3, 2),
+                        new(startup - 3, 0),
                         new(3, FP.FromString("1")),
                         new(50, 4),
                         new(5, 0),
@@ -2109,8 +2125,8 @@ namespace Quantum
                     {
                         new(startup, null),
                         new(active, hit),
-                        // new(active, hit),
-                        // new(active, hit),
+                        new(active, hit),
+                        new(active, hit),
                         new (20, null)
                     }
                 };
