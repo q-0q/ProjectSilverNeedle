@@ -952,11 +952,22 @@ namespace Quantum
                 }
             };
             
+            var _2HHurtTypes = new SectionGroup<PlayerFSM.HurtType>()
+            {
+                Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
+                {
+                    new(17, PlayerFSM.HurtType.Counter),
+                    new(20, PlayerFSM.HurtType.Punish)
+                }
+            };
+            
             Util.AutoSetupFromAnimationPath(_2HAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[StickTwoState._2H] = _2HAnimation;
             StateMapConfig.Duration.Dictionary[StickTwoState._2H] = _2HAnimation.SectionGroup.Duration();
             StateMapConfig.HitSectionGroup.Dictionary[StickTwoState._2H] = _2HHits;
             StateMapConfig.MovementSectionGroup.Dictionary[StickTwoState._2H] = _2HMovement;
+            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._2H] = _2HHurtTypes;
+
 
             var frontThrowCutsceneAnimation = new FighterAnimation()
             {
@@ -2748,7 +2759,8 @@ namespace Quantum
                 State = StickTwoState.JM,
                 
                 Name = "Jumping medium",
-                Description = "A bicycle kick that can combo opponents in the air."
+                AnimationDisplayFrameIndex = 13,
+                Description = "A two-hit bicycle kick that can combo opponents in the air."
             };
             
             ConfigureAction(this, JM);
@@ -2765,6 +2777,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
+                AnimationDisplayFrameIndex = 11,
                 State = StickTwoState.JH,
                 
                 Name = "Jumping heavy",
@@ -2929,7 +2942,8 @@ namespace Quantum
                 SpecialCancellable = false,
                 
                 Description = "A rising multi-hit attack that is invincible on startup, but leaves you highly exposed when blocked. Great as a defensive option.",
-                Name = "Fountain"
+                Name = "Fountain",
+                AnimationDisplayFrameIndex = 11
             };
             
             ConfigureAction(this, dp);
