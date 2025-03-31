@@ -13,14 +13,39 @@ using Input = UnityEngine.Input;
 
 public class CollisionBoxViewer : QuantumEntityViewComponent
 {
+    private bool _boxesEnabled = false;
     private SpriteRenderer _spriteRenderer;
-    private static float _alpha = 0f;
+    private static float _alpha = 1f;
     private static Color _hurtboxColor = new(0, 0f, 255f, _alpha);
     private static Color _hitboxColor = new(255f, 0, 0, _alpha);
     private static Color _pushboxColor = new(255f, 255f, 0, _alpha);
 
     private GameObject _lineRendererPrefab;
     private List<LineRenderer> _lineRenderers;
+    
+    public static Action OnCollisionBoxesToggled;
+
+
+    private void OnEnable()
+    {
+        OnCollisionBoxesToggled += Toggle;
+    }
+    
+    private void OnDisable()
+    {
+        OnCollisionBoxesToggled -= Toggle;
+    }
+
+    public void Toggle()
+    {
+        _boxesEnabled = !_boxesEnabled;
+        Debug.Log("Toggle: " + _boxesEnabled);
+        if (_boxesEnabled) return;
+        foreach (var t in _lineRenderers)
+        {
+            t.enabled = false;
+        }
+    }
 
     
     public override void OnInitialize()
@@ -39,6 +64,7 @@ public class CollisionBoxViewer : QuantumEntityViewComponent
 
     public override void OnUpdateView()
     {
+        if (!_boxesEnabled) return;
         if (_alpha <= 0.005f) return; 
         if (!PredictedFrame.Has<FSMData>(EntityRef)) return;
 

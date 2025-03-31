@@ -18,12 +18,24 @@ public class FrameMeterReporter : QuantumEntityViewComponent
     public List<GameObject> pooledObjects;
     public GameObject FrameMeterFramePrefab;
     public int poolSize = 50;
-    public static bool CollisionBoxViewEnabled;
+    // public static bool CollisionBoxViewEnabled;
+    public static Action OnFrameMeterToggled;
 
 
-    private void Start()
+    private void OnEnable()
     {
+        OnFrameMeterToggled += Toggle;
+    }
+    
+    private void OnDisable()
+    {
+        OnFrameMeterToggled -= Toggle;
+    }
 
+    public void Toggle()
+    {
+        _frameMeterEnabled = !_frameMeterEnabled;
+        ClearCurrentFrameMeter();
     }
 
     public override void OnInitialize()
@@ -37,26 +49,13 @@ public class FrameMeterReporter : QuantumEntityViewComponent
         }
     }
 
-    private void Update()
+    
+    public void ClearCurrentFrameMeter()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (_frameMeterEnabled) return;
+        for (int i = 0; i < transform.childCount; i++)
         {
-            _frameMeterEnabled = !_frameMeterEnabled;
-
-            if (!_frameMeterEnabled)
-            {
-                for (int i = 0; i < transform.childCount; i++)
-                {
-                    transform.GetChild(i).gameObject.SetActive(false);
-                }
-            }
-            
-        }
-        
-        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
-        {
-            Debug.Log("toggle");
-            CollisionBoxViewEnabled = !CollisionBoxViewEnabled;
+            transform.GetChild(i).gameObject.SetActive(false);
         }
     }
 

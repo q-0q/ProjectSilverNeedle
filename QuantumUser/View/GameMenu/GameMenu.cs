@@ -55,7 +55,8 @@ public class GameMenu : MonoBehaviour
             _canvas.gameObject.SetActive(false);
             _enqueueDisabled = false;
         }
-        if (Input.GetKeyDown(KeyCode.Escape)) _canvas.gameObject.SetActive(!_canvas.gameObject.activeInHierarchy);
+        
+        if (Input.GetKeyDown(KeyCode.Tab)) _canvas.gameObject.SetActive(!_canvas.gameObject.activeInHierarchy);
         
     }
     
