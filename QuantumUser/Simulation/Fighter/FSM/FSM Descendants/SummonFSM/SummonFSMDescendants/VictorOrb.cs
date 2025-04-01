@@ -4,11 +4,13 @@ using Photon.Deterministic;
 using Quantum;
 using Quantum.Types;
 using Quantum.Types.Collision;
+using UnityEditor;
 using UnityEngine;
+using Wasp;
 
 namespace Quantum
 {
-    public class VictorOrbFsm : SummonFSM
+    public unsafe class VictorOrbFsm : SummonFSM
     {
         public class VictorOrbState : SummonState
         {
@@ -27,12 +29,16 @@ namespace Quantum
             Name = "VictorOrb";
             StateType = typeof(VictorOrbState);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(FP.FromString("3.5"), FP.FromString("4"));
+            SummonPositionOffset = new FPVector2(FP.FromString("-2.5"), FP.FromString("2.5"));
         }
+        
+        
 
         public override void SetupStateMaps()
         {
             base.SetupStateMaps();
+
+            sendToBack = true;
             
             var visibleAnimation = new FighterAnimation()
             {
@@ -70,6 +76,7 @@ namespace Quantum
 
             Fsm.Configure(VictorOrbState.Invisible)
                 .SubstateOf(SummonState.Unpooled)
+                .OnEntry(OnVisible)
                 .Permit(VictorOrbTrigger.Show, VictorOrbState.Visible);
 
             
@@ -88,12 +95,22 @@ namespace Quantum
             }
             
             Fsm.Fire(stickTwoFsm.Fsm.IsInState(StickTwoFSM.StickTwoState.Rekka1) 
-                     || stickTwoFsm.Fsm.IsInState(StickTwoFSM.StickTwoState.Rekka2A) ? VictorOrbTrigger.Hide : VictorOrbTrigger.Show);
+                     || stickTwoFsm.Fsm.IsInState(StickTwoFSM.StickTwoState.Rekka2B) ? VictorOrbTrigger.Hide : VictorOrbTrigger.Show);
+        }
+
+        private void OnVisible(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam frameParam) return;
+            SnapToOwnerPosWithOffset(frameParam.f);
         }
         
         protected override void SummonMove(Frame f)
         {
-            
+            // if (f.Number % 2 != 0) return;
+            var transform3D = GetSnapPos(f, out var offsetXyo);
+            var v = offsetXyo - transform3D->Position;
+            var x = FP.FromString("0.2");
+            transform3D->Position += new FPVector3(v.X * x, v.Y * x, v.Z * x);
         }
     }
 }

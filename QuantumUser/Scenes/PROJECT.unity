@@ -5238,8 +5238,8 @@ MonoBehaviour:
       Value: 0
     dash:
       Value: 0
-    inputType: 1
-    commandDirection: 5
+    inputType: 3
+    commandDirection: 4
 --- !u!114 &147541240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12793,9 +12793,9 @@ Transform:
   m_GameObject: {fileID: 1386731000}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: 36.2}
+  m_LocalPosition: {x: 0, y: -98.2, z: 36.2}
   m_LocalScale: {x: 191.23056, y: 0.005823, z: 129.44077}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 782158040}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}

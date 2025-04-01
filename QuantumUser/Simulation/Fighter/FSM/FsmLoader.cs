@@ -24,7 +24,7 @@ namespace Quantum
             InheritableEnum.InheritableEnum.Initialize();
             
             // Setup players
-            var p0 = new StickTwoFSM();
+            var p0 = new GirlShotoFSM();
             p0.SetupStateMaps();
             p0.SetupMachine();
             p0.EntityRef = Util.GetPlayer(f, 0);
