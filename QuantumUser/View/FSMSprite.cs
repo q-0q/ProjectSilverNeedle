@@ -54,7 +54,14 @@ public class FSMSprite : QuantumEntityViewComponent
         // offense / defense sorting
         if (fsm is null) return;
         bool back = fsm.Fsm.IsInState(PlayerFSM.PlayerState.Block) || fsm.Fsm.IsInState(PlayerFSM.PlayerState.Hit) || fsm.Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor);
-        gameObject.layer = back ? LayerMask.NameToLayer("PlayerBack") : LayerMask.NameToLayer("PlayerFront");
+        if (fsm.sendToBack)
+        {
+            gameObject.layer = LayerMask.NameToLayer("AEBack");
+        }
+        else
+        {
+            gameObject.layer = (back) ? LayerMask.NameToLayer("PlayerBack") : LayerMask.NameToLayer("PlayerFront");
+        }
         
         _shadowCasterRenderer.sprite = sprite;
         var flip = !PredictedFrame.Get<PlayerDirection>(EntityRef).FacingRight;

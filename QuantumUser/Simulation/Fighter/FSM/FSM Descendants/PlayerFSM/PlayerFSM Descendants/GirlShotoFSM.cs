@@ -9,9 +9,9 @@ using UnityEngine;
 
 namespace Quantum
 {
-    public class StickTwoFSM : PlayerFSM
+    public class GirlShotoFSM : PlayerFSM
     {
-        public class StickTwoState : PlayerState
+        public class GirlShotoState : PlayerState
         {
             public static int _5L;
             public static int _2L;
@@ -35,15 +35,11 @@ namespace Quantum
             public static int JH;
         }
         
-        public class StickTwoCutscenes : PlayerFSM.CutsceneIndexes
+        
+        public GirlShotoFSM()
         {
-            // public static int Test;
-        }
-
-        public StickTwoFSM()
-        {
-            Name = "StickTwo";
-            StateType = typeof(StickTwoState);
+            Name = "GirlShoto";
+            StateType = typeof(GirlShotoState);
             JumpCount = 2;
 
             FallSpeed = FP.FromString("50");
@@ -86,11 +82,11 @@ namespace Quantum
                     Size = 2,
                     SummonFSMType = typeof(FireballFSM)
                 },
-                new()
-                {
-                    Size = 1,
-                    SummonFSMType = typeof(VictorOrbFsm)
-                },
+                // new()
+                // {
+                //     Size = 1,
+                //     SummonFSMType = typeof(VictorOrbFsm)
+                // },
             };
 
         }
@@ -492,18 +488,18 @@ namespace Quantum
                 }
             };
             
-            var orbSummon = new SectionGroup<SummonPool>()
-            {
-                Sections = new List<Tuple<int, SummonPool>>()
-                {
-                    new (1, SummonPools[1])
-                }
-            };
+            // var orbSummon = new SectionGroup<SummonPool>()
+            // {
+            //     Sections = new List<Tuple<int, SummonPool>>()
+            //     {
+            //         new (1, SummonPools[1])
+            //     }
+            // };
             
             
             Util.AutoSetupFromAnimationPath(standAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandActionable] = standAnimation;
-            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[PlayerState.StandActionable] = orbSummon;
+            // StateMapConfig.UnpoolSummonSectionGroup.Dictionary[PlayerState.StandActionable] = orbSummon;
             
             
             Util.AutoSetupFromAnimationPath(crouchAnimation, this);
@@ -741,17 +737,17 @@ namespace Quantum
 
             
             Util.AutoSetupFromAnimationPath(_5MAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StickTwoState._5M] = _5MAnimation;
-            StateMapConfig.Duration.Dictionary[StickTwoState._5M] = _5MAnimation.SectionGroup.Duration();
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState._5M] = _5MHits;
-            StateMapConfig.CancellableAfter.Dictionary[StickTwoState._5M] = 14;
-            StateMapConfig.WhiffCancellable.Dictionary[StickTwoState._5M] = false;
-            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtTypes;
-            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState._5M] = _5MHurtboxes;
+            StateMapConfig.FighterAnimation.Dictionary[GirlShotoState._5M] = _5MAnimation;
+            StateMapConfig.Duration.Dictionary[GirlShotoState._5M] = _5MAnimation.SectionGroup.Duration();
+            StateMapConfig.HitSectionGroup.Dictionary[GirlShotoState._5M] = _5MHits;
+            StateMapConfig.CancellableAfter.Dictionary[GirlShotoState._5M] = 14;
+            StateMapConfig.WhiffCancellable.Dictionary[GirlShotoState._5M] = false;
+            StateMapConfig.HurtTypeSectionGroup.Dictionary[GirlShotoState._5M] = _5MHurtTypes;
+            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[GirlShotoState._5M] = _5MHurtboxes;
             
             Cutscene forwardThrowCutscene = new Cutscene()
             {
-                InitiatorState = StickTwoState.ForwardThrowCutscene,
+                InitiatorState = GirlShotoState.ForwardThrowCutscene,
                 ReactorDuration = 33,
                 Techable = true,
                 ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
@@ -770,7 +766,7 @@ namespace Quantum
             
             Cutscene backThrowCutscene = new Cutscene()
             {
-                InitiatorState = StickTwoState.BackThrowCutscene,
+                InitiatorState = GirlShotoState.BackThrowCutscene,
                 ReactorDuration = 45,
                 Techable = true,
                 ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
@@ -900,14 +896,14 @@ namespace Quantum
             };
             
             Util.AutoSetupFromAnimationPath(_2MAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StickTwoState._2M] = _2MAnimation;
-            StateMapConfig.Duration.Dictionary[StickTwoState._2M] = _2MAnimation.SectionGroup.Duration();
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState._2M] = _2MHits;
-            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState._2M] = _2MHurtboxes;
-            StateMapConfig.CancellableAfter.Dictionary[StickTwoState._2M] = 16;
-            StateMapConfig.WhiffCancellable.Dictionary[StickTwoState._2M] = false;
-            // StateMapConfig.MovementSectionGroup.Dictionary[StickTwoState._2M] = _2MMovement;
-            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._2M] = _2MHurtTypes;
+            StateMapConfig.FighterAnimation.Dictionary[GirlShotoState._2M] = _2MAnimation;
+            StateMapConfig.Duration.Dictionary[GirlShotoState._2M] = _2MAnimation.SectionGroup.Duration();
+            StateMapConfig.HitSectionGroup.Dictionary[GirlShotoState._2M] = _2MHits;
+            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[GirlShotoState._2M] = _2MHurtboxes;
+            StateMapConfig.CancellableAfter.Dictionary[GirlShotoState._2M] = 16;
+            StateMapConfig.WhiffCancellable.Dictionary[GirlShotoState._2M] = false;
+            // StateMapConfig.MovementSectionGroup.Dictionary[GirlShotoState._2M] = _2MMovement;
+            StateMapConfig.HurtTypeSectionGroup.Dictionary[GirlShotoState._2M] = _2MHurtTypes;
 
 
             var _2HAnimation = new FighterAnimation()
@@ -995,11 +991,11 @@ namespace Quantum
             };
             
             Util.AutoSetupFromAnimationPath(_2HAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StickTwoState._2H] = _2HAnimation;
-            StateMapConfig.Duration.Dictionary[StickTwoState._2H] = _2HAnimation.SectionGroup.Duration();
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState._2H] = _2HHits;
-            StateMapConfig.MovementSectionGroup.Dictionary[StickTwoState._2H] = _2HMovement;
-            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState._2H] = _2HHurtTypes;
+            StateMapConfig.FighterAnimation.Dictionary[GirlShotoState._2H] = _2HAnimation;
+            StateMapConfig.Duration.Dictionary[GirlShotoState._2H] = _2HAnimation.SectionGroup.Duration();
+            StateMapConfig.HitSectionGroup.Dictionary[GirlShotoState._2H] = _2HHits;
+            StateMapConfig.MovementSectionGroup.Dictionary[GirlShotoState._2H] = _2HMovement;
+            StateMapConfig.HurtTypeSectionGroup.Dictionary[GirlShotoState._2H] = _2HHurtTypes;
 
 
             var frontThrowCutsceneAnimation = new FighterAnimation()
@@ -1051,9 +1047,9 @@ namespace Quantum
             };
             
             Util.AutoSetupFromAnimationPath(frontThrowCutsceneAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation;
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneHits;
-            StateMapConfig.Duration.Dictionary[StickTwoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation.SectionGroup.Duration();
+            StateMapConfig.FighterAnimation.Dictionary[GirlShotoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation;
+            StateMapConfig.HitSectionGroup.Dictionary[GirlShotoState.ForwardThrowCutscene] = frontThrowCutsceneHits;
+            StateMapConfig.Duration.Dictionary[GirlShotoState.ForwardThrowCutscene] = frontThrowCutsceneAnimation.SectionGroup.Duration();
             
             
             
@@ -1106,9 +1102,9 @@ namespace Quantum
             };
             
             Util.AutoSetupFromAnimationPath(backThrowCutsceneAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation;
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneHits;
-            StateMapConfig.Duration.Dictionary[StickTwoState.BackThrowCutscene] = backThrowCutsceneAnimation.SectionGroup.Duration();
+            StateMapConfig.FighterAnimation.Dictionary[GirlShotoState.BackThrowCutscene] = backThrowCutsceneAnimation;
+            StateMapConfig.HitSectionGroup.Dictionary[GirlShotoState.BackThrowCutscene] = backThrowCutsceneHits;
+            StateMapConfig.Duration.Dictionary[GirlShotoState.BackThrowCutscene] = backThrowCutsceneAnimation.SectionGroup.Duration();
 
 
 
@@ -1207,12 +1203,12 @@ namespace Quantum
             };
             
             Util.AutoSetupFromAnimationPath(fireballAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StickTwoState.Fireball] = fireballAnimation;
-            StateMapConfig.Duration.Dictionary[StickTwoState.Fireball] = fireballAnimation.SectionGroup.Duration();
-            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[StickTwoState.Fireball] = fireballSummon;
-            StateMapConfig.HurtTypeSectionGroup.Dictionary[StickTwoState.Fireball] = fireballHurtTypes;
-            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[StickTwoState.Fireball] = fireballHurtboxes;
-            StateMapConfig.HitSectionGroup.Dictionary[StickTwoState.Fireball] = fireBallHitboxes;
+            StateMapConfig.FighterAnimation.Dictionary[GirlShotoState.Fireball] = fireballAnimation;
+            StateMapConfig.Duration.Dictionary[GirlShotoState.Fireball] = fireballAnimation.SectionGroup.Duration();
+            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[GirlShotoState.Fireball] = fireballSummon;
+            StateMapConfig.HurtTypeSectionGroup.Dictionary[GirlShotoState.Fireball] = fireballHurtTypes;
+            StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[GirlShotoState.Fireball] = fireballHurtboxes;
+            StateMapConfig.HitSectionGroup.Dictionary[GirlShotoState.Fireball] = fireBallHitboxes;
 
 
             {
@@ -1220,7 +1216,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 3;
                 string path = "_5P";
-                int state = StickTwoState._5L;
+                int state = GirlShotoState._5L;
                 
                 var animation = new FighterAnimation()
                 {
@@ -1330,7 +1326,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 3;
                 string path = "_2P";
-                int state = StickTwoState._2L;
+                int state = GirlShotoState._2L;
                 
                 var animation = new FighterAnimation()
                 {
@@ -1440,7 +1436,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 15;
                 string path = "_5H";
-                int state = StickTwoState._5H;
+                int state = GirlShotoState._5H;
                 
                 var animation = new FighterAnimation()
                 {
@@ -1565,7 +1561,7 @@ namespace Quantum
                 int active = 6;
                 int hurtboxDuration = 15;
                 string path = "_4H";
-                int state = StickTwoState._4H;
+                int state = GirlShotoState._4H;
                 
                 var animation = new FighterAnimation()
                 {
@@ -1690,7 +1686,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 15;
                 string path = "Rekka1";
-                int state = StickTwoState.Rekka1;
+                int state = GirlShotoState.Rekka1;
                 
                 var animation = new FighterAnimation()
                 {
@@ -1829,7 +1825,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 15;
                 string path = "Rekka2A";
-                int state = StickTwoState.Rekka2A;
+                int state = GirlShotoState.Rekka2A;
                 
                 var animation = new FighterAnimation()
                 {
@@ -1966,7 +1962,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 15;
                 string path = "Rekka2B";
-                int state = StickTwoState.Rekka2B;
+                int state = GirlShotoState.Rekka2B;
                 
                 var animation = new FighterAnimation()
                 {
@@ -2092,10 +2088,10 @@ namespace Quantum
             
             {
                 int startup = 5;
-                int active = 2;
+                int active = 1;
                 int hurtboxDuration = 15;
                 string path = "DP";
-                int state = StickTwoState.DP;
+                int state = GirlShotoState.DP;
                 
                 var animation = new FighterAnimation()
                 {
@@ -2179,6 +2175,9 @@ namespace Quantum
                         new(active, hit),
                         new(active, hit),
                         new(active, hit),
+                        new(active, hit),
+                        new(active, hit),
+                        new(active, hit),
                         new (20, null)
                     }
                 };
@@ -2226,7 +2225,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 5;
                 string path = "JL";
-                int state = StickTwoState.JL;
+                int state = GirlShotoState.JL;
                 
                 var animation = new FighterAnimation()
                 {
@@ -2327,7 +2326,7 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 5;
                 string path = "JH";
-                int state = StickTwoState.JH;
+                int state = GirlShotoState.JH;
                 
                 var animation = new FighterAnimation()
                 {
@@ -2443,7 +2442,7 @@ namespace Quantum
                 int gap = 2;
                 int hurtboxDuration = 13;
                 string path = "JM";
-                int state = StickTwoState.JM;
+                int state = GirlShotoState.JM;
                 
                 var animation = new FighterAnimation()
                 {
@@ -2619,7 +2618,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState._5L,
+                State = GirlShotoState._5L,
                 
                 Name = "Standing light",
                 Description = "A fast jab, good at breaking out of pressure."
@@ -2642,7 +2641,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 1,
                 RawOk = true,
-                State = StickTwoState._2L,
+                State = GirlShotoState._2L,
                 
                 Name = "Crouching light",
                 Description = "A fast jab, good at breaking out of pressure."
@@ -2667,7 +2666,7 @@ namespace Quantum
                 JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState._5M,
+                State = GirlShotoState._5M,
                 
                 Name = "Standing medium",
                 AnimationDisplayFrameIndex = 11,
@@ -2688,7 +2687,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 2,
                 RawOk = true,
-                State = StickTwoState._2M,
+                State = GirlShotoState._2M,
                 
                 Name = "Crouching medium",
                 Description = "A quick, low, mid-ranged poke.",
@@ -2712,7 +2711,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState._5H,
+                State = GirlShotoState._5H,
                 
                 Name = "Standing heavy",
                 Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
@@ -2733,7 +2732,7 @@ namespace Quantum
                 JumpCancellable = true,
                 InputWeight = 3,
                 RawOk = true,
-                State = StickTwoState._4H,
+                State = GirlShotoState._4H,
                 
                 Name = "Back heavy",
                 Description = "A potent close-ranged elbow, great for starting offense and stringing together combos.",
@@ -2756,7 +2755,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 1,
                 RawOk = true,
-                State = StickTwoState._2H,
+                State = GirlShotoState._2H,
                 
                 Name = "Crouching heavy",
                 Description = "A powerful, upwards kick that launches grounded opponents into the air.",
@@ -2779,7 +2778,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState.JL,
+                State = GirlShotoState.JL,
                 
                 Name = "Jumping light",
                 Description = "A quick punch that can be used to stop incoming aerial opponents."
@@ -2800,7 +2799,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
-                State = StickTwoState.JM,
+                State = GirlShotoState.JM,
                 
                 Name = "Jumping medium",
                 AnimationDisplayFrameIndex = 13,
@@ -2822,7 +2821,7 @@ namespace Quantum
                 InputWeight = 0,
                 RawOk = true,
                 AnimationDisplayFrameIndex = 11,
-                State = StickTwoState.JH,
+                State = GirlShotoState.JH,
                 
                 Name = "Jumping heavy",
                 Description = "A downwards kick that can be used to deter approaching opponents."
@@ -2835,7 +2834,7 @@ namespace Quantum
             ActionConfig frontThrow = new ActionConfig()
             {
                 Aerial = false,
-                State = StickTwoState.ForwardThrowCutscene,
+                State = GirlShotoState.ForwardThrowCutscene,
                 IsCutscene = true,
                 
                 Name = "Forward throw"
@@ -2846,7 +2845,7 @@ namespace Quantum
             ActionConfig backThrow = new ActionConfig()
             {
                 Aerial = false,
-                State = StickTwoState.BackThrowCutscene,
+                State = GirlShotoState.BackThrowCutscene,
                 IsCutscene = true,
                 
                 Name = "Backward throw"
@@ -2871,7 +2870,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 4,
                 RawOk = true,
-                State = StickTwoState.Fireball,
+                State = GirlShotoState.Fireball,
                 IsSpecial = true,
                 SpecialCancellable = false,
                 
@@ -2900,7 +2899,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 3,
                 RawOk = true,
-                State = StickTwoState.Rekka1,
+                State = GirlShotoState.Rekka1,
                 IsSpecial = true,
                 SpecialCancellable = false,
                 
@@ -2928,7 +2927,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 3,
                 RawOk = false,
-                State = StickTwoState.Rekka2A,
+                State = GirlShotoState.Rekka2A,
                 IsSpecial = true,
                 SpecialCancellable = false,
                 
@@ -2954,7 +2953,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 5,
                 RawOk = false,
-                State = StickTwoState.Rekka2B,
+                State = GirlShotoState.Rekka2B,
                 IsSpecial = true,
                 SpecialCancellable = false,
                 
@@ -2980,7 +2979,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 5,
                 RawOk = true,
-                State = StickTwoState.DP,
+                State = GirlShotoState.DP,
                 IsSpecial = true,
                 SpecialCancellable = false,
                 

@@ -14,6 +14,7 @@ namespace Quantum
     {
         public EntityRef playerOwnerEntity;
         public FPVector2 SummonPositionOffset = FPVector2.Zero;
+
         
         public class SummonState : FSMState
         {
@@ -110,13 +111,20 @@ namespace Quantum
 
         protected void SnapToOwnerPosWithOffset(Frame f)
         {
+            var transform3D = GetSnapPos(f, out var offsetXyo);
+            transform3D->Position = offsetXyo;
+        }
+
+        protected Transform3D* GetSnapPos(Frame f, out FPVector3 offsetXyo)
+        {
             f.Unsafe.TryGetPointer<PlayerDirection>(EntityRef, out var playerDirection);
             playerDirection->FacingRight = FSM.IsFacingRight(f, playerOwnerEntity);
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             f.Unsafe.TryGetPointer<Transform3D>(playerOwnerEntity, out var playerOwnerTransform3D);
             var flip = playerDirection->FacingRight ? 1 : -1;
             var offset = new FPVector2(SummonPositionOffset.X * flip, SummonPositionOffset.Y);
-            transform3D->Position = playerOwnerTransform3D->Position.XYO + offset.XYO;
+            offsetXyo = playerOwnerTransform3D->Position.XYO + offset.XYO;
+            return transform3D;
         }
 
         public override void HandleSummonFSMTriggers(Frame f)
