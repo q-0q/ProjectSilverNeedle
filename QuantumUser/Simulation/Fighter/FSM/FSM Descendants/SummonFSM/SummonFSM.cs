@@ -101,15 +101,22 @@ namespace Quantum
             playerDirection->FacingRight = FSM.IsFacingRight(f, playerOwnerEntity);
             
             // set pos
+            SnapToOwnerPosWithOffset(f);
+
+            // clear hit entities
+            f.Unsafe.TryGetPointer<HitEntitiesTracker>(EntityRef, out var hitEntitiesTracker);
+            f.ResolveList(hitEntitiesTracker->HitEntities).Clear();
+        }
+
+        protected void SnapToOwnerPosWithOffset(Frame f)
+        {
+            f.Unsafe.TryGetPointer<PlayerDirection>(EntityRef, out var playerDirection);
+            playerDirection->FacingRight = FSM.IsFacingRight(f, playerOwnerEntity);
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             f.Unsafe.TryGetPointer<Transform3D>(playerOwnerEntity, out var playerOwnerTransform3D);
             var flip = playerDirection->FacingRight ? 1 : -1;
             var offset = new FPVector2(SummonPositionOffset.X * flip, SummonPositionOffset.Y);
             transform3D->Position = playerOwnerTransform3D->Position.XYO + offset.XYO;
-            
-            // clear hit entities
-            f.Unsafe.TryGetPointer<HitEntitiesTracker>(EntityRef, out var hitEntitiesTracker);
-            f.ResolveList(hitEntitiesTracker->HitEntities).Clear();
         }
 
         public override void HandleSummonFSMTriggers(Frame f)
@@ -149,6 +156,7 @@ namespace Quantum
             }
 
         }
+        
 
     }
 

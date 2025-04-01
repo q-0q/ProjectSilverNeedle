@@ -85,7 +85,12 @@ namespace Quantum
                 {
                     Size = 2,
                     SummonFSMType = typeof(FireballFSM)
-                }
+                },
+                new()
+                {
+                    Size = 1,
+                    SummonFSMType = typeof(VictorOrbFsm)
+                },
             };
 
         }
@@ -1099,10 +1104,18 @@ namespace Quantum
 
             var fireballAnimation = new FighterAnimation()
             {
-                Path = "Fireball",
+                Path = "Breath",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
+                }
+            };
+
+            var orbSummon = new SectionGroup<SummonPool>()
+            {
+                Sections = new List<Tuple<int, SummonPool>>()
+                {
+                    new (1, SummonPools[1])
                 }
             };
             
