@@ -31,10 +31,12 @@ namespace Quantum
             MomentumMove(f);
             PushbackMove(f);
             PushboxCollide(f);
+            SummonMove(f);
 
             ClampPosToWall(f);
         }
 
+        protected virtual void SummonMove(Frame f) { }
 
 
         private FPVector2 ComputeMovementThisFrame(Frame f)

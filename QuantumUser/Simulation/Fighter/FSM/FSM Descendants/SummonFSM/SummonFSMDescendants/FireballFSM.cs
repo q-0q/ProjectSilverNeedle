@@ -22,7 +22,7 @@ namespace Quantum
             Name = "StickTwoFireball";
             StateType = typeof(FireballState);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(FP.FromString("4.5"), FP.FromString("4.5"));
+            SummonPositionOffset = new FPVector2(FP.FromString("3.5"), FP.FromString("4"));
         }
 
         public override void SetupStateMaps()
@@ -112,7 +112,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(primeAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[FireballState.Prime] = primeAnimation;
-            StateMapConfig.Duration.Dictionary[FireballState.Prime] = 20;
+            StateMapConfig.Duration.Dictionary[FireballState.Prime] = 18;
 
 
         }
@@ -138,6 +138,11 @@ namespace Quantum
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(Trigger.Finish, SummonState.Pooled);
 
+        }
+        
+        protected override void SummonMove(Frame f)
+        {
+            if (Fsm.IsInState(FireballState.Prime)) SnapToOwnerPosWithOffset(f);
         }
     }
 }
