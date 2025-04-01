@@ -274,7 +274,7 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 2,
+                    LengthScalar = 1,
                     AutoFromAnimationPath = true
                 }
             };
@@ -285,7 +285,7 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 2,
+                    LengthScalar = 1,
                     AutoFromAnimationPath = true,
                 }
             };
@@ -593,7 +593,7 @@ namespace Quantum
                 Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 4))
+                    (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 10))
                 }
             };
             
@@ -602,7 +602,7 @@ namespace Quantum
                 Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -3))
+                    (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -9))
                 }
             };
 
@@ -611,8 +611,8 @@ namespace Quantum
                 Sections = new List<Tuple<int, FP>>()
                 {
                     new(3, 0),
-                    new(8, 4),
-                    new(8, 1),
+                    new(8, 6),
+                    new(8, 2),
                     new(12, FP.FromString("0.6")),
                     new (10, 0),
                 }
