@@ -36,6 +36,7 @@ namespace Quantum
         public EntityRef EntityRef;
         public Machine<int, int> Fsm;
         public StateMapConfig StateMapConfig;
+        public FP DamageDealtModifier = 1;
         public Type StateType;
         
         public Dictionary<int, Cutscene> Cutscenes;

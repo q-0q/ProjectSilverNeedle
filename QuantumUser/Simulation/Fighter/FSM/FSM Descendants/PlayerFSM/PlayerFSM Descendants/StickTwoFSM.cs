@@ -6,10 +6,11 @@ using Quantum.QuantumUser.Simulation.Fighter.Types;
 using Quantum.Types;
 using Quantum.Types.Collision;
 using UnityEngine;
+using Wasp;
 
 namespace Quantum
 {
-    public class StickTwoFSM : PlayerFSM
+    public unsafe class StickTwoFSM : PlayerFSM
     {
         public class StickTwoState : PlayerState
         {
@@ -2602,10 +2603,52 @@ namespace Quantum
             
 
         }
+        
+        protected virtual void DashMomentumCallback(TriggerParams? triggerParams)
+        {
+            if (triggerParams is null) return;
+            var frameParam = (FrameParam)triggerParams;
+
+            FP amount = IsFacingRight(frameParam.f, EntityRef) ? 2 : -2;
+            StartMomentum(frameParam.f, amount);
+
+            frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+
+            AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.Dash,
+                transform3D->Position.XY, 0, !IsFacingRight(frameParam.f, EntityRef));
+        }
 
         public override void SetupMachine()
         {
             base.SetupMachine();
+            
+                Fsm.Configure(PlayerState.Dash)
+                    .Permit(PlayerTrigger.Jump, PlayerState.Jumpsquat)
+                    // .Permit(Trigger.Backward, State.WalkBackward)
+                    .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
+                    .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
+                    .PermitIf(PlayerTrigger.ProxBlockHigh, PlayerState.ProxStandBlock, _ => true, -3)
+                    .PermitIf(PlayerTrigger.ProxBlockLow, PlayerState.ProxCrouchBlock, _ => true, -3)
+                    .Permit(PlayerTrigger.ForwardThrow, PlayerState.ForwardThrow)
+                    .Permit(PlayerTrigger.BackThrow, PlayerState.Backthrow)
+                    .OnExitFrom(PlayerTrigger.ForwardThrow, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.BackThrow, DashMomentumCallback)
+                    // .OnExitFrom(Trigger.ThrowTech, StartMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.ButtonAndDirection, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.Jump, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.JumpCancel, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.HitHigh, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.HitLow, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.BlockHigh, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.BlockLow, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.ProxBlockHigh, DashMomentumCallback)
+                    .OnExitFrom(PlayerTrigger.ProxBlockLow, DashMomentumCallback)
+                    // .OnExitFrom(Trigger.ThrowConnect, StartMomentumCallback)
+                    .OnEntry(InputSystem.ClearBufferParams)
+                    .SubstateOf(PlayerState.Stand)
+                    .SubstateOf(PlayerState.DirectionLocked)
+                    .SubstateOf(PlayerState.Ground);
+            
             
             ActionConfig _5L = new ActionConfig()
             {
