@@ -49,7 +49,7 @@ namespace Quantum
                 .OnEntry(GameFSMSystem.OnLoading);
 
             Fsm.Configure(State.Ready)
-                .Permit(Trigger.Started, State.Countdown) // Change to destination: State.Countdown
+                .Permit(Trigger.Started, State.RoundResetting) // Change to destination: State.Countdown
                 .SubstateOf(State.CanUpdateCharacter);
 
             Fsm.Configure(State.Countdown)

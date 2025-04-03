@@ -30,21 +30,20 @@ namespace Quantum
             InheritableEnum.InheritableEnum.Initialize();
             
             // Setup players
-            var p0 = new GirlShotoFSM();
-            p0.SetupStateMaps();
-            p0.SetupMachine();
-            p0.EntityRef = Util.GetPlayer(f, 0);
-            
-            var p1 = new GirlShotoFSM();
-            p1.SetupStateMaps();
-            p1.SetupMachine();
-            p1.EntityRef = Util.GetPlayer(f, 1);
+            var p0 = SetupPlayerFsm(f, 0);
+            var p1 = SetupPlayerFsm(f, 1);
             
             FSMs = new Dictionary<EntityRef, FSM>()
             {
                 { Util.GetPlayer(f, 0), p0 },
                 { Util.GetPlayer(f, 1), p1 },
             };
+            
+            // Clear existing summons
+            foreach (var (entityRef, _) in f.GetComponentIterator<SummonData>())
+            {
+                f.Destroy(entityRef);
+            }
             
             // Setup summons
             InitializeSummonPools(f, p0, 0);
@@ -56,6 +55,18 @@ namespace Quantum
                 FillHitTableFromFSM(f, fsm);
             }
 
+        }
+
+        private static PlayerFSM SetupPlayerFsm(Frame f, int playerId)
+        {
+            var entityRef = Util.GetPlayer(f, playerId);
+            f.Unsafe.TryGetPointer<PlayerLink>(entityRef, out var playerLink);
+            var fsm = Activator.CreateInstance(CharacterTypes[playerLink->characterId]);
+            if (fsm is not PlayerFSM playerFSM) return null;
+            playerFSM.SetupStateMaps();
+            playerFSM.SetupMachine();
+            playerFSM.EntityRef = entityRef;
+            return playerFSM;
         }
 
         public static FSM GetFsm(EntityRef entityRef)

@@ -6693,8 +6693,8 @@ Transform:
   m_GameObject: {fileID: 319876981}
   serializedVersion: 2
   m_LocalRotation: {x: -0.11091644, y: 0.0017040573, z: 0.015266813, w: 0.993711}
-  m_LocalPosition: {x: 1.8255118e-10, y: -0.0021001047, z: 7.6}
-  m_LocalScale: {x: 100.00029, y: 0.0060260673, z: 32.27881}
+  m_LocalPosition: {x: -0, y: 2.4497, z: 18.6367}
+  m_LocalScale: {x: 100.00029, y: 0.0060260673, z: 54.499542}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 782158040}
@@ -9704,7 +9704,19 @@ MonoBehaviour:
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 346587782}
+        m_TargetAssemblyTypeName: PSNGameSettings, Assembly-CSharp
+        m_MethodName: UpdateCharacter
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &842076653
 MonoBehaviour:
@@ -12673,13 +12685,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 965017621}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.11089896, y: -0.002604298, z: -0.023332156, w: 0.99355435}
-  m_LocalPosition: {x: 0, y: -0.2486, z: 6.5098}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 6.5098}
   m_LocalScale: {x: 100.00029, y: 0.0060260673, z: 73.84225}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 782158040}
-  m_LocalEulerAnglesHint: {x: -12.738, y: 0, z: -2.691}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &965017623
 BoxCollider:
   m_ObjectHideFlags: 0
