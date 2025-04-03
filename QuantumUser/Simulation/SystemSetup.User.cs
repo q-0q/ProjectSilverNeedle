@@ -13,16 +13,10 @@
       systems.Add(new SpawnSystem());
       systems.Add(new FSMSystemA());
       systems.Add(new FSMSystemB());
-      // systems.Add(new FSMUnpoolSummonSystem());
-      // systems.Add(new PlayerFSMTransitionSystem());
-      // systems.Add(new PlayerFSMSCollisionBoxSystem());
-      // systems.Add(new PlayerFSMSMoveSystem());
-      // systems.Add(new PlayerFSMThrowCollisionSystem());
-      // systems.Add(new PlayerFSMSCollisionSystem());
-      // systems.Add(new PlayerFSMSReportSystem());
       systems.Add(new HitstopSystem());
       systems.Add(new AnimationEntitySystem());
       systems.Add(new InputSystem());
+      systems.Add(new PlayerCommandsSystem());
     }
   }
 }

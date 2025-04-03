@@ -10,8 +10,8 @@ namespace Quantum
         public int id;
         public override void Serialize(BitStream stream)
         {
-            stream.Serialize(ref player);
             stream.Serialize(ref id);
+            stream.Serialize(ref player);
         }
 
         public void Execute(Frame f)

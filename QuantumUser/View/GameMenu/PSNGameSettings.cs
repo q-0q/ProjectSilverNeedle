@@ -33,7 +33,7 @@ public class PSNGameSettings : MonoBehaviour
     {
         CommandUpdatePlayerCharacter command = new CommandUpdatePlayerCharacter()
         {
-            id = 0,
+            id = 1,
             player = QuantumRunner.Default.Game.GetLocalPlayers()[0]
         };
         QuantumRunner.Default.Game.SendCommand(command);

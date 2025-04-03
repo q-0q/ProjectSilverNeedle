@@ -18,6 +18,7 @@ namespace Quantum
             var playerLink = new PlayerLink()
             {
                 Player = player,
+                characterId = 0,
             };
             frame.Add(entity, playerLink);
 
