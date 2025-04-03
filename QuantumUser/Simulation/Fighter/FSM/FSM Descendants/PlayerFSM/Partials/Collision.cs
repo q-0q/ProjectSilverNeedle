@@ -125,11 +125,11 @@ namespace Quantum
         {
             
             EndSlowdown(new FrameParam() { f = f, EntityRef = EntityRef});
-            var animationEntityEnum = hurtType is HurtType.Counter
-                ? AnimationEntities.AnimationEntityEnum.Counter
-                : AnimationEntities.AnimationEntityEnum.Hit;
-            AnimationEntitySystem.Create(f, animationEntityEnum, location, hitboxData.visualAngle, 
-                !IsFacingRight(f, hitboxData.source));
+            // var animationEntityEnum = hurtType is HurtType.Counter
+            //     ? AnimationEntities.AnimationEntityEnum.Counter
+            //     : AnimationEntities.AnimationEntityEnum.Hit;
+            // AnimationEntitySystem.Create(f, animationEntityEnum, location, hitboxData.visualAngle, 
+            //     !IsFacingRight(f, hitboxData.source));
             
             f.Events.PlayerHit(location, hitboxData.visualAngle);
 
@@ -139,13 +139,11 @@ namespace Quantum
 
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
-
             
-            
-            
+            FP damageMod = FsmLoader.FSMs[hitboxData.source].DamageDealtModifier;
             var rawDamage = hurtType is HurtType.Counter ? hitboxData.damage * CounterHitDamageMultiplier : hitboxData.damage;
             var rawDamageScaling = hurtType is HurtType.Counter ? CounterHitDamageScaling : hitboxData.damageScaling;
-            healthData->health -= (rawDamage * comboData->damageScaling * GlobalDamageModifier);
+            healthData->health -= (rawDamage * comboData->damageScaling * GlobalDamageModifier * DamageTakenModifier * damageMod);
             comboData->damageScaling *= rawDamageScaling;
             
             

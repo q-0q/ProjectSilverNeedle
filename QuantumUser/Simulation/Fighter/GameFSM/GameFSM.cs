@@ -14,7 +14,8 @@ namespace Quantum
             Playing,
             RoundEnd,
             RoundResetting,
-            GameEnd
+            GameEnd,
+            CanUpdateCharacter,
         }
 
         public enum Trigger
@@ -23,6 +24,7 @@ namespace Quantum
             Started,
             Finish,
             PlayerDeath,
+            NewCharacterSelected,
         }
         
         public EntityRef EntityRef;
@@ -36,6 +38,8 @@ namespace Quantum
             Fsm.OnTransitionCompleted(OnStateChanged);
 
 
+            Fsm.Configure(State.CanUpdateCharacter)
+                .Permit(Trigger.NewCharacterSelected, State.Loading);
 
             Fsm.Configure(State.Waiting)
                 .PermitIf(Trigger.PlayerJoin, State.Loading, GameHasTwoPlayers);
@@ -45,18 +49,22 @@ namespace Quantum
                 .OnEntry(GameFSMSystem.OnLoading);
 
             Fsm.Configure(State.Ready)
-                .Permit(Trigger.Started, State.Countdown); // Change to destination: State.Countdown
+                .Permit(Trigger.Started, State.Countdown) // Change to destination: State.Countdown
+                .SubstateOf(State.CanUpdateCharacter);
 
             Fsm.Configure(State.Countdown)
                 .Permit(Trigger.Finish, State.Playing)
-                .OnEntry(GameFSMSystem.OnCountdown);
+                .OnEntry(GameFSMSystem.OnCountdown)
+                .SubstateOf(State.CanUpdateCharacter);
             
             Fsm.Configure(State.Playing)
-                .Permit(Trigger.PlayerDeath, State.RoundEnd);
+                .Permit(Trigger.PlayerDeath, State.RoundEnd)
+                .SubstateOf(State.CanUpdateCharacter);
 
             Fsm.Configure(State.RoundEnd)
                 .Permit(Trigger.Finish, State.RoundResetting)
-                .OnEntry(GameFSMSystem.OnRoundEnd);
+                .OnEntry(GameFSMSystem.OnRoundEnd)
+                .SubstateOf(State.CanUpdateCharacter);
 
             Fsm.Configure(State.RoundResetting)
                 .Permit(Trigger.Finish, State.Countdown)

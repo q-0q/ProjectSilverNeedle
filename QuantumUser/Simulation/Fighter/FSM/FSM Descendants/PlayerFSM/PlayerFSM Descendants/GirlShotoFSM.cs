@@ -45,6 +45,8 @@ namespace Quantum
 
             FallSpeed = FP.FromString("50");
             FallTimeToSpeed = 16;
+            DamageDealtModifier = FP.FromString("0.85");
+            DamageTakenModifier = FP.FromString("1.35");
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
