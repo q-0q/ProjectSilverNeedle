@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Quantum;
 using Quantum.Types.Collision;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
@@ -26,6 +27,16 @@ public class PSNGameSettings : MonoBehaviour
     public void ToggleShadows()
     {
         _light.shadows = _light.shadows == LightShadows.Hard ? LightShadows.None : LightShadows.Hard;
+    }
+    
+    public void UpdateCharacter()
+    {
+        CommandUpdatePlayerCharacter command = new CommandUpdatePlayerCharacter()
+        {
+            id = 0,
+            player = QuantumRunner.Default.Game.GetLocalPlayers()[0]
+        };
+        QuantumRunner.Default.Game.SendCommand(command);
     }
 
     // Update is called once per frame

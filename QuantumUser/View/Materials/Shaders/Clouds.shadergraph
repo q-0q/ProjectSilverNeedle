@@ -384,8 +384,8 @@
     "m_ShaderOutputName": "BaseColor",
     "m_StageCapability": 2,
     "m_Value": {
-        "x": 0.9333930015563965,
-        "y": 0.7028301954269409,
+        "x": 1.0,
+        "y": 1.0,
         "z": 1.0
     },
     "m_DefaultValue": {
@@ -571,10 +571,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -502.5,
-            "y": 32.0,
+            "x": -351.0,
+            "y": 29.500001907348634,
             "width": 208.0,
-            "height": 336.5
+            "height": 336.5000305175781
         }
     },
     "m_Slots": [

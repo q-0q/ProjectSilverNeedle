@@ -11,6 +11,12 @@ namespace Quantum
     {
         public static Dictionary<EntityRef, FSM> FSMs;
         public static List<Hit> HitTable;
+
+        public static List<Type> CharacterTypes = new List<Type>()
+        {
+            typeof(StickTwoFSM),
+            typeof(GirlShotoFSM)
+        };
         
         public static void InitFsmLoader()
         {
@@ -29,7 +35,7 @@ namespace Quantum
             p0.SetupMachine();
             p0.EntityRef = Util.GetPlayer(f, 0);
             
-            var p1 = new StickTwoFSM();
+            var p1 = new GirlShotoFSM();
             p1.SetupStateMaps();
             p1.SetupMachine();
             p1.EntityRef = Util.GetPlayer(f, 1);
