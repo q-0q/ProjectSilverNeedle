@@ -52,7 +52,7 @@ namespace Quantum {
   public unsafe partial class Frame {
     public unsafe partial struct FrameEvents {
       static partial void GetEventTypeCountCodeGen(ref Int32 eventCount) {
-        eventCount = 6;
+        eventCount = 7;
       }
       static partial void GetParentEventIDCodeGen(Int32 eventID, ref Int32 parentEventID) {
         switch (eventID) {
@@ -63,6 +63,7 @@ namespace Quantum {
         switch (eventID) {
           case EventEntityVibrate.ID: result = typeof(EventEntityVibrate); return;
           case EventPlayerHit.ID: result = typeof(EventPlayerHit); return;
+          case EventPlayerBlocked.ID: result = typeof(EventPlayerBlocked); return;
           case EventGameEvent.ID: result = typeof(EventGameEvent); return;
           case EventResetUnityView.ID: result = typeof(EventResetUnityView); return;
           case EventGameFinishLoading.ID: result = typeof(EventGameFinishLoading); return;
@@ -80,6 +81,13 @@ namespace Quantum {
       }
       public EventPlayerHit PlayerHit(FPVector2 position, FP angle) {
         var ev = _f.Context.AcquireEvent<EventPlayerHit>(EventPlayerHit.ID);
+        ev.position = position;
+        ev.angle = angle;
+        _f.AddEvent(ev);
+        return ev;
+      }
+      public EventPlayerBlocked PlayerBlocked(FPVector2 position, FP angle) {
+        var ev = _f.Context.AcquireEvent<EventPlayerBlocked>(EventPlayerBlocked.ID);
         ev.position = position;
         ev.angle = angle;
         _f.AddEvent(ev);
@@ -163,14 +171,14 @@ namespace Quantum {
       }
     }
   }
-  public unsafe partial class EventGameEvent : EventBase {
+  public unsafe partial class EventPlayerBlocked : EventBase {
     public new const Int32 ID = 3;
-    public EntityRef entityRef;
-    public GameEventType type;
-    protected EventGameEvent(Int32 id, EventFlags flags) : 
+    public FPVector2 position;
+    public FP angle;
+    protected EventPlayerBlocked(Int32 id, EventFlags flags) : 
         base(id, flags) {
     }
-    public EventGameEvent() : 
+    public EventPlayerBlocked() : 
         base(3, EventFlags.Server|EventFlags.Client) {
     }
     public new QuantumGame Game {
@@ -184,18 +192,20 @@ namespace Quantum {
     public override Int32 GetHashCode() {
       unchecked {
         var hash = 47;
-        hash = hash * 31 + entityRef.GetHashCode();
-        hash = hash * 31 + type.GetHashCode();
+        hash = hash * 31 + position.GetHashCode();
+        hash = hash * 31 + angle.GetHashCode();
         return hash;
       }
     }
   }
-  public unsafe partial class EventResetUnityView : EventBase {
+  public unsafe partial class EventGameEvent : EventBase {
     public new const Int32 ID = 4;
-    protected EventResetUnityView(Int32 id, EventFlags flags) : 
+    public EntityRef entityRef;
+    public GameEventType type;
+    protected EventGameEvent(Int32 id, EventFlags flags) : 
         base(id, flags) {
     }
-    public EventResetUnityView() : 
+    public EventGameEvent() : 
         base(4, EventFlags.Server|EventFlags.Client) {
     }
     public new QuantumGame Game {
@@ -209,17 +219,18 @@ namespace Quantum {
     public override Int32 GetHashCode() {
       unchecked {
         var hash = 53;
+        hash = hash * 31 + entityRef.GetHashCode();
+        hash = hash * 31 + type.GetHashCode();
         return hash;
       }
     }
   }
-  public unsafe partial class EventGameFinishLoading : EventBase {
+  public unsafe partial class EventResetUnityView : EventBase {
     public new const Int32 ID = 5;
-    public Frame f;
-    protected EventGameFinishLoading(Int32 id, EventFlags flags) : 
+    protected EventResetUnityView(Int32 id, EventFlags flags) : 
         base(id, flags) {
     }
-    public EventGameFinishLoading() : 
+    public EventResetUnityView() : 
         base(5, EventFlags.Server|EventFlags.Client) {
     }
     public new QuantumGame Game {
@@ -233,6 +244,30 @@ namespace Quantum {
     public override Int32 GetHashCode() {
       unchecked {
         var hash = 59;
+        return hash;
+      }
+    }
+  }
+  public unsafe partial class EventGameFinishLoading : EventBase {
+    public new const Int32 ID = 6;
+    public Frame f;
+    protected EventGameFinishLoading(Int32 id, EventFlags flags) : 
+        base(id, flags) {
+    }
+    public EventGameFinishLoading() : 
+        base(6, EventFlags.Server|EventFlags.Client) {
+    }
+    public new QuantumGame Game {
+      get {
+        return (QuantumGame)base.Game;
+      }
+      set {
+        base.Game = value;
+      }
+    }
+    public override Int32 GetHashCode() {
+      unchecked {
+        var hash = 61;
         hash = hash * 31 + f.GetHashCode();
         return hash;
       }

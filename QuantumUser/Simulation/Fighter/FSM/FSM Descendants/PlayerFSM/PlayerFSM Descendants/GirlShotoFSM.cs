@@ -50,8 +50,8 @@ namespace Quantum
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
-            var jumpHeight = FP.FromString("8");
-            var jumpTimeToHeight = 25;
+            var jumpHeight = FP.FromString("5");
+            var jumpTimeToHeight = 20;
             var jumpForwardSpeed = FP.FromString("10");
             var jumpBackwardSpeed = FP.FromString("-7");
 
@@ -1631,7 +1631,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 2,
-                            // BonusBlockstun = 6,
+                            BonusBlockstun = 2,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.05"),
                             TrajectoryHeight = FP.FromString("0.5"),

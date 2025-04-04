@@ -12,6 +12,12 @@ event PlayerHit
     FP angle;
 }
 
+event PlayerBlocked
+{
+    FPVector2 position;
+    FP angle;
+}
+
 enum GameEventType {
     Counter,
     Punish,

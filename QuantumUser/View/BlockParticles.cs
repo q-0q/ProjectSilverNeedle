@@ -5,18 +5,21 @@ using Photon.Deterministic;
 using Quantum;
 using UnityEngine;
 
-public class HitParticles : MonoBehaviour
+public class BlockParticles : QuantumEntityViewComponent
 {
     private ParticleSystem _particleSystem;
+
+    private float _emissionRate;
     // Start is called before the first frame update
     private void Awake()
     {
         _particleSystem = GetComponent<ParticleSystem>();
+        _emissionRate = _particleSystem.emission.rateOverTimeMultiplier;
     }
 
     void Start()
     {
-        QuantumEvent.Subscribe(listener: this, handler: (EventPlayerHit e) => TriggerParticles(e.position, e.angle));
+        QuantumEvent.Subscribe(listener: this, handler: (EventPlayerBlocked e) => TriggerParticles(e.position, e.angle));
 
     }
 
@@ -28,8 +31,10 @@ public class HitParticles : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // void Update()
+    // {
+    //     // .emission.rateOverTimeMultiplier = HitstopSystem.IsHitstopActive(PredictedFrame) ? 0 : 1;
+    //     var main = _particleSystem.main;
+    //     main.simulationSpeed = HitstopSystem.IsHitstopActive(PredictedFrame) ? 0 : 1;
+    // }
 }
