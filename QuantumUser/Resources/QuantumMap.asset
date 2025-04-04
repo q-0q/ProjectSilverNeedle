@@ -60,7 +60,7 @@ MonoBehaviour:
         doJump:
           Value: 0
         block:
-          Value: 0
+          Value: 1
         dash:
           Value: 0
         inputType: 3

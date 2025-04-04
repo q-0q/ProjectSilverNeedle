@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Photon.Deterministic;
 using UnityEngine;
@@ -35,8 +36,15 @@ namespace Quantum
         public static bool IsHitstopActive(Frame f)
         {
             // return false;
-            var hitstopData = GetHitstopData(f);
-            return hitstopData->hitstopRemaining > 0 && hitstopData->queued == false;
+            try
+            {
+                var hitstopData = GetHitstopData(f);
+                return hitstopData->hitstopRemaining > 0 && hitstopData->queued == false;
+            }
+            catch (Exception e)
+            {
+                return true;
+            }
         }
 
         public static void TryDequeue(Frame f)

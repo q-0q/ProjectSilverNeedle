@@ -104,6 +104,9 @@ namespace Quantum
                 
                 AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, location, hitboxData.visualAngle, 
                     !IsFacingRight(f, hitboxData.source));
+                
+                f.Events.PlayerBlocked(location, hitboxData.visualAngle);
+
             }
             else
             {
@@ -125,11 +128,11 @@ namespace Quantum
         {
             
             EndSlowdown(new FrameParam() { f = f, EntityRef = EntityRef});
-            // var animationEntityEnum = hurtType is HurtType.Counter
-            //     ? AnimationEntities.AnimationEntityEnum.Counter
-            //     : AnimationEntities.AnimationEntityEnum.Hit;
-            // AnimationEntitySystem.Create(f, animationEntityEnum, location, hitboxData.visualAngle, 
-            //     !IsFacingRight(f, hitboxData.source));
+            var animationEntityEnum = hurtType is HurtType.Counter
+                ? AnimationEntities.AnimationEntityEnum.Counter
+                : AnimationEntities.AnimationEntityEnum.Hit;
+            AnimationEntitySystem.Create(f, animationEntityEnum, location, hitboxData.visualAngle, 
+                !IsFacingRight(f, hitboxData.source));
             
             f.Events.PlayerHit(location, hitboxData.visualAngle);
 

@@ -45,7 +45,7 @@ namespace Quantum
         {
             Name = "StickTwo";
             StateType = typeof(StickTwoState);
-            JumpCount = 2;
+            JumpCount = 1;
 
             FallSpeed = FP.FromString("50");
             FallTimeToSpeed = 16;
@@ -1633,7 +1633,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 2,
-                            // BonusBlockstun = 6,
+                            BonusBlockstun = 3,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.05"),
                             TrajectoryHeight = FP.FromString("0.5"),
@@ -2057,8 +2057,8 @@ namespace Quantum
                                         {
                                             new CollisionBox()
                                             {
-                                                Height = FP.FromString("6.0"),
-                                                Width = FP.FromString("5.0"),
+                                                Height = FP.FromString("4.0"),
+                                                Width = FP.FromString("8.0"),
                                                 GrowWidth = true,
                                                 GrowHeight = true,
                                                 PosY = FP.FromString("2.5"),
