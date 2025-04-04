@@ -155,8 +155,12 @@ namespace Quantum
         public override void TryToFireJump(Frame f, JumpType type)
         {
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
-            if (trajectoryData->jumpsRemaining <= 0) return;
-            if (GetFramesInTrajectory(f) < 5 && Fsm.IsInState(PlayerState.Air)) return;
+            if (trajectoryData->jumpsRemaining <= 0)
+            {
+                // Debug.Log("No jumps remaining.");
+                return;
+            }
+            // if (GetFramesInTrajectory(f) < 5 && Fsm.IsInState(PlayerState.Air)) return;
             
             var param = new JumpParam() { f = f, Type = type, EntityRef = EntityRef};
             
@@ -280,7 +284,6 @@ namespace Quantum
             param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
-            
             trajectoryData->jumpsRemaining = JumpCount;
             transform3D->Position.Y = Util.GroundHeight;
         }
