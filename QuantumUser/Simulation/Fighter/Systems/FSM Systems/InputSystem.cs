@@ -80,8 +80,19 @@ namespace Quantum
             }
             if (input.Jump.WasPressed)
             {
-                inputBuffer->type = (int)InputType.Jump;
-                resetBufferLength = true;
+                
+                // dont buffer jumps during player jumpsquat to prevent instant double jump
+                var skip = false;
+                if (FsmLoader.FSMs[entityRef] is PlayerFSM playerFsm)
+                {
+                    skip = (playerFsm.Fsm.IsInState(PlayerFSM.PlayerState.Jumpsquat));
+                }
+
+                if (!skip)
+                {
+                    inputBuffer->type = (int)InputType.Jump;
+                    resetBufferLength = true;
+                }
             }
             if (input.Dash.WasPressed)
             {
@@ -220,7 +231,29 @@ namespace Quantum
             
             int numpad = Numpad(f, fsm.EntityRef);
             
-            if (fsm.Fsm.IsInState(PlayerFSM.PlayerState.Ground))
+            if (fsm.InputIsBuffered(InputType.Jump, f, fsm.EntityRef) && !fsm.Fsm.IsInState(PlayerFSM.PlayerState.Jumpsquat))
+            {
+                switch (fsm.GetBufferDirection(f, fsm.EntityRef))
+                {
+                    case 7:
+                    {
+                        fsm.TryToFireJump(f, FSM.JumpType.Backward);
+                        break;
+                    }
+                    case 8:
+                    {
+                        fsm.TryToFireJump(f, FSM.JumpType.Up);
+                        break;
+                    }
+                    case 9:
+                    {
+                        fsm.TryToFireJump(f, FSM.JumpType.Forward);
+                        break;
+                    }
+                }
+            }
+            
+            if (!fsm.InputIsBuffered(InputType.Jump, f, fsm.EntityRef) && fsm.Fsm.IsInState(PlayerFSM.PlayerState.Ground) && !fsm.Fsm.IsInState(PlayerFSM.PlayerState.Jumpsquat))
             {
                 switch (numpad)
                 {
@@ -245,27 +278,7 @@ namespace Quantum
                 }
             }
             
-            if (fsm.InputIsBuffered(InputType.Jump, f, fsm.EntityRef))
-            {
-                switch (fsm.GetBufferDirection(f, fsm.EntityRef))
-                {
-                    case 7:
-                    {
-                        fsm.TryToFireJump(f, FSM.JumpType.Backward);
-                        break;
-                    }
-                    case 8:
-                    {
-                        fsm.TryToFireJump(f, FSM.JumpType.Up);
-                        break;
-                    }
-                    case 9:
-                    {
-                        fsm.TryToFireJump(f, FSM.JumpType.Forward);
-                        break;
-                    }
-                }
-            }
+
         }
 
         private static void FireDirection(Frame f, FSM fsm)
