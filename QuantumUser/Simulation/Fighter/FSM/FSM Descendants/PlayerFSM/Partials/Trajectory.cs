@@ -156,7 +156,7 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             if (trajectoryData->jumpsRemaining <= 0) return;
-            if (GetFramesInTrajectory(f) < 20 && Fsm.IsInState(PlayerState.Air)) return;
+            if (GetFramesInTrajectory(f) < 5 && Fsm.IsInState(PlayerState.Air)) return;
             
             var param = new JumpParam() { f = f, Type = type, EntityRef = EntityRef};
             
