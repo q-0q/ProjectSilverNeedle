@@ -12,7 +12,7 @@ namespace Quantum
 {
     public unsafe class InputSystem : SystemMainThreadFilter<InputSystem.Filter>
     {
-        private const int BufferWindowSize = 18;
+        private const int BufferWindowSize = 9;
 
         public enum InputType
         {

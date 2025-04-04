@@ -5595,7 +5595,7 @@ MonoBehaviour:
     doJump:
       Value: 0
     block:
-      Value: 1
+      Value: 0
     dash:
       Value: 0
     inputType: 3
@@ -9772,18 +9772,16 @@ MonoBehaviour:
       m_Image: {fileID: 0}
     - m_Text: Astrid
       m_Image: {fileID: 0}
-    - m_Text: Option C
-      m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 346587782}
         m_TargetAssemblyTypeName: PSNGameSettings, Assembly-CSharp
         m_MethodName: UpdateCharacter
-        m_Mode: 1
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 842076652}
+          m_ObjectArgumentAssemblyTypeName: TMPro.TMP_Dropdown, Unity.TextMeshPro
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -9803,7 +9801,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.90245956, b: 0.6556604, a: 1}
+  m_Color: {r: 0.94492835, g: 0.7783019, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

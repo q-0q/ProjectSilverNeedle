@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Quantum;
 using Quantum.Types.Collision;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
+
 
 public class PSNGameSettings : MonoBehaviour
 {
@@ -29,11 +31,11 @@ public class PSNGameSettings : MonoBehaviour
         _light.shadows = _light.shadows == LightShadows.Hard ? LightShadows.None : LightShadows.Hard;
     }
     
-    public void UpdateCharacter()
+    public void UpdateCharacter(TMPro.TMP_Dropdown dropdown)
     {
         CommandUpdatePlayerCharacter command = new CommandUpdatePlayerCharacter()
         {
-            id = 1,
+            id = dropdown.value,
             player = QuantumRunner.Default.Game.GetLocalPlayers()[0]
         };
         QuantumRunner.Default.Game.SendCommand(command);

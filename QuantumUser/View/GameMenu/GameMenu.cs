@@ -81,6 +81,7 @@ public class GameMenu : MonoBehaviour
     private void PopulateMoveList(Frame f)
     {
         
+        
         int playerId = 0; //todo
         
         if (FsmLoader.FSMs[Util.GetPlayer(f, playerId)] is not PlayerFSM fsm)
@@ -91,6 +92,10 @@ public class GameMenu : MonoBehaviour
 
         var scrollContent = transform.Find("MainCanvas").Find("MainPanel").Find("ContentPanel").Find("CurrentTabContent")
             .Find("MoveList").Find("ScrollContent");
+        
+        foreach (Transform child in scrollContent) {
+            GameObject.Destroy(child.gameObject);
+        }
 
         var normHeader = Instantiate(MoveListSectionHeaderPrefab, scrollContent);
         normHeader.GetComponent<TextMeshProUGUI>().text = "Grounded normals";

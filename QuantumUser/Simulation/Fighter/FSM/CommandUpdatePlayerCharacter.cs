@@ -16,7 +16,6 @@ namespace Quantum
 
         public void Execute(Frame f)
         {
-            Debug.Log("Hello from Update Player Character command");
             f.Unsafe.TryGetPointer<PlayerLink>(Util.GetPlayer(f, (int)player), out var playerLink);
             playerLink->characterId = id;
             GameFsmLoader.LoadGameFSM(f).Fsm.Fire(GameFSM.Trigger.NewCharacterSelected, 
