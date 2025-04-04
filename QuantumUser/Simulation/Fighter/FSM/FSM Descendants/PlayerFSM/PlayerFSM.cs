@@ -357,6 +357,7 @@ namespace Quantum
                 // .Permit(PlayerTrigger.Backdash, PlayerState.AirBackdash)
                 .AllowReentry(PlayerTrigger.Jump)
                 .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
+                .OnEntryFrom(PlayerTrigger.Jump, InputSystem.ClearBufferParams)
                 .OnEntryFrom(PlayerTrigger.JumpCancel, StartNewJump)
                 .Permit(Trigger.Jump, PlayerState.AirActionable)
                 .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
@@ -899,7 +900,7 @@ namespace Quantum
             if (actionConfig.JumpCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)
-                    .PermitIf(PlayerFSM.PlayerTrigger.Jump, PlayerFSM.PlayerState.Jumpsquat, Util.CanCancelNow);
+                    .PermitIf(PlayerFSM.PlayerTrigger.Jump, actionConfig.Aerial? PlayerFSM.PlayerState.AirActionable : PlayerFSM.PlayerState.Jumpsquat, Util.CanCancelNow);
             }
 
             if (actionConfig.DashCancellable)

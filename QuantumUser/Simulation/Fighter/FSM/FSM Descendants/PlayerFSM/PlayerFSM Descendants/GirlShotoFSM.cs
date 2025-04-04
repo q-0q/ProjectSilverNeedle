@@ -44,15 +44,15 @@ namespace Quantum
             JumpCount = 2;
 
             FallSpeed = FP.FromString("50");
-            FallTimeToSpeed = 16;
+            FallTimeToSpeed = 22;
             DamageDealtModifier = FP.FromString("0.85");
             DamageTakenModifier = FP.FromString("1.35");
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
-            var jumpHeight = FP.FromString("5");
-            var jumpTimeToHeight = 20;
-            var jumpForwardSpeed = FP.FromString("10");
+            var jumpHeight = FP.FromString("6");
+            var jumpTimeToHeight = 18;
+            var jumpForwardSpeed = FP.FromString("15");
             var jumpBackwardSpeed = FP.FromString("-7");
 
             UpwardJumpTrajectory = new Trajectory()
@@ -2841,7 +2841,7 @@ namespace Quantum
                 DashCancellable = false,
                 GroundOk = false,
                 InputType = InputSystem.InputType.M,
-                JumpCancellable = false,
+                JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
                 State = GirlShotoState.JM,
@@ -2862,7 +2862,7 @@ namespace Quantum
                 DashCancellable = false,
                 GroundOk = false,
                 InputType = InputSystem.InputType.H,
-                JumpCancellable = false,
+                JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
                 AnimationDisplayFrameIndex = 11,
