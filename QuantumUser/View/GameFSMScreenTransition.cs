@@ -56,7 +56,7 @@ public class GameFSMScreenTransition : QuantumEntityViewComponent
             // var distortion = Mathf.InverseLerp(DistortionDuration, 0, frames) * DistortionAmount;
             // if (_lensDistortion is not null) _lensDistortion.intensity.value = distortion;
         }
-        else if (state is GameFSM.State.RoundEnd)
+        else if (state is GameFSM.State.RoundEnd or GameFSM.State.Loading or GameFSM.State.Waiting)
         {
             alpha = Mathf.InverseLerp(GameFSMSystem.RoundEndDuration - FadeOutDuration, GameFSMSystem.RoundEndDuration, frames);
         }

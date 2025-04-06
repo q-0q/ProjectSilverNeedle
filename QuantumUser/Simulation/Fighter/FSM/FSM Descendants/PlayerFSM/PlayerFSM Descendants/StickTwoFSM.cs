@@ -238,8 +238,8 @@ namespace Quantum
                 GrowHeight = true,
                 GrowWidth = false,
                 PosX = 0,
-                PosY = 1,
-                Height = 3,
+                PosY = 0,
+                Height = 5,
                 Width = FP.FromString("1.5")
             };
             

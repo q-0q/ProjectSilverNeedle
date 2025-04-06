@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using Photon.Deterministic;
 using Quantum;
 using Quantum.QuantumUser.Simulation.Fighter.Types;
@@ -41,7 +42,7 @@ namespace Quantum
         {
             Name = "GirlShoto";
             StateType = typeof(GirlShotoState);
-            JumpCount = 2;
+            JumpCount = 3;
 
             FallSpeed = FP.FromString("50");
             FallTimeToSpeed = 22;
@@ -236,8 +237,8 @@ namespace Quantum
                 GrowHeight = true,
                 GrowWidth = false,
                 PosX = 0,
-                PosY = 1,
-                Height = 3,
+                PosY = 0,
+                Height = 5,
                 Width = FP.FromString("1.5")
             };
             
@@ -937,7 +938,7 @@ namespace Quantum
                         Level = 3,
                         Type = Hit.HitType.Mid,
                         Launches = true,
-                        TrajectoryHeight = 6,
+                        TrajectoryHeight = 4,
                         TrajectoryXVelocity = 4,
                         GravityScaling = 1,
                         GravityProration = FP.FromString("2"),
@@ -1622,45 +1623,81 @@ namespace Quantum
                         }),
                     }
                 };
+
+                var hit = new Hit()
+                {
+                    Level = 1,
+                    BonusBlockstun = 2,
+                    GravityScaling = FP.FromString("1"),
+                    GravityProration = FP.FromString("1.05"),
+                    TrajectoryHeight = FP.FromString("0.5"),
+                    TrajectoryXVelocity = 3,
+                    // GroundBounce = true,
+                    DamageScaling = 1,
+                    Damage = highDamage,
+                    HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                    {
+                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                        {
+                            new (active, new CollisionBoxCollection()
+                            {
+                                CollisionBoxes = new List<CollisionBox>()
+                                {
+                                    new CollisionBox()
+                                    {
+                                        Height = FP.FromString("4.5"),
+                                        Width = FP.FromString("2.5"),
+                                        GrowWidth = true,
+                                        GrowHeight = true,
+                                        PosY = 4,
+                                        PosX = 0
+                                    }
+                                }
+                            })
+                        }
+                    }
+                };
                 
+                var hit2 = new Hit()
+                {
+                    Level = 2,
+                    BonusBlockstun = 2,
+                    GravityScaling = FP.FromString("1"),
+                    GravityProration = FP.FromString("1.05"),
+                    TrajectoryHeight = FP.FromString("0.5"),
+                    TrajectoryXVelocity = 3,
+                    // GroundBounce = true,
+                    DamageScaling = 1,
+                    Damage = highDamage,
+                    HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                    {
+                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                        {
+                            new (active, new CollisionBoxCollection()
+                            {
+                                CollisionBoxes = new List<CollisionBox>()
+                                {
+                                    new CollisionBox()
+                                    {
+                                        Height = FP.FromString("4.5"),
+                                        Width = FP.FromString("2.5"),
+                                        GrowWidth = true,
+                                        GrowHeight = true,
+                                        PosY = 4,
+                                        PosX = 0
+                                    }
+                                }
+                            })
+                        }
+                    }
+                };
                 var hitboxes = new SectionGroup<Hit>()
                 {
                     Sections = new List<Tuple<int, Hit>>()
                     {
                         new(startup, null),
-                        new(active, new Hit()
-                        {
-                            Level = 2,
-                            BonusBlockstun = 2,
-                            GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.05"),
-                            TrajectoryHeight = FP.FromString("0.5"),
-                            TrajectoryXVelocity = 3,
-                            // GroundBounce = true,
-                            DamageScaling = 1,
-                            Damage = highDamage,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new (active, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                Height = FP.FromString("4.5"),
-                                                Width = FP.FromString("2.5"),
-                                                GrowWidth = true,
-                                                GrowHeight = true,
-                                                PosY = 4,
-                                                PosX = 0
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
+                        new(active, hit),
+                        new(active, hit2),
                         new (20, null)
                     }
                 };
@@ -1907,7 +1944,7 @@ namespace Quantum
                             // BonusBlockstun = 6,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.6"),
-                            TrajectoryHeight = FP.FromString("4.25"),
+                            TrajectoryHeight = FP.FromString("4.75"),
                             TrajectoryXVelocity = FP.FromString("3"),
                             Launches = true,
                             GroundBounce = true,
@@ -2325,7 +2362,7 @@ namespace Quantum
             }
             
             {
-                int startup = 9;
+                int startup = 18;
                 int active = 2;
                 int hurtboxDuration = 5;
                 string path = "JH";
@@ -2389,10 +2426,11 @@ namespace Quantum
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.2"),
                             Type = Hit.HitType.High,
-                            TrajectoryHeight = FP.FromString("0"),
-                            TrajectoryXVelocity = 12,
-                            Level = 3,
+                            TrajectoryHeight = FP.FromString("4.25"),
+                            TrajectoryXVelocity = 14,
+                            Level = 4,
                             VisualAngle = 70,
+                            GroundBounce = true,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -2404,10 +2442,10 @@ namespace Quantum
                                             new CollisionBox()
                                             {
                                                 Height = 4,
-                                                Width = FP.FromString("1.75"),
+                                                Width = FP.FromString("2.75"),
                                                 GrowWidth = true,
                                                 GrowHeight = false,
-                                                PosY = -2,
+                                                PosY = 0,
                                                 PosX = 0
                                             }
                                         }
@@ -2428,6 +2466,20 @@ namespace Quantum
                     }
                 };
 
+                var trajectory = new SectionGroup<Trajectory>()
+                {
+                    Sections = new List<Tuple<int, Trajectory>>()
+                    {
+                        new (5, null),
+                        new (10, new Trajectory()
+                        {
+                            TimeToTrajectoryHeight = 6,
+                            TrajectoryHeight = FP.FromString("3.5"),
+                            TrajectoryXVelocity = 19,
+                        })
+                    }
+                };
+
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
                 StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
@@ -2435,7 +2487,8 @@ namespace Quantum
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
-                
+                StateMapConfig.TrajectorySectionGroup.Dictionary[state] = trajectory;
+
             }
             
             

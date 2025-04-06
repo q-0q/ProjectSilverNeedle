@@ -50,6 +50,7 @@ namespace Quantum
             InitializeSummonPools(f, p1, 1);
             
             // Fill in HitTable
+            HitTable = new List<Hit>();
             foreach (var (_, fsm) in FSMs)
             {
                 FillHitTableFromFSM(f, fsm);
