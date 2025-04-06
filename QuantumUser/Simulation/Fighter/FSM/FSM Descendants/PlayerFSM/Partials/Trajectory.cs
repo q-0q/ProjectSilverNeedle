@@ -118,7 +118,7 @@ namespace Quantum
             comboData->gravityScaling *= GroundBounceGravityScaling;
             
             frameParam.f.Events.EntityVibrate(EntityRef, FP.FromString("0.4"), FP.FromString("0.4"), 40);
-            HitstopSystem.EnqueueHitstop(frameParam.f, 12);
+            HitstopSystem.EnqueueHitstop(frameParam.f, 9);
             
             // AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.GroundBounce, transform3D->Position.XY, 0, false);
             

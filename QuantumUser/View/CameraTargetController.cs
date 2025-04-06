@@ -56,7 +56,7 @@ public class CameraTargetController : MonoBehaviour
 
     private float GetGroundBouncePulldown()
     {
-        var groundBouncePulldown = Mathf.Clamp(Mathf.InverseLerp(0.75f, 0.25f, groundBounceTimer), 0, 1) * 1;
+        var groundBouncePulldown = Mathf.Clamp(Mathf.InverseLerp(0.75f, 0.25f, groundBounceTimer), 0, 1) * 2;
         // Debug.Log(groundBouncePulldown);
         return groundBouncePulldown;
     }
