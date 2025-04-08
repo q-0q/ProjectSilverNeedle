@@ -6626,7 +6626,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0.000045776367, y: -0.000061035156}
-  m_SizeDelta: {x: 1450, y: 25}
+  m_SizeDelta: {x: 1450, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &271973760
 MonoBehaviour:
@@ -21830,7 +21830,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1952076532
 RectTransform:
   m_ObjectHideFlags: 0
@@ -21880,7 +21880,7 @@ GameObject:
   - component: {fileID: 1970232649}
   - component: {fileID: 1970232651}
   - component: {fileID: 1970232650}
-  m_Layer: 11
+  m_Layer: 13
   m_Name: AmbientParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21896,7 +21896,7 @@ Transform:
   m_GameObject: {fileID: 1970232648}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 23.68}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22230,8 +22230,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.4
-      minScalar: 0.35
+      scalar: 0.25
+      minScalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -22547,7 +22547,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 100
+    maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -22813,7 +22813,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 5
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -24641,7 +24641,7 @@ ParticleSystem:
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.03
+      scalar: 0.2
       minScalar: 1
       maxCurve:
         serializedVersion: 2

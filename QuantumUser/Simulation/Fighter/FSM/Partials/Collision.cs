@@ -35,6 +35,7 @@ namespace Quantum
             public int level;
             public int bonusHitStun;
             public int bonusBlockStun;
+            public int bonusHitStop;
             public FP blockPushback;
             public FP hitPushback;
         
@@ -174,6 +175,7 @@ namespace Quantum
                         level = hit.Level,
                         bonusHitStun = hit.BonusHitstun,
                         bonusBlockStun = hit.BonusBlockstun,
+                        bonusHitStop = hit.BonusHitstop,
                         blockPushback = hit.BlockPushback,
                         hitPushback = hit.HitPushback,
                         visualAngle = hit.VisualAngle,
