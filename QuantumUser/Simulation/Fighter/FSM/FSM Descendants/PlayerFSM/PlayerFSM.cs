@@ -937,6 +937,7 @@ namespace Quantum
             var sectionGroup = fsm.StateMapConfig.HitSectionGroup;
             if (sectionGroup is null) return;
             var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
+            if (hitSectionGroup is null) return;
             Hit prevHit = null;
             int d = fsm.StateMapConfig.Duration.Lookup(actionConfig.State, fsm);
 
