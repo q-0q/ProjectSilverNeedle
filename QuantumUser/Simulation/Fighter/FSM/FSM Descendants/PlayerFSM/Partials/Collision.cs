@@ -164,7 +164,7 @@ namespace Quantum
                 ? Hit.AttackLevelCrouchHitstun[hitboxData.level] + hitboxData.bonusHitStun
                 : Hit.AttackLevelStandHitstun[hitboxData.level] + hitboxData.bonusHitStun;
             
-            var stop = Hit.AttackLevelHitstop[hitboxData.level];
+            var stop = Hit.AttackLevelHitstop[hitboxData.level] + hitboxData.bonusHitStop;
             
             
             if (hurtType == HurtType.Counter)

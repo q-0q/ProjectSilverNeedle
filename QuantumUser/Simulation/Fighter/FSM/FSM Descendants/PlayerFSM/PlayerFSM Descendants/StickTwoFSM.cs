@@ -238,8 +238,8 @@ namespace Quantum
                 GrowHeight = true,
                 GrowWidth = false,
                 PosX = 0,
-                PosY = 0,
-                Height = 5,
+                PosY = 1,
+                Height = 3,
                 Width = FP.FromString("1.5")
             };
             
@@ -1634,6 +1634,7 @@ namespace Quantum
                         {
                             Level = 2,
                             BonusBlockstun = 3,
+                            BonusHitstun = 5,
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.05"),
                             TrajectoryHeight = FP.FromString("0.5"),
