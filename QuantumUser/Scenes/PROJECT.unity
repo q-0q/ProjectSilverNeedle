@@ -5609,9 +5609,9 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 0
-    m_Bottom: 38
+    m_Bottom: 12
   m_ChildAlignment: 7
-  m_Spacing: 500
+  m_Spacing: 750
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -5672,15 +5672,15 @@ MonoBehaviour:
     forceCounter:
       Value: 0
     doAction:
-      Value: 0
+      Value: 1
     doJump:
       Value: 0
     block:
       Value: 0
     dash:
       Value: 0
-    inputType: 3
-    commandDirection: 2
+    inputType: 2
+    commandDirection: 4
 --- !u!114 &147541240
 MonoBehaviour:
   m_ObjectHideFlags: 0
