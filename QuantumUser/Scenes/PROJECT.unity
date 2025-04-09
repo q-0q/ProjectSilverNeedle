@@ -5599,7 +5599,7 @@ MonoBehaviour:
     dash:
       Value: 0
     inputType: 3
-    commandDirection: 4
+    commandDirection: 2
 --- !u!114 &147541240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22813,7 +22813,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 6
       minScalar: 10
       maxCurve:
         serializedVersion: 2
