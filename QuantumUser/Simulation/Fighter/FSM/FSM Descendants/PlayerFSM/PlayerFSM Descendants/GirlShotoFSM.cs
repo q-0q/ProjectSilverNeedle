@@ -665,7 +665,7 @@ namespace Quantum
                         Level = 1,
                         GravityScaling = FP.FromString("1"),
                         TrajectoryXVelocity = 6,
-                        TrajectoryHeight = FP.FromString("2.25"),
+                        TrajectoryHeight = FP.FromString("2"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -956,7 +956,7 @@ namespace Quantum
                                         {
                                             GrowHeight = false,
                                             GrowWidth = false,
-                                            Width = 2,
+                                            Width = 3,
                                             Height = 5,
                                             PosX = 1,
                                             PosY = 3,
@@ -971,7 +971,7 @@ namespace Quantum
                                         {
                                             GrowHeight = false,
                                             GrowWidth = false,
-                                            Width = 2,
+                                            Width = 3,
                                             Height = 4,
                                             PosX = 0,
                                             PosY = 6
@@ -1829,7 +1829,7 @@ namespace Quantum
             
             
             {
-                int startup = 9;
+                int startup = 13;
                 int hurtboxDuration = 15;
                 string path = "Rekka2A";
                 int state = GirlShotoState.Rekka2A;
@@ -1848,7 +1848,7 @@ namespace Quantum
                     Sections = new List<Tuple<int, FP>>()
                     {
                         new(startup, 0),
-                        new(2, FP.FromString("9.5")),
+                        new(2, FP.FromString("4.5")),
                         new(4, 0),
                     }
                 };
@@ -1857,9 +1857,9 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, bool>>()
                     {
-                        new(startup, true),
+                        new(startup, false),
                         new(20, true),
-                        new(50, true)
+                        new(50, false)
                     }
                 };
                 
@@ -2515,7 +2515,7 @@ namespace Quantum
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1.3"),
                     Type = Hit.HitType.High,
-                    TrajectoryHeight = 2,
+                    TrajectoryHeight = FP.FromString("1"),
                     Level = 2,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                     {
@@ -2547,7 +2547,7 @@ namespace Quantum
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1.3"),
                     Type = Hit.HitType.High,
-                    TrajectoryHeight = 2,
+                    TrajectoryHeight = FP.FromString("1"),
                     TrajectoryXVelocity = 3,
                     Level = 2,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -2810,7 +2810,7 @@ namespace Quantum
                 
                 Name = "Crouching heavy",
                 Description = "A powerful, upwards kick that launches grounded opponents into the air.",
-                AnimationDisplayFrameIndex = 17
+                AnimationDisplayFrameIndex = 15
             };
             
             ConfigureAction(this, _2H);
@@ -2871,11 +2871,11 @@ namespace Quantum
                 JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
-                AnimationDisplayFrameIndex = 11,
+                AnimationDisplayFrameIndex = 25,
                 State = GirlShotoState.JH,
                 
                 Name = "Jumping heavy",
-                Description = "A downwards kick that can be used to deter approaching opponents."
+                Description = "A flipping kick that spikes opponents downward, causing a Ground Bounce."
             };
             
             ConfigureAction(this, JH);
@@ -2910,28 +2910,28 @@ namespace Quantum
 
             
 
-            ActionConfig fireball = new ActionConfig()
-            {
-                Aerial = false,
-                AirOk = false,
-                CommandDirection = 4,
-                DashCancellable = false,
-                GroundOk = true,
-                InputType = InputSystem.InputType.S,
-                JumpCancellable = false,
-                InputWeight = 4,
-                RawOk = true,
-                State = GirlShotoState.Fireball,
-                IsSpecial = true,
-                SpecialCancellable = false,
-                
-                Name = "Breath",
-                Description = "A concentrated ball of ki that travels forward, great for controlling space and keeping opponents out.",
-                // FlavorText = "Few monks in the Temple's history have attained the ability to manifest their ki into tangible power.",
-                AnimationDisplayFrameIndex = 20
-            };
-            
-            ConfigureAction(this, fireball);
+            // ActionConfig fireball = new ActionConfig()
+            // {
+            //     Aerial = false,
+            //     AirOk = false,
+            //     CommandDirection = 4,
+            //     DashCancellable = false,
+            //     GroundOk = true,
+            //     InputType = InputSystem.InputType.S,
+            //     JumpCancellable = false,
+            //     InputWeight = 4,
+            //     RawOk = true,
+            //     State = GirlShotoState.Fireball,
+            //     IsSpecial = true,
+            //     SpecialCancellable = false,
+            //     
+            //     Name = "Breath",
+            //     Description = "A concentrated ball of ki that travels forward, great for controlling space and keeping opponents out.",
+            //     // FlavorText = "Few monks in the Temple's history have attained the ability to manifest their ki into tangible power.",
+            //     AnimationDisplayFrameIndex = 20
+            // };
+            //
+            // ConfigureAction(this, fireball);
             
             // MakeActionCancellable(this, _5M, fireball);
             // MakeActionCancellable(this, _5H, fireball);
@@ -2982,10 +2982,10 @@ namespace Quantum
                 IsSpecial = true,
                 SpecialCancellable = false,
                 
-                Name = "Falling Water",
-                Description = "A teleporting strike that must be blocked standing. It ground-bounces opponents into the air.",
-                // FlavorText = "Snap.",
-                AnimationDisplayFrameIndex = 20,
+                Name = "Astrid's Curse",
+                Description = "A short-ranged teleport that can cross through opponents.",
+                FlavorText = "Her actions can neither be undone nor forgiven.",
+                AnimationDisplayFrameIndex = 1,
                 WhileIn = Rekka1
             };
             
@@ -3035,7 +3035,7 @@ namespace Quantum
                 SpecialCancellable = false,
                 
                 Description = "A rising multi-hit attack that is invincible on startup, but leaves you highly exposed when blocked. Great as a defensive option.",
-                Name = "Fountain",
+                Name = "Reverse Fountain",
                 AnimationDisplayFrameIndex = 11
             };
             

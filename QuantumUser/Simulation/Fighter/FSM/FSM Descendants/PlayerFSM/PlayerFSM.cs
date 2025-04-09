@@ -105,6 +105,8 @@ namespace Quantum
         public int FallTimeToSpeed;
         public int JumpCount;
 
+        public int MinimumDashDuration = 1000; // set to a huge number to disable plinking by default
+
         public Trajectory UpwardJumpTrajectory;
         public Trajectory ForwardJumpTrajectory;
         public Trajectory BackwardJumpTrajectory;
@@ -1031,5 +1033,6 @@ namespace Quantum
             
             
         }
+        
     }
 }
