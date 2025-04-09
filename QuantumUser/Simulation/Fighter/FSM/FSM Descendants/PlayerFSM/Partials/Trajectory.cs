@@ -174,6 +174,7 @@ namespace Quantum
             var trajectory = GetFlippedTrajectoryFromJumpType(param.f, param.Type);
             if (trajectory is null) return;
             
+            AddMeter(param.f, 15);
             
             StartNewTrajectory(param.f, trajectory.TrajectoryHeight, trajectory.TimeToTrajectoryHeight, 
                 trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds, FallSpeed, FallTimeToSpeed, false);
@@ -280,6 +281,8 @@ namespace Quantum
             if (triggerParams is null) return;
             
             var param = (FrameParam)triggerParams;
+            
+            AddMeter(param.f, -10);
             
             param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);

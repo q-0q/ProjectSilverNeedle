@@ -1,4 +1,5 @@
 component HealthData
 {
     FP health;
+    FP meter;
 }

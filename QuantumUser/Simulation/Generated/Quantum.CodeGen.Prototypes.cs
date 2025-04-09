@@ -326,6 +326,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.HealthData))]
   public unsafe partial class HealthDataPrototype : ComponentPrototype<Quantum.HealthData> {
     public FP health;
+    public FP meter;
     partial void MaterializeUser(Frame frame, ref Quantum.HealthData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.HealthData component = default;
@@ -334,6 +335,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.HealthData result, in PrototypeMaterializationContext context = default) {
         result.health = this.health;
+        result.meter = this.meter;
         MaterializeUser(frame, ref result, in context);
     }
   }

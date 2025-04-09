@@ -1043,8 +1043,13 @@ namespace Quantum
                             (Util.CanCancelNow(param) && Util.DoesInputMatch(actionConfig, param)),
                         actionConfig.InputWeight);
             }
-            
-            
+        }
+
+        protected void AddMeter(Frame f, FP amount)
+        {
+            f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            healthData->meter += amount;
+            healthData->meter = Util.Clamp(healthData->meter, 0, 100);
         }
         
     }

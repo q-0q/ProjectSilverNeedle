@@ -942,20 +942,24 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct HealthData : Quantum.IComponent {
-    public const Int32 SIZE = 8;
+    public const Int32 SIZE = 16;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(0)]
     public FP health;
+    [FieldOffset(8)]
+    public FP meter;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 4673;
         hash = hash * 31 + health.GetHashCode();
+        hash = hash * 31 + meter.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (HealthData*)ptr;
         FP.Serialize(&p->health, serializer);
+        FP.Serialize(&p->meter, serializer);
     }
   }
   [StructLayout(LayoutKind.Explicit)]
