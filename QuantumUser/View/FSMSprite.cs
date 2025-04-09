@@ -79,6 +79,9 @@ public class FSMSprite : QuantumEntityViewComponent
                 PredictedFrame.Get<HealthData>(EntityRef).health.AsFloat,
                 PredictedFrame.Get<ComboData>(EntityRef).length,
                 PredictedFrame.Get<ScoreData>(EntityRef).score);
+            
+            MeterBarController.Instance.UpdatePlayerMeter(PredictedFrame.Get<PlayerLink>(EntityRef).Player,
+                PredictedFrame.Get<HealthData>(EntityRef).meter.AsFloat);
         }
         catch
         {
