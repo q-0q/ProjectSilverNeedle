@@ -1045,7 +1045,7 @@ namespace Quantum
             }
         }
 
-        protected void AddMeter(Frame f, FP amount)
+        public void AddMeter(Frame f, FP amount)
         {
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             healthData->meter += amount;

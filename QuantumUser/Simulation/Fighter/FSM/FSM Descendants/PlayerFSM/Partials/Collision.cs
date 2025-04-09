@@ -14,6 +14,8 @@ namespace Quantum
         public const int CrossupProtectionDuration = 4;
         public const int ThrowProtectionDuration = 6;
         public static FP MaxThrowDistance = FP.FromString("3.5");
+        public static FP OffenseMeterMultiplier = FP.FromString("0.2");
+        public static FP DefenseMeterMultiplier = FP.FromString("0.125");
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -105,6 +107,7 @@ namespace Quantum
                 AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, location, hitboxData.visualAngle, 
                     !IsFacingRight(f, hitboxData.source));
                 
+                AddMeter(f, hitboxData.damage * DefenseMeterMultiplier);
                 f.Events.PlayerBlocked(location, hitboxData.visualAngle);
 
             }
@@ -187,6 +190,11 @@ namespace Quantum
             else if (hurtType == HurtType.Punish)
             {
                 f.Events.GameEvent(EntityRef, GameEventType.Punish);
+            }
+
+            if (FsmLoader.FSMs[hitboxData.source] is PlayerFSM playerFsm)
+            {
+                playerFsm.AddMeter(f, hitboxData.damage * OffenseMeterMultiplier);
             }
             
             InvokeStun(f, stun);
