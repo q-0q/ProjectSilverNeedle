@@ -90,7 +90,6 @@ namespace Quantum
         {
             if (a is null || b is null)
             {
-                Debug.Log("A");
                 return true;
             }
             

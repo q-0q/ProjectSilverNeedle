@@ -889,7 +889,7 @@ namespace Quantum
                 if (actionConfig.GroundOk)
                 {
                     AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.GroundActionable);
-                    AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.Dash);
+                    AllowRawFromDash(fsm, actionConfig);
                 }
 
                 if (actionConfig.AirOk)
@@ -987,6 +987,19 @@ namespace Quantum
                     actionConfig.State,
                     param =>
                         Util.DoesInputMatch(actionConfig, param),
+                    actionConfig.InputWeight);
+        }
+        
+        private static void AllowRawFromDash(PlayerFSM fsm, ActionConfig actionConfig)
+        {
+            fsm.Fsm.Configure(PlayerFSM.PlayerState.Dash)
+                .PermitIf(PlayerFSM.PlayerTrigger.ButtonAndDirection,
+                    actionConfig.State,
+                    param =>
+                    {
+                        if (param is not FrameParam frameParam) return false;
+                        return Util.DoesInputMatch(actionConfig, param) && fsm.FramesInCurrentState(frameParam.f) > fsm.MinimumDashDuration;
+                    },
                     actionConfig.InputWeight);
         }
 

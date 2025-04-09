@@ -56,6 +56,8 @@ namespace Quantum
             var jumpForwardSpeed = FP.FromString("15");
             var jumpBackwardSpeed = FP.FromString("-7");
 
+            MinimumDashDuration = 7;
+
             UpwardJumpTrajectory = new Trajectory()
             {
                 TimeToTrajectoryHeight = jumpTimeToHeight,
@@ -1997,7 +1999,7 @@ namespace Quantum
                             Level = 3,
                             GravityScaling = FP.FromString("0.925"),
                             GravityProration = FP.FromString("1.6"),
-                            TrajectoryHeight = FP.FromString("3.25"),
+                            TrajectoryHeight = FP.FromString("3.5"),
                             TrajectoryXVelocity = FP.FromString("9"),
                             BlockPushback = FP.FromString("3"),
                             HitPushback = 3,
