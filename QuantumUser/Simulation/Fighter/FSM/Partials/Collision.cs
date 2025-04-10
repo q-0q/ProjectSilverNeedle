@@ -233,8 +233,14 @@ namespace Quantum
                     if (hitboxInternal.HitType == Hit.HitType.Throw) continue;
                     if (!CollisionBoxesOverlap(f, hitboxInternal, myHitboxInternal, out var overlapCenter, out var overlapWidth)) continue;
                     if (!CanBeHitBySource(f, hitboxInternal.source)) continue;
+                    
                     AddMeToSourceHitList(f, hitboxInternal.source);
-                    InvokeClash(f, myHitboxInternal, hitboxInternal, overlapCenter);
+                    InvokeClash(f, this, hitboxInternal, myHitboxInternal, overlapCenter);
+                    
+                    if (FsmLoader.FSMs[hitboxInternal.source] is not PlayerFSM opponentPlayerFsm) continue;
+                    if (!opponentPlayerFsm.CanBeHitBySource(f, myHitboxInternal.source)) continue;
+                    opponentPlayerFsm.AddMeToSourceHitList(f, myHitboxInternal.source);
+                    InvokeClash(f, opponentPlayerFsm, myHitboxInternal, hitboxInternal, overlapCenter);
                 }
                 
                 
@@ -254,7 +260,7 @@ namespace Quantum
         
         protected virtual void HandleProxBlock(Frame frame) {}
         
-        protected virtual void InvokeClash(Frame frame, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
+        protected virtual void InvokeClash(Frame frame, FSM fsm, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
 
         
         
