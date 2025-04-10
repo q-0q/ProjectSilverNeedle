@@ -44,7 +44,7 @@ namespace Quantum
             
             AddMeter(f, myHitboxInternal.damage * OffenseMeterMultiplier);
             Util.StartDramatic(f, EntityRef, 7);
-            Util.StartScreenDark(f, EntityRef, 7);
+            Util.StartScreenDark(f, EntityRef, 6);
             HandlePushback(f, hitboxData, true);
             
             
