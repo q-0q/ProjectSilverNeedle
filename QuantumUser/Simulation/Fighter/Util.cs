@@ -161,6 +161,7 @@ namespace Quantum
         
         public static void StartScreenDark(Frame f, EntityRef entityRef, int duration)
         {
+            Debug.Log("Start dark");
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->darkRemaining = duration;
         }

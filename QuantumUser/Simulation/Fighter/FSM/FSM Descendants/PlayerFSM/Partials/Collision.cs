@@ -16,7 +16,7 @@ namespace Quantum
         public static FP MaxThrowDistance = FP.FromString("3.5");
         public static FP OffenseMeterMultiplier = FP.FromString("0.2");
         public static FP DefenseMeterMultiplier = FP.FromString("0.125");
-        public static int ClashHitstopBonus = 11;
+        public static int ClashHitstopBonus = 8;
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -35,20 +35,22 @@ namespace Quantum
             HandleCutsceneTrigger(f, hurtboxData, hitboxData);
         }
         
-        protected override void InvokeClash(Frame f, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxData, FPVector2 location)
+        protected override void InvokeClash(Frame f, FSM fsm, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxData, FPVector2 location)
         {
-            InvokeCollisionVibrate(f, PlayerFSM.PlayerTrigger.HitHigh);
-            MakeNotWhiffed(f, hitboxData.source);
+            if (fsm is not PlayerFSM playerFsm) return;
+            
+            f.Events.EntityVibrate(fsm.EntityRef, FP.FromString("0.40"), FP.FromString("0.8"), 20);
+            playerFsm.MakeNotWhiffed(f, hitboxData.source);
             var stop = Hit.AttackLevelHitstop[hitboxData.level] + ClashHitstopBonus;
             HitstopSystem.EnqueueHitstop(f, stop);
             
-            AddMeter(f, myHitboxInternal.damage * OffenseMeterMultiplier);
+            playerFsm.AddMeter(f, myHitboxInternal.damage * OffenseMeterMultiplier);
             Util.StartDramatic(f, EntityRef, 7);
-            Util.StartScreenDark(f, EntityRef, 6);
-            HandlePushback(f, hitboxData, true);
+            Util.StartScreenDark(f, EntityRef, 2);
+            playerFsm.HandlePushback(f, hitboxData, true, FP.FromString("0.65"));
             
             
-            if (Util.GetPlayerId(f, EntityRef) != 0) return;
+            if (Util.GetPlayerId(f, myHitboxInternal.source) != 0) return;
             AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Clash, location, hitboxData.visualAngle, 
                 !IsFacingRight(f, hitboxData.source));
             
@@ -104,7 +106,7 @@ namespace Quantum
             MakeNotWhiffed(f, hitboxData.source);
 
             
-            HandlePushback(f, hitboxData, isBlocking);
+            HandlePushback(f, hitboxData, isBlocking, 1);
 
             if (isBlocking)
             {
@@ -130,7 +132,7 @@ namespace Quantum
             Fsm.Fire(trigger, juggleParam);
         }
 
-        private void HandlePushback(Frame f, CollisionBoxInternal hitboxData, bool isBlocking)
+        private void HandlePushback(Frame f, CollisionBoxInternal hitboxData, bool isBlocking, FP mod)
         {
             FP pushbackDistance;
             if (Fsm.IsInState(PlayerState.Ground) || Util.IsPlayerInCorner(f, EntityRef)) {

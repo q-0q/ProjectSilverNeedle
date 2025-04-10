@@ -29,7 +29,7 @@ public class ScreenDarkPanel : MonoBehaviour
     private Color GetColor()
     {
         var c = Color;
-        c.a = CameraTargetController.Instance.Player0Dark || CameraTargetController.Instance.Player1Dark ? 0.8f : 0;
+        c.a = CameraTargetController.Instance.Player0Dark || CameraTargetController.Instance.Player1Dark ? 0.6f : 0;
 
         return c;
 
