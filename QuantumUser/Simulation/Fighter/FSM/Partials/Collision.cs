@@ -213,18 +213,31 @@ namespace Quantum
             HandleProxBlock(f);
             
             var hurtboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hurtbox);
-            
+            var myHitboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hitbox);
 
             var hitboxSources = Util.GetOpponentFSMEntities(f, EntityRef);
-            List<CollisionBoxInternal> hitboxInternals = new List<CollisionBoxInternal>();
+            List<CollisionBoxInternal> opponentHitboxInternals = new List<CollisionBoxInternal>();
             foreach (var entityRef in hitboxSources)
             {
-                hitboxInternals.AddRange(GetCollisionBoxInternalsOfType(f, entityRef,
+                opponentHitboxInternals.AddRange(GetCollisionBoxInternalsOfType(f, entityRef,
                     CollisionBoxType.Hitbox));
             }
             
-            foreach (var hitboxInternal in hitboxInternals)
+            foreach (var hitboxInternal in opponentHitboxInternals)
             {
+                
+                // clashes
+                foreach (var myHitboxInternal in myHitboxInternals)
+                {
+                    if (myHitboxInternal.HitType == Hit.HitType.Throw) continue;
+                    if (hitboxInternal.HitType == Hit.HitType.Throw) continue;
+                    if (!CollisionBoxesOverlap(f, hitboxInternal, myHitboxInternal, out var overlapCenter, out var overlapWidth)) continue;
+                    if (!CanBeHitBySource(f, hitboxInternal.source)) continue;
+                    AddMeToSourceHitList(f, hitboxInternal.source);
+                    InvokeClash(f, myHitboxInternal, hitboxInternal, overlapCenter);
+                }
+                
+                
                 foreach (var hurtboxInternal in hurtboxInternals)
                 {
                     if (!CollisionBoxesOverlap(f, hitboxInternal, hurtboxInternal, out var overlapCenter, out var overlapWidth)) continue;
@@ -240,6 +253,9 @@ namespace Quantum
         protected virtual void InvokeHitboxHurtboxCollision(Frame frame, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
         
         protected virtual void HandleProxBlock(Frame frame) {}
+        
+        protected virtual void InvokeClash(Frame frame, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
+
         
         
         public virtual void HandleSummonFSMTriggers(Frame f) { }

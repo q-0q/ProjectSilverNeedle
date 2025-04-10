@@ -16,6 +16,7 @@ namespace Quantum
         public static FP MaxThrowDistance = FP.FromString("3.5");
         public static FP OffenseMeterMultiplier = FP.FromString("0.2");
         public static FP DefenseMeterMultiplier = FP.FromString("0.125");
+        public static int ClashHitstopBonus = 6;
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -33,12 +34,31 @@ namespace Quantum
             
             HandleCutsceneTrigger(f, hurtboxData, hitboxData);
         }
+        
+        protected override void InvokeClash(Frame f, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxData, FPVector2 location)
+        {
+            InvokeCollisionVibrate(f, PlayerFSM.PlayerTrigger.HitHigh);
+            MakeNotWhiffed(f, hitboxData.source);
+            var stop = Hit.AttackLevelHitstop[hitboxData.level] + ClashHitstopBonus;
+            HitstopSystem.EnqueueHitstop(f, stop);
+            
+            AddMeter(f, myHitboxInternal.damage * OffenseMeterMultiplier);
+            
+            HandlePushback(f, hitboxData, true);
+            
+            
+            if (Util.GetPlayerId(f, EntityRef) != 0) return;
+            AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Clash, location, hitboxData.visualAngle, 
+                !IsFacingRight(f, hitboxData.source));
+            
+        }
 
         private bool IsProjectileInvulnerable(Frame f)
         {
             var sectionGroup = StateMapConfig.ProjectileInvulnerable?.Get(this, new FrameParam() { f = f, EntityRef = EntityRef });
             if (sectionGroup is null) return false;
             return sectionGroup.GetCurrentItem(f, this);
+            
         }
 
         private FP GetXDistance(Frame f, EntityRef a, EntityRef b)
@@ -83,18 +103,8 @@ namespace Quantum
             MakeNotWhiffed(f, hitboxData.source);
 
             
-            FP pushbackDistance;
-            if (Fsm.IsInState(PlayerState.Ground) || Util.IsPlayerInCorner(f, EntityRef)) {
-                pushbackDistance = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
-            }
-            else
-            {
-                // universal air pushback
-                pushbackDistance = isBlocking ? 2 : 1;
-            }
-            if (IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
-            StartPushback(f, pushbackDistance);
-            
+            HandlePushback(f, hitboxData, isBlocking);
+
             if (isBlocking)
             {
                 var stun = Fsm.IsInState(PlayerState.Air)
@@ -118,7 +128,22 @@ namespace Quantum
             
             Fsm.Fire(trigger, juggleParam);
         }
-        
+
+        private void HandlePushback(Frame f, CollisionBoxInternal hitboxData, bool isBlocking)
+        {
+            FP pushbackDistance;
+            if (Fsm.IsInState(PlayerState.Ground) || Util.IsPlayerInCorner(f, EntityRef)) {
+                pushbackDistance = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
+            }
+            else
+            {
+                // universal air pushback
+                pushbackDistance = isBlocking ? 2 : 1;
+            }
+            if (IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
+            StartPushback(f, pushbackDistance);
+        }
+
         private void StartPushback(Frame f, FP totalDistance)
         {
             f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
