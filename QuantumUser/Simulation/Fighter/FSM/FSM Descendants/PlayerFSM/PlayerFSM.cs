@@ -179,6 +179,7 @@ namespace Quantum
                 .Permit(Trigger.Dash, PlayerState.Dash)
                 .Permit(Trigger.Backdash, PlayerState.Backdash)
                 .Permit(Trigger.Jump, PlayerState.Jumpsquat)
+                .PermitIf(Trigger.ButtonAndDirection, PlayerState.Dash, IsGuardCancelInput) // just a test
                 .SubstateOf(PlayerState.GroundActionable);
 
             machine.Configure(PlayerState.StandActionable)
@@ -1051,6 +1052,12 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             healthData->meter += amount;
             healthData->meter = Util.Clamp(healthData->meter, 0, 100);
+        }
+
+        public bool IsGuardCancelInput(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not ButtonAndDirectionParam param) return false;
+            return param.Type == InputSystem.InputType.X;
         }
         
     }
