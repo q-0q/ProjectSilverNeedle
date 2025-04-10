@@ -392,6 +392,7 @@ namespace Quantum.Prototypes {
     public Button Jump;
     public Button Dash;
     public Button Backdash;
+    public Button X;
     public Int32 UnflippedNumpadDirection;
     partial void MaterializeUser(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context);
     public void Materialize(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context = default) {
@@ -403,6 +404,7 @@ namespace Quantum.Prototypes {
         result.Jump = this.Jump;
         result.Dash = this.Dash;
         result.Backdash = this.Backdash;
+        result.X = this.X;
         result.UnflippedNumpadDirection = this.UnflippedNumpadDirection;
         MaterializeUser(frame, ref result, in context);
     }
