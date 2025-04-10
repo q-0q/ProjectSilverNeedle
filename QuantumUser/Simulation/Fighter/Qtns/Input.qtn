@@ -8,5 +8,6 @@ input
     button Jump;
     button Dash;
     button Backdash;
+    button X;
     int UnflippedNumpadDirection;
 }

@@ -74,6 +74,7 @@ namespace Quantum {
     Jump = 1 << 5,
     Dash = 1 << 6,
     Backdash = 1 << 7,
+    X = 1 << 8,
   }
   public static unsafe partial class FlagsExtensions {
     public static Boolean IsFlagSet(this InputButtons self, InputButtons flag) {
@@ -424,7 +425,7 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct Input {
-    public const Int32 SIZE = 100;
+    public const Int32 SIZE = 112;
     public const Int32 ALIGNMENT = 4;
     [FieldOffset(52)]
     public Button L;
@@ -442,6 +443,8 @@ namespace Quantum {
     public Button Dash;
     [FieldOffset(4)]
     public Button Backdash;
+    [FieldOffset(100)]
+    public Button X;
     [FieldOffset(0)]
     public Int32 UnflippedNumpadDirection;
     public override Int32 GetHashCode() {
@@ -455,6 +458,7 @@ namespace Quantum {
         hash = hash * 31 + Jump.GetHashCode();
         hash = hash * 31 + Dash.GetHashCode();
         hash = hash * 31 + Backdash.GetHashCode();
+        hash = hash * 31 + X.GetHashCode();
         hash = hash * 31 + UnflippedNumpadDirection.GetHashCode();
         return hash;
       }
@@ -472,6 +476,7 @@ namespace Quantum {
         case InputButtons.Jump: return Jump.IsDown;
         case InputButtons.Dash: return Dash.IsDown;
         case InputButtons.Backdash: return Backdash.IsDown;
+        case InputButtons.X: return X.IsDown;
         default: return false;
       }
     }
@@ -485,6 +490,7 @@ namespace Quantum {
         case InputButtons.Jump: return Jump.WasPressed;
         case InputButtons.Dash: return Dash.WasPressed;
         case InputButtons.Backdash: return Backdash.WasPressed;
+        case InputButtons.X: return X.WasPressed;
         default: return false;
       }
     }
@@ -499,11 +505,12 @@ namespace Quantum {
         Button.Serialize(&p->M, serializer);
         Button.Serialize(&p->S, serializer);
         Button.Serialize(&p->T, serializer);
+        Button.Serialize(&p->X, serializer);
     }
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct _globals_ {
-    public const Int32 SIZE = 1152;
+    public const Int32 SIZE = 1224;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(0)]
     public AssetRef<Map> Map;
@@ -527,12 +534,12 @@ namespace Quantum {
     public Int32 PlayerConnectedCount;
     [FieldOffset(540)]
     [FramePrinter.FixedArrayAttribute(typeof(Input), 6)]
-    private fixed Byte _input_[600];
-    [FieldOffset(1144)]
+    private fixed Byte _input_[672];
+    [FieldOffset(1216)]
     public BitSet6 PlayerLastConnectionState;
     public FixedArray<Input> input {
       get {
-        fixed (byte* p = _input_) { return new FixedArray<Input>(p, 100, 6); }
+        fixed (byte* p = _input_) { return new FixedArray<Input>(p, 112, 6); }
       }
     }
     public override Int32 GetHashCode() {
@@ -1505,6 +1512,7 @@ namespace Quantum {
       i->Jump = i->Jump.Update(this.Number, input.Jump);
       i->Dash = i->Dash.Update(this.Number, input.Dash);
       i->Backdash = i->Backdash.Update(this.Number, input.Backdash);
+      i->X = i->X.Update(this.Number, input.X);
       i->UnflippedNumpadDirection = input.UnflippedNumpadDirection;
     }
     public Input* GetPlayerInput(PlayerRef player) {

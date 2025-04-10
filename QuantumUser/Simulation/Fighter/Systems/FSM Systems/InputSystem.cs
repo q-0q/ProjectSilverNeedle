@@ -21,6 +21,7 @@ namespace Quantum
             H,
             S,
             T,
+            X,
             Jump,
             Dash
             
@@ -76,6 +77,11 @@ namespace Quantum
             if (input.T.WasPressed)
             {
                 inputBuffer->type = (int)InputType.T;
+                resetBufferLength = true;
+            }
+            if (input.X.WasPressed)
+            {
+                inputBuffer->type = (int)InputType.X;
                 resetBufferLength = true;
             }
             if (input.Jump.WasPressed)
