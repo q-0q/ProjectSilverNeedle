@@ -232,6 +232,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.DramaticData))]
   public unsafe partial class DramaticDataPrototype : ComponentPrototype<Quantum.DramaticData> {
     public Int32 remaining;
+    public Int32 darkRemaining;
     partial void MaterializeUser(Frame frame, ref Quantum.DramaticData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.DramaticData component = default;
@@ -240,6 +241,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.DramaticData result, in PrototypeMaterializationContext context = default) {
         result.remaining = this.remaining;
+        result.darkRemaining = this.darkRemaining;
         MaterializeUser(frame, ref result, in context);
     }
   }
