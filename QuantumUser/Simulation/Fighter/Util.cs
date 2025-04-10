@@ -158,6 +158,12 @@ namespace Quantum
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->remaining = duration;
         }
+        
+        public static void StartScreenDark(Frame f, EntityRef entityRef, int duration)
+        {
+            f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
+            dramaticData->darkRemaining = duration;
+        }
 
         public static bool IsPlayerFacingAwayFromWall(Frame f, EntityRef entityRef)
         {

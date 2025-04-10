@@ -16,7 +16,7 @@ namespace Quantum
         public static FP MaxThrowDistance = FP.FromString("3.5");
         public static FP OffenseMeterMultiplier = FP.FromString("0.2");
         public static FP DefenseMeterMultiplier = FP.FromString("0.125");
-        public static int ClashHitstopBonus = 6;
+        public static int ClashHitstopBonus = 11;
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -43,7 +43,8 @@ namespace Quantum
             HitstopSystem.EnqueueHitstop(f, stop);
             
             AddMeter(f, myHitboxInternal.damage * OffenseMeterMultiplier);
-            
+            Util.StartDramatic(f, EntityRef, 7);
+            Util.StartScreenDark(f, EntityRef, 7);
             HandlePushback(f, hitboxData, true);
             
             

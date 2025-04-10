@@ -2071,8 +2071,8 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
+                        new(3, FP.FromString("1")),
                         new(startup, 0),
-                        new(3, FP.FromString("-1")),
                         new(50, -4),
                         new(5, 0),
                     }

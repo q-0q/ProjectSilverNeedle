@@ -834,19 +834,23 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct DramaticData : Quantum.IComponent {
-    public const Int32 SIZE = 4;
+    public const Int32 SIZE = 8;
     public const Int32 ALIGNMENT = 4;
-    [FieldOffset(0)]
+    [FieldOffset(4)]
     public Int32 remaining;
+    [FieldOffset(0)]
+    public Int32 darkRemaining;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 13127;
         hash = hash * 31 + remaining.GetHashCode();
+        hash = hash * 31 + darkRemaining.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (DramaticData*)ptr;
+        serializer.Stream.Serialize(&p->darkRemaining);
         serializer.Stream.Serialize(&p->remaining);
     }
   }

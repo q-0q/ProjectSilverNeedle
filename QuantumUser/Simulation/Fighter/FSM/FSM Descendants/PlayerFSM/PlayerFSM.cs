@@ -798,6 +798,7 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->remaining = Math.Max(dramaticData->remaining - 1, 0);
+            dramaticData->darkRemaining = Math.Max(dramaticData->darkRemaining - 1, 0);
 
             f.Unsafe.TryGetPointer<SlowdownData>(entityRef, out var slowdownData);
             slowdownData->slowdownRemaining--;
