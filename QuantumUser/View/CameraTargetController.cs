@@ -17,6 +17,9 @@ public class CameraTargetController : MonoBehaviour
     public bool Player0Dramatic = false;
     public bool Player1Dramatic = false;
     
+    public bool Player0Dark = false;
+    public bool Player1Dark = false;
+    
     private float _baseYPos;
     private float _yPulldown = 4.5f;
     private float groundBounceTimer;
@@ -38,18 +41,20 @@ public class CameraTargetController : MonoBehaviour
 
     }
 
-    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, bool groundBounce)
+    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, int darkRemaining, bool groundBounce)
     {
         if (playerId == 0)
         {
             _player0Pos = pos;
             Player0Dramatic = dramaticRemaining > 0;
+            Player0Dark = darkRemaining > 0;
             if (groundBounce) groundBounceTimer = 0;
         }
         else
         {
             _player1Pos = pos;
             Player1Dramatic = dramaticRemaining > 0;
+            Player1Dark = darkRemaining > 0;
             if (groundBounce) groundBounceTimer = 0;
         }
     }

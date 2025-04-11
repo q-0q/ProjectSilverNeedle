@@ -35,6 +35,7 @@ namespace Quantum
             public int level;
             public int bonusHitStun;
             public int bonusBlockStun;
+            public int bonusHitStop;
             public FP blockPushback;
             public FP hitPushback;
         
@@ -174,6 +175,7 @@ namespace Quantum
                         level = hit.Level,
                         bonusHitStun = hit.BonusHitstun,
                         bonusBlockStun = hit.BonusBlockstun,
+                        bonusHitStop = hit.BonusHitstop,
                         blockPushback = hit.BlockPushback,
                         hitPushback = hit.HitPushback,
                         visualAngle = hit.VisualAngle,
@@ -211,18 +213,37 @@ namespace Quantum
             HandleProxBlock(f);
             
             var hurtboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hurtbox);
-            
+            var myHitboxInternals = GetCollisionBoxInternalsOfType(f, EntityRef, CollisionBoxType.Hitbox);
 
             var hitboxSources = Util.GetOpponentFSMEntities(f, EntityRef);
-            List<CollisionBoxInternal> hitboxInternals = new List<CollisionBoxInternal>();
+            List<CollisionBoxInternal> opponentHitboxInternals = new List<CollisionBoxInternal>();
             foreach (var entityRef in hitboxSources)
             {
-                hitboxInternals.AddRange(GetCollisionBoxInternalsOfType(f, entityRef,
+                opponentHitboxInternals.AddRange(GetCollisionBoxInternalsOfType(f, entityRef,
                     CollisionBoxType.Hitbox));
             }
             
-            foreach (var hitboxInternal in hitboxInternals)
+            foreach (var hitboxInternal in opponentHitboxInternals)
             {
+                
+                // clashes
+                foreach (var myHitboxInternal in myHitboxInternals)
+                {
+                    if (myHitboxInternal.HitType == Hit.HitType.Throw) continue;
+                    if (hitboxInternal.HitType == Hit.HitType.Throw) continue;
+                    if (!CollisionBoxesOverlap(f, hitboxInternal, myHitboxInternal, out var overlapCenter, out var overlapWidth)) continue;
+                    if (!CanBeHitBySource(f, hitboxInternal.source)) continue;
+                    
+                    AddMeToSourceHitList(f, hitboxInternal.source);
+                    InvokeClash(f, this, hitboxInternal, myHitboxInternal, overlapCenter);
+                    
+                    if (FsmLoader.FSMs[hitboxInternal.source] is not PlayerFSM opponentPlayerFsm) continue;
+                    if (!opponentPlayerFsm.CanBeHitBySource(f, myHitboxInternal.source)) continue;
+                    opponentPlayerFsm.AddMeToSourceHitList(f, myHitboxInternal.source);
+                    InvokeClash(f, opponentPlayerFsm, myHitboxInternal, hitboxInternal, overlapCenter);
+                }
+                
+                
                 foreach (var hurtboxInternal in hurtboxInternals)
                 {
                     if (!CollisionBoxesOverlap(f, hitboxInternal, hurtboxInternal, out var overlapCenter, out var overlapWidth)) continue;
@@ -238,6 +259,9 @@ namespace Quantum
         protected virtual void InvokeHitboxHurtboxCollision(Frame frame, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
         
         protected virtual void HandleProxBlock(Frame frame) {}
+        
+        protected virtual void InvokeClash(Frame frame, FSM fsm, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxInternal, FPVector2 overlapCenter) {}
+
         
         
         public virtual void HandleSummonFSMTriggers(Frame f) { }

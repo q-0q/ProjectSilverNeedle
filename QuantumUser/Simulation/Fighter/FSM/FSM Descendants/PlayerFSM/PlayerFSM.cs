@@ -105,6 +105,8 @@ namespace Quantum
         public int FallTimeToSpeed;
         public int JumpCount;
 
+        public int MinimumDashDuration = 1000; // set to a huge number to disable plinking by default
+
         public Trajectory UpwardJumpTrajectory;
         public Trajectory ForwardJumpTrajectory;
         public Trajectory BackwardJumpTrajectory;
@@ -177,6 +179,7 @@ namespace Quantum
                 .Permit(Trigger.Dash, PlayerState.Dash)
                 .Permit(Trigger.Backdash, PlayerState.Backdash)
                 .Permit(Trigger.Jump, PlayerState.Jumpsquat)
+                .PermitIf(Trigger.ButtonAndDirection, PlayerState.Dash, IsGuardCancelInput) // just a test
                 .SubstateOf(PlayerState.GroundActionable);
 
             machine.Configure(PlayerState.StandActionable)
@@ -796,6 +799,7 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->remaining = Math.Max(dramaticData->remaining - 1, 0);
+            dramaticData->darkRemaining = Math.Max(dramaticData->darkRemaining - 1, 0);
 
             f.Unsafe.TryGetPointer<SlowdownData>(entityRef, out var slowdownData);
             slowdownData->slowdownRemaining--;
@@ -887,7 +891,7 @@ namespace Quantum
                 if (actionConfig.GroundOk)
                 {
                     AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.GroundActionable);
-                    AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.Dash);
+                    AllowRawFromDash(fsm, actionConfig);
                 }
 
                 if (actionConfig.AirOk)
@@ -937,6 +941,7 @@ namespace Quantum
             var sectionGroup = fsm.StateMapConfig.HitSectionGroup;
             if (sectionGroup is null) return;
             var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
+            if (hitSectionGroup is null) return;
             Hit prevHit = null;
             int d = fsm.StateMapConfig.Duration.Lookup(actionConfig.State, fsm);
 
@@ -986,6 +991,19 @@ namespace Quantum
                         Util.DoesInputMatch(actionConfig, param),
                     actionConfig.InputWeight);
         }
+        
+        private static void AllowRawFromDash(PlayerFSM fsm, ActionConfig actionConfig)
+        {
+            fsm.Fsm.Configure(PlayerFSM.PlayerState.Dash)
+                .PermitIf(PlayerFSM.PlayerTrigger.ButtonAndDirection,
+                    actionConfig.State,
+                    param =>
+                    {
+                        if (param is not FrameParam frameParam) return false;
+                        return Util.DoesInputMatch(actionConfig, param) && fsm.FramesInCurrentState(frameParam.f) > fsm.MinimumDashDuration;
+                    },
+                    actionConfig.InputWeight);
+        }
 
         protected void MakeActionCancellable(PlayerFSM fsm, ActionConfig source,
             ActionConfig destination)
@@ -1027,8 +1045,20 @@ namespace Quantum
                             (Util.CanCancelNow(param) && Util.DoesInputMatch(actionConfig, param)),
                         actionConfig.InputWeight);
             }
-            
-            
         }
+
+        public void AddMeter(Frame f, FP amount)
+        {
+            f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            healthData->meter += amount;
+            healthData->meter = Util.Clamp(healthData->meter, 0, 100);
+        }
+
+        public bool IsGuardCancelInput(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not ButtonAndDirectionParam param) return false;
+            return param.Type == InputSystem.InputType.X;
+        }
+        
     }
 }

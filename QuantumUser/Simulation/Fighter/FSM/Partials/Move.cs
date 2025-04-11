@@ -12,7 +12,7 @@ namespace Quantum
     public unsafe partial class FSM
     {
         static FP _crossupThreshhold = FP.FromString("0.01");
-        private const bool AllowCrossup = false;
+        // private const bool AllowCrossup = false;
         protected static int _pushbackDuration = 23;
         protected static int _momentumDuration = 35;
         private FP _wallsSkew = FP.FromString("0.99");
@@ -68,7 +68,7 @@ namespace Quantum
         {
             GetPushboxes(f,  entityRef, out var opponentPushboxInternal, out var pushboxInternal);
             
-            if (!AllowCrossup)
+            if (!CanCrossup(f, pushboxInternal, opponentPushboxInternal))
             {
                 if (AreCollisionBoxesNextToEachOther(f, opponentPushboxInternal, pushboxInternal, out FP deltaX))
                 {
@@ -85,7 +85,27 @@ namespace Quantum
 
             transform3D->Position += (v.XYO * slowdownMod);
         }
-        
+
+        private static bool CanCrossup(Frame f, CollisionBoxInternal a, CollisionBoxInternal b)
+        {
+            if (a is null || b is null)
+            {
+                return true;
+            }
+            
+            var fsmA = FsmLoader.FSMs[a.source];
+            var fsmB = FsmLoader.FSMs[b.source];
+
+            var aCrossup = fsmA?.StateMapConfig?.AllowCrossupSectionGroup?.Get(fsmA,
+                    new FrameParam() { f = f, EntityRef = a.source })?.GetCurrentItem(f, fsmA);
+            var bCrossup = fsmB?.StateMapConfig?.AllowCrossupSectionGroup?.Get(fsmB,
+                new FrameParam() { f = f, EntityRef = b.source })?.GetCurrentItem(f, fsmB);
+
+            var aBool = aCrossup ?? false;
+            var bBool = bCrossup ?? false;
+            return (aBool || bBool);
+        }
+
         public virtual FP GetSlowdownMod(Frame f, EntityRef entityRef)
         {
             return 1;
@@ -100,10 +120,11 @@ namespace Quantum
 
         private void PushboxCollide(Frame f)
         {
-            if (AllowCrossup) return;
 
             GetPushboxes(f, EntityRef, out var opponentPushboxInternal, out var collisionBoxInternal);
-
+            
+            if (CanCrossup(f, collisionBoxInternal, opponentPushboxInternal)) return;
+            
             if (!CollisionBoxesOverlap(f, opponentPushboxInternal, collisionBoxInternal, out var overlapCenter,
                     out var overlapWidth)) return;
 

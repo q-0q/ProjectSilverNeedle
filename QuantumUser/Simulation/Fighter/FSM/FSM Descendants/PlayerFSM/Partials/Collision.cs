@@ -14,6 +14,9 @@ namespace Quantum
         public const int CrossupProtectionDuration = 4;
         public const int ThrowProtectionDuration = 6;
         public static FP MaxThrowDistance = FP.FromString("3.5");
+        public static FP OffenseMeterMultiplier = FP.FromString("0.2");
+        public static FP DefenseMeterMultiplier = FP.FromString("0.125");
+        public static int ClashHitstopBonus = 8;
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -31,12 +34,34 @@ namespace Quantum
             
             HandleCutsceneTrigger(f, hurtboxData, hitboxData);
         }
+        
+        protected override void InvokeClash(Frame f, FSM fsm, CollisionBoxInternal myHitboxInternal, CollisionBoxInternal hitboxData, FPVector2 location)
+        {
+            if (fsm is not PlayerFSM playerFsm) return;
+            
+            f.Events.EntityVibrate(fsm.EntityRef, FP.FromString("0.40"), FP.FromString("0.8"), 20);
+            playerFsm.MakeNotWhiffed(f, hitboxData.source);
+            var stop = Hit.AttackLevelHitstop[hitboxData.level] + ClashHitstopBonus;
+            HitstopSystem.EnqueueHitstop(f, stop);
+            
+            playerFsm.AddMeter(f, myHitboxInternal.damage * OffenseMeterMultiplier);
+            Util.StartDramatic(f, EntityRef, 7);
+            Util.StartScreenDark(f, EntityRef, 2);
+            playerFsm.HandlePushback(f, hitboxData, true, FP.FromString("0.65"));
+            
+            
+            if (Util.GetPlayerId(f, myHitboxInternal.source) != 0) return;
+            AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Clash, location, hitboxData.visualAngle, 
+                !IsFacingRight(f, hitboxData.source));
+            
+        }
 
         private bool IsProjectileInvulnerable(Frame f)
         {
             var sectionGroup = StateMapConfig.ProjectileInvulnerable?.Get(this, new FrameParam() { f = f, EntityRef = EntityRef });
             if (sectionGroup is null) return false;
             return sectionGroup.GetCurrentItem(f, this);
+            
         }
 
         private FP GetXDistance(Frame f, EntityRef a, EntityRef b)
@@ -81,18 +106,8 @@ namespace Quantum
             MakeNotWhiffed(f, hitboxData.source);
 
             
-            FP pushbackDistance;
-            if (Fsm.IsInState(PlayerState.Ground) || Util.IsPlayerInCorner(f, EntityRef)) {
-                pushbackDistance = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
-            }
-            else
-            {
-                // universal air pushback
-                pushbackDistance = isBlocking ? 2 : 1;
-            }
-            if (IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
-            StartPushback(f, pushbackDistance);
-            
+            HandlePushback(f, hitboxData, isBlocking, 1);
+
             if (isBlocking)
             {
                 var stun = Fsm.IsInState(PlayerState.Air)
@@ -105,6 +120,7 @@ namespace Quantum
                 AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, location, hitboxData.visualAngle, 
                     !IsFacingRight(f, hitboxData.source));
                 
+                AddMeter(f, hitboxData.damage * DefenseMeterMultiplier);
                 f.Events.PlayerBlocked(location, hitboxData.visualAngle);
 
             }
@@ -115,7 +131,22 @@ namespace Quantum
             
             Fsm.Fire(trigger, juggleParam);
         }
-        
+
+        private void HandlePushback(Frame f, CollisionBoxInternal hitboxData, bool isBlocking, FP mod)
+        {
+            FP pushbackDistance;
+            if (Fsm.IsInState(PlayerState.Ground) || Util.IsPlayerInCorner(f, EntityRef)) {
+                pushbackDistance = isBlocking ? hitboxData.blockPushback : hitboxData.hitPushback;
+            }
+            else
+            {
+                // universal air pushback
+                pushbackDistance = isBlocking ? 2 : 1;
+            }
+            if (IsFacingRight(f, EntityRef)) pushbackDistance *= FP.Minus_1;
+            StartPushback(f, pushbackDistance);
+        }
+
         private void StartPushback(Frame f, FP totalDistance)
         {
             f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
@@ -164,7 +195,7 @@ namespace Quantum
                 ? Hit.AttackLevelCrouchHitstun[hitboxData.level] + hitboxData.bonusHitStun
                 : Hit.AttackLevelStandHitstun[hitboxData.level] + hitboxData.bonusHitStun;
             
-            var stop = Hit.AttackLevelHitstop[hitboxData.level];
+            var stop = Hit.AttackLevelHitstop[hitboxData.level] + hitboxData.bonusHitStop;
             
             
             if (hurtType == HurtType.Counter)
@@ -187,6 +218,11 @@ namespace Quantum
             else if (hurtType == HurtType.Punish)
             {
                 f.Events.GameEvent(EntityRef, GameEventType.Punish);
+            }
+
+            if (FsmLoader.FSMs[hitboxData.source] is PlayerFSM playerFsm)
+            {
+                playerFsm.AddMeter(f, hitboxData.damage * OffenseMeterMultiplier);
             }
             
             InvokeStun(f, stun);

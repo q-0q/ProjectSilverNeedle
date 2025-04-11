@@ -1,4 +1,5 @@
 component DramaticData
 {
     int remaining;
+    int darkRemaining;
 }

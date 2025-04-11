@@ -56,6 +56,8 @@ namespace Quantum
             var jumpForwardSpeed = FP.FromString("15");
             var jumpBackwardSpeed = FP.FromString("-7");
 
+            MinimumDashDuration = 7;
+
             UpwardJumpTrajectory = new Trajectory()
             {
                 TimeToTrajectoryHeight = jumpTimeToHeight,
@@ -237,8 +239,8 @@ namespace Quantum
                 GrowHeight = true,
                 GrowWidth = false,
                 PosX = 0,
-                PosY = 0,
-                Height = 5,
+                PosY = 1,
+                Height = 3,
                 Width = FP.FromString("1.5")
             };
             
@@ -615,7 +617,7 @@ namespace Quantum
                 Sections = new List<Tuple<int, FP>>()
                 {
                     new(3, 0),
-                    new(8, 5),
+                    new(12, 7),
                     new(8, 1),
                     new(12, FP.FromString("0.6")),
                     new (10, 0),
@@ -665,7 +667,7 @@ namespace Quantum
                         Level = 1,
                         GravityScaling = FP.FromString("1"),
                         TrajectoryXVelocity = 6,
-                        TrajectoryHeight = FP.FromString("2.25"),
+                        TrajectoryHeight = FP.FromString("2"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -956,7 +958,7 @@ namespace Quantum
                                         {
                                             GrowHeight = false,
                                             GrowWidth = false,
-                                            Width = 2,
+                                            Width = 3,
                                             Height = 5,
                                             PosX = 1,
                                             PosY = 3,
@@ -971,7 +973,7 @@ namespace Quantum
                                         {
                                             GrowHeight = false,
                                             GrowWidth = false,
-                                            Width = 2,
+                                            Width = 3,
                                             Height = 4,
                                             PosX = 0,
                                             PosY = 6
@@ -1562,7 +1564,8 @@ namespace Quantum
             
             {
                 int startup = 6;
-                int active = 6;
+                int active1 = 3;
+                // int active2 = 4;
                 int hurtboxDuration = 15;
                 string path = "_4H";
                 int state = GirlShotoState._4H;
@@ -1626,40 +1629,6 @@ namespace Quantum
 
                 var hit = new Hit()
                 {
-                    Level = 1,
-                    BonusBlockstun = 2,
-                    GravityScaling = FP.FromString("1"),
-                    GravityProration = FP.FromString("1.05"),
-                    TrajectoryHeight = FP.FromString("0.5"),
-                    TrajectoryXVelocity = 3,
-                    // GroundBounce = true,
-                    DamageScaling = 1,
-                    Damage = highDamage,
-                    HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new (active, new CollisionBoxCollection()
-                            {
-                                CollisionBoxes = new List<CollisionBox>()
-                                {
-                                    new CollisionBox()
-                                    {
-                                        Height = FP.FromString("4.5"),
-                                        Width = FP.FromString("2.5"),
-                                        GrowWidth = true,
-                                        GrowHeight = true,
-                                        PosY = 4,
-                                        PosX = 0
-                                    }
-                                }
-                            })
-                        }
-                    }
-                };
-                
-                var hit2 = new Hit()
-                {
                     Level = 2,
                     BonusBlockstun = 2,
                     GravityScaling = FP.FromString("1"),
@@ -1673,7 +1642,7 @@ namespace Quantum
                     {
                         Sections = new List<Tuple<int, CollisionBoxCollection>>()
                         {
-                            new (active, new CollisionBoxCollection()
+                            new (active1, new CollisionBoxCollection()
                             {
                                 CollisionBoxes = new List<CollisionBox>()
                                 {
@@ -1683,7 +1652,7 @@ namespace Quantum
                                         Width = FP.FromString("2.5"),
                                         GrowWidth = true,
                                         GrowHeight = true,
-                                        PosY = 4,
+                                        PosY = 2,
                                         PosX = 0
                                     }
                                 }
@@ -1691,13 +1660,14 @@ namespace Quantum
                         }
                     }
                 };
+                
                 var hitboxes = new SectionGroup<Hit>()
                 {
                     Sections = new List<Tuple<int, Hit>>()
                     {
                         new(startup, null),
-                        new(active, hit),
-                        new(active, hit2),
+                        new(active1, hit),
+                        // new(active2, hit2),
                         new (20, null)
                     }
                 };
@@ -1706,7 +1676,7 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, HurtType>>()
                     {
-                        new(startup + active, HurtType.Counter),
+                        new(startup + active1, HurtType.Counter),
                         new(20, HurtType.Punish)
                     }
                 };
@@ -1861,8 +1831,7 @@ namespace Quantum
             
             
             {
-                int startup = 19;
-                int active = 2;
+                int startup = 13;
                 int hurtboxDuration = 15;
                 string path = "Rekka2A";
                 int state = GirlShotoState.Rekka2A;
@@ -1880,9 +1849,19 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(startup - 2, 0),
+                        new(startup, 0),
                         new(2, FP.FromString("4.5")),
                         new(4, 0),
+                    }
+                };
+
+                var crossup = new SectionGroup<bool>()
+                {
+                    Sections = new List<Tuple<int, bool>>()
+                    {
+                        new(startup, false),
+                        new(20, true),
+                        new(50, false)
                     }
                 };
                 
@@ -1924,66 +1903,12 @@ namespace Quantum
                     }
                 };
 
-                var projectileInvuln = new SectionGroup<bool>()
-                {
-                    Sections = new List<Tuple<int, bool>>()
-                    {
-                        new(startup + active, true),
-                        new(50, false),
-                    }
-                };
                 
-                var hitboxes = new SectionGroup<Hit>()
-                {
-                    Sections = new List<Tuple<int, Hit>>()
-                    {
-                        new(startup, null),
-                        new(active, new Hit()
-                        {
-                            Level = 3,
-                            // BonusBlockstun = 6,
-                            GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.6"),
-                            TrajectoryHeight = FP.FromString("4.75"),
-                            TrajectoryXVelocity = FP.FromString("3"),
-                            Launches = true,
-                            GroundBounce = true,
-                            Type = Hit.HitType.High,
-                            BlockPushback = FP.FromString("0.5"),
-                            VisualAngle = 70,
-                            // GroundBounce = true,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new (active, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                Height = FP.FromString("5.5"),
-                                                Width = FP.FromString("3"),
-                                                GrowWidth = true,
-                                                GrowHeight = true,
-                                                PosY = 0,
-                                                PosX = 0
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
-                        new (20, null)
-                    }
-                };
-
                 var hurtType = new SectionGroup<HurtType>()
                 {
                     Sections = new List<Tuple<int, HurtType>>()
                     {
-                        new(startup + active, HurtType.Counter),
-                        new(20, HurtType.Punish)
+                        new(100, HurtType.Counter)
                     }
                 };
 
@@ -1991,9 +1916,9 @@ namespace Quantum
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
                 StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
-                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
+                StateMapConfig.AllowCrossupSectionGroup.Dictionary[state] = crossup;
             }
             
             
@@ -2074,7 +1999,7 @@ namespace Quantum
                             Level = 3,
                             GravityScaling = FP.FromString("0.925"),
                             GravityProration = FP.FromString("1.6"),
-                            TrajectoryHeight = FP.FromString("3.25"),
+                            TrajectoryHeight = FP.FromString("3.5"),
                             TrajectoryXVelocity = FP.FromString("9"),
                             BlockPushback = FP.FromString("3"),
                             HitPushback = 3,
@@ -2127,7 +2052,7 @@ namespace Quantum
             }
             
             {
-                int startup = 5;
+                int startup = 9;
                 int active = 2;
                 int hurtboxDuration = 15;
                 string path = "DP";
@@ -2146,9 +2071,9 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(startup - 3, 0),
                         new(3, FP.FromString("1")),
-                        new(50, 4),
+                        new(startup, 0),
+                        new(50, -4),
                         new(5, 0),
                     }
                 };
@@ -2170,12 +2095,50 @@ namespace Quantum
                 };
 
 
-                var hit = new Hit()
+                var hitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new (active, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                new CollisionBox()
+                                {
+                                    Height = FP.FromString("8.0"),
+                                    Width = FP.FromString("3.0"),
+                                    GrowWidth = false,
+                                    GrowHeight = true,
+                                    PosY = 0,
+                                    PosX = 0
+                                },
+                            }
+                        })
+                    }
+                };
+                var hit1 = new Hit()
+                {
+                    Level = 3,
+                    GravityScaling = FP.FromString("1"),
+                    GravityProration = FP.FromString("1"),
+                    TrajectoryHeight = FP.FromString("4.25"),
+                    TrajectoryXVelocity = FP.FromString("12"),
+                    BlockPushback = FP.FromString("3"),
+                    HitPushback = 3,
+                    VisualAngle = -70,
+                    Launches = true,
+                    HardKnockdown = false,
+                    BonusHitstop = 5,
+                    // GroundBounce = true,
+                    Damage = 25,
+                    HitboxCollections = hitboxCollections
+                };
+                var hit2 = new Hit()
                 {
                     Level = 0,
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1"),
-                    TrajectoryHeight = FP.FromString("2.25"),
+                    TrajectoryHeight = FP.FromString("4.25"),
                     TrajectoryXVelocity = FP.FromString("12"),
                     BlockPushback = FP.FromString("3"),
                     HitPushback = 3,
@@ -2184,27 +2147,7 @@ namespace Quantum
                     HardKnockdown = false,
                     // GroundBounce = true,
                     Damage = 25,
-                    HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                    {
-                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                        {
-                            new (active, new CollisionBoxCollection()
-                            {
-                                CollisionBoxes = new List<CollisionBox>()
-                                {
-                                    new CollisionBox()
-                                    {
-                                        Height = FP.FromString("8.0"),
-                                        Width = FP.FromString("6.0"),
-                                        GrowWidth = false,
-                                        GrowHeight = true,
-                                        PosY = 0,
-                                        PosX = 0
-                                    },
-                                }
-                            })
-                        }
-                    }
+                    HitboxCollections = hitboxCollections
                 };
                 
                 var hitboxes = new SectionGroup<Hit>()
@@ -2212,9 +2155,9 @@ namespace Quantum
                     Sections = new List<Tuple<int, Hit>>()
                     {
                         new(startup, null),
-                        new(active, hit),
-                        new(active, hit),
-                        new(active, hit),
+                        new(active, hit1),
+                        new(active, hit2),
+                        // new(active, hit2),
                         // new(active, hit),
                         // new(active, hit),
                         // new(active, hit),
@@ -2242,8 +2185,8 @@ namespace Quantum
                         }),
                         new(10, new Trajectory()
                         {
-                            TimeToTrajectoryHeight = 30,
-                            TrajectoryHeight = 5,
+                            TimeToTrajectoryHeight = 36,
+                            TrajectoryHeight = 6,
                             TrajectoryXVelocity = 0
                         })
                     } 
@@ -2479,6 +2422,16 @@ namespace Quantum
                         })
                     }
                 };
+                
+                var pushbox = new CollisionBox()
+                {
+                    GrowHeight = true,
+                    GrowWidth = false,
+                    PosX = 0,
+                    PosY = -1,
+                    Height = 6,
+                    Width = FP.FromString("1.5")
+                };
 
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
@@ -2488,6 +2441,8 @@ namespace Quantum
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
                 StateMapConfig.TrajectorySectionGroup.Dictionary[state] = trajectory;
+                StateMapConfig.Pushbox.Dictionary[state] = pushbox;
+
 
             }
             
@@ -2562,7 +2517,7 @@ namespace Quantum
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1.3"),
                     Type = Hit.HitType.High,
-                    TrajectoryHeight = 2,
+                    TrajectoryHeight = FP.FromString("1"),
                     Level = 2,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                     {
@@ -2594,7 +2549,7 @@ namespace Quantum
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1.3"),
                     Type = Hit.HitType.High,
-                    TrajectoryHeight = 2,
+                    TrajectoryHeight = FP.FromString("1"),
                     TrajectoryXVelocity = 3,
                     Level = 2,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -2857,7 +2812,7 @@ namespace Quantum
                 
                 Name = "Crouching heavy",
                 Description = "A powerful, upwards kick that launches grounded opponents into the air.",
-                AnimationDisplayFrameIndex = 17
+                AnimationDisplayFrameIndex = 15
             };
             
             ConfigureAction(this, _2H);
@@ -2918,11 +2873,11 @@ namespace Quantum
                 JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
-                AnimationDisplayFrameIndex = 11,
+                AnimationDisplayFrameIndex = 25,
                 State = GirlShotoState.JH,
                 
                 Name = "Jumping heavy",
-                Description = "A downwards kick that can be used to deter approaching opponents."
+                Description = "A flipping kick that spikes opponents downward, causing a Ground Bounce."
             };
             
             ConfigureAction(this, JH);
@@ -2957,28 +2912,28 @@ namespace Quantum
 
             
 
-            ActionConfig fireball = new ActionConfig()
-            {
-                Aerial = false,
-                AirOk = false,
-                CommandDirection = 4,
-                DashCancellable = false,
-                GroundOk = true,
-                InputType = InputSystem.InputType.S,
-                JumpCancellable = false,
-                InputWeight = 4,
-                RawOk = true,
-                State = GirlShotoState.Fireball,
-                IsSpecial = true,
-                SpecialCancellable = false,
-                
-                Name = "Breath",
-                Description = "A concentrated ball of ki that travels forward, great for controlling space and keeping opponents out.",
-                // FlavorText = "Few monks in the Temple's history have attained the ability to manifest their ki into tangible power.",
-                AnimationDisplayFrameIndex = 20
-            };
-            
-            ConfigureAction(this, fireball);
+            // ActionConfig fireball = new ActionConfig()
+            // {
+            //     Aerial = false,
+            //     AirOk = false,
+            //     CommandDirection = 4,
+            //     DashCancellable = false,
+            //     GroundOk = true,
+            //     InputType = InputSystem.InputType.S,
+            //     JumpCancellable = false,
+            //     InputWeight = 4,
+            //     RawOk = true,
+            //     State = GirlShotoState.Fireball,
+            //     IsSpecial = true,
+            //     SpecialCancellable = false,
+            //     
+            //     Name = "Breath",
+            //     Description = "A concentrated ball of ki that travels forward, great for controlling space and keeping opponents out.",
+            //     // FlavorText = "Few monks in the Temple's history have attained the ability to manifest their ki into tangible power.",
+            //     AnimationDisplayFrameIndex = 20
+            // };
+            //
+            // ConfigureAction(this, fireball);
             
             // MakeActionCancellable(this, _5M, fireball);
             // MakeActionCancellable(this, _5H, fireball);
@@ -3029,10 +2984,10 @@ namespace Quantum
                 IsSpecial = true,
                 SpecialCancellable = false,
                 
-                Name = "Falling Water",
-                Description = "A teleporting strike that must be blocked standing. It ground-bounces opponents into the air.",
-                // FlavorText = "Snap.",
-                AnimationDisplayFrameIndex = 20,
+                Name = "Astrid's Curse",
+                Description = "A short-ranged teleport that can cross through opponents.",
+                FlavorText = "Her actions can neither be undone nor forgiven.",
+                AnimationDisplayFrameIndex = 1,
                 WhileIn = Rekka1
             };
             
@@ -3082,7 +3037,7 @@ namespace Quantum
                 SpecialCancellable = false,
                 
                 Description = "A rising multi-hit attack that is invincible on startup, but leaves you highly exposed when blocked. Great as a defensive option.",
-                Name = "Fountain",
+                Name = "Reverse Fountain",
                 AnimationDisplayFrameIndex = 11
             };
             

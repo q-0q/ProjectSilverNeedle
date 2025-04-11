@@ -73,12 +73,15 @@ public class FSMSprite : QuantumEntityViewComponent
         {
             Vector3 pos = PredictedFrame.Get<Transform3D>(EntityRef).Position.ToUnityVector3();
             CameraTargetController.Instance.UpdatePlayerPos(pos, PredictedFrame.Get<PlayerLink>(EntityRef).Player,
-                PredictedFrame.Get<DramaticData>(EntityRef).remaining, PredictedFrame.Get<TrajectoryData>(EntityRef).groundBounce);
+                PredictedFrame.Get<DramaticData>(EntityRef).remaining, PredictedFrame.Get<DramaticData>(EntityRef).darkRemaining, PredictedFrame.Get<TrajectoryData>(EntityRef).groundBounce);
 
             HealthBarController.Instance.UpdatePlayerHealth(PredictedFrame.Get<PlayerLink>(EntityRef).Player,
                 PredictedFrame.Get<HealthData>(EntityRef).health.AsFloat,
                 PredictedFrame.Get<ComboData>(EntityRef).length,
                 PredictedFrame.Get<ScoreData>(EntityRef).score);
+            
+            MeterBarController.Instance.UpdatePlayerMeter(PredictedFrame.Get<PlayerLink>(EntityRef).Player,
+                PredictedFrame.Get<HealthData>(EntityRef).meter.AsFloat);
         }
         catch
         {

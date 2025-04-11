@@ -38,6 +38,7 @@ public class UnityInput : MonoBehaviour
         input.S =  _playerInput.actions["S"].IsPressed();
         input.T =  _playerInput.actions["T"].IsPressed();
         input.Dash =  _playerInput.actions["Dash"].IsPressed();
+        input.X = _playerInput.actions["X"].IsPressed();
 
         input.Jump = _playerInput.actions["Direction"].IsPressed() && (uN == 7 || uN == 8 || uN == 9);
         

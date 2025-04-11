@@ -214,6 +214,7 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<HealthData>(entityRef, out var healthData);
             healthData->health = 500;
+            healthData->meter = 0;
 
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
             trajectoryData->startingTrajectoryHeight = 0;
@@ -281,6 +282,7 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->remaining = 0;
+            dramaticData->darkRemaining = 0;
             
             f.Unsafe.TryGetPointer<CutsceneData>(entityRef, out var cutsceneData);
             cutsceneData->initiator = EntityRef.None;

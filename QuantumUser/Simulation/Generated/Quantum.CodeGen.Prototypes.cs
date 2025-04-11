@@ -232,6 +232,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.DramaticData))]
   public unsafe partial class DramaticDataPrototype : ComponentPrototype<Quantum.DramaticData> {
     public Int32 remaining;
+    public Int32 darkRemaining;
     partial void MaterializeUser(Frame frame, ref Quantum.DramaticData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.DramaticData component = default;
@@ -240,6 +241,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.DramaticData result, in PrototypeMaterializationContext context = default) {
         result.remaining = this.remaining;
+        result.darkRemaining = this.darkRemaining;
         MaterializeUser(frame, ref result, in context);
     }
   }
@@ -326,6 +328,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.HealthData))]
   public unsafe partial class HealthDataPrototype : ComponentPrototype<Quantum.HealthData> {
     public FP health;
+    public FP meter;
     partial void MaterializeUser(Frame frame, ref Quantum.HealthData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.HealthData component = default;
@@ -334,6 +337,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.HealthData result, in PrototypeMaterializationContext context = default) {
         result.health = this.health;
+        result.meter = this.meter;
         MaterializeUser(frame, ref result, in context);
     }
   }
@@ -388,6 +392,7 @@ namespace Quantum.Prototypes {
     public Button Jump;
     public Button Dash;
     public Button Backdash;
+    public Button X;
     public Int32 UnflippedNumpadDirection;
     partial void MaterializeUser(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context);
     public void Materialize(Frame frame, ref Quantum.Input result, in PrototypeMaterializationContext context = default) {
@@ -399,6 +404,7 @@ namespace Quantum.Prototypes {
         result.Jump = this.Jump;
         result.Dash = this.Dash;
         result.Backdash = this.Backdash;
+        result.X = this.X;
         result.UnflippedNumpadDirection = this.UnflippedNumpadDirection;
         MaterializeUser(frame, ref result, in context);
     }
