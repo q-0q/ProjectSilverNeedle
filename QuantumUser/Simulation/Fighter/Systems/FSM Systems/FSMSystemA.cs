@@ -28,11 +28,6 @@ namespace Quantum
             fsm.CheckForLand(f);
             InputSystem.FireFsmFromInput(f, fsm);
             
-            // clear hit entities
-            if (fsm.IsOnFirstFrameOfHit(f))
-            {
-                fsm.ClearHitEntities(f);
-            }
             
             // Capture collision snapshot
             filter.FsmData->currentCollisionState = fsm.Fsm.State();
