@@ -88,6 +88,12 @@ namespace Quantum
                 HitstopSystem.EnqueueHitstop(f, 12);
                 return;
             }
+            
+            if (hurtboxData.highCrush && hitboxData.HitType != Hit.HitType.Low)
+            {
+                HitstopSystem.EnqueueHitstop(f, 12);
+                return;
+            }
 
             var xVelocity = hitboxData.trajectoryXVelocity;
             if (!IsFacingRight(f, hitboxData.source))
