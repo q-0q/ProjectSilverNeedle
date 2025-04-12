@@ -137,7 +137,18 @@ namespace Quantum.Types
 
         public bool IsOnFirstFrameOfSection(Frame f, FSM fsm)
         {
-            int index = fsm.FramesInCurrentState(f);   
+            // there's a bug here
+            // we use this func to determine when to clearhitentities of offenders
+            // however, if the offender is under a slowdown, this function will return
+            // true for several consecutive realtime frames, causing multiple clearhitentities
+            // calls and thus a any hitbox will be multihitting for the first virtual frame of
+            // its hitbox
+            
+            // we need a way to track number of realtime frames not just in the current state but in 
+            // the current section as well, its the only way i can think to actually track this in a way
+            // that works with slowdowns
+            
+            int index = fsm.FramesInCurrentState(f);
             int duration = Duration();
             if (Loop) index %= duration;
 

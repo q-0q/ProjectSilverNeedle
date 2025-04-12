@@ -1080,7 +1080,7 @@ namespace Quantum
             HitstopSystem.EnqueueHitstop(param.f, 3);
             Util.StartScreenDark(param.f, EntityRef, 30);
             Util.StartDramatic(param.f, EntityRef, 20);
-            FsmLoader.FSMs[Util.GetOtherPlayer(param.f, EntityRef)].StartSlowdown(param.f, 30, FP.FromString("0.5"));
+            FsmLoader.FSMs[Util.GetOtherPlayer(param.f, EntityRef)].StartSlowdown(param.f, 30, FP.FromString("0.25"));
         }
         
     }
