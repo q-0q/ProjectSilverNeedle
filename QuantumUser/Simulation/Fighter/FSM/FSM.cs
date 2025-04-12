@@ -101,6 +101,13 @@ namespace Quantum
             f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
         }
+        
+        public int RealtimeFramesInCurrentState(Frame f)
+        {
+            // if (EntityRef == EntityRef.None) return 0;
+            f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
+            return playerFsmData->framesInState;
+        }
 
         public static int FramesInCurrentState(Frame f, EntityRef entityRef)
         {
