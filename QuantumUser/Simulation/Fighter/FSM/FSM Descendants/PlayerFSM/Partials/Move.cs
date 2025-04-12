@@ -26,7 +26,7 @@ namespace Quantum
         
         public override void Move(Frame f)
         {
-            AddMeter(f, FP.FromString("1.667"));
+            // AddMeter(f, FP.FromString("1.667"));
             CutsceneReactorMove(f);
             SnapToGround(f);
             base.Move(f);
@@ -60,10 +60,12 @@ namespace Quantum
         protected override void PushbackMove(Frame f)
         {
             f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
-            if (pushbackData->framesInPushback >= _pushbackDuration) return;
+
+            var framesInPushback = pushbackData->framesInPushback;
+            if (framesInPushback >= _pushbackDuration) return;
 
             FPVector2 v =
-                new FPVector2(GetPushbackVelocityThisFrame(pushbackData->framesInPushback,
+                new FPVector2(GetPushbackVelocityThisFrame(framesInPushback,
                     pushbackData->pushbackAmount), 0);
 
             bool inCorner = Util.IsPlayerInCorner(f, EntityRef);

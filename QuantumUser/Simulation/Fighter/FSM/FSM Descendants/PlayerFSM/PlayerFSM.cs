@@ -518,7 +518,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
             
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 25;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 20;
 
             // StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[PlayerState.Cutscene] = null;
 
@@ -527,6 +527,14 @@ namespace Quantum
             
             StateMapConfig.TrajectoryYVelocityMod.DefaultValue = oneSectionGroup;
             StateMapConfig.TrajectoryXVelocityMod.DefaultValue = oneSectionGroup;
+            
+            StateMapConfig.HurtTypeSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Break] = new SectionGroup<PlayerFSM.HurtType>()
+            {
+                Sections = new List<Tuple<int, PlayerFSM.HurtType>>()
+                {
+                    new(100, PlayerFSM.HurtType.Punish)
+                }
+            };
             
             StateMapConfig.HurtTypeSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Throw] = new SectionGroup<PlayerFSM.HurtType>()
             {
@@ -1077,10 +1085,27 @@ namespace Quantum
         {
             if (triggerParams is not FrameParam param) return;
             AddMeter(param.f, FP.FromString("-33.33"));
-            HitstopSystem.EnqueueHitstop(param.f, 3);
-            Util.StartScreenDark(param.f, EntityRef, 30);
-            Util.StartDramatic(param.f, EntityRef, 20);
-            FsmLoader.FSMs[Util.GetOtherPlayer(param.f, EntityRef)].StartSlowdown(param.f, 30, FP.FromString("0.25"));
+            HitstopSystem.EnqueueHitstop(param.f, 8);
+
+            var otherFsm = FsmLoader.FSMs[Util.GetOtherPlayer(param.f, EntityRef)];
+            if (otherFsm is not PlayerFSM otherPlayerFsm) return;
+            
+            StartPushback(param.f, 0);
+            var pushbackDistance = FP.FromString("10");
+            if (IsFacingRight(param.f, EntityRef)) pushbackDistance *= FP.Minus_1;
+            otherPlayerFsm.StartMomentum(param.f, pushbackDistance * FP.Minus_1);
+            param.f.Events.EntityVibrate(EntityRef, FP.FromString("0.5"), FP.FromString("0.7"), 20);
+            param.f.Events.EntityVibrate(Util.GetOtherPlayer(param.f, EntityRef), FP.FromString("0.5"), FP.FromString("0.7"), 20);
+            
+            Util.StartScreenDark(param.f, EntityRef, 22);
+            Util.StartDramatic(param.f, EntityRef, 12);
+            otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
+
+            param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+            FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
+            
+            AnimationEntitySystem.Create(param.f, AnimationEntities.AnimationEntityEnum.Break, pos, 0, 
+                IsFacingRight(param.f, EntityRef));
         }
         
     }
