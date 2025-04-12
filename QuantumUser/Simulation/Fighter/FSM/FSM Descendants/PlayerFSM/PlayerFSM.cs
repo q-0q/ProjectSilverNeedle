@@ -46,6 +46,7 @@ namespace Quantum
             public static int Backthrow;
             public static int Tech;
             public static int Break;
+            public static int Surge;
             
 
             // Air
@@ -199,6 +200,10 @@ namespace Quantum
             machine.Configure(PlayerState.Dash)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable);
 
+            machine.Configure(PlayerState.Surge)
+                .OnEntry(OnSurge)
+                .SubstateOf(PlayerState.Dash);
+
             machine.Configure(PlayerState.Backdash)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
                 .OnEntry(OnBackdash)
@@ -214,6 +219,7 @@ namespace Quantum
                 .OnEntry(ResetWhiff)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)
+                .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.Surge, IsMeterInput)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.StandHitHigh)
@@ -256,7 +262,7 @@ namespace Quantum
             machine.Configure(PlayerState.GroundBlock)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -3)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -3)
-                .PermitIf(Trigger.ButtonAndDirection, PlayerState.Break, IsBreakInput)
+                .PermitIf(Trigger.ButtonAndDirection, PlayerState.Break, IsMeterInput)
                 .SubstateOf(PlayerState.Ground)
                 .SubstateOf(PlayerState.Block);
 
@@ -518,7 +524,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
             
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 20;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 32;
 
             // StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[PlayerState.Cutscene] = null;
 
@@ -1072,7 +1078,7 @@ namespace Quantum
             healthData->meter = Util.Clamp(healthData->meter, 0, 100);
         }
 
-        public bool IsBreakInput(TriggerParams? triggerParams)
+        public bool IsMeterInput(TriggerParams? triggerParams)
         {
             if (triggerParams is not ButtonAndDirectionParam param) return false;
             if (param.Type != InputSystem.InputType.X) return false;
@@ -1100,6 +1106,25 @@ namespace Quantum
             Util.StartScreenDark(param.f, EntityRef, 22);
             Util.StartDramatic(param.f, EntityRef, 12);
             otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
+
+            param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+            FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
+            
+            AnimationEntitySystem.Create(param.f, AnimationEntities.AnimationEntityEnum.Break, pos, 0, 
+                IsFacingRight(param.f, EntityRef));
+        }
+        
+        public void OnSurge(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam param) return;
+            param.f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
+            slowdownData->slowdownRemaining = 0;
+            
+            AddMeter(param.f, FP.FromString("-33.33"));
+            HitstopSystem.EnqueueHitstop(param.f, 8);
+
+            Util.StartScreenDark(param.f, EntityRef, 22);
+            Util.StartDramatic(param.f, EntityRef, 12);
 
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
