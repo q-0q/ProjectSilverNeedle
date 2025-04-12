@@ -147,7 +147,7 @@ namespace Quantum
             StartPushback(f, pushbackDistance);
         }
 
-        private void StartPushback(Frame f, FP totalDistance)
+        public void StartPushback(Frame f, FP totalDistance)
         {
             f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
             pushbackData->framesInPushback = 0;
