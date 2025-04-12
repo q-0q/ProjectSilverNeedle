@@ -138,8 +138,15 @@ namespace Quantum
             // if (EntityRef == EntityRef.None) return;
             FP virtualTimeIncrement = Util.FrameLengthInSeconds * GetSlowdownMod(f, entityRef);
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
+
+            var firstFrameOfHitBefore = IsOnFirstFrameOfHit(f);
             playerFsmData->framesInState++;
             playerFsmData->virtualTimeInState += virtualTimeIncrement;
+            var firstFrameOfHitAfter = IsOnFirstFrameOfHit(f);
+            if (!firstFrameOfHitBefore && firstFrameOfHitAfter)
+            {
+                ClearHitEntities(f);
+            }
         }
     }
 }
