@@ -22,8 +22,6 @@ namespace Quantum
             if (fsm is null) return;
             
             if (HitstopSystem.IsHitstopActive(f)) return;
-
-
             
             // fire transitional triggers
             fsm.DoFinish(f);

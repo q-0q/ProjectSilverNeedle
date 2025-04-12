@@ -395,6 +395,15 @@ namespace Quantum
                 }
             };
             
+            var breakAnimation = new FighterAnimation()
+            {
+                Path = "GuardBreak",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var proxStandBlockAnimation = new FighterAnimation()
             {
                 Path = "ProxStandBlock",
@@ -591,6 +600,10 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(landsquatAnimation, this);
             StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Landsquat] = landsquatAnimation;
+            
+            Util.AutoSetupFromAnimationPath(breakAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Break] = breakAnimation;
+
             
             // Basic movement
             
