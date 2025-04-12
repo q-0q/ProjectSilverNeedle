@@ -26,7 +26,7 @@ namespace Quantum
         
         public override void Move(Frame f)
         {
-            // AddMeter(f, FP.FromString("1.667"));
+            AddMeter(f, FP.FromString("1.667"));
             CutsceneReactorMove(f);
             SnapToGround(f);
             base.Move(f);
