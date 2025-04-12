@@ -31,6 +31,8 @@ namespace Quantum
             public FP width;
             public FP height;
             public FPVector2 pos;
+
+            public bool highCrush;
         
             public int level;
             public int bonusHitStun;
@@ -125,7 +127,8 @@ namespace Quantum
                 if (fsm is PlayerFSM && fsm.Fsm.IsInState(PlayerFSM.PlayerState.Cutscene))
                     return new List<CollisionBoxInternal>();
 
-
+                var highCrush = (fsm is PlayerFSM && fsm.Fsm.IsInState(PlayerFSM.PlayerState.Dash));
+                
                 var hurtboxInternals = new List<CollisionBoxInternal>();
                 foreach (var hurtbox in hurtboxCollection.CollisionBoxes)
                 {
@@ -136,7 +139,8 @@ namespace Quantum
                         HurtType = hurtType,
                         width = hurtbox.Width,
                         height = hurtbox.Height,
-                        pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY
+                        pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY,
+                        highCrush = false
                     };
 
                     hurtboxInternals.Add(_internal);
