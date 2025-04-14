@@ -40,6 +40,19 @@ namespace Quantum
         {
             
             // if (HitstopSystem.IsHitstopActive(f)) return;
+
+            
+            // surge destroys all breaks
+            if (filter.AnimationEntityData->type == (int)AnimationEntities.AnimationEntityEnum.Surge)
+            {
+                foreach (var animationEntityData in f.GetComponentIterator<AnimationEntityData>())
+                {
+                    if (animationEntityData.Component.type == (int)AnimationEntities.AnimationEntityEnum.Break)
+                    {
+                        f.Destroy(animationEntityData.Entity);
+                    }
+                }
+            }
             
             var animationEntity = AnimationEntities.Get((AnimationEntities.AnimationEntityEnum)filter.AnimationEntityData->type);
             filter.AnimationEntityData->spriteId =

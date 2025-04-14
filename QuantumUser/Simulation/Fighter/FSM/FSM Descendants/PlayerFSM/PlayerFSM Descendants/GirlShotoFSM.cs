@@ -535,6 +535,8 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(dashAnimation, this);
             StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashAnimation;
             StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashAnimation.SectionGroup.Duration();
+            
+            
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirDash] = dashAnimation;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.AirDash] = dashAnimation.SectionGroup.Duration();
             
@@ -637,6 +639,19 @@ namespace Quantum
                 }
             };
             
+            var surgeMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(1, 0),
+                    new(2, 0),
+                    new(12, 7),
+                    new(8, 1),
+                    new(12, FP.FromString("0.6")),
+                    new (10, 0),
+                }
+            };
+            
             var backdashMovement = new SectionGroup<FP>()
             {
                 Sections = new List<Tuple<int, FP>>()
@@ -651,6 +666,7 @@ namespace Quantum
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.WalkBackward] = walkBackwardMovement;
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.WalkForward] = walkForwardMovement;
             StateMapConfig.MovementSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashMovement;
+            StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.Surge] = surgeMovement;
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.AirDash] = dashMovement;
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashMovement;
             StateMapConfig.InvulnerableBefore.Dictionary[PlayerFSM.PlayerState.Backdash] = 12;
@@ -1136,6 +1152,9 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
+            
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Surge] = dashAnimation;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Surge] = dashAnimation.SectionGroup.Duration();
 
 
             

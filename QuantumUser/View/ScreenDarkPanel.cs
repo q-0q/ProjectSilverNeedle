@@ -14,7 +14,6 @@ using UnityEngine.UI;
 public class ScreenDarkPanel : MonoBehaviour
 {
     private Image _image;
-    public Color Color = Color.black;
     
     public void Awake()
     {
@@ -28,8 +27,8 @@ public class ScreenDarkPanel : MonoBehaviour
     
     private Color GetColor()
     {
-        var c = Color;
-        c.a = CameraTargetController.Instance.Player0Dark || CameraTargetController.Instance.Player1Dark ? 0.6f : 0;
+        var c = _image.color;
+        c.a = CameraTargetController.Instance.Player0Dark || CameraTargetController.Instance.Player1Dark ? 0.8f : Mathf.Lerp(c.a, 0, Time.deltaTime * 10);
 
         return c;
 
