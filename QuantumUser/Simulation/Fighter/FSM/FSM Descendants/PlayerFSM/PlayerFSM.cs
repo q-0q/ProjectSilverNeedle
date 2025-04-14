@@ -219,7 +219,7 @@ namespace Quantum
                 .OnEntry(ResetWhiff)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)
-                .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.Surge, IsMeterInput)
+                .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.Surge, IsSurgeInput)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.StandHitHigh)
@@ -1087,6 +1087,15 @@ namespace Quantum
             return healthData->meter >= FP.FromString("33.33");
         }
         
+        public bool IsSurgeInput(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not ButtonAndDirectionParam param) return false;
+            if (param.Type != InputSystem.InputType.X) return false;
+            if (!IsMeterInput(triggerParams)) return false;
+
+            return !IsWhiffed(param.f);
+        }
+        
         public void OnBreak(TriggerParams? triggerParams)
         {
             if (triggerParams is not FrameParam param) return;
@@ -1121,15 +1130,15 @@ namespace Quantum
             slowdownData->slowdownRemaining = 0;
             
             AddMeter(param.f, FP.FromString("-33.33"));
-            HitstopSystem.EnqueueHitstop(param.f, 8);
 
             Util.StartScreenDark(param.f, EntityRef, 22);
             Util.StartDramatic(param.f, EntityRef, 12);
+            StartMomentum(param.f, 0);
 
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
             
-            AnimationEntitySystem.Create(param.f, AnimationEntities.AnimationEntityEnum.Break, pos, 0, 
+            AnimationEntitySystem.Create(param.f, AnimationEntities.AnimationEntityEnum.Surge, pos, 0, 
                 IsFacingRight(param.f, EntityRef));
         }
         

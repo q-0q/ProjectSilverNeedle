@@ -16,7 +16,8 @@ namespace Quantum.Types
             Backdash,
             GroundBounce,
             Clash,
-            Break
+            Break,
+            Surge 
         }
         
         private static Dictionary<AnimationEntityEnum, AnimationEntity> _dictionary = new()
@@ -31,7 +32,8 @@ namespace Quantum.Types
             { AnimationEntityEnum.Backdash , new BackdashAnimationEntity() },
             { AnimationEntityEnum.GroundBounce , new GroundBounceAnimationEntity() },
             { AnimationEntityEnum.Clash , new ClashAnimationEntity() },
-            { AnimationEntityEnum.Break , new BreakAnimationEntity() }
+            { AnimationEntityEnum.Break , new BreakAnimationEntity() },
+            { AnimationEntityEnum.Surge , new SurgeAnimationEntity() }
         };
         
         public static AnimationEntity Get(AnimationEntityEnum e)

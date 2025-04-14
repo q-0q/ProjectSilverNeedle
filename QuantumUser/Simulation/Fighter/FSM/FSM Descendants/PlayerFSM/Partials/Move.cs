@@ -27,6 +27,14 @@ namespace Quantum
         public override void Move(Frame f)
         {
             AddMeter(f, FP.FromString("1.667"));
+            
+            if (Fsm.IsInState(PlayerState.Surge))
+            {
+                f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
+                slowdownData->slowdownRemaining = 0;
+                StartMomentum(f, 0);
+            }
+            
             CutsceneReactorMove(f);
             SnapToGround(f);
             base.Move(f);
