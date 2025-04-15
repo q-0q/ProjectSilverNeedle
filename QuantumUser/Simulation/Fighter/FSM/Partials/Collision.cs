@@ -42,6 +42,7 @@ namespace Quantum
             public FP hitPushback;
         
             public FP visualAngle;
+            public FPVector2 visualHitPosOffset;
             public FP trajectoryHeight;
             public FP trajectoryXVelocity;
             public FP gravityProration;
@@ -167,6 +168,7 @@ namespace Quantum
                 var hitboxInternals = new List<CollisionBoxInternal>();
                 foreach (var hurtbox in hitboxCollection.CollisionBoxes)
                 {
+                    var pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY;
                     var _internal = new CollisionBoxInternal()
                     {
                         source = source,
@@ -174,7 +176,7 @@ namespace Quantum
                         HitType = hitType,
                         width = hurtbox.Width,
                         height = hurtbox.Height,
-                        pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY,
+                        pos = pos,
                         
                         level = hit.Level,
                         bonusHitStun = hit.BonusHitstun,
@@ -183,6 +185,7 @@ namespace Quantum
                         blockPushback = hit.BlockPushback,
                         hitPushback = hit.HitPushback,
                         visualAngle = hit.VisualAngle,
+                        visualHitPosOffset = hit.VisualHitPositionOffset + pos,
                         trajectoryHeight = hit.TrajectoryHeight,
                         trajectoryXVelocity = hit.TrajectoryXVelocity,
                         gravityProration = hit.GravityProration,
@@ -239,7 +242,7 @@ namespace Quantum
                     if (!CanBeHitBySource(f, hitboxInternal.source)) continue;
                     
                     AddMeToSourceHitList(f, hitboxInternal.source);
-                    InvokeClash(f, this, hitboxInternal, myHitboxInternal, overlapCenter);
+                    InvokeClash(f, this, hitboxInternal, myHitboxInternal, hitboxInternal.pos);
                     
                     if (FsmLoader.FSMs[hitboxInternal.source] is not PlayerFSM opponentPlayerFsm) continue;
                     if (!opponentPlayerFsm.CanBeHitBySource(f, myHitboxInternal.source)) continue;

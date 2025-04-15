@@ -9,7 +9,7 @@ namespace Quantum.Types
         {
             SpriteDirectory = "Collisions";
             SpriteSheetOffset = 4;
-            Layer = AELayer.Front;
+            Layer = AELayer.Middle;
             SectionGroup = new SectionGroup<int>()
             {
                 Sections = new List<Tuple<int, int>>()
