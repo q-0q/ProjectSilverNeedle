@@ -42,6 +42,7 @@ namespace Quantum.Types.Collision
         
         public bool HardKnockdown = false;
         public FP VisualAngle = 0;
+        public FPVector2 VisualHitPositionOffset = FPVector2.One;
         public FP GravityScaling = FP.FromString("1.1");
         public FP GravityProration = FP.FromString("1.45");
         public FP DamageScaling = FP.FromString("0.85");
