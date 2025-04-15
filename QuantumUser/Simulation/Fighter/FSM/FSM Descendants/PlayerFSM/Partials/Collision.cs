@@ -51,7 +51,7 @@ namespace Quantum
             
             
             if (Util.GetPlayerId(f, myHitboxInternal.source) != 0) return;
-            AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Clash, hitboxData.visualHitPosOffset, hitboxData.visualAngle, 
+            AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Clash, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
                 !IsFacingRight(f, hitboxData.source));
             
         }
@@ -123,11 +123,11 @@ namespace Quantum
                 InvokeStun(f, stun);
                 HitstopSystem.EnqueueHitstop(f, stop);
                 
-                AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, hitboxData.visualHitPosOffset, hitboxData.visualAngle, 
+                AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
                     !IsFacingRight(f, hitboxData.source));
                 
                 AddMeter(f, hitboxData.damage * DefenseMeterMultiplier);
-                f.Events.PlayerBlocked(location, hitboxData.visualAngle);
+                f.Events.PlayerBlocked(location, hitboxData.visualHitAngle);
 
             }
             else
@@ -168,10 +168,10 @@ namespace Quantum
             var animationEntityEnum = hurtType is HurtType.Counter
                 ? AnimationEntities.AnimationEntityEnum.Counter
                 : AnimationEntities.AnimationEntityEnum.Hit;
-            AnimationEntitySystem.Create(f, animationEntityEnum, hitboxData.visualHitPosOffset, hitboxData.visualAngle, 
+            AnimationEntitySystem.Create(f, animationEntityEnum, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
                 !IsFacingRight(f, hitboxData.source));
             
-            f.Events.PlayerHit(location, hitboxData.visualAngle);
+            f.Events.PlayerHit(location, hitboxData.visualHitAngle);
 
 
             f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
