@@ -41,8 +41,8 @@ namespace Quantum
             public FP blockPushback;
             public FP hitPushback;
         
-            public FP visualAngle;
-            public FPVector2 visualHitPosOffset;
+            public FP visualHitAngle;
+            public FPVector2 visualHitPos;
             public FP trajectoryHeight;
             public FP trajectoryXVelocity;
             public FP gravityProration;
@@ -169,6 +169,8 @@ namespace Quantum
                 foreach (var hurtbox in hitboxCollection.CollisionBoxes)
                 {
                     var pos = GetCollisionBoxWorldPosition(f, source, hurtbox).XY;
+                    f.Unsafe.TryGetPointer<Transform3D>(source, out var sourceTransform);
+                    var offset = new FPVector2(hit.VisualHitPositionOffset.X * (IsFacingRight(f, source) ? 1 : -1), hit.VisualHitPositionOffset.Y);
                     var _internal = new CollisionBoxInternal()
                     {
                         source = source,
@@ -184,8 +186,8 @@ namespace Quantum
                         bonusHitStop = hit.BonusHitstop,
                         blockPushback = hit.BlockPushback,
                         hitPushback = hit.HitPushback,
-                        visualAngle = hit.VisualAngle,
-                        visualHitPosOffset = hit.VisualHitPositionOffset + pos,
+                        visualHitAngle = hit.VisualAngle,
+                        visualHitPos = offset + sourceTransform->Position.XY,
                         trajectoryHeight = hit.TrajectoryHeight,
                         trajectoryXVelocity = hit.TrajectoryXVelocity,
                         gravityProration = hit.GravityProration,
