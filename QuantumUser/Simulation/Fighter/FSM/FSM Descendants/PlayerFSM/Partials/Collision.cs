@@ -19,7 +19,7 @@ namespace Quantum
         public static int SurgeEmpoweredBuffDuration = 50;
         public static int SurgeHitstopBonus = 4;
         public static int ClashHitstopBonus = 8;
-        public static FP SurgeHitGravityScalingMod = FP.FromString("0.75");
+        public static FP SurgeHitGravityScalingMod = FP.FromString("1.1");
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -179,7 +179,7 @@ namespace Quantum
                 {
                     empowered = true;
                     Util.StartDramatic(f, EntityRef, 6);
-                    Util.StartScreenDark(f, EntityRef, 6);
+                    Util.StartScreenDark(f, EntityRef, 3);
                     AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
                         !IsFacingRight(f, hitboxData.source));
                     opponentHealthData->virtualTimeSinceEmpowered = 10;
@@ -215,11 +215,15 @@ namespace Quantum
             if (empowered)
             {
                 d.Clear();
+                comboData->gravityScaling = Util.Min(comboData->gravityScaling, SurgeHitGravityScalingMod);
+                comboData->damageScaling = 1;
             }
+            
             int hitTableId = hitboxData.lookupId;
             d.TryAdd(hitTableId, 0);
             var hitGravityScaling = d[hitTableId] == 0 ? hitboxData.gravityScaling : Util.Pow(hitboxData.gravityProration, d[hitTableId]);
             var rawGravityScaling =  hurtType is HurtType.Counter ? hitGravityScaling * CounterHitGravityScalingMultiplier : hitGravityScaling;
+            // if (empowered) rawGravityScaling *= SurgeHitGravityScalingMod;
             comboData->gravityScaling *= rawGravityScaling;
             comboData->length++;
             d[hitTableId] += 1;
