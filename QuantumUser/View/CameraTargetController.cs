@@ -74,7 +74,7 @@ public class CameraTargetController : MonoBehaviour
         var yPulldown = _yPulldown + GetGroundBouncePulldown();
         float y = Mathf.Clamp((Mathf.Max(_player0Pos.y - yPulldown, _player1Pos.y - yPulldown)), 0f, 1000f);
         transform.position =
-            new Vector3(Mathf.Lerp(transform.position.x, x, Time.deltaTime * 6f), Mathf.Lerp(transform.position.y, y + _baseYPos, Time.deltaTime * 20f), transform.position.z);
+            new Vector3(Mathf.Lerp(transform.position.x, x, Time.deltaTime * 12f), Mathf.Lerp(transform.position.y, y + _baseYPos, Time.deltaTime * 20f), transform.position.z);
     }
     
 }

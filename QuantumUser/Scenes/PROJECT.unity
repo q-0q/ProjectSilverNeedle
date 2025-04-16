@@ -1031,8 +1031,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.125
-      minScalar: 0.075
+      scalar: 0.15
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -5760,7 +5760,7 @@ MonoBehaviour:
     forceCounter:
       Value: 0
     doAction:
-      Value: 1
+      Value: 0
     doJump:
       Value: 0
     block:

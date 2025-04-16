@@ -697,6 +697,7 @@ namespace Quantum
                         GravityScaling = FP.FromString("1"),
                         TrajectoryXVelocity = 6,
                         TrajectoryHeight = FP.FromString("2"),
+                        VisualHitPositionOffset = new FPVector2(5, 5),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -838,6 +839,7 @@ namespace Quantum
                         Level = 2,
                         Type = Hit.HitType.Low,
                         GravityScaling = 1,
+                        VisualHitPositionOffset = new FPVector2(6, 3),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -975,6 +977,7 @@ namespace Quantum
                         GravityProration = FP.FromString("2"),
                         Damage = highDamage,
                         VisualAngle = -80,
+                        VisualHitPositionOffset = new FPVector2(1, 3),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1047,6 +1050,7 @@ namespace Quantum
                 Level = 0,
                 Type = Hit.HitType.Mid,
                 HardKnockdown = true,
+                VisualHitPositionOffset = new FPVector2(2, 7),
                 HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                 {
                     Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1102,6 +1106,7 @@ namespace Quantum
                 Level = 0,
                 Type = Hit.HitType.Mid,
                 HardKnockdown = true,
+                VisualHitPositionOffset = new FPVector2(2, 7),
                 HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                 {
                     Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1310,10 +1315,11 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             BlockPushback = 3,
-                            HitPushback = 2,
+                            HitPushback = 3,
                             GravityScaling = FP.FromString("1.3"),
                             Damage = lowDamage,
                             DamageScaling = FP.FromString("0.5"), 
+                            VisualHitPositionOffset = new FPVector2(3, 6),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1325,7 +1331,7 @@ namespace Quantum
                                             new CollisionBox()
                                             {
                                                 Height = 1,
-                                                Width = 4,
+                                                Width = 3,
                                                 GrowWidth = true,
                                                 GrowHeight = false,
                                                 PosY = 6,
@@ -1355,7 +1361,7 @@ namespace Quantum
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
-                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 6;
                 
             }
             
@@ -1420,10 +1426,11 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             BlockPushback = 3,
-                            HitPushback = 2,
+                            HitPushback = 3,
                             GravityScaling = FP.FromString("1.3"),
                             Damage = lowDamage,
                             DamageScaling = FP.FromString("0.5"), 
+                            VisualHitPositionOffset = new FPVector2(2, 2),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1435,7 +1442,7 @@ namespace Quantum
                                             new CollisionBox()
                                             {
                                                 Height = 5,
-                                                Width = 3,
+                                                Width = 2,
                                                 GrowWidth = true,
                                                 GrowHeight = true,
                                                 PosY = 0,
@@ -1465,7 +1472,7 @@ namespace Quantum
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
-                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 4;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 6;
             }
             
             
@@ -1549,6 +1556,7 @@ namespace Quantum
                             HitPushback = FP.FromString("3.5"),
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.2"),
+                            VisualHitPositionOffset = new FPVector2(4, 5),
                             Damage = highDamage,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
@@ -1667,6 +1675,7 @@ namespace Quantum
                     GravityProration = FP.FromString("1.05"),
                     TrajectoryHeight = FP.FromString("0.5"),
                     TrajectoryXVelocity = 3,
+                    VisualHitPositionOffset = new FPVector2(1, 3),
                     // GroundBounce = true,
                     DamageScaling = 1,
                     Damage = highDamage,
@@ -1811,6 +1820,7 @@ namespace Quantum
                             TrajectoryXVelocity = FP.FromString("3"),
                             BlockPushback = 2,
                             HitPushback = 2,
+                            VisualHitPositionOffset = new FPVector2(5, 3),
                             // Launches = true,
                             // GroundBounce = true,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -2037,6 +2047,7 @@ namespace Quantum
                             HitPushback = 3,
                             VisualAngle = -30,
                             Launches = true,
+                            VisualHitPositionOffset = new FPVector2(5, 4),
                             // HardKnockdown = true,
                             // GroundBounce = true,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -2158,6 +2169,7 @@ namespace Quantum
                     BlockPushback = FP.FromString("3"),
                     HitPushback = 3,
                     VisualAngle = -70,
+                    VisualHitPositionOffset = new FPVector2(2, 7),
                     Launches = true,
                     HardKnockdown = false,
                     BonusHitstop = 5,
@@ -2175,6 +2187,7 @@ namespace Quantum
                     BlockPushback = FP.FromString("3"),
                     HitPushback = 3,
                     VisualAngle = -70,
+                    VisualHitPositionOffset = new FPVector2(2, 7),
                     Launches = true,
                     HardKnockdown = false,
                     // GroundBounce = true,
@@ -2291,6 +2304,7 @@ namespace Quantum
                             VisualAngle = 0,
                             Damage = lowDamage,
                             DamageScaling = FP.FromString("0.5"), 
+                            VisualHitPositionOffset = new FPVector2(4, 4),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -2406,6 +2420,7 @@ namespace Quantum
                             Level = 4,
                             VisualAngle = 70,
                             GroundBounce = true,
+                            VisualHitPositionOffset = new FPVector2(FP.FromString("2.75"), -2),
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
                                 Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -2551,6 +2566,7 @@ namespace Quantum
                     Type = Hit.HitType.High,
                     TrajectoryHeight = FP.FromString("1"),
                     Level = 2,
+                    VisualHitPositionOffset = new FPVector2(FP.FromString("4.5"), 3),
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                     {
                         Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -2584,6 +2600,7 @@ namespace Quantum
                     TrajectoryHeight = FP.FromString("1"),
                     TrajectoryXVelocity = 3,
                     Level = 2,
+                    VisualHitPositionOffset = new FPVector2(3, 2),
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                     {
                         Sections = new List<Tuple<int, CollisionBoxCollection>>()
