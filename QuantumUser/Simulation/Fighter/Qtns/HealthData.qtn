@@ -2,4 +2,5 @@ component HealthData
 {
     FP health;
     FP meter;
+    FP virtualTimeSinceEmpowered;
 }
