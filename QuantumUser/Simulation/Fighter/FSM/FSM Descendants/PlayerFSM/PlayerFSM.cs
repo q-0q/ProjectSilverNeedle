@@ -840,8 +840,13 @@ namespace Quantum
             protectionData->virtualTimeSinceCrossupProtectionStart += virtualTimeIncrement;
             protectionData->virtualTimeSinceThrowProtectionStart += virtualTimeIncrement;
             
+            f.Unsafe.TryGetPointer<HealthData>(entityRef, out var healthData);
+            healthData->virtualTimeSinceEmpowered += virtualTimeIncrement;
+            
             if (Fsm.IsInState(PlayerState.Jumpsquat)) return;
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
+            
+            
 
             trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
         }
@@ -1128,6 +1133,8 @@ namespace Quantum
             if (triggerParams is not FrameParam param) return;
             param.f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
             slowdownData->slowdownRemaining = 0;
+            param.f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            healthData->virtualTimeSinceEmpowered = 0;
             
             AddMeter(param.f, FP.FromString("-33.33"));
 

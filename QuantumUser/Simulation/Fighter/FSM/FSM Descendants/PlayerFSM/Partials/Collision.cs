@@ -16,7 +16,10 @@ namespace Quantum
         public static FP MaxThrowDistance = FP.FromString("3.5");
         public static FP OffenseMeterMultiplier = FP.FromString("0.2");
         public static FP DefenseMeterMultiplier = FP.FromString("0.125");
+        public static int SurgeEmpoweredBuffDuration = 50;
+        public static int SurgeHitstopBonus = 4;
         public static int ClashHitstopBonus = 8;
+        public static FP SurgeHitGravityScalingMod = FP.FromString("0.75");
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -165,11 +168,32 @@ namespace Quantum
         {
             
             EndSlowdown(new FrameParam() { f = f, EntityRef = EntityRef});
-            var animationEntityEnum = hurtType is HurtType.Counter
-                ? AnimationEntities.AnimationEntityEnum.Counter
-                : AnimationEntities.AnimationEntityEnum.Hit;
-            AnimationEntitySystem.Create(f, animationEntityEnum, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
-                !IsFacingRight(f, hitboxData.source));
+
+            bool empowered = false;
+            if (FsmLoader.FSMs[hitboxData.source] is PlayerFSM opponentPlayerFsm)
+            {
+                f.Unsafe.TryGetPointer<HealthData>(hitboxData.source, out var opponentHealthData);
+                var framesFromVirtualTime = Util.FramesFromVirtualTime(opponentHealthData->virtualTimeSinceEmpowered);
+                Debug.Log(framesFromVirtualTime);
+                if (framesFromVirtualTime <= SurgeEmpoweredBuffDuration)
+                {
+                    empowered = true;
+                    Util.StartDramatic(f, EntityRef, 6);
+                    Util.StartScreenDark(f, EntityRef, 6);
+                    AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
+                        !IsFacingRight(f, hitboxData.source));
+                    opponentHealthData->virtualTimeSinceEmpowered = 10;
+                }
+            }
+
+            if (!empowered)
+            {
+                var animationEntityEnum = hurtType is HurtType.Counter
+                    ? AnimationEntities.AnimationEntityEnum.Counter
+                    : AnimationEntities.AnimationEntityEnum.Hit;
+                AnimationEntitySystem.Create(f, animationEntityEnum, hitboxData.visualHitPos, hitboxData.visualHitAngle,
+                    !IsFacingRight(f, hitboxData.source));
+            }
             
             f.Events.PlayerHit(location, hitboxData.visualHitAngle);
 
@@ -188,6 +212,10 @@ namespace Quantum
             
             
             var d = f.ResolveDictionary(comboData->hitCounts);
+            if (empowered)
+            {
+                d.Clear();
+            }
             int hitTableId = hitboxData.lookupId;
             d.TryAdd(hitTableId, 0);
             var hitGravityScaling = d[hitTableId] == 0 ? hitboxData.gravityScaling : Util.Pow(hitboxData.gravityProration, d[hitTableId]);
@@ -202,6 +230,7 @@ namespace Quantum
                 : Hit.AttackLevelStandHitstun[hitboxData.level] + hitboxData.bonusHitStun;
             
             var stop = Hit.AttackLevelHitstop[hitboxData.level] + hitboxData.bonusHitStop;
+            if (empowered) stop += SurgeHitstopBonus;
             
             
             if (hurtType == HurtType.Counter)
@@ -230,6 +259,8 @@ namespace Quantum
             {
                 playerFsm.AddMeter(f, hitboxData.damage * OffenseMeterMultiplier);
             }
+
+
             
             InvokeStun(f, stun);
             HitstopSystem.EnqueueHitstop(f, stop);
