@@ -26,7 +26,7 @@ namespace Quantum
         
         public override void Move(Frame f)
         {
-            AddMeter(f, FP.FromString("1.667"));
+            // AddMeter(f, FP.FromString("0.01667"));
             
             if (Fsm.IsInState(PlayerState.Surge))
             {
@@ -34,6 +34,11 @@ namespace Quantum
                 slowdownData->slowdownRemaining = 0;
                 StartMomentum(f, 0);
             }
+            if (Fsm.IsInState(PlayerState.Break))
+            {
+                AddMeter(f, FP.FromString("-1"));
+            }
+            
             
             CutsceneReactorMove(f);
             SnapToGround(f);
