@@ -219,7 +219,7 @@ namespace Quantum
                 .OnEntry(ResetWhiff)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)
-                .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.Surge, IsSurgeInput)
+                .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.Break, IsBreakUnwhiffedInput)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.StandHitHigh)
@@ -358,6 +358,7 @@ namespace Quantum
                 .SubstateOf(PlayerState.Ground)
                 .SubstateOf(PlayerState.Stand)
                 .OnEntry(InputSystem.ClearBufferParams)
+                .PermitIf(PlayerTrigger.Dash, PlayerState.Surge, IsSurgeInput)
                 .OnEntry(OnBreak)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable);
 
@@ -1080,31 +1081,38 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             healthData->meter += amount;
-            healthData->meter = Util.Clamp(healthData->meter, 0, 100);
+            // healthData->meter = Util.Clamp(healthData->meter, 0, 100);
+            healthData->meter = Util.Min(healthData->meter, 100);
         }
 
         public bool IsMeterInput(TriggerParams? triggerParams)
         {
             if (triggerParams is not ButtonAndDirectionParam param) return false;
-            if (param.Type != InputSystem.InputType.X) return false;
+            return param.Type == InputSystem.InputType.X;
 
-            param.f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
-            return healthData->meter >= FP.FromString("33.33");
+            // param.f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            // return healthData->meter >= FP.FromString("33.33");
         }
         
-        public bool IsSurgeInput(TriggerParams? triggerParams)
+        public bool IsBreakUnwhiffedInput(TriggerParams? triggerParams)
         {
             if (triggerParams is not ButtonAndDirectionParam param) return false;
             if (param.Type != InputSystem.InputType.X) return false;
-            if (!IsMeterInput(triggerParams)) return false;
+            // if (!IsMeterInput(triggerParams)) return false;
 
             return !IsWhiffed(param.f);
         }
         
+        public bool IsSurgeInput(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam param) return false;
+            param.f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            return healthData->meter >= FP.FromString("33.33");
+        }
+         
         public void OnBreak(TriggerParams? triggerParams)
         {
             if (triggerParams is not FrameParam param) return;
-            AddMeter(param.f, FP.FromString("-33.33"));
             HitstopSystem.EnqueueHitstop(param.f, 8);
 
             var otherFsm = FsmLoader.FSMs[Util.GetOtherPlayer(param.f, EntityRef)];
