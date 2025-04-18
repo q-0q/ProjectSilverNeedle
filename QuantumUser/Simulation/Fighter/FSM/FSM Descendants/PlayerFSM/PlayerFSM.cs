@@ -1015,22 +1015,34 @@ namespace Quantum
 
         private int ComputeStartupReduction(ActionConfig actionConfig, PlayerFSM fsm)
         {
-            
             var sectionGroup = fsm.StateMapConfig.HitSectionGroup;
-            if (sectionGroup is null) return SurgeMaxStartupReduction;
-            var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
-            if (hitSectionGroup is null) return SurgeMaxStartupReduction;
+            if (sectionGroup is null) return 0;
 
+            var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
+            if (hitSectionGroup is null) return 0;
+
+            int actualStartup = -1;
+
+            // Find the frame index of the first hitbox
             for (int i = 0; i < hitSectionGroup.Duration(); i++)
             {
-                Hit currentHit = hitSectionGroup.GetItemFromIndex(i); ;
-                if (currentHit is null) continue;
-                if (i <= SurgeMinimumStartup) return 0;
-                if (i <= SurgeMaxStartupReduction) return i - SurgeMinimumStartup;
-                return SurgeMaxStartupReduction;
+                Hit currentHit = hitSectionGroup.GetItemFromIndex(i);
+                if (currentHit != null)
+                {
+                    actualStartup = i;
+                    break;
+                }
             }
 
-            return SurgeMaxStartupReduction;
+            // If no hitbox found, no reduction is safe
+            if (actualStartup == -1) return 0;
+
+            // Calculate the maximum allowed reduction
+            int maxAllowedReduction = actualStartup - SurgeMinimumStartup;
+
+            if (maxAllowedReduction <= 0) return 0;
+
+            return Math.Min(SurgeMaxStartupReduction, maxAllowedReduction);
         }
 
         private static void AllowRawFromState(PlayerFSM fsm, ActionConfig actionConfig, int state)
