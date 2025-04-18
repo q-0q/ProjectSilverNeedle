@@ -36,7 +36,7 @@ namespace Quantum
             }
             if (Fsm.IsInState(PlayerState.Break))
             {
-                AddMeter(f, FP.FromString("-1"));
+                AddMeter(f, FP.FromString("-0.7"));
             }
             
             

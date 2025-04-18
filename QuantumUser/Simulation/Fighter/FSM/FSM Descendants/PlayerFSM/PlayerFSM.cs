@@ -1107,7 +1107,7 @@ namespace Quantum
         {
             if (triggerParams is not FrameParam param) return false;
             param.f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
-            return healthData->meter >= FP.FromString("33.33");
+            return healthData->meter >= FP.FromString("11.11") && FramesInCurrentState(param.f) >= 5;
         }
          
         public void OnBreak(TriggerParams? triggerParams)
@@ -1144,7 +1144,7 @@ namespace Quantum
             param.f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             healthData->virtualTimeSinceEmpowered = 0;
             
-            AddMeter(param.f, FP.FromString("-33.33"));
+            AddMeter(param.f, FP.FromString("-11.11"));
 
             Util.StartScreenDark(param.f, EntityRef, 22);
             Util.StartDramatic(param.f, EntityRef, 12);
