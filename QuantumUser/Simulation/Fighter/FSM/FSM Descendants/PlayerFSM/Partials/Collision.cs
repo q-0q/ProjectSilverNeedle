@@ -288,6 +288,9 @@ namespace Quantum
             FP virtualTimeIncrement = Util.FrameLengthInSeconds * ActionStartupReduction[Fsm.State()];
             Debug.Log("Current state: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(Fsm.State(), StateType));
             Debug.Log("Frames before: " + FramesInCurrentState(f));
+            
+            // TODO: maybe we can incrememnt the state clock ONLY which will allow air actions to also 
+            // be reduced, without fucking up trajectiories/ other clocks
             IncrementClockByAmount(f, EntityRef, virtualTimeIncrement);
             Debug.Log("Frames after: " + FramesInCurrentState(f));
         }
