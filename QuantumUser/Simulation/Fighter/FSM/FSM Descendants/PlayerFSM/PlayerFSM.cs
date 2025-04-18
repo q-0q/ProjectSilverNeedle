@@ -217,6 +217,7 @@ namespace Quantum
                 .Permit(PlayerTrigger.JumpCancel, PlayerState.Jumpsquat)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
+                .OnEntry(HandleEmpoweredStartup)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)
                 .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.Break, IsBreakUnwhiffedInput)
@@ -816,12 +817,10 @@ namespace Quantum
                 transform3D->Position.XY, 0, !IsFacingRight(frameParam.f, EntityRef));
         }
         
-        public override void IncrementClock(Frame f, EntityRef entityRef)
+
+        public override void IncrementClockByAmount(Frame f, EntityRef entityRef, FP virtualTimeIncrement)
         {
-            base.IncrementClock(f, entityRef);
-            
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * GetSlowdownMod(f, entityRef);
-            
+            base.IncrementClockByAmount(f, entityRef, virtualTimeIncrement);
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->remaining = Math.Max(dramaticData->remaining - 1, 0);
             dramaticData->darkRemaining = Math.Max(dramaticData->darkRemaining - 1, 0);
@@ -847,8 +846,6 @@ namespace Quantum
             if (Fsm.IsInState(PlayerState.Jumpsquat)) return;
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
             
-            
-
             trajectoryData->virtualTimeInTrajectory += (virtualTimeIncrement);
         }
 

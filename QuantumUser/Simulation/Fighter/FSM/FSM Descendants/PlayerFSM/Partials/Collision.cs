@@ -174,7 +174,6 @@ namespace Quantum
             {
                 f.Unsafe.TryGetPointer<HealthData>(hitboxData.source, out var opponentHealthData);
                 var framesFromVirtualTime = Util.FramesFromVirtualTime(opponentHealthData->virtualTimeSinceEmpowered);
-                Debug.Log(framesFromVirtualTime);
                 if (framesFromVirtualTime <= SurgeEmpoweredBuffDuration)
                 {
                     empowered = true;
@@ -270,6 +269,22 @@ namespace Quantum
             HitstopSystem.EnqueueHitstop(f, stop);
             
             if (healthData->health <= 0) InvokePlayerDeath(f);
+        }
+
+
+        private void HandleEmpoweredStartup(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam param) return;
+            var f = param.f;
+            
+            f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            var framesFromVirtualTime = Util.FramesFromVirtualTime(healthData->virtualTimeSinceEmpowered);
+            if (framesFromVirtualTime > SurgeEmpoweredBuffDuration) return;
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * 10;
+            Debug.Log("Current state: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(Fsm.State(), StateType));
+            Debug.Log("Frames before: " + FramesInCurrentState(f));
+            IncrementClockByAmount(f, EntityRef, virtualTimeIncrement);
+            Debug.Log("Frames after: " + FramesInCurrentState(f));
         }
 
         private void HandleCutsceneTrigger(Frame f, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal)

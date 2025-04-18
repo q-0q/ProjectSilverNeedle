@@ -77,7 +77,7 @@ namespace Quantum
 
         public virtual void SetupMachine()
         {
-            Fsm.OnTransitionCompleted(OnStateChanged);
+            Fsm.OnTransitioned(OnStateChanged);
         }
         
         protected virtual void OnStateChanged(TriggerParams? triggerParams)
@@ -133,10 +133,10 @@ namespace Quantum
 
         public abstract EntityRef GetPlayer();
         
-        public virtual void IncrementClock(Frame f, EntityRef entityRef)
+        public virtual void IncrementClockByAmount(Frame f, EntityRef entityRef, FP amount)
         {
             // if (EntityRef == EntityRef.None) return;
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * GetSlowdownMod(f, entityRef);
+            FP virtualTimeIncrement = amount;
             f.Unsafe.TryGetPointer<FSMData>(entityRef, out var playerFsmData);
 
             var firstFrameOfHitBefore = IsOnFirstFrameOfHit(f);
