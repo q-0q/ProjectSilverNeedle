@@ -26,7 +26,7 @@ namespace Quantum
         
         public override void Move(Frame f)
         {
-            // AddMeter(f, FP.FromString("0.01667"));
+            AddMeter(f, FP.FromString("0.1667"));
             
             if (Fsm.IsInState(PlayerState.Surge))
             {

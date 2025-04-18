@@ -119,6 +119,8 @@ namespace Quantum
         public List<ActionConfig> CommandNormalMoveList;
         public List<ActionConfig> SpecialMoveList;
         public List<ActionConfig> SuperMoveList;
+        
+        public static Dictionary<int, int> ActionStartupReduction;
 
         public static readonly int ThrowStartupDuration = 4;
 
@@ -132,6 +134,7 @@ namespace Quantum
             CommandNormalMoveList = new List<ActionConfig>();
             SpecialMoveList = new List<ActionConfig>();
             SuperMoveList = new List<ActionConfig>();
+            ActionStartupReduction = new Dictionary<int, int>();
         }
 
 
@@ -945,6 +948,11 @@ namespace Quantum
                 fsm.Fsm.Configure(actionConfig.State)
                     .SubstateOf(actionConfig.Aerial ? PlayerFSM.PlayerState.AirSpecialCancellable : PlayerFSM.PlayerState.GroundSpecialCancellable);
             }
+            
+            // Startup reduction
+            ActionStartupReduction[actionConfig.State] = ComputeStartupReduction(actionConfig, fsm);
+            Debug.Log(InheritableEnum.InheritableEnum.GetFieldNameByValue(actionConfig.State, fsm.StateType) + " reduction: " + ActionStartupReduction[actionConfig.State]);
+            
 
             
             // Movelist stuff
@@ -977,10 +985,6 @@ namespace Quantum
                 Hit currentHit = hitSectionGroup.GetItemFromIndex(i); ;
                 if (prevHit is null && currentHit is not null)
                 {
-                    if (actionConfig.State == StickTwoFSM.StickTwoState._4H)
-                    {
-                        var b = Hit.AttackLevelGroundBlockstun[currentHit.Level] + currentHit.BonusBlockstun;
-                    }
                     actionConfig.MinStandHitFrameAdvantage =
                         (Hit.AttackLevelStandHitstun[currentHit.Level] + currentHit.BonusHitstun) - (d - i);
                     actionConfig.MinCrouchHitFrameAdvantage =
@@ -1008,6 +1012,26 @@ namespace Quantum
         }
         
         // private static int ComputeAdvantageFromFrameIndex()
+
+        private int ComputeStartupReduction(ActionConfig actionConfig, PlayerFSM fsm)
+        {
+            
+            var sectionGroup = fsm.StateMapConfig.HitSectionGroup;
+            if (sectionGroup is null) return SurgeMaxStartupReduction;
+            var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
+            if (hitSectionGroup is null) return SurgeMaxStartupReduction;
+
+            for (int i = 0; i < hitSectionGroup.Duration(); i++)
+            {
+                Hit currentHit = hitSectionGroup.GetItemFromIndex(i); ;
+                if (currentHit is null) continue;
+                if (i <= SurgeMinimumStartup) return 0;
+                if (i <= SurgeMaxStartupReduction) return i - SurgeMinimumStartup;
+                return SurgeMaxStartupReduction;
+            }
+
+            return SurgeMaxStartupReduction;
+        }
 
         private static void AllowRawFromState(PlayerFSM fsm, ActionConfig actionConfig, int state)
         {

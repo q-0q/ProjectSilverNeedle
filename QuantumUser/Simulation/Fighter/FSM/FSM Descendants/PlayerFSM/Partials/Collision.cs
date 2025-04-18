@@ -16,10 +16,14 @@ namespace Quantum
         public static FP MaxThrowDistance = FP.FromString("3.5");
         public static FP OffenseMeterMultiplier = FP.FromString("0.2");
         public static FP DefenseMeterMultiplier = FP.FromString("0.125");
+        public static int ClashHitstopBonus = 8;
+        
+        
+        public static FP SurgeHitGravityScalingMod = FP.FromString("1.1");
         public static int SurgeEmpoweredBuffDuration = 50;
         public static int SurgeHitstopBonus = 4;
-        public static int ClashHitstopBonus = 8;
-        public static FP SurgeHitGravityScalingMod = FP.FromString("1.1");
+        public static int SurgeMaxStartupReduction = 5;
+        public static int SurgeMinimumStartup = 3;
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -280,7 +284,8 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             var framesFromVirtualTime = Util.FramesFromVirtualTime(healthData->virtualTimeSinceEmpowered);
             if (framesFromVirtualTime > SurgeEmpoweredBuffDuration) return;
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * 10;
+            
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * ActionStartupReduction[Fsm.State()];
             Debug.Log("Current state: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(Fsm.State(), StateType));
             Debug.Log("Frames before: " + FramesInCurrentState(f));
             IncrementClockByAmount(f, EntityRef, virtualTimeIncrement);
