@@ -36,7 +36,8 @@ namespace Quantum
             fsm.UnpoolSummon(f);
             
             // Clock
-            fsm.IncrementClock(f, filter.Entity);
+            FP virtualTimeIncrement = Util.FrameLengthInSeconds * fsm.GetSlowdownMod(f, filter.Entity);
+            fsm.IncrementClockByAmount(f, filter.Entity, virtualTimeIncrement);
             
             // Done!
             FsmLoader.WriteAllFSMsToNetwork(f);
