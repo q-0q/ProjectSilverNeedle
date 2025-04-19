@@ -1115,7 +1115,7 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             healthData->meter += amount;
             // healthData->meter = Util.Clamp(healthData->meter, 0, 100);
-            healthData->meter = Util.Min(healthData->meter, 100);
+            healthData->meter = Util.Clamp(healthData->meter, 0, 100);
         }
 
         public bool IsMeterInput(TriggerParams? triggerParams)
@@ -1152,7 +1152,7 @@ namespace Quantum
             if (otherFsm is not PlayerFSM otherPlayerFsm) return;
             
             StartPushback(param.f, 0);
-            var pushbackDistance = FP.FromString("10");
+            var pushbackDistance = FP.FromString("3");
             if (IsFacingRight(param.f, EntityRef)) pushbackDistance *= FP.Minus_1;
             otherPlayerFsm.StartMomentum(param.f, pushbackDistance * FP.Minus_1);
             param.f.Events.EntityVibrate(EntityRef, FP.FromString("0.5"), FP.FromString("0.7"), 20);
@@ -1160,7 +1160,7 @@ namespace Quantum
             
             Util.StartScreenDark(param.f, EntityRef, 22);
             Util.StartDramatic(param.f, EntityRef, 12);
-            otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
+            // otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
 
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FPVector2 pos = new FPVector2(transform3D->Position.X, 4);

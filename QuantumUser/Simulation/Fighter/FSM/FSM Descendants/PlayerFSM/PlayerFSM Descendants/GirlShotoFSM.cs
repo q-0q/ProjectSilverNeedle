@@ -645,9 +645,9 @@ namespace Quantum
                 {
                     new(1, 0),
                     new(2, 0),
-                    new(12, 7),
-                    new(8, 1),
-                    new(12, FP.FromString("0.6")),
+                    new(12, 3),
+                    new(8, FP.FromString("0.7")),
+                    new(12, FP.FromString("0.3")),
                     new (10, 0),
                 }
             };

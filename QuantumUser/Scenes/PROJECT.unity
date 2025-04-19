@@ -5653,6 +5653,7 @@ GameObject:
   - component: {fileID: 92424933}
   - component: {fileID: 92424935}
   - component: {fileID: 92424936}
+  - component: {fileID: 92424937}
   m_Layer: 5
   m_Name: Meter
   m_TagString: Untagged
@@ -5723,6 +5724,18 @@ MonoBehaviour:
   Player1MeterBar: {fileID: 0}
   Player0ComboBar: {fileID: 0}
   Player1ComboBar: {fileID: 0}
+--- !u!225 &92424937
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 92424932}
+  m_Enabled: 1
+  m_Alpha: 0.6
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &147541238
 GameObject:
   m_ObjectHideFlags: 0
@@ -5767,7 +5780,7 @@ MonoBehaviour:
       Value: 0
     dash:
       Value: 0
-    inputType: 2
+    inputType: 5
     commandDirection: 5
 --- !u!114 &147541240
 MonoBehaviour:
@@ -18490,6 +18503,7 @@ GameObject:
   - component: {fileID: 1180131430}
   - component: {fileID: 1180131431}
   - component: {fileID: 1180131432}
+  - component: {fileID: 1180131433}
   m_Layer: 5
   m_Name: Health
   m_TagString: Untagged
@@ -18560,6 +18574,18 @@ MonoBehaviour:
   Player1HealthBar: {fileID: 0}
   Player0ComboBar: {fileID: 0}
   Player1ComboBar: {fileID: 0}
+--- !u!225 &1180131433
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180131429}
+  m_Enabled: 1
+  m_Alpha: 0.6
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1188707073
 GameObject:
   m_ObjectHideFlags: 0
