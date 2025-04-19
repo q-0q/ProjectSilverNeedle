@@ -8,7 +8,7 @@ namespace Quantum.Types
         public SurgeBlockAnimationEntity()
         {
             SpriteDirectory = "Collisions";
-            SpriteSheetOffset = 25;
+            SpriteSheetOffset = 28;
             Layer = AELayer.Middle;
             SectionGroup = new SectionGroup<int>()
             {
