@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Quantum.Types
 {
-    public class SurgeAnimationEntity : AnimationEntity
+    public class BreakRedAnimationEntity : AnimationEntity
     {
-        public SurgeAnimationEntity()
+        public BreakRedAnimationEntity()
         {
             SpriteDirectory = "Collisions";
-            SpriteSheetOffset = 25;
-            Layer = AELayer.Back;
+            SpriteSheetOffset = 21;
+            Layer = AELayer.Front;
             SectionGroup = new SectionGroup<int>()
             {
                 Sections = new List<Tuple<int, int>>()
