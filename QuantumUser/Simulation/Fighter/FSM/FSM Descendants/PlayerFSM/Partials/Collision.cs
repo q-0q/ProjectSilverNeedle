@@ -281,7 +281,8 @@ namespace Quantum
         {
             if (triggerParams is not FrameParam param) return;
             var f = param.f;
-            
+            if (Fsm.IsInState(PlayerState.Throw)) return;
+            if (Fsm.IsInState(PlayerState.Cutscene)) return;
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             var framesFromVirtualTime = Util.FramesFromVirtualTime(healthData->virtualTimeSinceEmpowered);
             if (framesFromVirtualTime > SurgeEmpoweredBuffDuration) return;

@@ -21,7 +21,7 @@ namespace Quantum
             FSM fsm = FsmLoader.FSMs[filter.Entity];
             if (fsm is null) return;
             
-            if (HitstopSystem.IsHitstopActive(f)) return;
+            if (fsm.IsTimeStopped(f)) return;
             
             // fire transitional triggers
             fsm.DoFinish(f);

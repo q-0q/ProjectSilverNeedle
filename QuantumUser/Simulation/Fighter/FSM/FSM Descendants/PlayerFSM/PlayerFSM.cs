@@ -536,8 +536,8 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
             
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 32;
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.RedBreak] = 12;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 20;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.RedBreak] = 15;
 
             // StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[PlayerState.Cutscene] = null;
 
@@ -1169,7 +1169,7 @@ namespace Quantum
             
             Util.StartScreenDark(param.f, EntityRef, 22);
             Util.StartDramatic(param.f, EntityRef, 12);
-            // otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
+            otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
 
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
@@ -1188,15 +1188,32 @@ namespace Quantum
             
             AddMeter(param.f, FP.FromString("-11.11"));
 
-            Util.StartScreenDark(param.f, EntityRef, 15);
-            Util.StartDramatic(param.f, EntityRef, 12);
+            Util.StartScreenDark(param.f, EntityRef, 20);
+            Util.StartDramatic(param.f, EntityRef, 2);
             // StartMomentum(param.f, 0);
+            
+            var otherFsm = FsmLoader.FSMs[Util.GetOtherPlayer(param.f, EntityRef)];
+            if (otherFsm is not PlayerFSM otherPlayerFsm) return;
+            otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
 
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
+            FPVector2 pos = new FPVector2(transform3D->Position.X, 3);
+            
+            param.f.Events.EntityVibrate(EntityRef, FP.FromString("0.5"), FP.FromString("0.7"), 20);
             
             AnimationEntitySystem.Create(param.f, AnimationEntities.AnimationEntityEnum.BreakRed, pos, 0, 
                 IsFacingRight(param.f, EntityRef));
+        }
+
+        public override bool IsTimeStopped(Frame f)
+        {
+            // if (FsmLoader.FSMs[Util.GetOtherPlayer(f, EntityRef)] is PlayerFSM opponentPlayerFsm)
+            // {
+            //     if (opponentPlayerFsm.Fsm.IsInState(PlayerState.RedBreak) && !Fsm.IsInState(PlayerState.Break)) return true;
+            //     // if (opponentPlayerFsm.Fsm.IsInState(PlayerState.Break) && !Fsm.IsInState(PlayerState.RedBreak)) return true;
+            // }
+
+            return base.IsTimeStopped(f);
         }
         
     }

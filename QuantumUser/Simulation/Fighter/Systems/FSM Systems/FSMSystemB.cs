@@ -18,26 +18,32 @@ namespace Quantum
             FSM fsm = FsmLoader.FSMs[filter.Entity];
             if (fsm is null) return;
             
-            if (HitstopSystem.IsHitstopActive(f)) return;
-            
-            // Receive collisions
-            fsm.HitboxHurtboxCollide(f);
+            if (!fsm.IsTimeStopped(f))
+            {
+                // Receive collisions
+                fsm.HitboxHurtboxCollide(f);
 
-            // Fire summon triggers
-            fsm.HandleSummonFSMTriggers(f);
-            
-            // Animation
-            fsm.Animation(f);
+                // Fire summon triggers
+                fsm.HandleSummonFSMTriggers(f);
+
+                // Animation
+                fsm.Animation(f);
+            }
             
             // Report frame meter
-            fsm.ReportFrameMeterType(f);
+            if (!HitstopSystem.IsHitstopActive(f))
+                fsm.ReportFrameMeterType(f);
             
-            // unpool summons
-            fsm.UnpoolSummon(f);
             
-            // Clock
-            FP virtualTimeIncrement = Util.FrameLengthInSeconds * fsm.GetSlowdownMod(f, filter.Entity);
-            fsm.IncrementClockByAmount(f, filter.Entity, virtualTimeIncrement);
+            if (!fsm.IsTimeStopped(f))
+            {
+                // unpool summons
+                fsm.UnpoolSummon(f);
+                
+                // Clock
+                FP virtualTimeIncrement = Util.FrameLengthInSeconds * fsm.GetSlowdownMod(f, filter.Entity);
+                fsm.IncrementClockByAmount(f, filter.Entity, virtualTimeIncrement);
+            }
             
             // Done!
             FsmLoader.WriteAllFSMsToNetwork(f);
