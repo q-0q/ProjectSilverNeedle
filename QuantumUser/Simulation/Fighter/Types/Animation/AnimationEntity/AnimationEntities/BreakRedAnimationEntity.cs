@@ -14,9 +14,9 @@ namespace Quantum.Types
             {
                 Sections = new List<Tuple<int, int>>()
                 {
-                    new(5, 0),
-                    new(11, 1),
-                    new(6, 2),
+                    new(6, 0),
+                    new(14, 1),
+                    new(18, 2),
                 }
             };
         }

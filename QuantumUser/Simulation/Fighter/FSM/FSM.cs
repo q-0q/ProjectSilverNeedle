@@ -101,6 +101,11 @@ namespace Quantum
             f.Unsafe.TryGetPointer<FSMData>(EntityRef, out var playerFsmData);
             return Util.FramesFromVirtualTime(playerFsmData->virtualTimeInState);
         }
+
+        public virtual bool IsTimeStopped(Frame f)
+        {
+            return HitstopSystem.IsHitstopActive(f);
+        }
         
         public int RealtimeFramesInCurrentState(Frame f)
         {
