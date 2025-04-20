@@ -1,5 +1,6 @@
 using Photon.Deterministic;
 using Quantum.Types;
+using UnityEngine;
 using Wasp;
 
 namespace Quantum
@@ -28,12 +29,12 @@ namespace Quantum
         {
             // AddMeter(f, FP.FromString("0.1667"));
             
-            if (Fsm.IsInState(PlayerState.Surge))
-            {
-                f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
-                slowdownData->slowdownRemaining = 0;
-                StartMomentum(f, 0);
-            }
+            // if (Fsm.IsInState(PlayerState.Surge))
+            // {
+            //     f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
+            //     slowdownData->slowdownRemaining = 0;
+            //     StartMomentum(f, 0);
+            // }
             if (Fsm.IsInState(PlayerState.Break))
             {
                 AddMeter(f, FP.FromString("-0.7"));
@@ -61,10 +62,12 @@ namespace Quantum
         protected override void MomentumMove(Frame f)
         {
             f.Unsafe.TryGetPointer<MomentumData>(EntityRef, out var momentumData);
-            if (momentumData->framesInMomentum >= _pushbackDuration) return;
+            ;
+            var framesInMomentum = Util.FramesFromVirtualTime(momentumData->virtualTimeInMomentum);
+            if (framesInMomentum >= _pushbackDuration) return;
 
             FPVector2 v =
-                new FPVector2(GetMomentumVelocityThisFrame(momentumData->framesInMomentum,
+                new FPVector2(GetMomentumVelocityThisFrame(framesInMomentum,
                     momentumData->momentumAmount), 0);
 
             ApplyFlippedMovement(f, v, EntityRef);
@@ -74,12 +77,19 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<PushbackData>(EntityRef, out var pushbackData);
 
-            var framesInPushback = pushbackData->framesInPushback;
+            // return;
+            
+            var framesInPushback = Util.FramesFromVirtualTime(pushbackData->virtualTimeInPushback);
             if (framesInPushback >= _pushbackDuration) return;
 
+            var pushbackVelocityThisFrame = GetPushbackVelocityThisFrame(framesInPushback,
+                pushbackData->pushbackAmount);
+            if (Fsm.IsInState(PlayerState.Block))
+            {
+                Debug.Log(pushbackVelocityThisFrame);
+            }
             FPVector2 v =
-                new FPVector2(GetPushbackVelocityThisFrame(framesInPushback,
-                    pushbackData->pushbackAmount), 0);
+                new FPVector2(pushbackVelocityThisFrame, 0);
 
             bool inCorner = Util.IsPlayerInCorner(f, EntityRef);
             EntityRef entityRef = inCorner ? Util.GetOtherPlayer(f, EntityRef) : EntityRef;

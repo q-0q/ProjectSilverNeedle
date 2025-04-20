@@ -605,6 +605,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(breakAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Break] = breakAnimation;
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.RedBreak] = breakAnimation;
 
             
             // Basic movement
@@ -666,7 +667,7 @@ namespace Quantum
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.WalkBackward] = walkBackwardMovement;
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.WalkForward] = walkForwardMovement;
             StateMapConfig.MovementSectionGroup.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashMovement;
-            StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.Surge] = surgeMovement;
+            // StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.Surge] = surgeMovement;
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.AirDash] = dashMovement;
             StateMapConfig.MovementSectionGroup.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashMovement;
             StateMapConfig.InvulnerableBefore.Dictionary[PlayerFSM.PlayerState.Backdash] = 12;
@@ -1158,8 +1159,8 @@ namespace Quantum
                 }
             };
             
-            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Surge] = dashAnimation;
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Surge] = dashAnimation.SectionGroup.Duration();
+            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Surge] = dashAnimation;
+            // StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Surge] = dashAnimation.SectionGroup.Duration();
 
 
             

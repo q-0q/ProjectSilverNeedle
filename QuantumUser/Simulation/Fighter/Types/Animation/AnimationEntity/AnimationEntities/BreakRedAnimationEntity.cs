@@ -8,7 +8,7 @@ namespace Quantum.Types
         public BreakRedAnimationEntity()
         {
             SpriteDirectory = "Collisions";
-            SpriteSheetOffset = 21;
+            SpriteSheetOffset = 22;
             Layer = AELayer.Front;
             SectionGroup = new SectionGroup<int>()
             {
