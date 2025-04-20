@@ -46,7 +46,8 @@ namespace Quantum
             public static int Backthrow;
             public static int Tech;
             public static int Break;
-            public static int Surge;
+            public static int RedBreak;
+            // public static int Surge;
             
 
             // Air
@@ -203,9 +204,9 @@ namespace Quantum
             machine.Configure(PlayerState.Dash)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable);
 
-            machine.Configure(PlayerState.Surge)
-                .OnEntry(OnSurge)
-                .SubstateOf(PlayerState.Dash);
+            // machine.Configure(PlayerState.Surge)
+            //     .OnEntry(OnRedBreak)
+            //     .SubstateOf(PlayerState.Dash);
 
             machine.Configure(PlayerState.Backdash)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
@@ -223,7 +224,7 @@ namespace Quantum
                 .OnEntry(HandleEmpoweredStartup)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)
-                .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.Break, IsBreakUnwhiffedInput)
+                .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.RedBreak, IsBreakUnwhiffedInput)
                 .SubstateOf(PlayerState.Ground);
 
             machine.Configure(PlayerState.StandHitHigh)
@@ -362,8 +363,14 @@ namespace Quantum
                 .SubstateOf(PlayerState.Ground)
                 .SubstateOf(PlayerState.Stand)
                 .OnEntry(InputSystem.ClearBufferParams)
-                .PermitIf(PlayerTrigger.Dash, PlayerState.Surge, IsSurgeInput)
                 .OnEntry(OnBreak)
+                .Permit(PlayerTrigger.Finish, PlayerState.StandActionable);
+            
+            machine.Configure(PlayerState.RedBreak)
+                .SubstateOf(PlayerState.Ground)
+                .SubstateOf(PlayerState.Stand)
+                .OnEntry(InputSystem.ClearBufferParams)
+                .OnEntry(OnRedBreak)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable);
 
             // Air
@@ -530,6 +537,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
             
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 32;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.RedBreak] = 12;
 
             // StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[PlayerState.Cutscene] = null;
 
@@ -687,6 +695,7 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<MomentumData>(EntityRef, out var pushbackData);
             pushbackData->framesInMomentum = 0;
+            pushbackData->virtualTimeInMomentum = 0;
             pushbackData->momentumAmount = totalDistance;
         }
         
@@ -1169,7 +1178,7 @@ namespace Quantum
                 IsFacingRight(param.f, EntityRef));
         }
         
-        public void OnSurge(TriggerParams? triggerParams)
+        public void OnRedBreak(TriggerParams? triggerParams)
         {
             if (triggerParams is not FrameParam param) return;
             param.f.Unsafe.TryGetPointer<SlowdownData>(EntityRef, out var slowdownData);
@@ -1179,14 +1188,14 @@ namespace Quantum
             
             AddMeter(param.f, FP.FromString("-11.11"));
 
-            Util.StartScreenDark(param.f, EntityRef, 22);
+            Util.StartScreenDark(param.f, EntityRef, 15);
             Util.StartDramatic(param.f, EntityRef, 12);
-            StartMomentum(param.f, 0);
+            // StartMomentum(param.f, 0);
 
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
             
-            AnimationEntitySystem.Create(param.f, AnimationEntities.AnimationEntityEnum.Surge, pos, 0, 
+            AnimationEntitySystem.Create(param.f, AnimationEntities.AnimationEntityEnum.BreakRed, pos, 0, 
                 IsFacingRight(param.f, EntityRef));
         }
         
