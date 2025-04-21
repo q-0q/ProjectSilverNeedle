@@ -63,6 +63,30 @@ namespace Quantum
             
         }
 
+        private FPVector2 GetVisualCollisionPosition(Frame f, FPVector2 visualHitPos, EntityRef playerA, EntityRef playerB)
+        {
+            f.Unsafe.TryGetPointer<Transform3D>(playerA, out var aTransform3D);
+            f.Unsafe.TryGetPointer<Transform3D>(playerB, out var bTransform3D);
+
+            var minX = Util.Min(aTransform3D->Position.X, bTransform3D->Position.X);
+            var maxX = Util.Max(aTransform3D->Position.X, bTransform3D->Position.X);
+
+            // Clamp to the range first
+            var clampedX = Util.Clamp(visualHitPos.X, minX, maxX);
+
+            // Determine the direction toward the center
+            var centerX = (minX + maxX) * FP.FromString("0.5");
+            var direction = centerX < clampedX ? -1 : 1;
+
+            var padAmount = FP.FromString("0.5"); // Can be parameterized if needed
+            var paddedX = clampedX + direction * padAmount;
+
+            // Ensure it still stays within bounds after padding
+            paddedX = Util.Clamp(paddedX, minX, maxX);
+
+            return new FPVector2(paddedX, visualHitPos.Y);
+        }
+
         private bool IsProjectileInvulnerable(Frame f)
         {
             var sectionGroup = StateMapConfig.ProjectileInvulnerable?.Get(this, new FrameParam() { f = f, EntityRef = EntityRef });
@@ -130,7 +154,7 @@ namespace Quantum
                 InvokeStun(f, stun);
                 HitstopSystem.EnqueueHitstop(f, stop);
                 
-                AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
+                AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
                     !IsFacingRight(f, hitboxData.source));
                 
                 AddMeter(f, hitboxData.damage * DefenseMeterMultiplier);
@@ -184,7 +208,7 @@ namespace Quantum
                     empowered = true;
                     Util.StartDramatic(f, EntityRef, 6);
                     Util.StartScreenDark(f, EntityRef, 3);
-                    AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, hitboxData.visualHitPos, hitboxData.visualHitAngle, 
+                    AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
                         !IsFacingRight(f, hitboxData.source));
                     opponentHealthData->virtualTimeSinceEmpowered = 10;
                 }
@@ -195,7 +219,7 @@ namespace Quantum
                 var animationEntityEnum = hurtType is HurtType.Counter
                     ? AnimationEntities.AnimationEntityEnum.Counter
                     : AnimationEntities.AnimationEntityEnum.Hit;
-                AnimationEntitySystem.Create(f, animationEntityEnum, hitboxData.visualHitPos, hitboxData.visualHitAngle,
+                AnimationEntitySystem.Create(f, animationEntityEnum, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle,
                     !IsFacingRight(f, hitboxData.source));
             }
             
