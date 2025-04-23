@@ -330,6 +330,7 @@ namespace Quantum.Prototypes {
     public FP health;
     public FP meter;
     public FP virtualTimeSinceEmpowered;
+    public QBoolean nextHitEmpowered;
     partial void MaterializeUser(Frame frame, ref Quantum.HealthData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.HealthData component = default;
@@ -340,6 +341,7 @@ namespace Quantum.Prototypes {
         result.health = this.health;
         result.meter = this.meter;
         result.virtualTimeSinceEmpowered = this.virtualTimeSinceEmpowered;
+        result.nextHitEmpowered = this.nextHitEmpowered;
         MaterializeUser(frame, ref result, in context);
     }
   }

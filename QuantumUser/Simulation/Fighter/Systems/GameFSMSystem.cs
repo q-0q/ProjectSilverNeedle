@@ -216,6 +216,7 @@ namespace Quantum
             healthData->health = 500;
             healthData->meter = 0;
             healthData->virtualTimeSinceEmpowered = 0;
+            healthData->nextHitEmpowered = false;
 
             f.Unsafe.TryGetPointer<TrajectoryData>(entityRef, out var trajectoryData);
             trajectoryData->startingTrajectoryHeight = 0;

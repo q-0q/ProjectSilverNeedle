@@ -222,6 +222,7 @@ namespace Quantum
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
                 .OnEntry(HandleEmpoweredStartup)
+                .OnExit(ResetEmpoweredHit)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)
                 .PermitIf(PlayerTrigger.ButtonAndDirection, PlayerState.RedBreak, IsBreakUnwhiffedInput)
