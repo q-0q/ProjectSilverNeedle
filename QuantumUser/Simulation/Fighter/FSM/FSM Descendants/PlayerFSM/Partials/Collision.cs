@@ -22,8 +22,13 @@ namespace Quantum
         public static FP SurgeHitGravityScalingMod = FP.FromString("1.1");
         public static int SurgeEmpoweredBuffDuration = 50;
         public static int SurgeHitstopBonus = 4;
+        public static int SurgeBlockHitstopBonus = 10;
         public static int SurgeMaxStartupReduction = 5;
         public static int SurgeMinimumStartup = 3;
+        
+        public static int SurgeBlockStun = 3;
+        public static int SurgeBlockStunReduction = 3;
+        public static int MinimumBlockStunWithSurgeReduction = 2;
         
         protected override void InvokeHitboxHurtboxCollision(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData, FPVector2 location)
         {
@@ -151,15 +156,28 @@ namespace Quantum
                     ? Hit.AttackLevelAirBlockstun[hitboxData.level] + hitboxData.bonusBlockStun
                     : Hit.AttackLevelGroundBlockstun[hitboxData.level] + hitboxData.bonusBlockStun;
                 var stop = Hit.AttackLevelHitstop[hitboxData.level];
+                var empowered = IsEmpowered(f, hitboxData.source);
+
+                if (empowered)
+                {
+                    // stun = Math.Max(stun - SurgeBlockStunReduction, MinimumBlockStunWithSurgeReduction);
+                    stun = SurgeBlockStun;
+                    stop += SurgeBlockHitstopBonus;
+                    f.Events.EntityVibrate(hitboxData.source, FP.FromString("0.5"), FP.FromString("0.5"), 40);
+                }
+                
+                
                 InvokeStun(f, stun);
                 HitstopSystem.EnqueueHitstop(f, stop);
-                
-                AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.Block, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
+
+                var animationEntityEnum = empowered ? AnimationEntities.AnimationEntityEnum.SurgeBlock : AnimationEntities.AnimationEntityEnum.Block;
+                AnimationEntitySystem.Create(f, animationEntityEnum, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
                     !IsFacingRight(f, hitboxData.source));
                 
                 AddMeter(f, hitboxData.damage * DefenseMeterMultiplier);
                 f.Events.PlayerBlocked(location, hitboxData.visualHitAngle);
-
+                
+                EndSlowdown(new FrameParam() { f = f, EntityRef = EntityRef});
             }
             else
             {
@@ -192,26 +210,29 @@ namespace Quantum
             pushbackData->pushbackAmount = totalDistance;
         }
 
+        private bool IsEmpowered(Frame f, EntityRef source)
+        {
+            if (FsmLoader.FSMs[source] is not PlayerFSM opponentPlayerFsm) return false;
+            f.Unsafe.TryGetPointer<HealthData>(source, out var opponentHealthData);
+            var framesFromVirtualTime = Util.FramesFromVirtualTime(opponentHealthData->virtualTimeSinceEmpowered);
+            return framesFromVirtualTime <= SurgeEmpoweredBuffDuration;
+        }
+
         private void InvokeDamagingCollisionCore(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData,
             HurtType hurtType, FPVector2 location)
         {
             
             EndSlowdown(new FrameParam() { f = f, EntityRef = EntityRef});
 
-            bool empowered = false;
-            if (FsmLoader.FSMs[hitboxData.source] is PlayerFSM opponentPlayerFsm)
+            var empowered = IsEmpowered(f, hitboxData.source);
+            if (empowered)
             {
                 f.Unsafe.TryGetPointer<HealthData>(hitboxData.source, out var opponentHealthData);
-                var framesFromVirtualTime = Util.FramesFromVirtualTime(opponentHealthData->virtualTimeSinceEmpowered);
-                if (framesFromVirtualTime <= SurgeEmpoweredBuffDuration)
-                {
-                    empowered = true;
-                    Util.StartDramatic(f, EntityRef, 6);
-                    Util.StartScreenDark(f, EntityRef, 3);
-                    AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
-                        !IsFacingRight(f, hitboxData.source));
-                    opponentHealthData->virtualTimeSinceEmpowered = 10;
-                }
+                Util.StartDramatic(f, EntityRef, 6);
+                Util.StartScreenDark(f, EntityRef, 3);
+                AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
+                    !IsFacingRight(f, hitboxData.source));
+                opponentHealthData->virtualTimeSinceEmpowered = 10;
             }
 
             if (!empowered)

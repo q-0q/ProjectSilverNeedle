@@ -416,14 +416,14 @@ namespace Quantum
 
         protected void InvokeCollisionVibrate(Frame f, int playerTrigger)
         {
-            FP strength = FP.FromString("0.4");
+            FP strength = FP.FromString("0.5");
             FP duration = FP.FromString("0.4");
             int vibrato = 45;
             if (playerTrigger == PlayerFSM.PlayerTrigger.BlockHigh || playerTrigger ==  PlayerFSM.PlayerTrigger.BlockLow)
             {
-                strength = FP.FromString("0.2"); 
+                strength = FP.FromString("0.35"); 
                 duration = FP.FromString("0.2");
-                vibrato = 35;
+                vibrato = 40;
             }
             
             f.Events.EntityVibrate(EntityRef, strength, duration, vibrato);
