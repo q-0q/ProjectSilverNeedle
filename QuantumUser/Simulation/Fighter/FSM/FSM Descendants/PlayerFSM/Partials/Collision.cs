@@ -212,10 +212,9 @@ namespace Quantum
 
         private bool IsEmpowered(Frame f, EntityRef source)
         {
-            if (FsmLoader.FSMs[source] is not PlayerFSM opponentPlayerFsm) return false;
-            f.Unsafe.TryGetPointer<HealthData>(source, out var opponentHealthData);
-            var framesFromVirtualTime = Util.FramesFromVirtualTime(opponentHealthData->virtualTimeSinceEmpowered);
-            return framesFromVirtualTime <= SurgeEmpoweredBuffDuration;
+            if (FsmLoader.FSMs[source] is not PlayerFSM) return false;
+            f.Unsafe.TryGetPointer<HealthData>(source, out var healthData);
+            return healthData->nextHitEmpowered;
         }
 
         private void InvokeDamagingCollisionCore(Frame f, CollisionBoxInternal hurtboxData, CollisionBoxInternal hitboxData,
@@ -331,6 +330,8 @@ namespace Quantum
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             var framesFromVirtualTime = Util.FramesFromVirtualTime(healthData->virtualTimeSinceEmpowered);
             if (framesFromVirtualTime > SurgeEmpoweredBuffDuration) return;
+
+            healthData->nextHitEmpowered = true;
             
             FP virtualTimeIncrement = Util.FrameLengthInSeconds * ActionStartupReduction[Fsm.State()];
             
@@ -338,6 +339,14 @@ namespace Quantum
             // be reduced, without fucking up trajectiories/ other clocks
             IncrementClockByAmount(f, EntityRef, virtualTimeIncrement);
 
+        }
+        
+        private void ResetEmpoweredHit(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam param) return;
+            var f = param.f;
+            f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            healthData->nextHitEmpowered = false;
         }
 
         private void HandleCutsceneTrigger(Frame f, CollisionBoxInternal hurtboxInternal, CollisionBoxInternal hitboxInternal)
