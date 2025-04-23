@@ -432,6 +432,8 @@ namespace Quantum
                 .SubstateOf(PlayerState.DirectionLocked)
                 .OnEntry(InputSystem.ClearBufferParams)
                 .OnEntry(ResetWhiff)
+                .OnEntry(HandleEmpoweredStartup)
+                .OnExit(ResetEmpoweredHit)
                 .OnEntry(MakeTrajectoryFull)
                 .SubstateOf(PlayerState.Action)
                 .SubstateOf(PlayerState.DirectionLocked)

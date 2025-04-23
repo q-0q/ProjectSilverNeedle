@@ -210,7 +210,7 @@ namespace Quantum
             pushbackData->pushbackAmount = totalDistance;
         }
 
-        private bool IsEmpowered(Frame f, EntityRef source)
+        public static bool IsEmpowered(Frame f, EntityRef source)
         {
             if (FsmLoader.FSMs[source] is not PlayerFSM) return false;
             f.Unsafe.TryGetPointer<HealthData>(source, out var healthData);
@@ -325,22 +325,28 @@ namespace Quantum
         {
             if (triggerParams is not FrameParam param) return;
             var f = param.f;
-            if (Fsm.IsInState(PlayerState.Throw)) return;
-            if (Fsm.IsInState(PlayerState.Cutscene)) return;
-            f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
-            var framesFromVirtualTime = Util.FramesFromVirtualTime(healthData->virtualTimeSinceEmpowered);
-            if (framesFromVirtualTime > SurgeEmpoweredBuffDuration) return;
+            if (!IsBuffActive(f)) return;
 
+            f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             healthData->nextHitEmpowered = true;
             
             FP virtualTimeIncrement = Util.FrameLengthInSeconds * ActionStartupReduction[Fsm.State()];
+
             
-            // TODO: maybe we can incrememnt the state clock ONLY which will allow air actions to also 
-            // be reduced, without fucking up trajectiories/ other clocks
-            IncrementClockByAmount(f, EntityRef, virtualTimeIncrement);
+            base.IncrementClockByAmount(f, EntityRef, virtualTimeIncrement);
 
         }
-        
+
+        public bool IsBuffActive(Frame f)
+        {
+            if (Fsm.IsInState(PlayerState.Throw)) return false;
+            if (Fsm.IsInState(PlayerState.Cutscene)) return false;
+            f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            var framesFromVirtualTime = Util.FramesFromVirtualTime(healthData->virtualTimeSinceEmpowered);
+            if (framesFromVirtualTime > SurgeEmpoweredBuffDuration) return false;
+            return true;
+        }
+
         private void ResetEmpoweredHit(TriggerParams? triggerParams)
         {
             if (triggerParams is not FrameParam param) return;
