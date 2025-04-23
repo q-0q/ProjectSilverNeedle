@@ -1753,8 +1753,10 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(12, 0),
-                        new(4, 3),
+                        new(14, 0),
+                        new(4, 4),
+                        new(10, 0),
+                        new(4, -1),
                         new(4, 0),
                     }
                 };
@@ -1821,6 +1823,7 @@ namespace Quantum
                             TrajectoryXVelocity = FP.FromString("3"),
                             BlockPushback = 2,
                             HitPushback = 2,
+                            Type = Hit.HitType.Low,
                             VisualHitPositionOffset = new FPVector2(5, 3),
                             // Launches = true,
                             // GroundBounce = true,
@@ -2668,7 +2671,7 @@ namespace Quantum
             if (triggerParams is null) return;
             var frameParam = (FrameParam)triggerParams;
 
-            FP amount = IsFacingRight(frameParam.f, EntityRef) ? 4 : -4;
+            FP amount = IsFacingRight(frameParam.f, EntityRef) ? 3 : -3;
             StartMomentum(frameParam.f, amount);
 
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);

@@ -165,11 +165,11 @@ namespace Quantum
 
         private static void FireCpuButtonAndDirection(Frame f, FSM fsm)
         {
-            if (fsm.FramesInCurrentState(f) > 1) return;
-            if (f.Number % 3 != 0)
-            {
-                return;
-            }
+            // if (fsm.FramesInCurrentState(f) > 1) return;
+            // if (f.Number % 3 != 0)
+            // {
+            //     return;
+            // }
             foreach (var (_, cpuControllerData) in f.GetComponentIterator<CpuControllerData>())
             {
                 if (!cpuControllerData.doAction) return;
