@@ -20,7 +20,7 @@ namespace Quantum
         
         
         public static FP SurgeHitGravityScalingMod = FP.FromString("1.1");
-        public static int SurgeEmpoweredBuffDuration = 50;
+        public static int SurgeEmpoweredBuffDuration = 35;
         public static int SurgeHitstopBonus = 4;
         public static int SurgeBlockHitstopBonus = 10;
         public static int SurgeMaxStartupReduction = 5;

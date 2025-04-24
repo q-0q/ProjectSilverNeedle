@@ -27,13 +27,11 @@ public class PlayerEmpoweredParticles : QuantumEntityViewComponent
 
         if (playerFsm.IsBuffActive(PredictedFrame))
         {
-            Debug.Log("PLAY");
             _particleSystem.Play(true);
             
         }
         else
         {
-            Debug.Log("STOP");
             _particleSystem.Stop(true);
             
         }
