@@ -43,12 +43,18 @@ public class FSMSprite : QuantumEntityViewComponent
         if (fighterAnimation is null) return;
 
         var fighterAnimation1 = fighterAnimation.Get(fsm, null);
-        
-        if (fighterAnimation1 is null) return;
-        string path = fighterAnimation1.Path;
-        string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + path + "/" + path + "_" + frame;
-        Sprite sprite = Resources.Load<Sprite>(fullPath);
-        _renderer.sprite = sprite;
+
+        if (fighterAnimation1 is not null)
+        {
+            string path = fighterAnimation1.Path;
+            string fullPath = "Sprites/Characters/" + characterName + "/FrameGroups/" + path + "/" + path + "_" + frame;
+            Sprite sprite = Resources.Load<Sprite>(fullPath);
+            _renderer.sprite = sprite;
+            _shadowCasterRenderer.sprite = sprite;
+            var flip = !PredictedFrame.Get<PlayerDirection>(EntityRef).FacingRight;
+            _renderer.flipX = flip;
+            _shadowCasterRenderer.flipX = flip;
+        }
 
         
         // offense / defense sorting
@@ -63,10 +69,6 @@ public class FSMSprite : QuantumEntityViewComponent
             gameObject.layer = (back) ? LayerMask.NameToLayer("PlayerBack") : LayerMask.NameToLayer("PlayerFront");
         }
         
-        _shadowCasterRenderer.sprite = sprite;
-        var flip = !PredictedFrame.Get<PlayerDirection>(EntityRef).FacingRight;
-        _renderer.flipX = flip;
-        _shadowCasterRenderer.flipX = flip;
 
 
         try
@@ -85,7 +87,7 @@ public class FSMSprite : QuantumEntityViewComponent
         }
         catch
         {
-            // ignored
+            // Debug.LogError(e);
         }
     }
 

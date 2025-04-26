@@ -15,7 +15,8 @@ namespace Quantum
         public static List<Type> CharacterTypes = new List<Type>()
         {
             typeof(StickTwoFSM),
-            typeof(GirlShotoFSM)
+            typeof(GirlShotoFSM),
+            typeof(PriestessFSM),
         };
         
         public static void InitFsmLoader()
