@@ -11,7 +11,16 @@ namespace Quantum.Types
 
         public virtual void SetAnimationFrameForFsm(Frame f, FSM fsm)
         {
-            int frame = SectionGroup.GetCurrentItem(f, fsm);
+            int frame;
+            try
+            {
+                frame = SectionGroup.GetCurrentItem(f, fsm);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("SetAnimation failed for state: " + InheritableEnum.InheritableEnum.GetFieldNameByValue(fsm.Fsm.State(), fsm.StateType));
+                throw;
+            }
             f.Unsafe.TryGetPointer<AnimationData>(fsm.EntityRef, out var animationData);
             animationData->frame = frame;
         }

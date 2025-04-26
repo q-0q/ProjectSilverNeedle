@@ -583,7 +583,7 @@ namespace Quantum
                 Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    (new(Util.GetAnimationPathLength(this, walkForwardAnimation.Path), 10))
+                    (new(30, 4))
                 }
             };
             
@@ -592,7 +592,7 @@ namespace Quantum
                 Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    (new(Util.GetAnimationPathLength(this, walkBackwardAnimation.Path), -9))
+                    (new(30, -4))
                 }
             };
 
