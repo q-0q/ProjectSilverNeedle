@@ -235,7 +235,7 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 4,
+                    LengthScalar = 1,
                     AutoFromAnimationPath = true
                 }
             };
@@ -264,7 +264,7 @@ namespace Quantum
             
             var walkBackwardAnimation = new FighterAnimation()
             {
-                Path = "WalkForward",
+                Path = "WalkBackward",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
@@ -272,16 +272,16 @@ namespace Quantum
                     AutoFromAnimationPath = true,
                 }
             };
-            //
-            // var jumpingAnimation = new FighterAnimation()
-            // {
-            //     Path = "Jump",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
+            
+            var jumpingAnimation = new FighterAnimation()
+            {
+                Path = "Jump",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             // var afterAirActionAnimation = new FighterAnimation()
             // {
             //     Path = "AfterAirAction",
@@ -291,23 +291,23 @@ namespace Quantum
             //     }
             // };
             //
-            // var dashAnimation = new FighterAnimation()
-            // {
-            //     Path = "Dash",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var dashAnimation = new FighterAnimation()
+            {
+                Path = "Dash",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
-            // var backdashAnimation = new FighterAnimation()
-            // {
-            //     Path = "Backdash",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var backdashAnimation = new FighterAnimation()
+            {
+                Path = "Dash", // temp
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             // var standHitHighAnimation = new FighterAnimation()
             // {
@@ -494,23 +494,23 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(walkBackwardAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.WalkBackward] = walkBackwardAnimation;
             
-            // Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionable] = jumpingAnimation;
-            //
+            Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionable] = jumpingAnimation;
+            
             // Util.AutoSetupFromAnimationPath(afterAirActionAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionableAfterAction] = afterAirActionAnimation;
             //
-            // Util.AutoSetupFromAnimationPath(dashAnimation, this);
-            // StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashAnimation;
-            // StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashAnimation.SectionGroup.Duration();
+            Util.AutoSetupFromAnimationPath(dashAnimation, this);
+            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashAnimation;
+            StateMapConfig.Duration.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashAnimation.SectionGroup.Duration();
             //
             //
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirDash] = dashAnimation;
             // StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.AirDash] = dashAnimation.SectionGroup.Duration();
             //
-            // Util.AutoSetupFromAnimationPath(backdashAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation;
-            // StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation.SectionGroup.Duration();
+            Util.AutoSetupFromAnimationPath(backdashAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation.SectionGroup.Duration();
             //
             // Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitHigh] = standHitHighAnimation;
@@ -600,10 +600,9 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(3, 0),
-                    new(12, 7),
+                    new(5, 0),
+                    new(12, 4),
                     new(8, 1),
-                    new(12, FP.FromString("0.6")),
                     new (10, 0),
                 }
             };
@@ -648,6 +647,17 @@ namespace Quantum
         public override void SetupMachine()
         {
             base.SetupMachine();
+            
+            Fsm.Configure(PlayerState.Dash)
+                .Permit(PlayerTrigger.Jump, PlayerState.Jumpsquat)
+                .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
+                .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
+                .PermitIf(PlayerTrigger.ProxBlockHigh, PlayerState.ProxStandBlock, _ => true, -3)
+                .PermitIf(PlayerTrigger.ProxBlockLow, PlayerState.ProxCrouchBlock, _ => true, -3)
+                .OnEntry(InputSystem.ClearBufferParams)
+                .SubstateOf(PlayerState.Stand)
+                .SubstateOf(PlayerState.DirectionLocked)
+                .SubstateOf(PlayerState.Ground);
             
         }
     }
