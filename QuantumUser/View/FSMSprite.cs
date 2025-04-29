@@ -84,6 +84,9 @@ public class FSMSprite : QuantumEntityViewComponent
             
             MeterBarController.Instance.UpdatePlayerMeter(PredictedFrame.Get<PlayerLink>(EntityRef).Player,
                 PredictedFrame.Get<HealthData>(EntityRef).meter.AsFloat);
+
+            float scale = fsm.SpriteScale.AsFloat;
+            transform.parent.GetComponent<RectTransform>().localScale = new Vector3(scale, scale, scale);
         }
         catch
         {
