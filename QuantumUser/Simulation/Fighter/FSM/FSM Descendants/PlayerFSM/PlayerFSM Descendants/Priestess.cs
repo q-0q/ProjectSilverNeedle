@@ -1400,6 +1400,7 @@ namespace Quantum
                 JumpCancellable = false,
                 InputWeight = 0,
                 RawOk = true,
+                IsSpecial = true,
                 State = PriestessState.Summon,
                 
                 Name = "Standing heavy",
