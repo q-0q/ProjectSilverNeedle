@@ -72,7 +72,9 @@ namespace Quantum
             StateMapConfig.InvulnerableBefore = new StateMap<int>();
             StateMapConfig.ProjectileInvulnerable = new StateMap<SectionGroup<bool>>();
             StateMapConfig.UnpoolSummonSectionGroup = new StateMap<SectionGroup<SummonPool>>();
+            StateMapConfig.SmearFrame = new StateMap<SectionGroup<int>>();
             Cutscenes = new Dictionary<int, Cutscene>();
+            
         }
 
         public virtual void SetupMachine()
