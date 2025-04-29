@@ -747,8 +747,8 @@ namespace Quantum
                     Sections = new List<Tuple<int, int>>()
                     {
                         new(startup, -1),
-                        new(2, 1),
-                        new(2, 2),
+                        new(6, 1),
+                        // new(3, 2),
                         new(10, -1),
                     }
                 };
@@ -1006,8 +1006,8 @@ namespace Quantum
                     Sections = new List<Tuple<int, int>>()
                     {
                         new(startup, -1),
-                        new(2, 4),
-                        new(2, 5),
+                        new(6, 4),
+                        // new(3, 5),
                         new(10, -1),
                     }
                 };
