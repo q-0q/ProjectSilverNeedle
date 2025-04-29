@@ -84,10 +84,6 @@ namespace Quantum
 
             var pushbackVelocityThisFrame = GetPushbackVelocityThisFrame(framesInPushback,
                 pushbackData->pushbackAmount);
-            if (Fsm.IsInState(PlayerState.Block))
-            {
-                Debug.Log(pushbackVelocityThisFrame);
-            }
             FPVector2 v =
                 new FPVector2(pushbackVelocityThisFrame, 0);
 

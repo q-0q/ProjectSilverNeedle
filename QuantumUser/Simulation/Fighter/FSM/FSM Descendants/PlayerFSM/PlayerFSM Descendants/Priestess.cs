@@ -1159,7 +1159,7 @@ namespace Quantum
             }
             
             {
-                int startup = 7;
+                int startup = 15;
                 int active = 2;
                 int hurtboxDuration = 7;
                 string path = "Summon";

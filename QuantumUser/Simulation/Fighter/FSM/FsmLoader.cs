@@ -68,6 +68,7 @@ namespace Quantum
             playerFSM.SetupStateMaps();
             playerFSM.SetupMachine();
             playerFSM.EntityRef = entityRef;
+            
             return playerFSM;
         }
 
