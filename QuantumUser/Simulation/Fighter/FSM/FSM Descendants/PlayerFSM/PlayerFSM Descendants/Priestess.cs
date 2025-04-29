@@ -78,6 +78,15 @@ namespace Quantum
 
             JumpsquatDuration = 6;
             
+            SummonPools = new List<SummonPool>()
+            {
+                new()
+                {
+                    Size = 1,
+                    SummonFSMType = typeof(PriestessSetplayFSM)
+                }
+            };
+            
         }
 
         public override void SetupStateMaps()
@@ -1253,6 +1262,15 @@ namespace Quantum
                         new(20, HurtType.Punish)
                     }
                 };
+                
+                var summon = new SectionGroup<SummonPool>()
+                {
+                    Sections = new List<Tuple<int, SummonPool>>()
+                    {
+                        new (9, null),
+                        new (1, SummonPools[0])
+                    }
+                };
 
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
@@ -1260,6 +1278,7 @@ namespace Quantum
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
             }
             
 

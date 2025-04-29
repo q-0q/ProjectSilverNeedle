@@ -21,7 +21,9 @@ namespace Quantum
             Name = "PriestessSetplay";
             StateType = typeof(PriestessSetplayState);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(FP.FromString("0"), FP.FromString("9"));
+            SummonPositionOffset = new FPVector2(FP.FromString("0"), FP.FromString("10"));
+            OwnerActivationFrame = 15;
+            SpriteScale = FP.FromString("0.5");
         }
 
         public override void SetupStateMaps()
@@ -64,22 +66,14 @@ namespace Quantum
                 }
             };
             
-            StateMapConfig.MovementSectionGroup.Dictionary[StartupSummonState.Alive] = new SectionGroup<FP>()
-            {
-                Sections = new List<Tuple<int, FP>>()
-                {
-                    new(lifeSpan, 28),
-                }
-            };
-
-            StateMapConfig.Duration.Dictionary[StartupSummonState.Alive] = lifeSpan;
-
+            
             var aliveAnimation = new FighterAnimation()
             {
                 Path = "Alive",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
+                    LengthScalar = 3,
                     AutoFromAnimationPath = true
                 }
             };
@@ -94,6 +88,8 @@ namespace Quantum
                 Path = "Alive",
                 SectionGroup = new SectionGroup<int>()
                 {
+                    Loop = true,
+                    LengthScalar = 3,
                     AutoFromAnimationPath = true
                 }
             };
@@ -108,7 +104,7 @@ namespace Quantum
             base.SetupMachine();
             
             Fsm.Configure(StartupSummonState.Alive)
-                .Permit(Trigger.Finish, SummonState.Unpooled);
+                .Permit(Trigger.Finish, SummonState.Pooled);
             
 
         }

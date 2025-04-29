@@ -34,6 +34,9 @@ public class FSMSprite : QuantumEntityViewComponent
         if (GameFsmLoader.LoadGameFSM(PredictedFrame).Fsm.IsInState(GameFSM.State.Loading)) return;
         if (GameFsmLoader.LoadGameFSM(PredictedFrame).Fsm.IsInState(GameFSM.State.Waiting)) return; 
         
+        float scale = fsm.SpriteScale.AsFloat;
+        transform.parent.GetComponent<RectTransform>().localScale = new Vector3(scale, scale, scale);
+        
         // Vector3 target = (transform.position - _camera.transform.position) + transform.position;
         // transform.LookAt(target);
 
@@ -85,8 +88,7 @@ public class FSMSprite : QuantumEntityViewComponent
             MeterBarController.Instance.UpdatePlayerMeter(PredictedFrame.Get<PlayerLink>(EntityRef).Player,
                 PredictedFrame.Get<HealthData>(EntityRef).meter.AsFloat);
 
-            float scale = fsm.SpriteScale.AsFloat;
-            transform.parent.GetComponent<RectTransform>().localScale = new Vector3(scale, scale, scale);
+            
         }
         catch
         {
