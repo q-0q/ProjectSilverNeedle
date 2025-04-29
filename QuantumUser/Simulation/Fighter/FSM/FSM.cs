@@ -42,6 +42,7 @@ namespace Quantum
         public Dictionary<int, Cutscene> Cutscenes;
         public List<SummonPool> SummonPools;
         public bool sendToBack = false;
+        public FP SpriteScale = 1;
 
         
         public enum JumpType
