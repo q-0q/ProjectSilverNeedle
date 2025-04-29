@@ -163,7 +163,7 @@ namespace Quantum
                     // stun = Math.Max(stun - SurgeBlockStunReduction, MinimumBlockStunWithSurgeReduction);
                     stun = SurgeBlockStun;
                     stop += SurgeBlockHitstopBonus;
-                    f.Events.EntityVibrate(hitboxData.source, FP.FromString("0.5"), FP.FromString("0.5"), 40);
+                    f.Events.EntityVibrate(FsmLoader.FSMs[hitboxData.source].GetPlayer(), FP.FromString("0.5"), FP.FromString("0.5"), 40);
                 }
                 
                 
@@ -212,8 +212,9 @@ namespace Quantum
 
         public static bool IsEmpowered(Frame f, EntityRef source)
         {
-            if (FsmLoader.FSMs[source] is not PlayerFSM) return false;
-            f.Unsafe.TryGetPointer<HealthData>(source, out var healthData);
+            var entity = FsmLoader.FSMs[source].GetPlayer();
+            if (FsmLoader.FSMs[entity] is not PlayerFSM) return false;
+            f.Unsafe.TryGetPointer<HealthData>(entity, out var healthData);
             return healthData->nextHitEmpowered;
         }
 
