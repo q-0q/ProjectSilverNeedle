@@ -30,7 +30,6 @@ public class SmearSprite : QuantumEntityViewComponent
         
         if (!UpdatedSprite(fsm))
         {
-            Debug.Log("Clearing smear");
             _renderer.color = Color.clear;
         }
     }
@@ -47,7 +46,6 @@ public class SmearSprite : QuantumEntityViewComponent
         
         _renderer.color = Color.white;
         string fullPath = "Sprites/Characters/" + characterName + "/Smears/smears" + "" + frame;
-        Debug.Log(fullPath);
         Sprite sprite = Resources.Load<Sprite>(fullPath);
         _renderer.sprite = sprite;
         var flip = !PredictedFrame.Get<PlayerDirection>(EntityRef).FacingRight;

@@ -121,7 +121,7 @@ namespace Quantum
         public List<ActionConfig> SpecialMoveList;
         public List<ActionConfig> SuperMoveList;
         
-        public static Dictionary<int, int> ActionStartupReduction;
+        public Dictionary<int, int> ActionStartupReduction;
 
         public static readonly int ThrowStartupDuration = 4;
 
@@ -136,6 +136,7 @@ namespace Quantum
             SpecialMoveList = new List<ActionConfig>();
             SuperMoveList = new List<ActionConfig>();
             ActionStartupReduction = new Dictionary<int, int>();
+            Debug.Log("Dict cleared for entity: " + EntityRef);
         }
 
 
@@ -293,9 +294,7 @@ namespace Quantum
             machine.Configure(PlayerState.ProxCrouchBlock)
                 .SubstateOf(PlayerState.ProxBlock)
                 .SubstateOf(PlayerState.Crouch)
-                .Permit(PlayerTrigger.EndProxBlock, PlayerState.CrouchActionable)
-                .OnEntry(_ => Debug.Log("Enter prox crouch"))
-                .OnExit(_ => Debug.Log("Exit prox crouch"));
+                .Permit(PlayerTrigger.EndProxBlock, PlayerState.CrouchActionable);
                 
             
             machine.Configure(PlayerState.HardKnockdown)
@@ -963,7 +962,7 @@ namespace Quantum
             
             // Startup reduction
             ActionStartupReduction[actionConfig.State] = ComputeStartupReduction(actionConfig, fsm);
-            Debug.Log(InheritableEnum.InheritableEnum.GetFieldNameByValue(actionConfig.State, fsm.StateType) + " reduction: " + ActionStartupReduction[actionConfig.State]);
+            Debug.Log(Name + ": " + InheritableEnum.InheritableEnum.GetFieldNameByValue(actionConfig.State, fsm.StateType) + "(" + actionConfig.State + ") reduction: " + ActionStartupReduction[actionConfig.State]);
             
 
             

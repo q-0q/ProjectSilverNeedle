@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using Photon.Deterministic;
 using Quantum.Types;
 using UnityEngine;
@@ -161,7 +162,6 @@ namespace Quantum
         
         public static void StartScreenDark(Frame f, EntityRef entityRef, int duration)
         {
-            Debug.Log("Start dark");
             f.Unsafe.TryGetPointer<DramaticData>(entityRef, out var dramaticData);
             dramaticData->darkRemaining = duration;
         }
@@ -268,6 +268,26 @@ namespace Quantum
              return (actionConfig.InputType == buttonAndDirectionParam.Type &&
                      InputSystem.NumpadMatchesNumpad(buttonAndDirectionParam.CommandDirection, actionConfig.CommandDirection));
          }
+        
+        
+        
+        
+        public static string PrettyPrint<TKey, TValue>(Dictionary<TKey, TValue> dict)
+        {
+            if (dict == null)
+                return "Dictionary is null";
+
+            var sb = new StringBuilder();
+            sb.AppendLine("{");
+
+            foreach (var kvp in dict)
+            {
+                sb.AppendLine($"  {kvp.Key}: {kvp.Value}");
+            }
+
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
         
     }
     
