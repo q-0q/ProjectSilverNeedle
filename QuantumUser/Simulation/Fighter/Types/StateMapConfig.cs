@@ -26,6 +26,7 @@ namespace Quantum.StateMap
         public StateMap<int> InvulnerableBefore;
         public StateMap<SectionGroup<bool>> ProjectileInvulnerable;
         public StateMap<SectionGroup<SummonPool>> UnpoolSummonSectionGroup;
-
+        public StateMap<SectionGroup<int>> SmearFrame;
+        
     }
 }

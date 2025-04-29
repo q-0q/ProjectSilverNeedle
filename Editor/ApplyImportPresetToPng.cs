@@ -26,8 +26,8 @@ public class ApplyImportSettingsFromReference : EditorWindow
         // Directory to scan for PNG files
 
         // string directoryPath = "Assets/Resources/Sprites/Characters/VictorOrb";
-        // string directoryPath = "Assets/Resources/Sprites/Characters/StickTwo/FrameGroups/AirHit";
-        string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/";
+        // string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/FrameGroups/_2M";
+        string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/Smears";
         // string directoryPath = "Assets/Resources/Sprites/AnimationEntities";
         
         string[] pngFiles = Directory.GetFiles(directoryPath, "*.png", SearchOption.AllDirectories);

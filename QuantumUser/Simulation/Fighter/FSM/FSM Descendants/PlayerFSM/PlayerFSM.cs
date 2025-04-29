@@ -648,7 +648,6 @@ namespace Quantum
 
             
             
-            
             StateMapConfig.CancellableAfter.DefaultValue = 0;
             
             StateMapConfig.WhiffCancellable.DefaultValue = false;
@@ -658,7 +657,8 @@ namespace Quantum
             StateMapConfig.InvulnerableBefore.DefaultValue = 0;
 
             StateMapConfig.UnpoolSummonSectionGroup.DefaultValue = null;
-            
+
+            StateMapConfig.SmearFrame.DefaultValue = null;
             return;
 
 
