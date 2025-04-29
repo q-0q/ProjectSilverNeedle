@@ -6,10 +6,11 @@ using Quantum;
 using Quantum.Types;
 using Quantum.Types.Collision;
 using UnityEngine;
+using Wasp;
 
 namespace Quantum
 {
-    public class PriestessSetplayFSM : StartupSummonFSM
+    public unsafe class PriestessSetplayFSM : StartupSummonFSM
     {
         public class PriestessSetplayState : StartupSummonState
         {
@@ -23,7 +24,7 @@ namespace Quantum
             KinematicAttachPointOffset = FPVector2.Zero;
             SummonPositionOffset = new FPVector2(FP.FromString("0"), FP.FromString("10"));
             OwnerActivationFrame = 15;
-            SpriteScale = FP.FromString("0.5");
+            SpriteScale = FP.FromString("0.6");
         }
 
         public override void SetupStateMaps()
@@ -104,9 +105,19 @@ namespace Quantum
             base.SetupMachine();
             
             Fsm.Configure(StartupSummonState.Alive)
+                .OnEntry(OnAlive)
                 .Permit(Trigger.Finish, SummonState.Pooled);
             
-
+        }
+        
+        //TriggerParams? triggerParams
+        private void OnAlive(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam param) return;
+            var otherPlayerEntity = Util.GetOtherPlayer(param.f, playerOwnerEntity);
+            param.f.Unsafe.TryGetPointer<Transform3D>(otherPlayerEntity, out var otherPlayerTransform);
+            var pos = new FPVector2(otherPlayerTransform->Position.X, Util.Max(otherPlayerTransform->Position.Y, 3));
+            SetPosition(param.f, pos);
         }
         
     }
