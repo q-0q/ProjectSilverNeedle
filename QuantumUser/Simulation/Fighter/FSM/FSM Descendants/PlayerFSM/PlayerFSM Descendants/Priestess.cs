@@ -710,7 +710,7 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
-                            Level = 2,
+                            Level = 3,
                             TrajectoryHeight = 1,
                             TrajectoryXVelocity = 30,
                             BlockPushback = FP.FromString("2.5"),
@@ -968,7 +968,7 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
-                            Level = 1,
+                            Level = 3,
                             TrajectoryHeight = 1,
                             TrajectoryXVelocity = 30,
                             BlockPushback = FP.FromString("3.5"),
@@ -1244,7 +1244,7 @@ namespace Quantum
 
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
-                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 10;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;

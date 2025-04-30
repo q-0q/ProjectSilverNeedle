@@ -23,7 +23,7 @@ namespace Quantum
             StateType = typeof(PriestessSetplayState);
             KinematicAttachPointOffset = FPVector2.Zero;
             SummonPositionOffset = new FPVector2(FP.FromString("5.75"), FP.FromString("7.75"));
-            OwnerActivationFrame = 24;
+            OwnerActivationFrame = 14;
             SpriteScale = FP.FromString("0.6");
         }
 
@@ -88,14 +88,14 @@ namespace Quantum
                 Path = "Tracking",
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 5,
+                    LengthScalar = 2,
                     AutoFromAnimationPath = true
                 }
             };
             
             Util.AutoSetupFromAnimationPath(trackingAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Tracking] = trackingAnimation;
-            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 18;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 10;
             
             
             var aliveAnimation = new FighterAnimation()
@@ -104,7 +104,7 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 4,
+                    LengthScalar = 6,
                     AutoFromAnimationPath = true
                 }
             };
