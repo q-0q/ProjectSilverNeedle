@@ -227,7 +227,8 @@ namespace Quantum
             var empowered = IsEmpowered(f, hitboxData.source);
             if (empowered)
             {
-                f.Unsafe.TryGetPointer<HealthData>(hitboxData.source, out var opponentHealthData);
+                var entityRef = FsmLoader.FSMs[hitboxData.source].GetPlayer();
+                f.Unsafe.TryGetPointer<HealthData>(entityRef, out var opponentHealthData);
                 Util.StartDramatic(f, EntityRef, 6);
                 Util.StartScreenDark(f, EntityRef, 3);
                 AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
