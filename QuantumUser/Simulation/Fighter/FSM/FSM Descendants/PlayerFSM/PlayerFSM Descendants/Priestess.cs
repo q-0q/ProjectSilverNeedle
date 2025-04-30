@@ -1159,7 +1159,7 @@ namespace Quantum
             }
             
             {
-                int startup = 15;
+                int startup = 24;
                 int active = 2;
                 int hurtboxDuration = 7;
                 string path = "Summon";
@@ -1218,37 +1218,7 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
-                            Level = 1,
-                            TrajectoryHeight = 1,
-                            TrajectoryXVelocity = 30,
-                            BlockPushback = FP.FromString("3.5"),
-                            HitPushback = FP.FromString("2.5"),
-                            GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.2"),
-                            VisualHitPositionOffset = new FPVector2(4, 1),
-                            Type = Hit.HitType.Low,
-                            Damage = 20,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new (active, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                Height = 2,
-                                                Width = FP.FromString("4"),
-                                                GrowWidth = true,
-                                                GrowHeight = true,
-                                                PosY = 0,
-                                                PosX = 0
-                                            }
-                                        }
-                                    })
-                                }
-                            }
+                            HitboxCollections = null // ghost hit
                         }),
                         new (20, null)
                     }
@@ -1274,7 +1244,7 @@ namespace Quantum
 
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
-                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 10;
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
