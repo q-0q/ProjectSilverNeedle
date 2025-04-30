@@ -158,6 +158,7 @@ namespace Quantum
 
                 var hit = hitSectionGroup.GetItemFromIndex(collisionStateFrames);
                 if (hit is null) return new List<CollisionBoxInternal>();
+                if (hit.HitboxCollections is null) return new List<CollisionBoxInternal>();
 
                 var firstFrame = hitSectionGroup.GetFirstFrameFromIndex(collisionStateFrames);
 

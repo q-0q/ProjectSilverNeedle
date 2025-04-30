@@ -14,7 +14,7 @@ namespace Quantum
     {
         public class PriestessSetplayState : StartupSummonState
         {
-
+            public static int Tracking;
         }
         
         public PriestessSetplayFSM()
@@ -22,8 +22,8 @@ namespace Quantum
             Name = "PriestessSetplay";
             StateType = typeof(PriestessSetplayState);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(FP.FromString("0"), FP.FromString("10"));
-            OwnerActivationFrame = 15;
+            SummonPositionOffset = new FPVector2(FP.FromString("5.75"), FP.FromString("7.75"));
+            OwnerActivationFrame = 24;
             SpriteScale = FP.FromString("0.6");
         }
 
@@ -31,7 +31,7 @@ namespace Quantum
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 20;
+            const int lifeSpan = 40;
             
             StateMapConfig.HitSectionGroup.Dictionary[StartupSummonState.Alive] = new SectionGroup<Hit>()
             {
@@ -68,13 +68,43 @@ namespace Quantum
             };
             
             
+            var startupAnimation = new FighterAnimation()
+            {
+                Path = "Startup",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    Loop = true,
+                    LengthScalar = 4,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(startupAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[StartupSummonState.Startup] = startupAnimation;
+            
+            
+            var trackingAnimation = new FighterAnimation()
+            {
+                Path = "Tracking",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    LengthScalar = 5,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(trackingAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Tracking] = trackingAnimation;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 18;
+            
+            
             var aliveAnimation = new FighterAnimation()
             {
                 Path = "Alive",
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 3,
+                    LengthScalar = 4,
                     AutoFromAnimationPath = true
                 }
             };
@@ -84,41 +114,41 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[StartupSummonState.Alive] = lifeSpan;
 
             
-            var startupAnimation = new FighterAnimation()
-            {
-                Path = "Alive",
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Loop = true,
-                    LengthScalar = 3,
-                    AutoFromAnimationPath = true
-                }
-            };
-            
-            Util.AutoSetupFromAnimationPath(startupAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[StartupSummonState.Startup] = startupAnimation;
 
         }
 
         public override void SetupMachine()
         {
             base.SetupMachine();
+
+            Fsm.Configure(StartupSummonState.Startup)
+                .PermitIf(StartupSummonTrigger.OwnerActivated, PriestessSetplayState.Tracking, _ => true, 1);
+            
+            Fsm.Configure(PriestessSetplayState.Tracking)
+                .OnEntry(SnapToOpponent)
+                .PermitIf(Trigger.Finish, StartupSummonState.Alive, _ => true, 1)
+                .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
+                .SubstateOf(StartupSummonState.Alive);
             
             Fsm.Configure(StartupSummonState.Alive)
-                .OnEntry(OnAlive)
                 .Permit(Trigger.Finish, SummonState.Pooled);
             
         }
         
         //TriggerParams? triggerParams
-        private void OnAlive(TriggerParams? triggerParams)
+        private void SnapToOpponent(TriggerParams? triggerParams)
         {
-            if (triggerParams is not FrameParam param) return;
+            if (triggerParams is not FrameParam param)
+            {
+                Debug.LogError("errrrr");
+                return;
+            };
             var otherPlayerEntity = Util.GetOtherPlayer(param.f, playerOwnerEntity);
             param.f.Unsafe.TryGetPointer<Transform3D>(otherPlayerEntity, out var otherPlayerTransform);
             var pos = new FPVector2(otherPlayerTransform->Position.X, Util.Max(otherPlayerTransform->Position.Y, 3));
             SetPosition(param.f, pos);
         }
+        
         
     }
 }
