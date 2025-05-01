@@ -18,6 +18,7 @@ namespace Quantum
             public static int Tracking;
             public static int Startup;
             public static int Alive;
+            public static int Return;
         }
         
         public class PriestessSetplayTrigger : OwnerActivationSummonTrigger
@@ -33,6 +34,12 @@ namespace Quantum
             StateType = typeof(PriestessSetplayState);
             KinematicAttachPointOffset = FPVector2.Zero;
             SummonPositionOffset = new FPVector2(FP.FromString("5.75"), FP.FromString("7.75"));
+
+            OwnerActivationTriggers[(PriestessFSM.PriestessState.Summon, 10)] =
+                PriestessSetplayTrigger.OwnerStartupComplete;
+            
+            OwnerActivationTriggers[(PriestessFSM.PriestessState.Summon, 1)] =
+                PriestessSetplayTrigger.OwnerCallUsed;
         }
         
 
@@ -47,7 +54,8 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new(lifeSpan, new Hit()
+                    new (3, null),
+                    new(3, new Hit()
                     {
                         // Launches = true,
                         Level = 1,
@@ -56,7 +64,7 @@ namespace Quantum
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                new(lifeSpan, new CollisionBoxCollection()
+                                new(3, new CollisionBoxCollection()
                                 {
                                     CollisionBoxes = new List<CollisionBox>()
                                     {
@@ -73,7 +81,8 @@ namespace Quantum
                                 })
                             }
                         }
-                    })
+                    }),
+                    new (1, null),
                 }
             };
             
@@ -122,6 +131,21 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(aliveAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Alive] = aliveAnimation;
             StateMapConfig.Duration.Dictionary[PriestessSetplayState.Alive] = lifeSpan;
+            
+            var returnAnimation = new FighterAnimation()
+            {
+                Path = "Return",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    Loop = true,
+                    LengthScalar = 1,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(returnAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Return] = returnAnimation;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Return] = 30;
 
             
 
@@ -133,27 +157,28 @@ namespace Quantum
             
             Fsm.Configure(SummonState.Pooled)
                 .Permit(SummonTrigger.Summoned, PriestessSetplayState.Startup);
+
             
             Fsm.Configure(PriestessSetplayState.Startup)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
-                .Permit(PriestessSetplayTrigger.OwnerStartupComplete, PriestessSetplayState.Alive);
+                .Permit(PriestessSetplayTrigger.OwnerStartupComplete, PriestessSetplayState.Tracking);
 
-            Fsm.Configure(PriestessSetplayState.Alive)
-                .SubstateOf(SummonState.Unpooled);
-
-            Fsm.Configure(PriestessSetplayState.Startup)
-                .PermitIf(PriestessSetplayTrigger.OwnerStartupComplete, PriestessSetplayState.Tracking, _ => true, 1);
-            
             Fsm.Configure(PriestessSetplayState.Tracking)
                 .OnEntry(SnapToOpponent)
-                .PermitIf(Trigger.Finish, PriestessSetplayState.Alive, _ => true, 1)
+                .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
-                .SubstateOf(PriestessSetplayState.Alive);
+                .Permit(Trigger.Finish, PriestessSetplayState.Alive);
             
             Fsm.Configure(PriestessSetplayState.Alive)
+                .SubstateOf(SummonState.Unpooled)
+                .Permit(Trigger.Finish, SummonState.Pooled)
+                .Permit(PriestessSetplayTrigger.OwnerCallUsed, PriestessSetplayState.Return);
+
+            Fsm.Configure(PriestessSetplayState.Return)
+                .SubstateOf(SummonState.Unpooled)
                 .Permit(Trigger.Finish, SummonState.Pooled);
-            
+
         }
         
         //TriggerParams? triggerParams

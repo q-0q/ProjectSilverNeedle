@@ -5773,7 +5773,7 @@ MonoBehaviour:
     forceCounter:
       Value: 0
     doAction:
-      Value: 1
+      Value: 0
     doJump:
       Value: 0
     block:

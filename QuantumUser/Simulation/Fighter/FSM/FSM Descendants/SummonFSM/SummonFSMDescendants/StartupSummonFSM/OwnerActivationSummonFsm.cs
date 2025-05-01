@@ -20,11 +20,11 @@ namespace Quantum
             
         }
         
-        Dictionary<(int, int), int> OwnerActivationFrames;
+        protected Dictionary<(int, int), int> OwnerActivationTriggers;
 
         public OwnerActivationSummonFsm()
         {
-            OwnerActivationFrames = new Dictionary<(int, int), int>();
+            OwnerActivationTriggers = new Dictionary<(int, int), int>();
         }
         
         public override void SetupStateMaps()
@@ -46,7 +46,7 @@ namespace Quantum
             var ownerPlayerFsm = FsmLoader.FSMs[playerOwnerEntity];
             var key = (ownerPlayerFsm.Fsm.State(), ownerPlayerFsm.FramesInCurrentState(f));
             
-            if (OwnerActivationFrames.TryGetValue(key, out var frame))
+            if (OwnerActivationTriggers.TryGetValue(key, out var frame))
             {
                 Fsm.Fire(frame, new FrameParam() { f = f, EntityRef = EntityRef});
             }
