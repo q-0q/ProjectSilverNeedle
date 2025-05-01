@@ -28,7 +28,7 @@ namespace Quantum
             public static int ReturnComplete;
         }
 
-        private int ReturnStartup = 10;
+        private int ReturnStartup = 16;
         
         public PriestessSetplayFSM()
         {
@@ -50,7 +50,7 @@ namespace Quantum
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 40;
+            const int lifeSpan = 60;
             
             StateMapConfig.HitSectionGroup.Dictionary[PriestessSetplayState.Alive] = new SectionGroup<Hit>()
             {
@@ -63,6 +63,7 @@ namespace Quantum
                         Level = 2,
                         Projectile = true,
                         HitPushback = 0,
+                        BlockPushback = 0,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -99,8 +100,10 @@ namespace Quantum
                         Launches = true,
                         Level = 2,
                         Projectile = true,
-                        TrajectoryHeight = 4,
-                        TrajectoryXVelocity = -8,
+                        TrajectoryHeight = 5,
+                        TrajectoryXVelocity = -10,
+                        HitPushback = 0,
+                        BlockPushback = 0,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -115,8 +118,8 @@ namespace Quantum
                                             GrowHeight = false,
                                             PosX = 0,
                                             PosY = 0,
-                                            Height = 3,
-                                            Width = 3,
+                                            Height = 5,
+                                            Width = 5,
                                         }
                                     }
                                 })
@@ -164,7 +167,7 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 6,
+                    LengthScalar = 7,
                     AutoFromAnimationPath = true
                 }
             };
@@ -243,7 +246,7 @@ namespace Quantum
                 f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
                 
                 var dirMod = IsFacingRight(f, EntityRef) ? 1 : -1;
-                var destinationOffset = new FPVector2(SummonPositionOffset.X * dirMod, SummonPositionOffset.Y - 4);
+                var destinationOffset = new FPVector2(FP.FromString("1.5") * dirMod, 3);
                 var destination = ownerTransform3d->Position + destinationOffset.XYO;
                 var direction = destination - transform3D->Position;
                 if (direction.Magnitude < FP.FromString("0.65"))
@@ -256,7 +259,7 @@ namespace Quantum
                 int frames = FramesInCurrentState(f);
                 if (frames <= ReturnStartup) speed = FP.FromString("0.01");
                 else if (frames <= ReturnStartup + 5) speed = FP.FromString("0.15");
-                else speed = FP.FromString("0.65");
+                else speed = FP.FromString("0.85");
                 
                 direction = direction.Normalized * speed;
                 

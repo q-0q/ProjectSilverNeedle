@@ -1254,7 +1254,7 @@ namespace Quantum
                 
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
-                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 7;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 3;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
             }
