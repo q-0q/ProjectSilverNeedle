@@ -888,6 +888,9 @@ namespace Quantum
             public int InputWeight = 0;
             public bool IsCutscene = false;
 
+            // an additional optional clause that must be true to enter this action
+            public Func<TriggerParams?, bool> BonusClause = _ => true;
+
             // non-authoritative fields for MoveList rendering
             public string Name = "No name provided";
             public string FlavorText = "";
@@ -941,17 +944,26 @@ namespace Quantum
                     AllowRawFromState(fsm, actionConfig, PlayerFSM.PlayerState.AirDash);
                 }
             }
+            
+
+            Func<TriggerParams?, bool>? cancelClause = param =>
+            {
+                var bonus = actionConfig.BonusClause?.Invoke(param) ?? true;
+                return Util.CanCancelNow(param) && bonus;
+            };
 
             if (actionConfig.JumpCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)
-                    .PermitIf(PlayerFSM.PlayerTrigger.Jump, actionConfig.Aerial? PlayerFSM.PlayerState.AirActionable : PlayerFSM.PlayerState.Jumpsquat, Util.CanCancelNow);
+                    .PermitIf(PlayerFSM.Trigger.Jump, actionConfig.Aerial? PlayerFSM.PlayerState.AirActionable : PlayerFSM.PlayerState.Jumpsquat, 
+                        param => Util.CanCancelNow(param) && actionConfig.BonusClause(param));
             }
 
             if (actionConfig.DashCancellable)
             {
                 fsm.Fsm.Configure(actionConfig.State)
-                    .PermitIf(PlayerFSM.PlayerTrigger.Dash, PlayerFSM.PlayerState.Dash, Util.CanCancelNow);
+                    .PermitIf(PlayerFSM.Trigger.Dash, PlayerFSM.PlayerState.Dash, 
+                        param => Util.CanCancelNow(param) && actionConfig.BonusClause(param));
             }
             
             if (actionConfig.SpecialCancellable)
@@ -1062,7 +1074,7 @@ namespace Quantum
                 .PermitIf(PlayerFSM.PlayerTrigger.ButtonAndDirection,
                     actionConfig.State,
                     param =>
-                        Util.DoesInputMatch(actionConfig, param),
+                        Util.DoesInputMatch(actionConfig, param) && actionConfig.BonusClause(param),
                     actionConfig.InputWeight);
         }
         
@@ -1074,7 +1086,9 @@ namespace Quantum
                     param =>
                     {
                         if (param is not FrameParam frameParam) return false;
-                        return Util.DoesInputMatch(actionConfig, param) && fsm.FramesInCurrentState(frameParam.f) > fsm.MinimumDashDuration;
+                        return Util.DoesInputMatch(actionConfig, param) && 
+                               fsm.FramesInCurrentState(frameParam.f) > fsm.MinimumDashDuration &&
+                               actionConfig.BonusClause(param);
                     },
                     actionConfig.InputWeight);
         }
@@ -1092,7 +1106,9 @@ namespace Quantum
                 .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
                     destination.State,
                     param =>
-                        (Util.CanCancelNow(param) && Util.DoesInputMatch(destination, param)),
+                        (Util.CanCancelNow(param) && 
+                         Util.DoesInputMatch(destination, param) &&
+                         destination.BonusClause(param)),
                     destination.InputWeight);
         }
 
@@ -1106,7 +1122,9 @@ namespace Quantum
                     .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
                         actionConfig.State,
                         param =>
-                            (Util.CanCancelNow(param) && Util.DoesInputMatch(actionConfig, param)),
+                            (Util.CanCancelNow(param) && 
+                             Util.DoesInputMatch(actionConfig, param) &&
+                             actionConfig.BonusClause(param)),
                         actionConfig.InputWeight);
             }
             
@@ -1116,7 +1134,9 @@ namespace Quantum
                     .PermitIf(PlayerFSM.Trigger.ButtonAndDirection,
                         actionConfig.State,
                         param =>
-                            (Util.CanCancelNow(param) && Util.DoesInputMatch(actionConfig, param)),
+                            (Util.CanCancelNow(param) && 
+                             Util.DoesInputMatch(actionConfig, param) &&
+                             actionConfig.BonusClause(param)),
                         actionConfig.InputWeight);
             }
         }
