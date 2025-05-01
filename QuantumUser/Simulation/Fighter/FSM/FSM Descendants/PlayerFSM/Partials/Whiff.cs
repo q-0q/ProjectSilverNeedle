@@ -20,6 +20,7 @@ namespace Quantum
 
         private void MakeNotWhiffed(Frame f, EntityRef entityRef)
         {
+            entityRef = FsmLoader.FSMs[entityRef].GetPlayer();
             if (f.Unsafe.TryGetPointer<WhiffData>(entityRef, out var whiffData))
             {
                 whiffData->whiffed = false;
