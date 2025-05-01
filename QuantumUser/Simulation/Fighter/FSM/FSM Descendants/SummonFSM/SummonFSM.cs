@@ -87,7 +87,7 @@ namespace Quantum
             var frameParam = (FrameParam)triggerParams;
             var f = frameParam.f;
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
-            transform3D->Position = new FPVector2(0, -20).XYO;
+            transform3D->Teleport(f, new FPVector2(0, -20).XYO);
         }
         
         public void OnUnpooled(TriggerParams? triggerParams)
@@ -112,7 +112,7 @@ namespace Quantum
         protected void SnapToOwnerPosWithOffset(Frame f)
         {
             var transform3D = GetSnapPos(f, out var offsetXyo);
-            transform3D->Position = offsetXyo;
+            transform3D->Teleport(f, offsetXyo);
         }
 
         protected Transform3D* GetSnapPos(Frame f, out FPVector3 offsetXyo)
