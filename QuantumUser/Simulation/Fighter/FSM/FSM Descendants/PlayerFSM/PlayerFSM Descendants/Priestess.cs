@@ -31,6 +31,7 @@ namespace Quantum
             public static int JH;
 
             public static int Summon;
+            public static int Return;
         }
         
         
@@ -1174,43 +1175,6 @@ namespace Quantum
                     }
                 };
                 
-                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
-                {
-                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                    {
-                        new(startup + active, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                standHurtbox
-                            }
-                        }),
-                        new(hurtboxDuration, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                standHurtbox,
-                                new CollisionBox()
-                                {
-                                    Height = FP.FromString("1.5"),
-                                    Width = FP.FromString("2.5"),
-                                    GrowWidth = true,
-                                    GrowHeight = false,
-                                    PosY = FP.FromString("4.75"),
-                                    PosX = 0
-                                }
-                            }
-                        }),
-                        new(20, new CollisionBoxCollection()
-                        {
-                            CollisionBoxes = new List<CollisionBox>()
-                            {
-                                standHurtbox
-                            }
-                        }),
-                    }
-                };
-                
                 var hitboxes = new SectionGroup<Hit>()
                 {
                     Sections = new List<Tuple<int, Hit>>()
@@ -1245,13 +1209,56 @@ namespace Quantum
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
                 StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 7;
-                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
             }
             
+            {
+                int startup = 24;
+                int active = 2;
+                int hurtboxDuration = 7;
+                string path = "Return";
+                int state = PriestessState.Return;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            HitboxCollections = null // ghost hit
+                        }),
+                        new (20, null)
+                    }
+                };
 
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+                
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 7;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+            }
+            
         }
         
         public override void SetupMachine()
@@ -1379,8 +1386,42 @@ namespace Quantum
             };
             
             ConfigureAction(this, Summon);
+            
+            ActionConfig Return = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                IsSpecial = true,
+                State = PriestessState.Return,
+                
+                BonusClause = IsSetplayUnpooled,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, Return);
+        }
+        
+        private bool IsSetplayUnpooled(TriggerParams? triggerParams)
+        {
+            foreach (var setplayEntity in SummonPools[0].EntityRefs)
+            {
+                if (FsmLoader.FSMs[setplayEntity].Fsm.IsInState(SummonFSM.SummonState.Unpooled)) return true;
+            }
+            return false;
         }
     }
+    
 }
 
 
