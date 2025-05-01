@@ -20,11 +20,13 @@ namespace Quantum
             
         }
         
-        protected Dictionary<(int, int), int> OwnerActivationTriggers;
+        protected Dictionary<(int, int), int> OwnerActivationFrameTriggers;
+        protected Dictionary<int, (int, int)> OwnerActivationMaxFrameTriggers;
 
         public OwnerActivationSummonFsm()
         {
-            OwnerActivationTriggers = new Dictionary<(int, int), int>();
+            OwnerActivationFrameTriggers = new Dictionary<(int, int), int>();
+            OwnerActivationMaxFrameTriggers = new Dictionary<int, (int, int)>();
         }
         
         public override void SetupStateMaps()
@@ -44,11 +46,18 @@ namespace Quantum
         {
 
             var ownerPlayerFsm = FsmLoader.FSMs[playerOwnerEntity];
-            var key = (ownerPlayerFsm.Fsm.State(), ownerPlayerFsm.FramesInCurrentState(f));
+            var state = ownerPlayerFsm.Fsm.State();
+            var framesInCurrentState = ownerPlayerFsm.FramesInCurrentState(f);
+            var key = (state, framesInCurrentState);
             
-            if (OwnerActivationTriggers.TryGetValue(key, out var frame))
+            if (OwnerActivationFrameTriggers.TryGetValue(key, out var t1))
             {
-                Fsm.Fire(frame, new FrameParam() { f = f, EntityRef = EntityRef});
+                Fsm.Fire(t1, new FrameParam() { f = f, EntityRef = EntityRef});
+            }
+            if (OwnerActivationMaxFrameTriggers.TryGetValue(state, out var t2))
+            {
+                if (framesInCurrentState <= t2.Item1)
+                    Fsm.Fire(t2.Item2, new FrameParam() { f = f, EntityRef = EntityRef});
             }
             
             base.HandleSummonFSMTriggers(f);
@@ -58,5 +67,13 @@ namespace Quantum
 }
 
 
+// var framesInCurrentState = ownerPlayerFsm.FramesInCurrentState(f);
+//
+// foreach (var kvp in OwnerActivationTriggers)
+// {
+//     if (framesInCurrentState >= kvp.Key.Item2)
+//         Fsm.Fire(kvp.Value, new FrameParam() { f = f, EntityRef = EntityRef});
+// }
+//
 
         

@@ -25,8 +25,10 @@ namespace Quantum
         {
             public static int OwnerStartupComplete;
             public static int OwnerCallUsed;
+            public static int ReturnComplete;
         }
-        
+
+        private int ReturnStartup = 10;
         
         public PriestessSetplayFSM()
         {
@@ -35,11 +37,11 @@ namespace Quantum
             KinematicAttachPointOffset = FPVector2.Zero;
             SummonPositionOffset = new FPVector2(FP.FromString("5.75"), FP.FromString("7.75"));
 
-            OwnerActivationTriggers[(PriestessFSM.PriestessState.Summon, 10)] =
+            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState.Summon, 10)] =
                 PriestessSetplayTrigger.OwnerStartupComplete;
             
-            OwnerActivationTriggers[(PriestessFSM.PriestessState.Summon, 1)] =
-                PriestessSetplayTrigger.OwnerCallUsed;
+            OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Summon] =
+                (12, PriestessSetplayTrigger.OwnerCallUsed);
         }
         
 
@@ -58,8 +60,9 @@ namespace Quantum
                     new(3, new Hit()
                     {
                         // Launches = true,
-                        Level = 1,
+                        Level = 2,
                         Projectile = true,
+                        HitPushback = 0,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -74,8 +77,46 @@ namespace Quantum
                                             GrowHeight = false,
                                             PosX = 0,
                                             PosY = 0,
-                                            Height = 2,
-                                            Width = 2,
+                                            Height = 3,
+                                            Width = 3,
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    new (1, null),
+                }
+            };
+            
+            StateMapConfig.HitSectionGroup.Dictionary[PriestessSetplayState.Return] = new SectionGroup<Hit>()
+            {
+                Sections = new List<Tuple<int, Hit>>()
+                {
+                    new (ReturnStartup, null),
+                    new(3, new Hit()
+                    {
+                        Launches = true,
+                        Level = 2,
+                        Projectile = true,
+                        TrajectoryHeight = 4,
+                        TrajectoryXVelocity = -8,
+                        HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                        {
+                            Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                            {
+                                new(3, new CollisionBoxCollection()
+                                {
+                                    CollisionBoxes = new List<CollisionBox>()
+                                    {
+                                        new CollisionBox()
+                                        {
+                                            GrowWidth = false,
+                                            GrowHeight = false,
+                                            PosX = 0,
+                                            PosY = 0,
+                                            Height = 3,
+                                            Width = 3,
                                         }
                                     }
                                 })
@@ -138,14 +179,14 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     Loop = true,
-                    LengthScalar = 1,
+                    LengthScalar = 3,
                     AutoFromAnimationPath = true
                 }
             };
             
             Util.AutoSetupFromAnimationPath(returnAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Return] = returnAnimation;
-            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Return] = 30;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Return] = 40;
 
             
 
@@ -177,18 +218,15 @@ namespace Quantum
 
             Fsm.Configure(PriestessSetplayState.Return)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(Trigger.Finish, SummonState.Pooled);
+                .Permit(Trigger.Finish, SummonState.Pooled)
+                .Permit(PriestessSetplayTrigger.ReturnComplete, SummonState.Pooled);
 
         }
         
         //TriggerParams? triggerParams
         private void SnapToOpponent(TriggerParams? triggerParams)
         {
-            if (triggerParams is not FrameParam param)
-            {
-                Debug.LogError("errrrr");
-                return;
-            };
+            if (triggerParams is not FrameParam param) return;
             var otherPlayerEntity = Util.GetOtherPlayer(param.f, playerOwnerEntity);
             param.f.Unsafe.TryGetPointer<Transform3D>(otherPlayerEntity, out var otherPlayerTransform);
             var pos = new FPVector3(otherPlayerTransform->Position.X, Util.Max(otherPlayerTransform->Position.Y, 3), 0);
@@ -199,6 +237,31 @@ namespace Quantum
         protected override void SummonMove(Frame f)
         {
             if (Fsm.IsInState(PriestessSetplayState.Startup)) SnapToOwnerPosWithOffset(f);
+            if (Fsm.IsInState(PriestessSetplayState.Return))
+            {
+                f.Unsafe.TryGetPointer<Transform3D>(playerOwnerEntity, out var ownerTransform3d);
+                f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+                
+                var dirMod = IsFacingRight(f, EntityRef) ? 1 : -1;
+                var destinationOffset = new FPVector2(SummonPositionOffset.X * dirMod, SummonPositionOffset.Y);
+                var destination = ownerTransform3d->Position + destinationOffset.XYO;
+                var direction = destination - transform3D->Position;
+                if (direction.Magnitude < FP.FromString("0.65"))
+                {
+                    Fsm.Fire(PriestessSetplayTrigger.ReturnComplete, new FrameParam() { f = f, EntityRef = EntityRef});
+                    return;
+                }
+
+                FP speed;
+                int frames = FramesInCurrentState(f);
+                if (frames <= ReturnStartup) speed = FP.FromString("0.01");
+                else if (frames <= ReturnStartup + 5) speed = FP.FromString("0.15");
+                else speed = FP.FromString("0.65");
+                
+                direction = direction.Normalized * speed;
+                
+                ApplyFlippedMovement(f, direction.XY, EntityRef);
+            }
         }
 
         
