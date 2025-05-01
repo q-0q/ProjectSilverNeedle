@@ -94,7 +94,7 @@ namespace Quantum
                 Sections = new List<Tuple<int, Hit>>()
                 {
                     new (ReturnStartup, null),
-                    new(3, new Hit()
+                    new(30, new Hit()
                     {
                         Launches = true,
                         Level = 2,
@@ -105,7 +105,7 @@ namespace Quantum
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
                             {
-                                new(3, new CollisionBoxCollection()
+                                new(30, new CollisionBoxCollection()
                                 {
                                     CollisionBoxes = new List<CollisionBox>()
                                     {
@@ -243,7 +243,7 @@ namespace Quantum
                 f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
                 
                 var dirMod = IsFacingRight(f, EntityRef) ? 1 : -1;
-                var destinationOffset = new FPVector2(SummonPositionOffset.X * dirMod, SummonPositionOffset.Y);
+                var destinationOffset = new FPVector2(SummonPositionOffset.X * dirMod, SummonPositionOffset.Y - 4);
                 var destination = ownerTransform3d->Position + destinationOffset.XYO;
                 var direction = destination - transform3D->Position;
                 if (direction.Magnitude < FP.FromString("0.65"))
