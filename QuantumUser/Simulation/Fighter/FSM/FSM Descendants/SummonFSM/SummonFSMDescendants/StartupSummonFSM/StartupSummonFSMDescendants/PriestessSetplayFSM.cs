@@ -40,7 +40,7 @@ namespace Quantum
             OwnerActivationFrameTriggers[(PriestessFSM.PriestessState.Summon, 10)] =
                 PriestessSetplayTrigger.OwnerStartupComplete;
             
-            OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Summon] =
+            OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Return] =
                 (12, PriestessSetplayTrigger.OwnerCallUsed);
         }
         
