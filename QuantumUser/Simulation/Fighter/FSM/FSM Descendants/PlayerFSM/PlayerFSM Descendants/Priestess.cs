@@ -318,23 +318,23 @@ namespace Quantum
                 }
             };
             //
-            // var standHitHighAnimation = new FighterAnimation()
-            // {
-            //     Path = "StandHitHigh",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
-            // var standHitLowAnimation = new FighterAnimation()
-            // {
-            //     Path = "StandHitLow",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var standHitHighAnimation = new FighterAnimation()
+            {
+                Path = "StandHitHigh",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var standHitLowAnimation = new FighterAnimation()
+            {
+                Path = "StandHitLow",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             // var crouchHitAnimation = new FighterAnimation()
             // {
@@ -345,14 +345,14 @@ namespace Quantum
             //     }
             // };
             //
-            // var airHitAnimation = new FighterAnimation()
-            // {
-            //     Path = "AirHit",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var airHitAnimation = new FighterAnimation()
+            {
+                Path = "AirHit",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             // var wallBounceAnimation = new FighterAnimation()
             // {
@@ -372,14 +372,14 @@ namespace Quantum
             //     }
             // };
             //
-            // var standBlockAnimation = new FighterAnimation()
-            // {
-            //     Path = "StandBlock",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var standBlockAnimation = new FighterAnimation()
+            {
+                Path = "StandBlock",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             var breakAnimation = new FighterAnimation()
             {
@@ -399,14 +399,14 @@ namespace Quantum
             //     }
             // };
             //
-            // var crouchBlockAnimation = new FighterAnimation()
-            // {
-            //     Path = "CrouchBlock",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var crouchBlockAnimation = new FighterAnimation()
+            {
+                Path = "CrouchBlock",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             // var proxCrouchBlockAnimation = new FighterAnimation()
             // {
@@ -435,14 +435,14 @@ namespace Quantum
             //     }
             // };
             //
-            // var softKnockdownAnimation = new FighterAnimation()
-            // {
-            //     Path = "SoftKnockdown",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var softKnockdownAnimation = new FighterAnimation()
+            {
+                Path = "SoftKnockdown",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             // var deadFromGroundAnimation = new FighterAnimation()
             // {
@@ -521,19 +521,18 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Backdash] = backdashAnimation.SectionGroup.Duration();
             //
-            // Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitHigh] = standHitHighAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(standHitLowAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitLow] = standHitLowAnimation;
+            Util.AutoSetupFromAnimationPath(standHitHighAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitHigh] = standHitHighAnimation;
+            
+            Util.AutoSetupFromAnimationPath(standHitLowAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitLow] = standHitLowAnimation;
             //
             // Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchHit] = crouchHitAnimation;
             //
-            // Util.AutoSetupFromAnimationPath(airHitAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = airHitAnimation;
-            // StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitAnimation;
+            Util.AutoSetupFromAnimationPath(airHitAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
+            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitAnimation;
             //
             // Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostWallBounce] = wallBounceAnimation;
@@ -541,16 +540,16 @@ namespace Quantum
             // Util.AutoSetupFromAnimationPath(groundBounceAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = groundBounceAnimation;
             //
-            // Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandBlock] = standBlockAnimation;
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Tech] = standBlockAnimation;
+            Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandBlock] = standBlockAnimation;
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Tech] = standBlockAnimation;
             //
             // Util.AutoSetupFromAnimationPath(proxStandBlockAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = proxStandBlockAnimation;
             // StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = 100;
             //
-            // Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchBlock] = crouchBlockAnimation;
+            Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchBlock] = crouchBlockAnimation;
             //
             // Util.AutoSetupFromAnimationPath(proxCrouchBlockAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = proxCrouchBlockAnimation;
@@ -562,8 +561,8 @@ namespace Quantum
             // Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = hardKnockdownAnimation;
             //
-            // Util.AutoSetupFromAnimationPath(softKnockdownAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = softKnockdownAnimation;
+            Util.AutoSetupFromAnimationPath(softKnockdownAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = softKnockdownAnimation;
             //
             // Util.AutoSetupFromAnimationPath(deadFromGroundAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.DeadFromGround] = deadFromGroundAnimation;

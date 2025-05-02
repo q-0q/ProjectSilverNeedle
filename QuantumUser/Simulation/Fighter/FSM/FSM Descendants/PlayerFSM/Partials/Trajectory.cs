@@ -14,7 +14,7 @@ namespace Quantum
         private static readonly FP UniversalJuggleFallSpeed = 65;
         private static readonly int UniversalJuggleTimeToFallSpeed = 25;
         private static readonly FP UniversalJuggleLaunchSpeed = 8;
-        private static readonly FP UniversalGroundBounceSpikeVelocity = -40; // this should be negative lol
+        private static readonly FP UniversalGroundBounceSpikeVelocity = -60; // this should be negative lol
         private static readonly FP GroundBounceGravityScaling = FP.FromString("1.05");
 
         private static readonly FP GlobalGravityScalingMod = FP.FromString("1.05");
