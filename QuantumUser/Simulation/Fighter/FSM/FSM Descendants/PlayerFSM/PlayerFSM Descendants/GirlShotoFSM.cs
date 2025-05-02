@@ -555,7 +555,6 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(airHitAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
-            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = airHitAnimation;
             StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitAnimation;
             
             Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);

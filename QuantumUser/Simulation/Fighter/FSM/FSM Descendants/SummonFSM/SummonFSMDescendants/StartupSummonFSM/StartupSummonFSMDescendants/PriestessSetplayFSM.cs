@@ -60,7 +60,7 @@ namespace Quantum
                     new(3, new Hit()
                     {
                         // Launches = true,
-                        Level = 2,
+                        Level = 1,
                         Projectile = true,
                         HitPushback = 0,
                         BlockPushback = 0,
