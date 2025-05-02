@@ -64,9 +64,9 @@ namespace Quantum
                         Projectile = true,
                         HitPushback = 0,
                         BlockPushback = 0,
-                        // GroundBounce = true,
-                        TrajectoryHeight = 4,
-                        TrajectoryXVelocity = 3,
+                        GroundBounce = true,
+                        TrajectoryHeight = 5,
+                        TrajectoryXVelocity = -1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -225,6 +225,7 @@ namespace Quantum
             Fsm.Configure(PriestessSetplayState.Return)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(Trigger.Finish, SummonState.Pooled)
+                .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
                 .Permit(PriestessSetplayTrigger.ReturnComplete, SummonState.Pooled);
 
         }

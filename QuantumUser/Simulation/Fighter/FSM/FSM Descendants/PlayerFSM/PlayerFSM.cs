@@ -1038,23 +1038,30 @@ namespace Quantum
 
         private int ComputeStartupReduction(ActionConfig actionConfig, PlayerFSM fsm)
         {
-            var sectionGroup = fsm.StateMapConfig.HitSectionGroup;
-            if (sectionGroup is null) return 0;
-
-            var hitSectionGroup = sectionGroup.Lookup(actionConfig.State, fsm);
-            if (hitSectionGroup is null) return 0;
+            var hitStateMap = fsm.StateMapConfig.HitSectionGroup;
+            var hitSectionGroup = hitStateMap?.Lookup(actionConfig.State, fsm);
+            
+            var trajectoryStateMap = fsm.StateMapConfig.TrajectorySectionGroup;
+            var trajectorySectionGroup = trajectoryStateMap?.Lookup(actionConfig.State, fsm);
+            
 
             int actualStartup = -1;
-
+            
             // Find the frame index of the first hitbox
-            for (int i = 0; i < hitSectionGroup.Duration(); i++)
+            for (int i = 0; i < StateMapConfig.Duration.Lookup(actionConfig.State, fsm); i++)
             {
-                Hit currentHit = hitSectionGroup.GetItemFromIndex(i);
-                if (currentHit != null)
+                if (hitSectionGroup?.GetItemFromIndex(i) != null)
                 {
                     actualStartup = i;
                     break;
                 }
+                
+                if (trajectorySectionGroup?.GetItemFromIndex(i) != null)
+                {
+                    actualStartup = i;
+                    break;
+                }
+
             }
 
             // If no hitbox found, no reduction is safe
