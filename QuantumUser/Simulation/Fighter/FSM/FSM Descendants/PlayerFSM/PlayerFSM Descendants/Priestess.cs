@@ -48,33 +48,29 @@ namespace Quantum
 
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
-            var jumpHeight = FP.FromString("6");
-            var jumpTimeToHeight = 18;
-            var jumpForwardSpeed = FP.FromString("15");
-            var jumpBackwardSpeed = FP.FromString("-7");
 
-            MinimumDashDuration = 16;
+            MinimumDashDuration = 13;
             // SpriteScale = FP.FromString("1.2");
 
             UpwardJumpTrajectory = new Trajectory()
             {
-                TimeToTrajectoryHeight = jumpTimeToHeight,
+                TimeToTrajectoryHeight = 18,
                 TrajectoryXVelocity = 0,
-                TrajectoryHeight = jumpHeight
-            };
-            
-            ForwardJumpTrajectory = new Trajectory()
-            {
-                TimeToTrajectoryHeight = jumpTimeToHeight,
-                TrajectoryXVelocity = jumpForwardSpeed,
-                TrajectoryHeight = jumpHeight
+                TrajectoryHeight = FP.FromString("5")
             };
             
             BackwardJumpTrajectory = new Trajectory()
             {
-                TimeToTrajectoryHeight = jumpTimeToHeight,
-                TrajectoryXVelocity = jumpBackwardSpeed,
-                TrajectoryHeight = jumpHeight
+                TimeToTrajectoryHeight = 20,
+                TrajectoryXVelocity = FP.FromString("-14"),
+                TrajectoryHeight = FP.FromString("5")
+            };
+            
+            ForwardJumpTrajectory = new Trajectory()
+            {
+                TimeToTrajectoryHeight = 18,
+                TrajectoryXVelocity = FP.FromString("10"),
+                TrajectoryHeight = FP.FromString("5")
             };
 
             JumpsquatDuration = 6;
@@ -385,14 +381,14 @@ namespace Quantum
             //     }
             // };
             //
-            // var breakAnimation = new FighterAnimation()
-            // {
-            //     Path = "GuardBreak",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var breakAnimation = new FighterAnimation()
+            {
+                Path = "Break",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             // var proxStandBlockAnimation = new FighterAnimation()
             // {
@@ -483,10 +479,10 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
+            
             var landsquatAnimation = new FighterAnimation()
             {
-                Path = "Jumpsquat",
+                Path = "Landsquat",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -584,9 +580,9 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(landsquatAnimation, this);
             StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Landsquat] = landsquatAnimation;
             //
-            // Util.AutoSetupFromAnimationPath(breakAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Break] = breakAnimation;
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.RedBreak] = breakAnimation;
+            Util.AutoSetupFromAnimationPath(breakAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Break] = breakAnimation;
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.RedBreak] = breakAnimation;
 
             
             // Basic movement
@@ -712,8 +708,8 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 3,
-                            TrajectoryHeight = 1,
-                            TrajectoryXVelocity = 30,
+                            TrajectoryHeight = 3,
+                            TrajectoryXVelocity = 12,
                             BlockPushback = FP.FromString("2.5"),
                             HitPushback = FP.FromString("1.5"),
                             GravityScaling = FP.FromString("1"),
@@ -847,8 +843,8 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 1,
-                            TrajectoryHeight = 1,
-                            TrajectoryXVelocity = 30,
+                            TrajectoryHeight = 2,
+                            TrajectoryXVelocity = 8,
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
                             GravityScaling = FP.FromString("1"),
@@ -970,8 +966,8 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 3,
-                            TrajectoryHeight = 1,
-                            TrajectoryXVelocity = 30,
+                            TrajectoryHeight = 4,
+                            TrajectoryXVelocity = 8,
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
                             GravityScaling = FP.FromString("1"),
@@ -1106,8 +1102,8 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 1,
-                            TrajectoryHeight = 1,
-                            TrajectoryXVelocity = 30,
+                            TrajectoryHeight = 2,
+                            TrajectoryXVelocity = 8,
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
                             GravityScaling = FP.FromString("1"),

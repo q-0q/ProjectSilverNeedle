@@ -50,7 +50,7 @@ namespace Quantum
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 60;
+            const int lifeSpan = 120;
             
             StateMapConfig.HitSectionGroup.Dictionary[PriestessSetplayState.Alive] = new SectionGroup<Hit>()
             {
@@ -64,6 +64,9 @@ namespace Quantum
                         Projectile = true,
                         HitPushback = 0,
                         BlockPushback = 0,
+                        // GroundBounce = true,
+                        TrajectoryHeight = 4,
+                        TrajectoryXVelocity = 3,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -100,8 +103,8 @@ namespace Quantum
                         Launches = true,
                         Level = 2,
                         Projectile = true,
-                        TrajectoryHeight = 5,
-                        TrajectoryXVelocity = -10,
+                        TrajectoryHeight = 4,
+                        TrajectoryXVelocity = -12,
                         HitPushback = 0,
                         BlockPushback = 0,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
