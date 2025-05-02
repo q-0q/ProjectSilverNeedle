@@ -79,7 +79,7 @@ namespace Quantum
                 TrajectoryHeight = jumpHeight
             };
 
-            JumpsquatDuration = 6;
+            JumpsquatDuration = 4;
 
             SummonPools = new List<SummonPool>()
             {
