@@ -234,6 +234,7 @@ namespace Quantum
                 AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
                     !IsFacingRight(f, hitboxData.source));
                 opponentHealthData->virtualTimeSinceEmpowered = 10;
+                opponentHealthData->nextHitEmpowered = false;
             }
 
             if (!empowered)
