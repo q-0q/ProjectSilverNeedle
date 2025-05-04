@@ -172,7 +172,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(trackingAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Tracking] = trackingAnimation;
-            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 14;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 19;
             
             var activeAnimation = new FighterAnimation()
             {
@@ -223,14 +223,14 @@ namespace Quantum
                 Path = "Destroy",
                 SectionGroup = new SectionGroup<int>()
                 {
-                    LengthScalar = 3,
+                    LengthScalar = 6,
                     AutoFromAnimationPath = true
                 }
             };
             
             Util.AutoSetupFromAnimationPath(destroyAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Destroy] = destroyAnimation;
-            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Destroy] = 6;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Destroy] = 12;
 
             
 
@@ -272,7 +272,8 @@ namespace Quantum
 
             Fsm.Configure(PriestessSetplayState.Destroy)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(Trigger.Finish, SummonState.Unpooled);
+                .Permit(SummonTrigger.Summoned, PriestessSetplayState.Startup)
+                .Permit(Trigger.Finish, SummonState.Pooled);
 
         }
         

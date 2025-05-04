@@ -1412,7 +1412,9 @@ namespace Quantum
         {
             foreach (var setplayEntity in SummonPools[0].EntityRefs)
             {
-                if (FsmLoader.FSMs[setplayEntity].Fsm.IsInState(SummonFSM.SummonState.Unpooled)) return true;
+                var machine = FsmLoader.FSMs[setplayEntity].Fsm;
+                if (machine.IsInState(PriestessSetplayFSM.PriestessSetplayState.Destroy)) return false; 
+                if (machine.IsInState(SummonFSM.SummonState.Unpooled)) return true;
             }
             return false;
         }
