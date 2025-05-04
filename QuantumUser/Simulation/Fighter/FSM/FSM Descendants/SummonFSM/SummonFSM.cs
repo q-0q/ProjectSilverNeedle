@@ -14,6 +14,7 @@ namespace Quantum
     {
         public EntityRef playerOwnerEntity;
         public FPVector2 SummonPositionOffset = FPVector2.Zero;
+        public bool DisableUnpoolOwnerSnap = false;
 
         
         public class SummonState : FSMState
@@ -102,7 +103,7 @@ namespace Quantum
             playerDirection->FacingRight = FSM.IsFacingRight(f, playerOwnerEntity);
             
             // set pos
-            SnapToOwnerPosWithOffset(f);
+            if (!DisableUnpoolOwnerSnap) SnapToOwnerPosWithOffset(f);
 
             // clear hit entities
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(EntityRef, out var hitEntitiesTracker);

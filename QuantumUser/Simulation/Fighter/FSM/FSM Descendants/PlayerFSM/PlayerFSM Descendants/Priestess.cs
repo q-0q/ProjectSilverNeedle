@@ -30,7 +30,8 @@ namespace Quantum
             public static int JM;
             public static int JH;
 
-            public static int Summon;
+            public static int SummonHigh;
+            public static int SummonLow;
             public static int Return;
         }
         
@@ -1160,7 +1161,63 @@ namespace Quantum
                 int active = 2;
                 int hurtboxDuration = 7;
                 string path = "Summon";
-                int state = PriestessState.Summon;
+                int state = PriestessState.SummonHigh;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            HitboxCollections = null // ghost hit
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+                
+                var summon = new SectionGroup<SummonPool>()
+                {
+                    Sections = new List<Tuple<int, SummonPool>>()
+                    {
+                        new (9, null),
+                        new (1, SummonPools[0])
+                    }
+                };
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 7;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
+            }
+            
+            
+            {
+                int startup = 24;
+                int active = 2;
+                int hurtboxDuration = 7;
+                string path = "SummonLow";
+                int state = PriestessState.SummonLow;
                 
                 var animation = new FighterAnimation()
                 {
@@ -1365,6 +1422,28 @@ namespace Quantum
             {
                 Aerial = false,
                 AirOk = false,
+                CommandDirection = 2,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 1,
+                RawOk = true,
+                IsSpecial = true,
+                State = PriestessState.SummonHigh,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, Summon);
+            
+            ActionConfig SummonLow = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
                 CommandDirection = 5,
                 Crouching = false,
                 DashCancellable = false,
@@ -1374,14 +1453,14 @@ namespace Quantum
                 InputWeight = 0,
                 RawOk = true,
                 IsSpecial = true,
-                State = PriestessState.Summon,
+                State = PriestessState.SummonLow,
                 
                 Name = "Standing heavy",
                 Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
                 AnimationDisplayFrameIndex = 13
             };
             
-            ConfigureAction(this, Summon);
+            ConfigureAction(this, SummonLow);
             
             ActionConfig Return = new ActionConfig()
             {
@@ -1393,7 +1472,7 @@ namespace Quantum
                 GroundOk = true,
                 InputType = InputSystem.InputType.S,
                 JumpCancellable = false,
-                InputWeight = 1,
+                InputWeight = 2,
                 RawOk = true,
                 IsSpecial = true,
                 State = PriestessState.Return,

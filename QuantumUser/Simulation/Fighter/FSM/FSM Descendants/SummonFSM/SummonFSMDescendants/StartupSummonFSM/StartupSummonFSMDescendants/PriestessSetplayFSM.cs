@@ -37,9 +37,13 @@ namespace Quantum
             Name = "PriestessSetplay";
             StateType = typeof(PriestessSetplayState);
             KinematicAttachPointOffset = FPVector2.Zero;
+            DisableUnpoolOwnerSnap = true;
             SummonPositionOffset = new FPVector2(FP.FromString("5.75"), FP.FromString("7.75"));
 
-            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState.Summon, 10)] =
+            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState.SummonHigh, 10)] =
+                PriestessSetplayTrigger.OwnerStartupComplete;
+            
+            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState.SummonLow, 10)] =
                 PriestessSetplayTrigger.OwnerStartupComplete;
             
             OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Return] =
@@ -82,7 +86,7 @@ namespace Quantum
                                             GrowWidth = false,
                                             GrowHeight = false,
                                             PosX = 0,
-                                            PosY = 0,
+                                            PosY = 1,
                                             Height = 3,
                                             Width = 3,
                                         }
@@ -121,7 +125,7 @@ namespace Quantum
                                             GrowWidth = false,
                                             GrowHeight = false,
                                             PosX = 0,
-                                            PosY = 0,
+                                            PosY = 1,
                                             Height = 5,
                                             Width = 5,
                                         }
@@ -239,18 +243,17 @@ namespace Quantum
         public override void SetupMachine()
         {
             base.SetupMachine();
-            
-            Fsm.Configure(SummonState.Pooled)
-                .Permit(SummonTrigger.Summoned, PriestessSetplayState.Startup);
 
-            
+            Fsm.Configure(SummonState.Pooled)
+                .Permit(SummonTrigger.Summoned, PriestessSetplayState.Tracking);
+                
             Fsm.Configure(PriestessSetplayState.Startup)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(PriestessSetplayTrigger.OwnerStartupComplete, PriestessSetplayState.Tracking);
 
             Fsm.Configure(PriestessSetplayState.Tracking)
-                .OnEntry(SnapToOpponent)
+                .OnEntryFrom(SummonTrigger.Summoned, SnapToPos)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(Trigger.Finish, PriestessSetplayState.Active);
@@ -278,12 +281,15 @@ namespace Quantum
         }
         
         //TriggerParams? triggerParams
-        private void SnapToOpponent(TriggerParams? triggerParams)
+        private void SnapToPos(TriggerParams? triggerParams)
         {
             if (triggerParams is not FrameParam param) return;
             var otherPlayerEntity = Util.GetOtherPlayer(param.f, playerOwnerEntity);
             param.f.Unsafe.TryGetPointer<Transform3D>(otherPlayerEntity, out var otherPlayerTransform);
-            var pos = new FPVector3(otherPlayerTransform->Position.X, Util.Max(otherPlayerTransform->Position.Y, 3), 0);
+
+            bool low = FsmLoader.FSMs[playerOwnerEntity].Fsm.IsInState(PriestessFSM.PriestessState.SummonLow);
+            
+            var pos = new FPVector3(otherPlayerTransform->Position.X, low ? 3 : 9, 0);
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             transform3D->Teleport(param.f, pos);
         }
