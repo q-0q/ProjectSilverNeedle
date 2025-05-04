@@ -19,6 +19,8 @@ namespace Quantum
             public static int Startup;
             public static int Alive;
             public static int Return;
+            public static int Active;
+            public static int Destroy;
         }
         
         public class PriestessSetplayTrigger : OwnerActivationSummonTrigger
@@ -50,9 +52,9 @@ namespace Quantum
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 120;
+            const int lifeSpan = 150;
             
-            StateMapConfig.HitSectionGroup.Dictionary[PriestessSetplayState.Alive] = new SectionGroup<Hit>()
+            StateMapConfig.HitSectionGroup.Dictionary[PriestessSetplayState.Active] = new SectionGroup<Hit>()
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
@@ -100,13 +102,12 @@ namespace Quantum
                     new (ReturnStartup, null),
                     new(30, new Hit()
                     {
-                        Launches = true,
-                        Level = 2,
+                        Level = 1,
                         Projectile = true,
-                        TrajectoryHeight = 4,
-                        TrajectoryXVelocity = -12,
-                        HitPushback = 0,
-                        BlockPushback = 0,
+                        TrajectoryHeight = 3,
+                        TrajectoryXVelocity = -16,
+                        HitPushback = -2,
+                        BlockPushback = -3,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -132,6 +133,16 @@ namespace Quantum
                     new (1, null),
                 }
             };
+
+            var aliveMovement = new SectionGroup<FP>()
+            {
+                Loop = true,
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(10, FP.FromString("1.5"))
+                }
+            };
+            StateMapConfig.MovementSectionGroup.Dictionary[PriestessSetplayState.Alive] = aliveMovement;
             
             
             var startupAnimation = new FighterAnimation()
@@ -161,8 +172,21 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(trackingAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Tracking] = trackingAnimation;
-            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 10;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 14;
             
+            var activeAnimation = new FighterAnimation()
+            {
+                Path = "Active",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    LengthScalar = 4,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(activeAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Active] = activeAnimation;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Active] = 6;
             
             var aliveAnimation = new FighterAnimation()
             {
@@ -193,6 +217,20 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(returnAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Return] = returnAnimation;
             StateMapConfig.Duration.Dictionary[PriestessSetplayState.Return] = 40;
+            
+            var destroyAnimation = new FighterAnimation()
+            {
+                Path = "Destroy",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    LengthScalar = 3,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(destroyAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Destroy] = destroyAnimation;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Destroy] = 6;
 
             
 
@@ -208,25 +246,33 @@ namespace Quantum
             
             Fsm.Configure(PriestessSetplayState.Startup)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
+                .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(PriestessSetplayTrigger.OwnerStartupComplete, PriestessSetplayState.Tracking);
 
             Fsm.Configure(PriestessSetplayState.Tracking)
                 .OnEntry(SnapToOpponent)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
+                .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
+                .Permit(Trigger.Finish, PriestessSetplayState.Active);
+
+            Fsm.Configure(PriestessSetplayState.Active)
+                .SubstateOf(SummonState.Unpooled)
                 .Permit(Trigger.Finish, PriestessSetplayState.Alive);
             
             Fsm.Configure(PriestessSetplayState.Alive)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(Trigger.Finish, SummonState.Pooled)
+                .Permit(Trigger.Finish, PriestessSetplayState.Destroy)
                 .Permit(PriestessSetplayTrigger.OwnerCallUsed, PriestessSetplayState.Return);
 
             Fsm.Configure(PriestessSetplayState.Return)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(Trigger.Finish, SummonState.Pooled)
-                .Permit(SummonTrigger.OwnerHit, SummonState.Pooled)
-                .Permit(PriestessSetplayTrigger.ReturnComplete, SummonState.Pooled);
+                .Permit(Trigger.Finish, PriestessSetplayState.Destroy)
+                .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
+                .Permit(PriestessSetplayTrigger.ReturnComplete, PriestessSetplayState.Destroy);
+
+            Fsm.Configure(PriestessSetplayState.Destroy)
+                .SubstateOf(SummonState.Unpooled)
+                .Permit(Trigger.Finish, SummonState.Unpooled);
 
         }
         

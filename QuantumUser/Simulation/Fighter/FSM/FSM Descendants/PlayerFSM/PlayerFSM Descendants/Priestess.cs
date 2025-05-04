@@ -354,14 +354,14 @@ namespace Quantum
                 }
             };
             //
-            // var wallBounceAnimation = new FighterAnimation()
-            // {
-            //     Path = "WallBounce",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var wallBounceAnimation = new FighterAnimation()
+            {
+                Path = "WallBounce",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             //
             // var groundBounceAnimation = new FighterAnimation()
             // {
@@ -534,8 +534,8 @@ namespace Quantum
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
             StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitAnimation;
             //
-            // Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostWallBounce] = wallBounceAnimation;
+            Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostWallBounce] = wallBounceAnimation;
             //
             // Util.AutoSetupFromAnimationPath(groundBounceAnimation, this);
             // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = groundBounceAnimation;
@@ -938,7 +938,7 @@ namespace Quantum
                                 standHurtbox,
                                 new CollisionBox()
                                 {
-                                    Height = FP.FromString("1.5"),
+                                    Height = FP.FromString("2"),
                                     Width = FP.FromString("4"),
                                     GrowWidth = true,
                                     GrowHeight = false,
@@ -964,9 +964,10 @@ namespace Quantum
                         new(startup, null),
                         new(active, new Hit()
                         {
-                            Level = 3,
-                            TrajectoryHeight = 4,
-                            TrajectoryXVelocity = 8,
+                            Level = 1,
+                            Launches = true,
+                            TrajectoryHeight = FP.FromString("1.5"),
+                            TrajectoryXVelocity = 15,
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
                             GravityScaling = FP.FromString("1"),

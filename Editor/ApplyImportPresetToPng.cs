@@ -25,8 +25,8 @@ public class ApplyImportSettingsFromReference : EditorWindow
 
         // Directory to scan for PNG files
 
-        // string directoryPath = "Assets/Resources/Sprites/Characters/PriestessSetplay";
-        string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/FrameGroups/SoftKnockdown";
+        string directoryPath = "Assets/Resources/Sprites/Characters/PriestessSetplay";
+        // string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/FrameGroups";
         // string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/FrameGroups";
         // string directoryPath = "Assets/Resources/Sprites/AnimationEntities";
         
