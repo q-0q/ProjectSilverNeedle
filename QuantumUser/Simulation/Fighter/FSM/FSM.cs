@@ -140,6 +140,11 @@ namespace Quantum
         }
 
         public abstract EntityRef GetPlayer();
+
+        public FSM GetPlayerFsm()
+        {
+            return FsmLoader.FSMs[GetPlayer()];
+        }
         
         public virtual void IncrementClockByAmount(Frame f, EntityRef entityRef, FP amount)
         {
