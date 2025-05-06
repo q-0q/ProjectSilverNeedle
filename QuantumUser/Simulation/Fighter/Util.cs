@@ -230,7 +230,7 @@ namespace Quantum
         {
             f.Unsafe.TryGetPointer<CutsceneData>(entityRef, out var cutsceneData);
             var index = cutsceneData->cutsceneIndex;
-            var fsm = FsmLoader.FSMs[entityRef];
+            var fsm = FsmLoader.FSMs[cutsceneData->initiator];
             
             try
             {

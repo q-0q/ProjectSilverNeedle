@@ -368,14 +368,14 @@ namespace Quantum
             Debug.Log(border);
             Debug.Log("Cutscene " + cutsceneIndex + " triggered frame " + f.Number);
             
-            var hurtboxPlayerFsm = FsmLoader.FSMs[hurtboxInternal.source];
-            var hitboxPlayerFsm = FsmLoader.FSMs[hitboxInternal.source];
+            var hurtboxPlayerFsm = FsmLoader.FSMs[hurtboxInternal.source].GetPlayerFsm();
+            var hitboxPlayerFsm = FsmLoader.FSMs[hitboxInternal.source].GetPlayerFsm();
 
             Cutscene cutscene;
             
             try
             {
-                cutscene = Cutscenes[cutsceneIndex];
+                cutscene = hitboxPlayerFsm.Cutscenes[cutsceneIndex];
             }
             catch (Exception)
             {

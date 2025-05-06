@@ -29,6 +29,7 @@ namespace Quantum
             public static int Summoned;
             public static int Collided;
             public static int OwnerHit;
+            public static int OwnerCollided;
             public static int Offscreen;
         }
         
@@ -157,12 +158,20 @@ namespace Quantum
                 }
             }
 
-            var fsm = FsmLoader.FSMs[GetPlayer()].Fsm;
-            if (fsm.IsInState(PlayerFSM.PlayerState.Hit) || fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor) || 
-                fsm.IsInState(PlayerFSM.PlayerState.DeadFromGround) || fsm.IsInState(PlayerFSM.PlayerState.DeadFromAir))
+            var ownerMachine = FsmLoader.FSMs[GetPlayer()].Fsm;
+            if (ownerMachine.IsInState(PlayerFSM.PlayerState.Hit) || ownerMachine.IsInState(PlayerFSM.PlayerState.CutsceneReactor) || 
+                ownerMachine.IsInState(PlayerFSM.PlayerState.DeadFromGround) || ownerMachine.IsInState(PlayerFSM.PlayerState.DeadFromAir))
             {
                 Fsm.Fire(SummonTrigger.OwnerHit, triggerParams);
             }
+            
+            if (GetPlayerFsm() is not PlayerFSM playerFsm) return;
+            if (!playerFsm.IsWhiffed(f))
+            {
+                Fsm.Fire(SummonTrigger.OwnerCollided, triggerParams);
+            }
+            
+            
 
         }
         

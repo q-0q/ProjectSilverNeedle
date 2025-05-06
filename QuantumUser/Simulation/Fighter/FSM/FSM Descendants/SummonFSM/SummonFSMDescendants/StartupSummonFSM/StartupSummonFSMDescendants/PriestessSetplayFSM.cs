@@ -16,7 +16,7 @@ namespace Quantum
         public class PriestessSetplayState : OwnerActivationSummonState
         {
             public static int Tracking;
-            public static int Startup;
+            // public static int Startup;
             public static int Alive;
             public static int Return;
             public static int Active;
@@ -38,7 +38,7 @@ namespace Quantum
             StateType = typeof(PriestessSetplayState);
             KinematicAttachPointOffset = FPVector2.Zero;
             DisableUnpoolOwnerSnap = true;
-            SummonPositionOffset = new FPVector2(FP.FromString("5.75"), FP.FromString("7.75"));
+            SummonPositionOffset = new FPVector2(FP.FromString("5.75"), FP.FromString("-1"));
 
             OwnerActivationFrameTriggers[(PriestessFSM.PriestessState.SummonHigh, 10)] =
                 PriestessSetplayTrigger.OwnerStartupComplete;
@@ -56,7 +56,7 @@ namespace Quantum
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 150;
+            const int lifeSpan = 110;
             
             StateMapConfig.HitSectionGroup.Dictionary[PriestessSetplayState.Active] = new SectionGroup<Hit>()
             {
@@ -70,8 +70,8 @@ namespace Quantum
                         Projectile = true,
                         HitPushback = 0,
                         BlockPushback = 0,
-                        GroundBounce = true,
-                        TrajectoryHeight = 5,
+                        // GroundBounce = true,
+                        TrajectoryHeight = 1,
                         TrajectoryXVelocity = -1,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
@@ -108,8 +108,8 @@ namespace Quantum
                     {
                         Level = 1,
                         Projectile = true,
-                        TrajectoryHeight = 3,
-                        TrajectoryXVelocity = -16,
+                        TrajectoryHeight = 2,
+                        TrajectoryXVelocity = -13,
                         HitPushback = -2,
                         BlockPushback = -3,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -143,25 +143,25 @@ namespace Quantum
                 Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(10, FP.FromString("1.5"))
+                    new(10, FP.FromString("2"))
                 }
             };
             StateMapConfig.MovementSectionGroup.Dictionary[PriestessSetplayState.Alive] = aliveMovement;
             
             
-            var startupAnimation = new FighterAnimation()
-            {
-                Path = "Startup",
-                SectionGroup = new SectionGroup<int>()
-                {
-                    Loop = true,
-                    LengthScalar = 4,
-                    AutoFromAnimationPath = true
-                }
-            };
-            
-            Util.AutoSetupFromAnimationPath(startupAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Startup] = startupAnimation;
+            // var startupAnimation = new FighterAnimation()
+            // {
+            //     Path = "Startup",
+            //     SectionGroup = new SectionGroup<int>()
+            //     {
+            //         Loop = true,
+            //         LengthScalar = 4,
+            //         AutoFromAnimationPath = true
+            //     }
+            // };
+            //
+            // Util.AutoSetupFromAnimationPath(startupAnimation, this);
+            // StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Startup] = startupAnimation;
             
             
             var trackingAnimation = new FighterAnimation()
@@ -176,7 +176,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(trackingAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Tracking] = trackingAnimation;
-            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 19;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 10;
             
             var activeAnimation = new FighterAnimation()
             {
@@ -247,10 +247,10 @@ namespace Quantum
             Fsm.Configure(SummonState.Pooled)
                 .Permit(SummonTrigger.Summoned, PriestessSetplayState.Tracking);
                 
-            Fsm.Configure(PriestessSetplayState.Startup)
-                .SubstateOf(SummonState.Unpooled)
-                .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
-                .Permit(PriestessSetplayTrigger.OwnerStartupComplete, PriestessSetplayState.Tracking);
+            // Fsm.Configure(PriestessSetplayState.Startup)
+            //     .SubstateOf(SummonState.Unpooled)
+            //     .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
+            //     .Permit(PriestessSetplayTrigger.OwnerStartupComplete, PriestessSetplayState.Tracking);
 
             Fsm.Configure(PriestessSetplayState.Tracking)
                 .OnEntryFrom(SummonTrigger.Summoned, SnapToPos)
@@ -260,10 +260,12 @@ namespace Quantum
 
             Fsm.Configure(PriestessSetplayState.Active)
                 .SubstateOf(SummonState.Unpooled)
+                .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(Trigger.Finish, PriestessSetplayState.Alive);
             
             Fsm.Configure(PriestessSetplayState.Alive)
                 .SubstateOf(SummonState.Unpooled)
+                .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(Trigger.Finish, PriestessSetplayState.Destroy)
                 .Permit(PriestessSetplayTrigger.OwnerCallUsed, PriestessSetplayState.Return);
 
@@ -275,7 +277,7 @@ namespace Quantum
 
             Fsm.Configure(PriestessSetplayState.Destroy)
                 .SubstateOf(SummonState.Unpooled)
-                .Permit(SummonTrigger.Summoned, PriestessSetplayState.Startup)
+                .Permit(SummonTrigger.Summoned, PriestessSetplayState.Tracking)
                 .Permit(Trigger.Finish, SummonState.Pooled);
 
         }
@@ -289,14 +291,14 @@ namespace Quantum
 
             bool low = FsmLoader.FSMs[playerOwnerEntity].Fsm.IsInState(PriestessFSM.PriestessState.SummonLow);
             
-            var pos = new FPVector3(otherPlayerTransform->Position.X, low ? 3 : 9, 0);
+            var pos = new FPVector3(otherPlayerTransform->Position.X, low ? 2 : 9, 0);
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             transform3D->Teleport(param.f, pos);
         }
         
         protected override void SummonMove(Frame f)
         {
-            if (Fsm.IsInState(PriestessSetplayState.Startup)) SnapToOwnerPosWithOffset(f);
+            // if (Fsm.IsInState(PriestessSetplayState.Startup)) SnapToOwnerPosWithOffset(f);
             if (Fsm.IsInState(PriestessSetplayState.Return))
             {
                 f.Unsafe.TryGetPointer<Transform3D>(playerOwnerEntity, out var ownerTransform3d);
