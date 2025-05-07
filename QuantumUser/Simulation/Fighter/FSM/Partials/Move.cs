@@ -11,11 +11,12 @@ namespace Quantum
 {
     public unsafe partial class FSM
     {
+        public 
         static FP _crossupThreshhold = FP.FromString("0.01");
         // private const bool AllowCrossup = false;
         protected static int _pushbackDuration = 23;
         protected static int _momentumDuration = 35;
-        private FP _wallsSkew = FP.FromString("0.99");
+        
 
         private FP _pushboxResistance = FP.FromString("0.3"); // 0 - 1;
 
@@ -32,8 +33,6 @@ namespace Quantum
             PushbackMove(f);
             PushboxCollide(f);
             SummonMove(f);
-
-            ClampPosToWall(f);
         }
 
         protected virtual void SummonMove(Frame f) { }
@@ -81,9 +80,20 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<Transform3D>(entityRef, out var transform3D);
             FP slowdownMod = FsmLoader.FSMs[entityRef].GetSlowdownMod(f, entityRef);
-
-
-            transform3D->Position += (v.XYO * slowdownMod);
+            var v3 = (v.XYO * slowdownMod);
+            
+            if (FsmLoader.FSMs[entityRef] is PlayerFSM){
+                f.Unsafe.TryGetPointer<Transform3D>(Util.GetOtherPlayer(f, entityRef), out var opponentTransform3d);
+                var dX = Util.Abs((transform3D->Position + v3).X - opponentTransform3d->Position.X);
+                var maxPlayerDistance = 26;
+                if (dX > maxPlayerDistance)
+                {
+                    v3.X = 0;
+                }
+            }
+            
+            transform3D->Position += v3;
+            
         }
 
         private static bool CanCrossup(Frame f, CollisionBoxInternal a, CollisionBoxInternal b)
@@ -180,19 +190,7 @@ namespace Quantum
 
 
 
-        public void ClampPosToWall(Frame f)
-        {
-            f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
 
-            FP clampX = Fsm.IsInState(PlayerFSM.PlayerState.Air) // || Fsm.IsInState(State.KinematicReceiver)
-                ? WallHalfLength + 1
-                : WallHalfLength;
-            if (Util.IsPlayerFacingAwayFromWall(f, EntityRef)) clampX *= _wallsSkew;
-
-            var lerpedX = Util.Lerp(transform3D->Position.X, Util.Clamp(transform3D->Position.X, -clampX, clampX),
-                Util.FrameLengthInSeconds * 60);
-            transform3D->Position.X = lerpedX;
-        }
         
         protected virtual void MomentumMove(Frame f) { }
     }

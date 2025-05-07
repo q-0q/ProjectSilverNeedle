@@ -11,10 +11,12 @@ public class CameraTargetController : MonoBehaviour
     public static CameraTargetController Instance;
 
 
-    public static float cameraMinCharDistance = 20;
-    public static float cameraMaxCharDistance = 30;
+    public static float cameraMinCharDistance = 15;
+    public static float cameraMaxCharDistance = 20;
     public static float cameraMaxZ = 3;
-    public static float cameraMinZ = -3;
+    public static float cameraMinZ = 1;
+    public static float cameraMaxY = 0.5f;
+    public static float cameraMinY = 0f;
     
     
     private static float _cameraXPan = PlayerFSM.WallHalfLength.AsFloat - 7;
@@ -84,9 +86,10 @@ public class CameraTargetController : MonoBehaviour
         float deltaX = Mathf.Abs(_player0Pos.x - _player1Pos.x);
         var inverseLerp = Mathf.InverseLerp(cameraMinCharDistance, cameraMaxCharDistance, deltaX);
         float z = Mathf.Lerp(cameraMaxZ, cameraMinZ, inverseLerp);
+        float yMod = Mathf.Lerp(cameraMinY, cameraMaxY, inverseLerp);
         
         transform.position =
-            new Vector3(Mathf.Lerp(transform.position.x, x, Time.deltaTime * 12f), Mathf.Lerp(transform.position.y, y + _baseYPos, Time.deltaTime * 20f), z);
+            new Vector3(Mathf.Lerp(transform.position.x, x, Time.deltaTime * 12f), Mathf.Lerp(transform.position.y, y + _baseYPos + yMod, Time.deltaTime * 20f), z);
     }
     
 }

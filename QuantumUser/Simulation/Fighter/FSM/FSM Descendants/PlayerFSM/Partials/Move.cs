@@ -9,6 +9,7 @@ namespace Quantum
     {
         
         private static FP _throwTechPushback = FP.FromString("6");
+        private FP _wallsSkew = FP.FromString("0.99");
 
         private void CutsceneReactorMove(Frame f)
         {
@@ -41,9 +42,26 @@ namespace Quantum
             }
             
             
+            
             CutsceneReactorMove(f);
             SnapToGround(f);
             base.Move(f);
+            
+            ClampPosToWall(f);
+        }
+        
+        public void ClampPosToWall(Frame f)
+        {
+            f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+
+            FP clampX = Fsm.IsInState(PlayerFSM.PlayerState.Air)
+                ? WallHalfLength + 1
+                : WallHalfLength;
+            if (Util.IsPlayerFacingAwayFromWall(f, EntityRef)) clampX *= _wallsSkew;
+
+            var lerpedX = Util.Lerp(transform3D->Position.X, Util.Clamp(transform3D->Position.X, -clampX, clampX),
+                Util.FrameLengthInSeconds * 60);
+            transform3D->Position.X = lerpedX;
         }
         
         private void SnapToGround(Frame f)
