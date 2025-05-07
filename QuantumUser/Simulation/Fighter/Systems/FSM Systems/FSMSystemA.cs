@@ -27,6 +27,7 @@ namespace Quantum
             fsm.DoFinish(f);
             fsm.CheckForLand(f);
             InputSystem.FireFsmFromInput(f, fsm);
+            fsm.HandleSummonFSMTriggers(f);
             
             
             // Capture collision snapshot

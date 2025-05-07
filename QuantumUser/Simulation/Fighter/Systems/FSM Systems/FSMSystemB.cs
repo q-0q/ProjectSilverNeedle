@@ -23,9 +23,6 @@ namespace Quantum
                 // Receive collisions
                 fsm.HitboxHurtboxCollide(f);
 
-                // Fire summon triggers
-                fsm.HandleSummonFSMTriggers(f);
-
                 // Animation
                 fsm.Animation(f);
             }

@@ -52,7 +52,7 @@ namespace Quantum
             if (fsm is not PlayerFSM playerFsm) return;
             
             f.Events.EntityVibrate(fsm.EntityRef, FP.FromString("0.40"), FP.FromString("0.8"), 20);
-            playerFsm.MakeNotWhiffed(f, hitboxData.source);
+            playerFsm.MakeNotWhiffed(f, hitboxData);
             var stop = Hit.AttackLevelHitstop[hitboxData.level] + ClashHitstopBonus;
             HitstopSystem.EnqueueHitstop(f, stop);
             
@@ -145,7 +145,7 @@ namespace Quantum
                 WallBounces = hitboxData.wallBounce
             };
             
-            MakeNotWhiffed(f, hitboxData.source);
+            MakeNotWhiffed(f, hitboxData);
 
             
             HandlePushback(f, hitboxData, isBlocking, 1);

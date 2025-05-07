@@ -18,21 +18,27 @@ namespace Quantum
             whiffData->whiffed = true;
         }
 
-        private void MakeNotWhiffed(Frame f, EntityRef entityRef)
+        private void MakeNotWhiffed(Frame f, CollisionBoxInternal hitboxInternal)
         {
-            entityRef = FsmLoader.FSMs[entityRef].GetPlayer();
+            var entityRef = FsmLoader.FSMs[hitboxInternal.source].GetPlayer();
             Debug.Log("made not whiffed " + entityRef);
             if (f.Unsafe.TryGetPointer<WhiffData>(entityRef, out var whiffData))
             {
                 whiffData->whiffed = false;
+                whiffData->notWhiffedHitId = hitboxInternal.lookupId;
             };
-            // f.Set(entityRef, *whiffData);
         }
 
         public bool IsWhiffed(Frame f)
         {
             f.Unsafe.TryGetPointer<WhiffData>(EntityRef, out var whiffData);
             return whiffData->whiffed;
+        }
+        
+        public bool IsNotWhiffedFromHit(Frame f, int hitId)
+        {
+            f.Unsafe.TryGetPointer<WhiffData>(EntityRef, out var whiffData);
+            return !whiffData->whiffed && whiffData->notWhiffedHitId == hitId;
         }
     }
 }

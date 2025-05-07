@@ -1384,19 +1384,23 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct WhiffData : Quantum.IComponent {
-    public const Int32 SIZE = 4;
+    public const Int32 SIZE = 8;
     public const Int32 ALIGNMENT = 4;
-    [FieldOffset(0)]
+    [FieldOffset(4)]
     public QBoolean whiffed;
+    [FieldOffset(0)]
+    public Int32 notWhiffedHitId;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 1663;
         hash = hash * 31 + whiffed.GetHashCode();
+        hash = hash * 31 + notWhiffedHitId.GetHashCode();
         return hash;
       }
     }
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (WhiffData*)ptr;
+        serializer.Stream.Serialize(&p->notWhiffedHitId);
         QBoolean.Serialize(&p->whiffed, serializer);
     }
   }

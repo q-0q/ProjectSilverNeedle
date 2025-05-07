@@ -34,6 +34,9 @@ namespace Quantum
             public static int SummonLow;
             public static int Return;
         }
+
+        public Hit _5HHit;
+        public Hit _2HHit;
         
         
         public PriestessFSM()
@@ -1319,7 +1322,7 @@ namespace Quantum
             
             
             {
-                int startup = 18;
+                int startup = 20;
                 int active = 2;
                 int hurtboxDuration = 6;
                 string path = "_5H";
@@ -1338,9 +1341,8 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FP>>()
                     {
-                        new(startup - active, 0),
-                        new(active, 2),
-                        // new(active + 4, -1),
+                        new(startup - 2, 0),
+                        new(2, 2),
                         new (10, 0)
                     }
                 };
@@ -1381,47 +1383,48 @@ namespace Quantum
                         }),
                     }
                 };
-                
+
+                _5HHit = new Hit()
+                {
+                    Level = 3,
+                    TrajectoryHeight = 6,
+                    TrajectoryXVelocity = 4,
+                    BlockPushback = FP.FromString("2.5"),
+                    HitPushback = FP.FromString("1.5"),
+                    GravityScaling = FP.FromString("1"),
+                    GravityProration = FP.FromString("1.4"),
+                    GroundBounce = true,
+                    VisualHitPositionOffset = new FPVector2(4, 5),
+                    VisualAngle = 70,
+                    Damage = 20,
+                    HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                    {
+                        Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                        {
+                            new (active, new CollisionBoxCollection()
+                            {
+                                CollisionBoxes = new List<CollisionBox>()
+                                {
+                                    new CollisionBox()
+                                    {
+                                        Height = 3,
+                                        Width = 4,
+                                        GrowWidth = true,
+                                        GrowHeight = false,
+                                        PosY = FP.FromString("4.75"),
+                                        PosX = 0
+                                    }
+                                }
+                            })
+                        }
+                    }
+                };
                 var hitboxes = new SectionGroup<Hit>()
                 {
                     Sections = new List<Tuple<int, Hit>>()
                     {
                         new(startup, null),
-                        new(active, new Hit()
-                        {
-                            Level = 3,
-                            TrajectoryHeight = 4,
-                            TrajectoryXVelocity = 6,
-                            BlockPushback = FP.FromString("2.5"),
-                            HitPushback = FP.FromString("1.5"),
-                            GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.4"),
-                            GroundBounce = true,
-                            VisualHitPositionOffset = new FPVector2(4, 5),
-                            VisualAngle = 70,
-                            Damage = 20,
-                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
-                            {
-                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
-                                {
-                                    new (active, new CollisionBoxCollection()
-                                    {
-                                        CollisionBoxes = new List<CollisionBox>()
-                                        {
-                                            new CollisionBox()
-                                            {
-                                                Height = 3,
-                                                Width = 4,
-                                                GrowWidth = true,
-                                                GrowHeight = false,
-                                                PosY = FP.FromString("4.75"),
-                                                PosX = 0
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                        }),
+                        new(active, _5HHit),
                         new (20, null)
                     }
                 };
@@ -1440,7 +1443,7 @@ namespace Quantum
                     Sections = new List<Tuple<int, int>>()
                     {
                         new(startup, -1),
-                        new(6, 6),
+                        new(8, 6),
                         new(10, -1),
                     }
                 };
@@ -1449,7 +1452,7 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, SummonPool>>()
                     {
-                        new (2, null),
+                        new (16, null),
                         new (1, SummonPools[1])
                     }
                 };
@@ -1463,6 +1466,7 @@ namespace Quantum
                 StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
                 StateMapConfig.SmearFrame.Dictionary[state] = smear;
                 StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 6;
             }
             
         }
