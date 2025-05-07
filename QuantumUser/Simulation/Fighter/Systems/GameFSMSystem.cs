@@ -274,6 +274,7 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<WhiffData>(entityRef, out var whiffData);
             whiffData->whiffed = true;
+            whiffData->notWhiffedHitId = 0;
             
             f.Unsafe.TryGetPointer<KinematicsData>(entityRef, out var kinematicsData);
             kinematicsData->attachPosition = FPVector2.Zero;

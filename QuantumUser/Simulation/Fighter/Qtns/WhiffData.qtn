@@ -1,4 +1,5 @@
 component WhiffData
 {
     bool whiffed;
+    int notWhiffedHitId;
 }

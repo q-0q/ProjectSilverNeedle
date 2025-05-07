@@ -32,9 +32,9 @@ namespace Quantum
             Name = "PriestessHorizontalFireball";
             StateType = typeof(PriestessHorizontalFireballState);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(FP.FromString("5.25"), FP.FromString("2.5"));
+            SummonPositionOffset = new FPVector2(FP.FromString("4.25"), FP.FromString("3.5"));
 
-            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState._5H, 20)] =
+            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState._5H, 21)] =
                 PriestessHorizontalFireballTrigger.OwnerStartupComplete;
         }
         
@@ -50,11 +50,11 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, Hit>>()
                 {
-                    new (3, null),
+                    new (1, null),
                     new(3, new Hit()
                     {
                         // Launches = true,
-                        Level = 1,
+                        Level = 0,
                         Projectile = true,
                         HitPushback = 0,
                         BlockPushback = 0,
@@ -159,12 +159,13 @@ namespace Quantum
             Fsm.Configure(PriestessHorizontalFireballState.Startup)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, PriestessHorizontalFireballState.Destroy)
-                .Permit(SummonTrigger.OwnerCollided, PriestessHorizontalFireballState.Destroy)
+                .PermitIf(SummonTrigger.OwnerCollided, SummonState.Pooled, IsOwnerInCorrectStateToSnuff)
                 .Permit(PriestessHorizontalFireballTrigger.OwnerStartupComplete, PriestessHorizontalFireballState.Active);
 
             Fsm.Configure(PriestessHorizontalFireballState.Active)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(Trigger.Finish, PriestessHorizontalFireballState.Destroy)
+                .PermitIf(SummonTrigger.OwnerCollided, SummonState.Pooled, IsOwnerInCorrectStateToSnuff)
                 .Permit(SummonTrigger.Collided, PriestessHorizontalFireballState.Destroy);
             
             Fsm.Configure(PriestessHorizontalFireballState.Destroy)
@@ -172,6 +173,13 @@ namespace Quantum
                 .Permit(SummonTrigger.Summoned, PriestessHorizontalFireballState.Startup)
                 .Permit(Trigger.Finish, SummonState.Pooled);
 
+        }
+
+        private bool IsOwnerInCorrectStateToSnuff(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam frameParam) return false;
+            if (GetPlayerFsm() is not PriestessFSM priestessFsm) return false;
+            return priestessFsm.IsNotWhiffedFromHit(frameParam.f, priestessFsm._5HHit.LookupId);
         }
         
 //         protected override void SummonMove(Frame f)

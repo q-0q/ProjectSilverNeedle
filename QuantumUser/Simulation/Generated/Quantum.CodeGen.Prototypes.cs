@@ -670,6 +670,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.WhiffData))]
   public unsafe partial class WhiffDataPrototype : ComponentPrototype<Quantum.WhiffData> {
     public QBoolean whiffed;
+    public Int32 notWhiffedHitId;
     partial void MaterializeUser(Frame frame, ref Quantum.WhiffData result, in PrototypeMaterializationContext context);
     public override Boolean AddToEntity(FrameBase f, EntityRef entity, in PrototypeMaterializationContext context) {
         Quantum.WhiffData component = default;
@@ -678,6 +679,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.WhiffData result, in PrototypeMaterializationContext context = default) {
         result.whiffed = this.whiffed;
+        result.notWhiffedHitId = this.notWhiffedHitId;
         MaterializeUser(frame, ref result, in context);
     }
   }

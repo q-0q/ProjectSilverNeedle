@@ -71,8 +71,9 @@ namespace Quantum
                         HitPushback = 0,
                         BlockPushback = 0,
                         // GroundBounce = true,
-                        TrajectoryHeight = 1,
-                        TrajectoryXVelocity = -1,
+                        TrajectoryHeight = FP.FromString("0.25"),
+                        TrajectoryXVelocity = 15,
+                        GravityProration = FP.FromString("1.7"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -108,10 +109,11 @@ namespace Quantum
                     {
                         Level = 1,
                         Projectile = true,
-                        TrajectoryHeight = 2,
+                        TrajectoryHeight = FP.FromString("1.75"),
                         TrajectoryXVelocity = -13,
                         HitPushback = -2,
                         BlockPushback = -3,
+                        GravityProration = FP.FromString("1.7"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -126,8 +128,8 @@ namespace Quantum
                                             GrowHeight = false,
                                             PosX = 0,
                                             PosY = 1,
-                                            Height = 5,
-                                            Width = 5,
+                                            Height = 3,
+                                            Width = 3,
                                         }
                                     }
                                 })
