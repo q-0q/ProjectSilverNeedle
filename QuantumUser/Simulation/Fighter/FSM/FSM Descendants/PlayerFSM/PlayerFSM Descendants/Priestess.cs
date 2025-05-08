@@ -824,8 +824,8 @@ namespace Quantum
                                 standHurtbox,
                                 new CollisionBox()
                                 {
-                                    Height = FP.FromString("1.5"),
-                                    Width = FP.FromString("2.5"),
+                                    Height = 2,
+                                    Width = FP.FromString("5"),
                                     GrowWidth = true,
                                     GrowHeight = false,
                                     PosY = FP.FromString("4.75"),
@@ -856,8 +856,8 @@ namespace Quantum
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
                             GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.2"),
-                            VisualHitPositionOffset = new FPVector2(2, 5),
+                            GravityProration = FP.FromString("1.1"),
+                            VisualHitPositionOffset = new FPVector2(6, 5),
                             Damage = 20,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
@@ -869,8 +869,8 @@ namespace Quantum
                                         {
                                             new CollisionBox()
                                             {
-                                                Height = 3,
-                                                Width = FP.FromString("2"),
+                                                Height = 2,
+                                                Width = FP.FromString("5"),
                                                 GrowWidth = true,
                                                 GrowHeight = false,
                                                 PosY = FP.FromString("4.75"),
@@ -1116,7 +1116,7 @@ namespace Quantum
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
                             GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.2"),
+                            GravityProration = FP.FromString("1.1"),
                             VisualHitPositionOffset = new FPVector2(4, 1),
                             Type = Hit.HitType.Low,
                             Damage = 20,
@@ -1322,7 +1322,7 @@ namespace Quantum
             
             
             {
-                int startup = 20;
+                int startup = 16;
                 int active = 2;
                 int hurtboxDuration = 6;
                 string path = "_5H";
@@ -1365,11 +1365,11 @@ namespace Quantum
                                 standHurtbox,
                                 new CollisionBox()
                                 {
-                                    Height = FP.FromString("3.5"),
-                                    Width = FP.FromString("3.5"),
+                                    Height = FP.FromString("7"),
+                                    Width = FP.FromString("8"),
                                     GrowWidth = true,
-                                    GrowHeight = false,
-                                    PosY = FP.FromString("4.75"),
+                                    GrowHeight = true,
+                                    PosY = FP.FromString("0"),
                                     PosX = 0
                                 }
                             }
@@ -1407,11 +1407,11 @@ namespace Quantum
                                 {
                                     new CollisionBox()
                                     {
-                                        Height = 3,
-                                        Width = 4,
+                                        Height = FP.FromString("7"),
+                                        Width = FP.FromString("8"),
                                         GrowWidth = true,
-                                        GrowHeight = false,
-                                        PosY = FP.FromString("4.75"),
+                                        GrowHeight = true,
+                                        PosY = FP.FromString("0"),
                                         PosX = 0
                                     }
                                 }
@@ -1465,7 +1465,7 @@ namespace Quantum
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
                 StateMapConfig.SmearFrame.Dictionary[state] = smear;
-                StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
+                // StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 6;
             }
             
@@ -1587,6 +1587,7 @@ namespace Quantum
                 InputWeight = 0,
                 RawOk = true,
                 IsSpecial = false,
+                SpecialCancellable = false,
                 State = PriestessState._5H,
                 
                 Name = "Standing heavy",
