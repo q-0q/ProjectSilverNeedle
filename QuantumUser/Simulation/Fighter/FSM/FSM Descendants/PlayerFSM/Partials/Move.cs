@@ -106,14 +106,14 @@ namespace Quantum
                 new FPVector2(pushbackVelocityThisFrame, 0);
 
             bool inCorner = Util.IsPlayerInCorner(f, EntityRef);
-            EntityRef entityRef = inCorner ? Util.GetOtherPlayer(f, EntityRef) : EntityRef;
+            EntityRef entityRef = inCorner && (v.X < 0 == IsFacingRight(f, EntityRef)) ? Util.GetOtherPlayer(f, EntityRef) : EntityRef;
             
             // This is like the hackiest workaround ever for the problem related to corner pushback
             // reversion while under a time modifier causing the other player to get 1/x times pushback
             // due to reasons that I really honestly cannot understand for the life of me but this seems
             // to nullify it in most cases
             FP slowMod = inCorner ? GetSlowdownMod(f, EntityRef) : 1;
-            if (inCorner) v.X *= (FP.Minus_1 * slowMod);
+            if (inCorner && (v.X < 0 == IsFacingRight(f, EntityRef))) v.X *= (FP.Minus_1 * slowMod);
 
             ApplyFlippedMovement(f, v, entityRef, true);
         }
