@@ -11,9 +11,9 @@ public class CameraTargetController : MonoBehaviour
     public static CameraTargetController Instance;
 
 
-    public static float cameraMinCharDistance = 15;
+    public static float cameraMinCharDistance = 10;
     public static float cameraMaxCharDistance = 20;
-    public static float cameraMaxZ = 3;
+    public static float cameraMaxZ = 4;
     public static float cameraMinZ = 1;
     public static float cameraMaxY = 0.5f;
     public static float cameraMinY = 0f;
