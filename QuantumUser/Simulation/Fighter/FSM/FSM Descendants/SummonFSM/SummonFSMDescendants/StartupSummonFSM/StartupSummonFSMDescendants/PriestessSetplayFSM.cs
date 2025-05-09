@@ -110,7 +110,7 @@ namespace Quantum
                         Level = 1,
                         Projectile = true,
                         TrajectoryHeight = FP.FromString("2"),
-                        TrajectoryXVelocity = -13,
+                        TrajectoryXVelocity = -16,
                         HitPushback = -2,
                         BlockPushback = -3,
                         GravityProration = FP.FromString("1.7"),
@@ -142,10 +142,12 @@ namespace Quantum
 
             var aliveMovement = new SectionGroup<FP>()
             {
-                Loop = true,
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(10, FP.FromString("1"))
+                    new(15, FP.FromString("4")),
+                    new(15, FP.FromString("1.5")),
+                    new(15, FP.FromString("0.5")),
+                    new(10, FP.FromString("0"))
                 }
             };
             StateMapConfig.MovementSectionGroup.Dictionary[PriestessSetplayState.Alive] = aliveMovement;
