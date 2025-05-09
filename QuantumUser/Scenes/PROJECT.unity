@@ -5780,7 +5780,7 @@ MonoBehaviour:
       Value: 0
     dash:
       Value: 0
-    inputType: 3
+    inputType: 2
     commandDirection: 5
 --- !u!114 &147541240
 MonoBehaviour:

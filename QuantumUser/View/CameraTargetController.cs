@@ -16,7 +16,7 @@ public class CameraTargetController : MonoBehaviour
     public static float cameraMaxZ = 4;
     public static float cameraMinZ = 1;
     public static float cameraMaxY = 0.5f;
-    public static float cameraMinY = 0f;
+    public static float cameraMinY = -0.25f;
     
     
     private static float _cameraXPan = PlayerFSM.WallHalfLength.AsFloat - 7;

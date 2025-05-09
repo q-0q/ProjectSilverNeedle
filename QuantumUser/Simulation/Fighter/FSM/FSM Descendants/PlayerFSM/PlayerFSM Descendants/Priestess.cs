@@ -308,7 +308,7 @@ namespace Quantum
             //         AutoFromAnimationPath = true
             //     }
             // };
-            //
+            
             var dashAnimation = new FighterAnimation()
             {
                 Path = "Dash",
@@ -317,7 +317,7 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
+            
             var backdashAnimation = new FighterAnimation()
             {
                 Path = "Dash", // temp
@@ -326,7 +326,7 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
+            
             var standHitHighAnimation = new FighterAnimation()
             {
                 Path = "StandHitHigh",
@@ -344,16 +344,16 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
-            // var crouchHitAnimation = new FighterAnimation()
-            // {
-            //     Path = "CrouchHit",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
+            
+            var crouchHitAnimation = new FighterAnimation()
+            {
+                Path = "CrouchHit",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var airHitAnimation = new FighterAnimation()
             {
                 Path = "AirHit",
@@ -362,7 +362,7 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
+            
             var wallBounceAnimation = new FighterAnimation()
             {
                 Path = "WallBounce",
@@ -371,16 +371,16 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
-            // var groundBounceAnimation = new FighterAnimation()
-            // {
-            //     Path = "GroundBounce",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
+            
+            var groundBounceAnimation = new FighterAnimation()
+            {
+                Path = "GroundBounce",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var standBlockAnimation = new FighterAnimation()
             {
                 Path = "StandBlock",
@@ -389,7 +389,7 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
+            
             var breakAnimation = new FighterAnimation()
             {
                 Path = "Break",
@@ -398,16 +398,16 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
-            // var proxStandBlockAnimation = new FighterAnimation()
-            // {
-            //     Path = "ProxStandBlock",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
+            
+            var proxStandBlockAnimation = new FighterAnimation()
+            {
+                Path = "StandProxBlock",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var crouchBlockAnimation = new FighterAnimation()
             {
                 Path = "CrouchBlock",
@@ -416,34 +416,34 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
-            // var proxCrouchBlockAnimation = new FighterAnimation()
-            // {
-            //     Path = "ProxCrouchBlock",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
-            // var airBlockAnimation = new FighterAnimation()
-            // {
-            //     Path = "AirBlock",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
-            // var hardKnockdownAnimation = new FighterAnimation()
-            // {
-            //     Path = "HardKnockdown",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
+            
+            var proxCrouchBlockAnimation = new FighterAnimation()
+            {
+                Path = "CrouchProxBlock",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+
+            var airBlockAnimation = new FighterAnimation()
+            {
+                Path = "AirBlock",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+
+            var hardKnockdownAnimation = new FighterAnimation()
+            {
+                Path = "HardKnockdown",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var softKnockdownAnimation = new FighterAnimation()
             {
                 Path = "SoftKnockdown",
@@ -452,34 +452,34 @@ namespace Quantum
                     AutoFromAnimationPath = true
                 }
             };
-            //
-            // var deadFromGroundAnimation = new FighterAnimation()
-            // {
-            //     Path = "DeadFromGround",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
-            // var deadFromAirAnimation = new FighterAnimation()
-            // {
-            //     Path = "DeadFromAir",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
-            // var throwAnimation = new FighterAnimation()
-            // {
-            //     Path = "Throw",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
-            //
+            
+            var deadFromGroundAnimation = new FighterAnimation()
+            {
+                Path = "DeadFromGround",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var deadFromAirAnimation = new FighterAnimation()
+            {
+                Path = "DeadFromAir",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+
+            var throwAnimation = new FighterAnimation()
+            {
+                Path = "Throw",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+
             var jumpsquatAnimation = new FighterAnimation()
             {
                 Path = "Jumpsquat",
@@ -536,8 +536,8 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(standHitLowAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandHitLow] = standHitLowAnimation;
             //
-            // Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchHit] = crouchHitAnimation;
+            Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchHit] = crouchHitAnimation;
             //
             Util.AutoSetupFromAnimationPath(airHitAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
@@ -545,42 +545,42 @@ namespace Quantum
             //
             Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostWallBounce] = wallBounceAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(groundBounceAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = groundBounceAnimation;
-            //
+            
+            Util.AutoSetupFromAnimationPath(groundBounceAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostGroundBounce] = groundBounceAnimation;
+            
             Util.AutoSetupFromAnimationPath(standBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.StandBlock] = standBlockAnimation;
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Tech] = standBlockAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(proxStandBlockAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = proxStandBlockAnimation;
-            // StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = 100;
-            //
+            
+            Util.AutoSetupFromAnimationPath(proxStandBlockAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = proxStandBlockAnimation;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.ProxStandBlock] = 100;
+            
             Util.AutoSetupFromAnimationPath(crouchBlockAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchBlock] = crouchBlockAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(proxCrouchBlockAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = proxCrouchBlockAnimation;
-            // StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = 100;
-            //
-            // Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirBlock] = airBlockAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = hardKnockdownAnimation;
-            //
+            
+            Util.AutoSetupFromAnimationPath(proxCrouchBlockAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = proxCrouchBlockAnimation;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.ProxCrouchBlock] = 100;
+            
+            Util.AutoSetupFromAnimationPath(airBlockAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirBlock] = airBlockAnimation;
+            
+            Util.AutoSetupFromAnimationPath(hardKnockdownAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.HardKnockdown] = hardKnockdownAnimation;
+            
             Util.AutoSetupFromAnimationPath(softKnockdownAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.SoftKnockdown] = softKnockdownAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(deadFromGroundAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.DeadFromGround] = deadFromGroundAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(deadFromAirAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.DeadFromAir] = deadFromAirAnimation;
-            //
-            // Util.AutoSetupFromAnimationPath(throwAnimation, this);
-            // StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Throw] = throwAnimation;
+            
+            Util.AutoSetupFromAnimationPath(deadFromGroundAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.DeadFromGround] = deadFromGroundAnimation;
+            
+            Util.AutoSetupFromAnimationPath(deadFromAirAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.DeadFromAir] = deadFromAirAnimation;
+            
+            Util.AutoSetupFromAnimationPath(throwAnimation, this);
+            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Throw] = throwAnimation;
             //
             Util.AutoSetupFromAnimationPath(jumpsquatAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = jumpsquatAnimation;
@@ -690,7 +690,7 @@ namespace Quantum
                                 new CollisionBox()
                                 {
                                     Height = FP.FromString("3.5"),
-                                    Width = FP.FromString("5.5"),
+                                    Width = FP.FromString("9"),
                                     GrowWidth = true,
                                     GrowHeight = false,
                                     PosY = FP.FromString("4.75"),
@@ -722,7 +722,7 @@ namespace Quantum
                             HitPushback = FP.FromString("1.5"),
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.4"),
-                            VisualHitPositionOffset = new FPVector2(6, 5),
+                            VisualHitPositionOffset = new FPVector2(10, 5),
                             Damage = 20,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {
@@ -735,7 +735,7 @@ namespace Quantum
                                             new CollisionBox()
                                             {
                                                 Height = 3,
-                                                Width = 7,
+                                                Width = 9,
                                                 GrowWidth = true,
                                                 GrowHeight = false,
                                                 PosY = FP.FromString("4.75"),
@@ -851,12 +851,12 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 1,
-                            TrajectoryHeight = 2,
+                            TrajectoryHeight = FP.FromString("2"),
                             TrajectoryXVelocity = 8,
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
-                            GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.1"),
+                            GravityScaling = FP.FromString("1.3"),
+                            GravityProration = FP.FromString("1.5"),
                             VisualHitPositionOffset = new FPVector2(6, 5),
                             Damage = 20,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -947,11 +947,11 @@ namespace Quantum
                                 standHurtbox,
                                 new CollisionBox()
                                 {
-                                    Height = FP.FromString("2"),
-                                    Width = FP.FromString("4"),
+                                    Height = 2,
+                                    Width = FP.FromString("7.5"),
                                     GrowWidth = true,
-                                    GrowHeight = false,
-                                    PosY = FP.FromString("4.75"),
+                                    GrowHeight = true,
+                                    PosY = 0,
                                     PosX = 0
                                 }
                             }
@@ -981,7 +981,7 @@ namespace Quantum
                             HitPushback = FP.FromString("2.5"),
                             GravityScaling = FP.FromString("1"),
                             GravityProration = FP.FromString("1.3"),
-                            VisualHitPositionOffset = new FPVector2(6, 1),
+                            VisualHitPositionOffset = new FPVector2(7, 1),
                             Type = Hit.HitType.Low,
                             Damage = 20,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -995,7 +995,7 @@ namespace Quantum
                                             new CollisionBox()
                                             {
                                                 Height = 2,
-                                                Width = FP.FromString("7"),
+                                                Width = FP.FromString("7.5"),
                                                 GrowWidth = true,
                                                 GrowHeight = true,
                                                 PosY = 0,
@@ -1387,16 +1387,18 @@ namespace Quantum
                 _5HHit = new Hit()
                 {
                     Level = 3,
-                    TrajectoryHeight = 6,
+                    TrajectoryHeight = FP.FromString("6.8"),
                     TrajectoryXVelocity = 4,
                     BlockPushback = FP.FromString("2.5"),
                     HitPushback = FP.FromString("1.5"),
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1.4"),
                     GroundBounce = true,
-                    VisualHitPositionOffset = new FPVector2(4, 5),
+                    VisualHitPositionOffset = new FPVector2(7, 5),
                     VisualAngle = 70,
                     Damage = 20,
+                    ProxBlockDistance = 9,
+                    // Launches = true,
                     HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                     {
                         Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -1459,7 +1461,7 @@ namespace Quantum
 
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
-                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() - 4;
                 StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
@@ -1526,7 +1528,7 @@ namespace Quantum
             };
             
             ConfigureAction(this, _2L);
-            MakeActionCancellable(this, _5L, _5L);
+            // MakeActionCancellable(this, _5L, _5L);
             MakeActionCancellable(this, _5L, _2L);
             // MakeActionCancellable(this, _2L, _5L);
             // MakeActionCancellable(this, _2L, _2L);
