@@ -57,6 +57,8 @@ namespace Quantum
             public static int AirActionable;
             public static int AirActionableAfterAction;
             public static int AirHit;
+            public static int AirHitHigh;
+            public static int AirHitLow;
             public static int AirBlock;
             public static int AirHitPostGroundBounce;
             public static int AirHitPostWallBounce;
@@ -149,8 +151,8 @@ namespace Quantum
             // Ground
             machine.Configure(PlayerState.Ground)
                 .OnEntryFrom(PlayerTrigger.Land, OnLand)
-                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHit, IsCollisionHitParamLauncher, 1)
-                .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHit, IsCollisionHitParamLauncher, 1)
+                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitHigh, IsCollisionHitParamLauncher, 1)
+                .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHitLow, IsCollisionHitParamLauncher, 1)
                 .PermitIf(PlayerTrigger.Die, PlayerState.DeadFromGround, PlayerIsDead, 3)
                 .SubstateOf(PlayerState.Any);
 
@@ -377,8 +379,8 @@ namespace Quantum
             machine.Configure(PlayerState.Air)
                 .PermitIf(PlayerTrigger.Land, PlayerState.EmptyLandsquat, IsTrajectoryEmpty)
                 .PermitIf(PlayerTrigger.Land, PlayerState.FullLandsquat, x => !IsTrajectoryEmpty(x))
-                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHit, _ => true, -1)
-                .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHit, _ => true, -1)
+                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitHigh, _ => true, -1)
+                .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHitLow, _ => true, -1)
                 .SubstateOf(PlayerState.Any);
 
             machine.Configure(PlayerState.AirActionable)
@@ -456,8 +458,8 @@ namespace Quantum
                 .OnEntryFrom(PlayerTrigger.HitHigh, StartNewJuggle)
                 .OnEntryFrom(PlayerTrigger.HitLow, StartNewJuggle)
                 .OnEntryFrom(PlayerTrigger.Finish, StartNewJuggle)
-                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHit, _ => true, -2)
-                .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHit, _ => true, -2)
+                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitHigh, _ => true, -2)
+                .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHitLow, _ => true, -2)
                 .PermitIf(PlayerTrigger.Land, PlayerState.AirHitPostGroundBounce, IsInGroundBounce, 4)
                 .Permit(PlayerTrigger.HitWall, PlayerState.AirHitPostWallBounce)
                 .PermitIf(PlayerTrigger.Land, PlayerState.DeadFromAir, PlayerIsDead, 3)
@@ -467,9 +469,15 @@ namespace Quantum
                 .AllowReentry(PlayerTrigger.HitHigh)
                 .AllowReentry(PlayerTrigger.HitLow)
                 .AllowReentry(PlayerTrigger.Land)
-                .Permit(PlayerTrigger.HitHigh, PlayerState.AirHit)
-                .Permit(PlayerTrigger.HitLow, PlayerState.AirHit)
+                .Permit(PlayerTrigger.HitHigh, PlayerState.AirHitHigh)
+                .Permit(PlayerTrigger.HitLow, PlayerState.AirHitLow)
                 .Permit(PlayerTrigger.Land, PlayerState.AirHit);
+
+            machine.Configure(PlayerState.AirHitHigh)
+                .SubstateOf(PlayerState.AirHit);
+            
+            machine.Configure(PlayerState.AirHitLow)
+                .SubstateOf(PlayerState.AirHit);
 
             machine.Configure(PlayerState.AirHitPostGroundBounce)
                 .OnEntry(OnGroundBounce)
@@ -502,7 +510,7 @@ namespace Quantum
             
             machine.Configure(PlayerState.CutsceneReactor)
                 .SubstateOf(PlayerState.DirectionLocked)
-                .Permit(PlayerTrigger.Finish, PlayerState.AirHit);
+                .Permit(PlayerTrigger.Finish, PlayerState.AirHitHigh);
                 
             machine.Configure(PlayerState.TechableCutsceneReactor)
                 .SubstateOf(PlayerState.CutsceneReactor)

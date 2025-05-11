@@ -71,8 +71,8 @@ namespace Quantum
                         HitPushback = 0,
                         BlockPushback = 0,
                         // GroundBounce = true,
-                        TrajectoryHeight = FP.FromString("0.25"),
-                        TrajectoryXVelocity = 15,
+                        TrajectoryHeight = FP.FromString("0.5"),
+                        TrajectoryXVelocity = 13,
                         GravityProration = FP.FromString("1.7"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
@@ -110,7 +110,7 @@ namespace Quantum
                         Level = 1,
                         Projectile = true,
                         TrajectoryHeight = FP.FromString("2"),
-                        TrajectoryXVelocity = -16,
+                        TrajectoryXVelocity = -8,
                         HitPushback = -2,
                         BlockPushback = -3,
                         GravityProration = FP.FromString("1.7"),
@@ -128,8 +128,8 @@ namespace Quantum
                                             GrowHeight = false,
                                             PosX = 0,
                                             PosY = 1,
-                                            Height = 3,
-                                            Width = 3,
+                                            Height = 2,
+                                            Width = 2,
                                         }
                                     }
                                 })
@@ -144,9 +144,9 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(15, FP.FromString("4")),
+                    new(15, FP.FromString("6")),
+                    new(15, FP.FromString("3")),
                     new(15, FP.FromString("1.5")),
-                    new(15, FP.FromString("0.5")),
                     new(10, FP.FromString("0"))
                 }
             };
@@ -180,7 +180,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(trackingAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Tracking] = trackingAnimation;
-            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 10;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Tracking] = 13;
             
             var activeAnimation = new FighterAnimation()
             {

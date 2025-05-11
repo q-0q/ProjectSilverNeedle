@@ -77,7 +77,7 @@ namespace Quantum
         public static FP CounterHitDamageMultiplier = 2;
         public static FP CounterHitDamageScaling = FP.FromString("1.3");
         public static FP CounterHitGravityScalingMultiplier = FP.FromString("0.95");
-        public static FP GlobalDamageModifier = FP.FromString("0.9");
+        public static FP GlobalDamageModifier = FP.FromString("0.09");
 
 
         public static int CounterBonusHitstop = 10;
