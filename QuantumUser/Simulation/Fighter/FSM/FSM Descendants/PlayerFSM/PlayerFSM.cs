@@ -94,6 +94,7 @@ namespace Quantum
             public static int Land;
             public static int HitWall;
             public static int JumpCancel;
+            public static int BecameAerial;
             public static int HitHigh;
             public static int HitLow;
             public static int BlockHigh;
@@ -169,6 +170,7 @@ namespace Quantum
             machine.Configure(PlayerState.GroundActionable)
                 .Permit(Trigger.ForwardThrow, PlayerState.ForwardThrow)
                 .Permit(Trigger.BackThrow, PlayerState.Backthrow)
+                .Permit(PlayerTrigger.BecameAerial, PlayerState.AirActionable)
                 // .Permit(Trigger.FrontThrow, State.ThrowFrontStartup)
                 // .Permit(Trigger.BackThrow, State.ThrowBackStartup)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
@@ -390,6 +392,7 @@ namespace Quantum
                 .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
                 .OnEntryFrom(PlayerTrigger.Jump, InputSystem.ClearBufferParams)
                 .OnEntryFrom(PlayerTrigger.JumpCancel, StartNewJump)
+                .OnEntryFrom(PlayerTrigger.BecameAerial, StartNewFallFromApex)
                 .Permit(Trigger.Jump, PlayerState.AirActionable)
                 .Permit(PlayerTrigger.JumpCancel, PlayerState.AirActionable)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.AirBlock, _ => true, -1)

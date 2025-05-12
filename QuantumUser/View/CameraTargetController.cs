@@ -30,7 +30,7 @@ public class CameraTargetController : MonoBehaviour
     public bool Player1Dark = false;
     
     private float _baseYPos;
-    private float _yPulldown = 4.5f;
+    private float _yPulldown = 3f;
     private float groundBounceTimer;
 
     private void Awake()

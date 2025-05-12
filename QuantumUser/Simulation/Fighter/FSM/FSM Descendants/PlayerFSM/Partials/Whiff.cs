@@ -21,7 +21,6 @@ namespace Quantum
         private void MakeNotWhiffed(Frame f, CollisionBoxInternal hitboxInternal)
         {
             var entityRef = FsmLoader.FSMs[hitboxInternal.source].GetPlayer();
-            Debug.Log("made not whiffed " + entityRef);
             if (f.Unsafe.TryGetPointer<WhiffData>(entityRef, out var whiffData))
             {
                 whiffData->whiffed = false;

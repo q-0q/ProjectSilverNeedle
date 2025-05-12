@@ -13,7 +13,6 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _CUSTOMWIND_ON
-  - _TRANSLUCENCYONOFF_ON
   m_InvalidKeywords:
   - _ALPHAPREMULTIPLY_ON
   - _CUSTOMCOLORSTINTING_ON
@@ -99,9 +98,9 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
-    - _Gradient: 0.073
-    - _GradientPower: 2.56
-    - _LeavesThickness: 0.513
+    - _Gradient: 0.093
+    - _GradientPower: 4.2
+    - _LeavesThickness: 0.183
     - _MaskClipValue: 0.5
     - _Metallic: 0
     - _Mode: 3
@@ -113,18 +112,18 @@ Material:
     - _SNOWONOFF: 0
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
-    - _SnowAmount: 1
-    - _SnowCoverage: 0.453
-    - _SnowGradient: 0.446
+    - _SnowAmount: 0.083
+    - _SnowCoverage: 0.334
+    - _SnowGradient: 0.381
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _TRANSLUCENCYONOFF: 1
+    - _TRANSLUCENCYONOFF: 0
     - _TransAmbient: 0.7
     - _TransDirect: 1
     - _TransNormal: 0.5
     - _TransNormalDistortion: 0.1
     - _TransScattering: 2
-    - _TransShadow: 0.5
+    - _TransShadow: 0.454
     - _TransStrength: 1
     - _Translucency: 7.8
     - _UVSec: 0
@@ -133,7 +132,7 @@ Material:
     - _WindDensity1: 0.01
     - _WindMovement: 10
     - _WindMovement1: 10
-    - _WindStrength: 1
+    - _WindStrength: 0
     - _WindStrength1: 1
     - _ZWrite: 0
     - __dirty: 0

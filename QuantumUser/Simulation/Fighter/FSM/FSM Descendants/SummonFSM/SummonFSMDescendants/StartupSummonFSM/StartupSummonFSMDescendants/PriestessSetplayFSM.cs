@@ -19,6 +19,7 @@ namespace Quantum
             // public static int Startup;
             public static int Alive;
             public static int Return;
+            public static int Teleport;
             public static int Active;
             public static int Destroy;
         }
@@ -27,6 +28,7 @@ namespace Quantum
         {
             public static int OwnerStartupComplete;
             public static int OwnerCallUsed;
+            public static int Teleport;
             public static int ReturnComplete;
         }
 
@@ -48,6 +50,9 @@ namespace Quantum
             
             OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Return] =
                 (12, PriestessSetplayTrigger.OwnerCallUsed);
+            
+            OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Teleport] =
+                (12, PriestessSetplayTrigger.Teleport);
         }
         
 
@@ -239,6 +244,21 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(destroyAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Destroy] = destroyAnimation;
             StateMapConfig.Duration.Dictionary[PriestessSetplayState.Destroy] = 12;
+            
+            
+            var teleportAnimation = new FighterAnimation()
+            {
+                Path = "Teleport",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    LengthScalar = 4,
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            Util.AutoSetupFromAnimationPath(teleportAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PriestessSetplayState.Teleport] = teleportAnimation;
+            StateMapConfig.Duration.Dictionary[PriestessSetplayState.Teleport] = 28;
 
             
 
@@ -266,18 +286,23 @@ namespace Quantum
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(Trigger.Finish, PriestessSetplayState.Alive);
-            
+
             Fsm.Configure(PriestessSetplayState.Alive)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(Trigger.Finish, PriestessSetplayState.Destroy)
-                .Permit(PriestessSetplayTrigger.OwnerCallUsed, PriestessSetplayState.Return);
+                .Permit(PriestessSetplayTrigger.OwnerCallUsed, PriestessSetplayState.Return)
+                .Permit(PriestessSetplayTrigger.Teleport, PriestessSetplayState.Teleport);
 
             Fsm.Configure(PriestessSetplayState.Return)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(Trigger.Finish, PriestessSetplayState.Destroy)
                 .Permit(SummonTrigger.OwnerHit, PriestessSetplayState.Destroy)
                 .Permit(PriestessSetplayTrigger.ReturnComplete, PriestessSetplayState.Destroy);
+
+            Fsm.Configure(PriestessSetplayState.Teleport)
+                .SubstateOf(SummonState.Unpooled)
+                .Permit(Trigger.Finish, SummonState.Pooled);
 
             Fsm.Configure(PriestessSetplayState.Destroy)
                 .SubstateOf(SummonState.Unpooled)
@@ -292,10 +317,17 @@ namespace Quantum
             if (triggerParams is not FrameParam param) return;
             var otherPlayerEntity = Util.GetOtherPlayer(param.f, playerOwnerEntity);
             param.f.Unsafe.TryGetPointer<Transform3D>(otherPlayerEntity, out var otherPlayerTransform);
+            param.f.Unsafe.TryGetPointer<Transform3D>(playerOwnerEntity, out var ownerTransform);
 
-            bool low = FsmLoader.FSMs[playerOwnerEntity].Fsm.IsInState(PriestessFSM.PriestessState.SummonLow);
+            bool low = GetPlayerFsm().Fsm.IsInState(PriestessFSM.PriestessState.SummonLow);
+            var isFacingRight = IsFacingRight(param.f, playerOwnerEntity);
+            var maxDistance = 11;
+            var x = isFacingRight
+                ? Util.Min(otherPlayerTransform->Position.X, ownerTransform->Position.X + maxDistance)
+                : Util.Max(otherPlayerTransform->Position.X, ownerTransform->Position.X - maxDistance);
             
-            var pos = new FPVector3(otherPlayerTransform->Position.X, low ? 2 : 9, 0);
+            
+            var pos = new FPVector3(x, low ? 2 : 9, 0);
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             transform3D->Teleport(param.f, pos);
         }
@@ -327,6 +359,21 @@ namespace Quantum
                 direction = direction.Normalized * speed;
                 
                 ApplyFlippedMovement(f, direction.XY, EntityRef);
+            }
+            
+            if (Fsm.IsInState(PriestessSetplayState.Teleport))
+            {
+                f.Unsafe.TryGetPointer<Transform3D>(playerOwnerEntity, out var ownerTransform3d);
+                f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+                
+                
+                int frames = FramesInCurrentState(f);
+                if (frames != 16) return;
+
+                var p = transform3D->Position;
+                p.Y = (p.Y < 5 ? 0 : p.Y - 2);
+                ownerTransform3d->Teleport(f, p);
+                
             }
         }
 

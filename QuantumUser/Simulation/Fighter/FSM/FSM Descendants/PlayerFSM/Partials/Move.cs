@@ -44,7 +44,7 @@ namespace Quantum
             
             
             CutsceneReactorMove(f);
-            SnapToGround(f);
+            // SnapToGround(f);
             base.Move(f);
             
             ClampPosToWall(f);
