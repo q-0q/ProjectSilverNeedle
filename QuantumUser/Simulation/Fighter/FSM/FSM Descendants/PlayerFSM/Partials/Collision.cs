@@ -215,6 +215,7 @@ namespace Quantum
             var entity = FsmLoader.FSMs[source].GetPlayer();
             if (FsmLoader.FSMs[entity] is not PlayerFSM) return false;
             f.Unsafe.TryGetPointer<HealthData>(entity, out var healthData);
+            Debug.Log(entity + " nextHitEmpowered read: " + healthData->nextHitEmpowered);
             return healthData->nextHitEmpowered;
         }
 
@@ -332,6 +333,7 @@ namespace Quantum
 
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
             healthData->nextHitEmpowered = true;
+            Debug.Log(EntityRef + " nextHitEmpowered");
             
             FP virtualTimeIncrement = Util.FrameLengthInSeconds * ActionStartupReduction[Fsm.State()];
 
@@ -355,6 +357,7 @@ namespace Quantum
             if (triggerParams is not FrameParam param) return;
             var f = param.f;
             f.Unsafe.TryGetPointer<HealthData>(EntityRef, out var healthData);
+            Debug.Log(EntityRef + " reset empowered");
             healthData->nextHitEmpowered = false;
         }
 

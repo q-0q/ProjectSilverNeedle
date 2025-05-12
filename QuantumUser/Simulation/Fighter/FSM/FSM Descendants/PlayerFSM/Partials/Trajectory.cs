@@ -181,6 +181,19 @@ namespace Quantum
             param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             trajectoryData->jumpsRemaining--;
         }
+        
+        private void StartNewFallFromApex(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam param) return;
+
+            var trajectory = UpwardJumpTrajectory;
+            
+            StartNewTrajectory(param.f, 0, 1, 
+                trajectory.TrajectoryXVelocity * Util.FrameLengthInSeconds, FallSpeed, FallTimeToSpeed, false);
+
+            param.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
+            trajectoryData->jumpsRemaining--;
+        }
 
         private bool IsTrajectoryEmpty(TriggerParams? triggerParams)
         {
@@ -262,15 +275,17 @@ namespace Quantum
         public override void CheckForLand(Frame f)
         {
             
-            if (!Fsm.IsInState(PlayerState.Air)) return;
             f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FP posY = transform3D->Position.Y;
-            
-            if (posY > Util.GroundHeight) return;
-            if (ComputeTrajectoryMovementThisFrame(f).Y > 0) return;
-            
             var param = new FrameParam() { f = f, EntityRef = EntityRef};
+            if (posY > Util.GroundHeight)
+            {
+                Fsm.Fire(PlayerTrigger.BecameAerial, param);
+                return;
+            }
             
+            if (!Fsm.IsInState(PlayerState.Air)) return;
+            if (ComputeTrajectoryMovementThisFrame(f).Y > 0) return;
             Fsm.Fire(PlayerTrigger.Land, param);
             
         }

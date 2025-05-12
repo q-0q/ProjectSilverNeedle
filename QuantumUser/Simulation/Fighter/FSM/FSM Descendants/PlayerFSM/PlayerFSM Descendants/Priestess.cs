@@ -33,6 +33,7 @@ namespace Quantum
             public static int SummonHigh;
             public static int SummonLow;
             public static int Return;
+            public static int Teleport;
         }
 
         public Hit _5HHit;
@@ -733,7 +734,7 @@ namespace Quantum
                             BlockPushback = FP.FromString("2.5"),
                             HitPushback = FP.FromString("1.5"),
                             GravityScaling = FP.FromString("1"),
-                            GravityProration = FP.FromString("1.4"),
+                            GravityProration = FP.FromString("2.5"),
                             VisualHitPositionOffset = new FPVector2(10, 5),
                             Damage = 20,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
@@ -1279,7 +1280,7 @@ namespace Quantum
             }
             
             {
-                int startup = 24;
+                int startup = 16;
                 int active = 2;
                 int hurtboxDuration = 7;
                 string path = "Return";
@@ -1321,6 +1322,66 @@ namespace Quantum
                 StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() - 6;
                 StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+            }
+            
+            {
+                int startup = 16;
+                string path = "Teleport";
+                int state = PriestessState.Teleport;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(1, new Hit()
+                        {
+                            HitboxCollections = null // ghost hit
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+                
+                var smear = new SectionGroup<int>()
+                {
+                    Sections = new List<Tuple<int, int>>()
+                    {
+                        new(2, 7),
+                        new(2, 8),
+                        new(2, 9),
+                        new(1, 10),
+                        new(1, 11),
+                        new(8, 12),
+                        new(5, 13),
+                        new(5, 14),
+                        new(5, -1),
+                    }
+                };
+                
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() - 1;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.SmearFrame.Dictionary[state] = smear;
             }
             
             
@@ -1841,7 +1902,7 @@ namespace Quantum
                 IsSpecial = true,
                 State = PriestessState.Return,
                 
-                BonusClause = CanUseReturn,
+                BonusClause = CanActivateReturn,
                 
                 Name = "Standing heavy",
                 Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
@@ -1849,9 +1910,34 @@ namespace Quantum
             };
             
             ConfigureAction(this, Return);
+            
+            
+            ActionConfig Teleport = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 6,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 3,
+                RawOk = true,
+                IsSpecial = true,
+                State = PriestessState.Teleport,
+                
+                BonusClause = CanActivateTeleport,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, Teleport);
         }
         
-        private bool CanUseReturn(TriggerParams? triggerParams)
+        private bool CanActivateReturn(TriggerParams? triggerParams)
         {
             foreach (var setplayEntity in SummonPools[0].EntityRefs)
             {
@@ -1861,6 +1947,17 @@ namespace Quantum
                 if (machine.IsInState(SummonFSM.SummonState.Unpooled)) return true;
             }
             return false;
+        }
+        
+        private bool CanActivateTeleport(TriggerParams? triggerParams)
+        {
+            return CanActivateReturn(triggerParams);
+            // foreach (var setplayEntity in SummonPools[0].EntityRefs)
+            // {
+            //     var machine = FsmLoader.FSMs[setplayEntity].Fsm;
+            //     return (machine.IsInState(PriestessSetplayFSM.PriestessSetplayState.Return));
+            // }
+            // return false;
         }
         
         private bool CanUseSummon(TriggerParams? triggerParams)
