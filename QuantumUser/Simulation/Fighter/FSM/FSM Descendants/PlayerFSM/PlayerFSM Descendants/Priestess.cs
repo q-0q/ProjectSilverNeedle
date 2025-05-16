@@ -34,6 +34,7 @@ namespace Quantum
             public static int SummonLow;
             public static int Return;
             public static int Teleport;
+            public static int Fireball;
         }
 
         public Hit _5HHit;
@@ -1384,6 +1385,60 @@ namespace Quantum
                 StateMapConfig.SmearFrame.Dictionary[state] = smear;
             }
             
+            {
+                int startup = 16;
+                string path = "Summon";
+                int state = PriestessState.Fireball;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(1, new Hit()
+                        {
+                            HitboxCollections = null // ghost hit
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+                
+                
+                var summon = new SectionGroup<SummonPool>()
+                {
+                    Sections = new List<Tuple<int, SummonPool>>()
+                    {
+                        new (1, null),
+                        new (1, SummonPools[1])
+                    }
+                };
+                
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() + 5;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
+            }
+            
             
             {
                 int startup = 16;
@@ -1514,14 +1569,7 @@ namespace Quantum
                     }
                 };
                 
-                var summon = new SectionGroup<SummonPool>()
-                {
-                    Sections = new List<Tuple<int, SummonPool>>()
-                    {
-                        new (16, null),
-                        new (1, SummonPools[1])
-                    }
-                };
+
 
                 Util.AutoSetupFromAnimationPath(animation, this);
                 StateMapConfig.FighterAnimation.Dictionary[state] = animation;
@@ -1531,13 +1579,12 @@ namespace Quantum
                 StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
                 StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
                 StateMapConfig.SmearFrame.Dictionary[state] = smear;
-                // StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 6;
             }
             
             
             {
-                int startup = 10;
+                int startup = 15;
                 int active = 2;
                 int hurtboxDuration = 6;
                 string path = "_2H";
@@ -1581,7 +1628,7 @@ namespace Quantum
                                 new CollisionBox()
                                 {
                                     Height = FP.FromString("7"),
-                                    Width = FP.FromString("5"),
+                                    Width = FP.FromString("3"),
                                     GrowWidth = true,
                                     GrowHeight = true,
                                     PosY = FP.FromString("0"),
@@ -1624,7 +1671,7 @@ namespace Quantum
                                     new CollisionBox()
                                     {
                                         Height = FP.FromString("7"),
-                                        Width = FP.FromString("5"),
+                                        Width = FP.FromString("3"),
                                         GrowWidth = true,
                                         GrowHeight = true,
                                         PosY = FP.FromString("0"),
@@ -1659,7 +1706,7 @@ namespace Quantum
                     Sections = new List<Tuple<int, int>>()
                     {
                         new(startup, -1),
-                        new(4, 7),
+                        new(4, 15),
                         new(10, -1),
                     }
                 };
@@ -1827,7 +1874,7 @@ namespace Quantum
                 InputWeight = 1,
                 RawOk = true,
                 IsSpecial = false,
-                // SpecialCancellable = false,
+                SpecialCancellable = false,
                 State = PriestessState._2H,
                 
                 Name = "Standing heavy",
@@ -1886,6 +1933,28 @@ namespace Quantum
             };
             
             ConfigureAction(this, SummonLow);
+            
+            ActionConfig Fireball = new ActionConfig()
+            {
+                Aerial = false,
+                AirOk = false,
+                CommandDirection = 4,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = true,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 3,
+                RawOk = true,
+                IsSpecial = true,
+                State = PriestessState.Fireball,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, Fireball);
             
             ActionConfig Return = new ActionConfig()
             {

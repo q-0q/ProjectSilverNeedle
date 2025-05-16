@@ -367,7 +367,7 @@ namespace Quantum
                 f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
                 
                 
-                int frames = FramesInCurrentState(f);
+                int frames = GetPlayerFsm().FramesInCurrentState(f);
                 if (frames != 16) return;
 
                 var p = transform3D->Position;

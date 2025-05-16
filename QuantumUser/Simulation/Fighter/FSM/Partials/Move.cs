@@ -40,7 +40,7 @@ namespace Quantum
 
         private FPVector2 ComputeMovementThisFrame(Frame f)
         {
-            FP xMoveAmount = GetXMovementFromMovementSectionGroup(f, StateMapConfig.MovementSectionGroup.Get(this));
+            FP xMoveAmount = GetXMovementFromMovementSectionGroup(f, StateMapConfig.MovementSectionGroup.Get(this, new FrameParam() { f = f, EntityRef = EntityRef}));
 
             return new FPVector2(xMoveAmount, 0);
         }
