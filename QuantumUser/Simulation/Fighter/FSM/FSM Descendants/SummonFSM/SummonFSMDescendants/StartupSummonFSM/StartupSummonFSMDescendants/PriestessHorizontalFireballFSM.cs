@@ -24,17 +24,15 @@ namespace Quantum
         {
             public static int OwnerStartupComplete;
         }
-
-        private int ReturnStartup = 16;
         
         public PriestessHorizontalFireballFSM()
         {
             Name = "PriestessHorizontalFireball";
             StateType = typeof(PriestessHorizontalFireballState);
             KinematicAttachPointOffset = FPVector2.Zero;
-            SummonPositionOffset = new FPVector2(FP.FromString("4.25"), FP.FromString("3.5"));
+            SummonPositionOffset = new FPVector2(FP.FromString("-4"), FP.FromString("11"));
 
-            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState._5H, 21)] =
+            OwnerActivationFrameTriggers[(PriestessFSM.PriestessState.Fireball, 18)] =
                 PriestessHorizontalFireballTrigger.OwnerStartupComplete;
         }
         
@@ -43,8 +41,7 @@ namespace Quantum
         public override void SetupStateMaps()
         {
             base.SetupStateMaps();
-
-            const int lifeSpan = 110;
+            
             
             StateMapConfig.HitSectionGroup.Dictionary[PriestessHorizontalFireballState.Active] = new SectionGroup<Hit>()
             {
@@ -54,13 +51,11 @@ namespace Quantum
                     new(3, new Hit()
                     {
                         // Launches = true,
-                        Level = 0,
+                        Level = 1,
                         Projectile = true,
-                        HitPushback = 0,
-                        BlockPushback = 0,
                         // GroundBounce = true,
-                        TrajectoryHeight = 1,
-                        TrajectoryXVelocity = -1,
+                        TrajectoryHeight = 2,
+                        TrajectoryXVelocity = 8,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -74,9 +69,9 @@ namespace Quantum
                                             GrowWidth = false,
                                             GrowHeight = false,
                                             PosX = 0,
-                                            PosY = 1,
-                                            Height = 3,
-                                            Width = 3,
+                                            PosY = 0,
+                                            Height = 2,
+                                            Width = 2,
                                         }
                                     }
                                 })
@@ -95,14 +90,21 @@ namespace Quantum
                 Path = "Startup",
                 SectionGroup = new SectionGroup<int>()
                 {
-                    Loop = true,
-                    LengthScalar = 9,
+                    LengthScalar = 7,
                     AutoFromAnimationPath = true
+                }
+            };
+            var startupMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(10, FP.FromString("1")),
                 }
             };
             
             Util.AutoSetupFromAnimationPath(startupAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessHorizontalFireballState.Startup] = startupAnimation;
+            StateMapConfig.MovementSectionGroup.Dictionary[PriestessHorizontalFireballState.Startup] = startupMovement;
             
             
             
@@ -112,23 +114,19 @@ namespace Quantum
                 SectionGroup = new SectionGroup<int>()
                 {
                     LengthScalar = 3,
+                    Loop = true,
                     AutoFromAnimationPath = true
                 }
             };
             
-            var activeMovement = new SectionGroup<FP>()
-            {
-                Sections = new List<Tuple<int, FP>>()
-                {
-                    new(5, FP.FromString("5.5")),
-                    new(10, FP.FromString("4.5"))
-                }
-            };
+
+            
+
             
             Util.AutoSetupFromAnimationPath(activeAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessHorizontalFireballState.Active] = activeAnimation;
-            StateMapConfig.MovementSectionGroup.Dictionary[PriestessHorizontalFireballState.Active] = activeMovement;
-            StateMapConfig.Duration.Dictionary[PriestessHorizontalFireballState.Active] = 30;
+            StateMapConfig.MovementSectionGroup.FuncDictionary[PriestessHorizontalFireballState.Active] = GetActiveMovement;
+            StateMapConfig.Duration.Dictionary[PriestessHorizontalFireballState.Active] = 100;
             
             
             var destroyAnimation = new FighterAnimation()
@@ -143,6 +141,7 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(destroyAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PriestessHorizontalFireballState.Destroy] = destroyAnimation;
+            StateMapConfig.MovementSectionGroup.FuncDictionary[PriestessHorizontalFireballState.Destroy] = GetActiveMovement;
             StateMapConfig.Duration.Dictionary[PriestessHorizontalFireballState.Destroy] = 12;
 
             
@@ -152,10 +151,15 @@ namespace Quantum
         public override void SetupMachine()
         {
             base.SetupMachine();
+            
+            
 
             Fsm.Configure(SummonState.Pooled)
-                .Permit(SummonTrigger.Summoned, PriestessHorizontalFireballState.Startup);
-                
+                .Permit(SummonTrigger.Summoned, PriestessHorizontalFireballState.Startup)
+                .OnExitFrom(PriestessHorizontalFireballTrigger.OwnerStartupComplete, OnUnpooled)
+                .Permit(PriestessHorizontalFireballTrigger.OwnerStartupComplete, PriestessHorizontalFireballState.Active);
+            
+            
             Fsm.Configure(PriestessHorizontalFireballState.Startup)
                 .SubstateOf(SummonState.Unpooled)
                 .Permit(SummonTrigger.OwnerHit, PriestessHorizontalFireballState.Destroy)
@@ -182,10 +186,41 @@ namespace Quantum
             return priestessFsm.IsNotWhiffedFromHit(frameParam.f, priestessFsm._5HHit.LookupId);
         }
         
-//         protected override void SummonMove(Frame f)
-//         {
-// base.S
-//         }
+        protected override void SummonMove(Frame f)
+        {
+            if (Fsm.IsInState(SummonState.Pooled)) return;
+            base.SummonMove(f);
+            
+            if (!SetplayActive(f)) return;
+
+            f.Unsafe.TryGetPointer<Transform3D>(GetPlayerFsm().SummonPools[0].EntityRefs[0], out var setplayTransform);
+            f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform);
+
+            var dY = (setplayTransform->Position.Y - transform->Position.Y);
+
+            transform->Position.Y += dY * FP.FromString("0.05");
+            
+        }
+        
+        SectionGroup<FP> GetActiveMovement(FrameParam frameParam)
+        {
+            if (frameParam is null) return null;
+            var activeMovement = new SectionGroup<FP>()
+            {
+                Sections = new List<Tuple<int, FP>>()
+                {
+                    new(10, FP.FromString("2.25"))
+                }
+            };
+
+            return activeMovement;
+        }
+
+        bool SetplayActive(Frame f)
+        {
+            var setplayFsm = FsmLoader.FSMs[GetPlayerFsm().SummonPools[0].EntityRefs[0]];
+            return setplayFsm.Fsm.IsInState(SummonState.Unpooled);
+        }
 
         
         
