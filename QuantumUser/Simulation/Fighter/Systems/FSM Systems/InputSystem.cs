@@ -202,7 +202,7 @@ namespace Quantum
                 foreach (var (_, cpuControllerData) in f.GetComponentIterator<CpuControllerData>())
                 {
                     if (!cpuControllerData.dash) return;
-                    fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Dash, param);
+                    fsm.Fsm.Fire(FSM.Trigger.Dash, param);
                     return;
                 }
                 return;
@@ -214,11 +214,18 @@ namespace Quantum
             
             if (fsm.InputIsBuffered(InputType.Dash, f, fsm.EntityRef) && (commandDirection is 1 or 4 or 7))
             {
-                fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Backdash, param);
+                fsm.Fsm.Fire(FSM.Trigger.Backdash, param);
             }
             else if (fsm.InputIsBuffered(InputType.Dash, f, fsm.EntityRef))
             {
-                fsm.Fsm.Fire(PlayerFSM.PlayerTrigger.Dash, param);
+                fsm.Fsm.Fire(FSM.Trigger.Dash, param);
+            }
+            
+            f.Unsafe.TryGetPointer<PlayerLink>(fsm.GetPlayer(), out var playerLink);
+            Input input = *f.GetPlayerInput(playerLink->Player);
+            if (!input.Dash.IsDown)
+            {
+                fsm.Fsm.Fire(FSM.Trigger.NotDash, param);
             }
         }
         

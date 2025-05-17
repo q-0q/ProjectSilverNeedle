@@ -55,7 +55,7 @@ namespace Quantum
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
 
-            MinimumDashDuration = 13;
+            MinimumDashDuration = 7;
             // SpriteScale = FP.FromString("1.2");
 
             UpwardJumpTrajectory = new Trajectory()
@@ -316,13 +316,14 @@ namespace Quantum
                 Path = "Dash",
                 SectionGroup = new SectionGroup<int>()
                 {
+                    Loop = true,
                     AutoFromAnimationPath = true
                 }
             };
             
             var backdashAnimation = new FighterAnimation()
             {
-                Path = "Dash", // temp
+                Path = "Backdash", // temp
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -631,10 +632,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(5, 0),
-                    new(12, 4),
-                    new(8, 1),
-                    new (10, 0),
+                    new(8, 3),
                 }
             };
             
@@ -1739,7 +1737,8 @@ namespace Quantum
             base.SetupMachine();
             
             Fsm.Configure(PlayerState.Dash)
-                .Permit(PlayerTrigger.Jump, PlayerState.Jumpsquat)
+                .PermitIf(Trigger.NotDash, PlayerState.StandActionable, MinimumDashDurationElapsed)
+                .Permit(Trigger.Jump, PlayerState.Jumpsquat)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.BlockLow, PlayerState.CrouchBlock, _ => true, -2)
                 .PermitIf(PlayerTrigger.ProxBlockHigh, PlayerState.ProxStandBlock, _ => true, -3)

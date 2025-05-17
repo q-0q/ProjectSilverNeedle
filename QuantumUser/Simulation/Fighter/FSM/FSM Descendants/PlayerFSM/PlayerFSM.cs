@@ -205,10 +205,7 @@ namespace Quantum
 
             machine.Configure(PlayerState.WalkBackward)
                 .SubstateOf(PlayerState.StandActionable);
-
-            machine.Configure(PlayerState.Dash)
-                .Permit(PlayerTrigger.Finish, PlayerState.StandActionable);
-
+            
             // machine.Configure(PlayerState.Surge)
             //     .OnEntry(OnRedBreak)
             //     .SubstateOf(PlayerState.Dash);
@@ -549,7 +546,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
             
-            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 19;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 20;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.RedBreak] = 15;
 
             // StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[PlayerState.Cutscene] = null;
@@ -1209,7 +1206,7 @@ namespace Quantum
             
             Util.StartScreenDark(param.f, EntityRef, 22);
             Util.StartDramatic(param.f, EntityRef, 12);
-            otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.5"));
+            otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.4"));
 
             param.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             FPVector2 pos = new FPVector2(transform3D->Position.X, 4);
@@ -1254,6 +1251,12 @@ namespace Quantum
             }
 
             return base.IsTimeStopped(f);
+        }
+
+        protected bool MinimumDashDurationElapsed(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam frameParam) return false;
+            return FramesInCurrentState(frameParam.f) > MinimumDashDuration;
         }
         
     }
