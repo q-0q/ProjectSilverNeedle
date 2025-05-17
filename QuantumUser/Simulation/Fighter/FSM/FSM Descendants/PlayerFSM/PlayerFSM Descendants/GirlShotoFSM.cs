@@ -2685,6 +2685,7 @@ namespace Quantum
             base.SetupMachine();
             
             Fsm.Configure(PlayerState.Dash)
+                .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
                 .Permit(PlayerTrigger.Jump, PlayerState.Jumpsquat)
                 // .Permit(Trigger.Backward, State.WalkBackward)
                 .PermitIf(PlayerTrigger.BlockHigh, PlayerState.StandBlock, _ => true, -2)

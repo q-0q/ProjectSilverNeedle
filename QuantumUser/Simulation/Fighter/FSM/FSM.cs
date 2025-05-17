@@ -21,6 +21,7 @@ namespace Quantum
             public static int Forward;
             public static int Backward;
             public static int Dash;
+            public static int NotDash;
             public static int Backdash;
             public static int ForwardThrow;
             public static int BackThrow;
