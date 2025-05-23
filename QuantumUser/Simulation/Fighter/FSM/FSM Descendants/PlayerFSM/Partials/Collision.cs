@@ -231,7 +231,7 @@ namespace Quantum
                 var entityRef = FsmLoader.FSMs[hitboxData.source].GetPlayer();
                 f.Unsafe.TryGetPointer<HealthData>(entityRef, out var opponentHealthData);
                 Util.StartDramatic(f, EntityRef, 6);
-                Util.StartScreenDark(f, EntityRef, 3);
+                // Util.StartScreenDark(f, EntityRef, 3);
                 AnimationEntitySystem.Create(f, AnimationEntities.AnimationEntityEnum.SurgeHit, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle, 
                     !IsFacingRight(f, hitboxData.source));
                 opponentHealthData->virtualTimeSinceEmpowered = 10;

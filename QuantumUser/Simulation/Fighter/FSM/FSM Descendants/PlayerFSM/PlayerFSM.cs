@@ -1204,7 +1204,7 @@ namespace Quantum
             param.f.Events.EntityVibrate(EntityRef, FP.FromString("0.5"), FP.FromString("0.7"), 20);
             param.f.Events.EntityVibrate(Util.GetOtherPlayer(param.f, EntityRef), FP.FromString("0.5"), FP.FromString("0.7"), 20);
             
-            Util.StartScreenDark(param.f, EntityRef, 22);
+            Util.StartScreenDark(param.f, EntityRef, 8);
             Util.StartDramatic(param.f, EntityRef, 12);
             otherPlayerFsm.StartSlowdown(param.f, 25, FP.FromString("0.4"));
 
@@ -1225,7 +1225,7 @@ namespace Quantum
             
             AddMeter(param.f, FP.FromString("-11.11"));
 
-            Util.StartScreenDark(param.f, EntityRef, 20);
+            Util.StartScreenDark(param.f, EntityRef, 8);
             Util.StartDramatic(param.f, EntityRef, 2);
             // StartMomentum(param.f, 0);
             

@@ -55,7 +55,7 @@ namespace Quantum
             KinematicAttachPointOffset = new FPVector2(0, 3);
             
 
-            MinimumDashDuration = 7;
+            MinimumDashDuration = 5;
             // SpriteScale = FP.FromString("1.2");
 
             UpwardJumpTrajectory = new Trajectory()
@@ -702,7 +702,7 @@ namespace Quantum
                                 new CollisionBox()
                                 {
                                     Height = FP.FromString("3.5"),
-                                    Width = FP.FromString("9"),
+                                    Width = FP.FromString("8.25"),
                                     GrowWidth = true,
                                     GrowHeight = false,
                                     PosY = FP.FromString("4.75"),
@@ -747,7 +747,7 @@ namespace Quantum
                                             new CollisionBox()
                                             {
                                                 Height = 3,
-                                                Width = 9,
+                                                Width = FP.FromString("8.25"),
                                                 GrowWidth = true,
                                                 GrowHeight = false,
                                                 PosY = FP.FromString("4.75"),
@@ -855,7 +855,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 1,
-                            TrajectoryHeight = FP.FromString("2"),
+                            TrajectoryHeight = FP.FromString("2.25"),
                             TrajectoryXVelocity = 8,
                             BlockPushback = FP.FromString("3.5"),
                             HitPushback = FP.FromString("2.5"),
@@ -1602,7 +1602,8 @@ namespace Quantum
                     Sections = new List<Tuple<int, FP>>()
                     {
                         new(startup - 2, 0),
-                        new(2, 1),
+                        new(2, FP.FromString("0.5")),
+                        new(9, 2),
                         new (10, 0)
                     }
                 };
@@ -1728,6 +1729,254 @@ namespace Quantum
                 StateMapConfig.SmearFrame.Dictionary[state] = smear;
                 // StateMapConfig.UnpoolSummonSectionGroup.Dictionary[state] = summon;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 10;
+            }
+            
+            
+            
+            {
+                int startup = 10;
+                int active = 2;
+                int hurtboxDuration = 6;
+                string path = "JM";
+                int state = PriestessState.JM;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+
+                var move = new SectionGroup<FP>()
+                {
+                    Sections = new List<Tuple<int, FP>>()
+                    {
+                        new(startup - active, 0),
+                        new(active, 1),
+                        new (10, 0)
+                    }
+                };
+
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup + active, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                        new(hurtboxDuration, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox,
+                                new CollisionBox()
+                                {
+                                    Height = FP.FromString("3.5"),
+                                    Width = FP.FromString("8.25"),
+                                    GrowWidth = true,
+                                    GrowHeight = false,
+                                    PosY = FP.FromString("4.75"),
+                                    PosX = 0
+                                }
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            Level = 3,
+                            TrajectoryHeight = 2,
+                            TrajectoryXVelocity = 10,
+                            BlockPushback = FP.FromString("2.5"),
+                            HitPushback = FP.FromString("1.5"),
+                            GravityScaling = FP.FromString("1"),
+                            GravityProration = FP.FromString("2.5"),
+                            VisualHitPositionOffset = new FPVector2(10, 5),
+                            Damage = 20,
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            new CollisionBox()
+                                            {
+                                                Height = 3,
+                                                Width = FP.FromString("8.25"),
+                                                GrowWidth = true,
+                                                GrowHeight = false,
+                                                PosY = FP.FromString("4.75"),
+                                                PosX = 0
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+
+                var smear = new SectionGroup<int>()
+                {
+                    Sections = new List<Tuple<int, int>>()
+                    {
+                        new(startup, -1),
+                        new(6, 16),
+                        // new(3, 2),
+                        new(10, -1),
+                    }
+                };
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.MovementSectionGroup.Dictionary[state] = move;
+                StateMapConfig.SmearFrame.Dictionary[state] = smear;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 2;
+            }
+            
+            
+            {
+                int startup = 7;
+                int active = 2;
+                int hurtboxDuration = 6;
+                string path = "JL";
+                int state = PriestessState.JL;
+
+                var collisionBox = new CollisionBox()
+                {
+                    Height = FP.FromString("2.5"),
+                    Width = FP.FromString("4.5"),
+                    GrowWidth = true,
+                    GrowHeight = false,
+                    PosY = FP.FromString("0"),
+                    PosX = 0
+                };
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup + active, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                        new(hurtboxDuration, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox,
+                                collisionBox
+
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            Level = 1,
+                            TrajectoryHeight = 2,
+                            TrajectoryXVelocity = 10,
+                            BlockPushback = FP.FromString("2.5"),
+                            HitPushback = FP.FromString("1.5"),
+                            GravityScaling = FP.FromString("1"),
+                            GravityProration = FP.FromString("2.5"),
+                            VisualHitPositionOffset = new FPVector2(5, 0),
+                            Damage = 20,
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            collisionBox
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+                
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 2;
             }
             
         }
@@ -1882,6 +2131,50 @@ namespace Quantum
             };
             
             ConfigureAction(this, _2H);
+            
+            
+            ActionConfig JM = new ActionConfig()
+            {
+                Aerial = true,
+                AirOk = true,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = false,
+                InputType = InputSystem.InputType.M,
+                JumpCancellable = false,
+                InputWeight = 0,
+                RawOk = true,
+                State = PriestessState.JM,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, JM);
+            
+                        
+            ActionConfig JL = new ActionConfig()
+            {
+                Aerial = true,
+                AirOk = true,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = false,
+                InputType = InputSystem.InputType.L,
+                JumpCancellable = true,
+                InputWeight = 0,
+                RawOk = true,
+                State = PriestessState.JL,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, JL);
             
             
             
