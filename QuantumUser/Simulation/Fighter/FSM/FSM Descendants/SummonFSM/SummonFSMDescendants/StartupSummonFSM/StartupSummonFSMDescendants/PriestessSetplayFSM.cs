@@ -117,7 +117,7 @@ namespace Quantum
                         TrajectoryHeight = FP.FromString("2"),
                         TrajectoryXVelocity = -8,
                         HitPushback = -2,
-                        BlockPushback = -3,
+                        BlockPushback = -4,
                         GravityProration = FP.FromString("1.7"),
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {

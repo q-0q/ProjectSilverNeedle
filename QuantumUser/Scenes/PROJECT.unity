@@ -5971,11 +5971,11 @@ MonoBehaviour:
     forceCounter:
       Value: 0
     doAction:
-      Value: 1
+      Value: 0
     doJump:
       Value: 0
     block:
-      Value: 1
+      Value: 0
     dash:
       Value: 0
     inputType: 5
