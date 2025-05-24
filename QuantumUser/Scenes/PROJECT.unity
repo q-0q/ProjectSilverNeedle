@@ -20898,6 +20898,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player0Dramatic: 0
   Player1Dramatic: 0
+  Player0AirHit: 0
+  Player1AirHit: 0
   Player0Dark: 0
   Player1Dark: 0
 --- !u!1 &1291163934

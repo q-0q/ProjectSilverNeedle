@@ -67,8 +67,8 @@ namespace Quantum
             
             BackwardJumpTrajectory = new Trajectory()
             {
-                TimeToTrajectoryHeight = 20,
-                TrajectoryXVelocity = FP.FromString("-14"),
+                TimeToTrajectoryHeight = 18,
+                TrajectoryXVelocity = FP.FromString("-10"),
                 TrajectoryHeight = FP.FromString("7")
             };
             
@@ -302,14 +302,14 @@ namespace Quantum
                 }
             };
             
-            // var afterAirActionAnimation = new FighterAnimation()
-            // {
-            //     Path = "AfterAirAction",
-            //     SectionGroup = new SectionGroup<int>()
-            //     {
-            //         AutoFromAnimationPath = true
-            //     }
-            // };
+            var afterAirActionAnimation = new FighterAnimation()
+            {
+                Path = "JumpAfter",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
             
             var dashAnimation = new FighterAnimation()
             {
@@ -527,8 +527,8 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(jumpingAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionable] = jumpingAnimation;
             
-            // Util.AutoSetupFromAnimationPath(afterAirActionAnimation, this);
-            // StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionableAfterAction] = afterAirActionAnimation;
+            Util.AutoSetupFromAnimationPath(afterAirActionAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirActionableAfterAction] = afterAirActionAnimation;
             //
             Util.AutoSetupFromAnimationPath(dashAnimation, this);
             StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.Dash] = dashAnimation;
@@ -1754,8 +1754,8 @@ namespace Quantum
                     Sections = new List<Tuple<int, FP>>()
                     {
                         new(startup - active, 0),
-                        new(active, 1),
-                        new (10, 0)
+                        new(active, -1),
+                        new (10, FP.FromString("-1.25"))
                     }
                 };
 
@@ -1979,6 +1979,128 @@ namespace Quantum
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 2;
             }
             
+            {
+                int startup = 13;
+                int active = 2;
+                int hurtboxDuration = 6;
+                string path = "JH";
+                int state = PriestessState.JH;
+
+                var collisionBox = new CollisionBox()
+                {
+                    Height = FP.FromString("6"),
+                    Width = FP.FromString("4"),
+                    GrowWidth = true,
+                    GrowHeight = false,
+                    PosY = FP.FromString("0"),
+                    PosX = 0
+                };
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var hurtboxes = new SectionGroup<CollisionBoxCollection>()
+                {
+                    Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                    {
+                        new(startup + active, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                        new(hurtboxDuration, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox,
+                                collisionBox
+
+                            }
+                        }),
+                        new(20, new CollisionBoxCollection()
+                        {
+                            CollisionBoxes = new List<CollisionBox>()
+                            {
+                                standHurtbox
+                            }
+                        }),
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(active, new Hit()
+                        {
+                            Level = 3,
+                            TrajectoryHeight = 3,333
+                            TrajectoryXVelocity = 7,
+                            BlockPushback = FP.FromString("2.5"),
+                            HitPushback = FP.FromString("1.5"),
+                            GravityScaling = FP.FromString("1"),
+                            GravityProration = FP.FromString("2.5"),
+                            VisualHitPositionOffset = new FPVector2(5, 0),
+                            Damage = 20,
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new (active, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            collisionBox
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup + active, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+                
+                var smear = new SectionGroup<int>()
+                {
+                    Sections = new List<Tuple<int, int>>()
+                    {
+                        new(startup, -1),
+                        new(6, 17),
+                        // new(3, 2),
+                        new(10, -1),
+                    }
+                };
+                
+
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration();
+                StateMapConfig.HurtboxCollectionSectionGroup.Dictionary[state] = hurtboxes;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.SmearFrame.Dictionary[state] = smear;
+                StateMapConfig.CancellableAfter.Dictionary[state] = startup + 2;
+            }
+            
+            
         }
         
         public override void SetupMachine()
@@ -2006,7 +2128,7 @@ namespace Quantum
                 DashCancellable = false,
                 GroundOk = true,
                 InputType = InputSystem.InputType.L,
-                JumpCancellable = false,
+                JumpCancellable = true,
                 InputWeight = 0,
                 RawOk = true,
                 State = PriestessState._5L,
@@ -2175,6 +2297,27 @@ namespace Quantum
             };
             
             ConfigureAction(this, JL);
+            
+            ActionConfig JH = new ActionConfig()
+            {
+                Aerial = true,
+                AirOk = true,
+                CommandDirection = 5,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = false,
+                InputType = InputSystem.InputType.H,
+                JumpCancellable = true,
+                InputWeight = 0,
+                RawOk = true,
+                State = PriestessState.JH,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, JH);
             
             
             

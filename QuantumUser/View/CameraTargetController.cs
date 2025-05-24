@@ -2,6 +2,7 @@ using System;
 using Cinemachine;
 using Photon.Deterministic;
 using Quantum;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Input = UnityEngine.Input;
@@ -26,11 +27,15 @@ public class CameraTargetController : MonoBehaviour
     public bool Player0Dramatic = false;
     public bool Player1Dramatic = false;
     
+    public bool Player0AirHit = false;
+    public bool Player1AirHit = false;
+    
     public bool Player0Dark = false;
     public bool Player1Dark = false;
     
     private float _baseYPos;
     private float _yPulldown = 3f;
+    private float _hitBonusYPulldown = 2.25f;
     private float groundBounceTimer;
 
     private void Awake()
@@ -50,13 +55,14 @@ public class CameraTargetController : MonoBehaviour
 
     }
 
-    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, int darkRemaining, bool groundBounce)
+    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, int darkRemaining, bool groundBounce, bool airHit)
     {
         if (playerId == 0)
         {
             _player0Pos = pos;
             Player0Dramatic = dramaticRemaining > 0;
             Player0Dark = darkRemaining > 0;
+            Player0AirHit = airHit;
             if (groundBounce) groundBounceTimer = 0;
         }
         else
@@ -64,6 +70,7 @@ public class CameraTargetController : MonoBehaviour
             _player1Pos = pos;
             Player1Dramatic = dramaticRemaining > 0;
             Player1Dark = darkRemaining > 0;
+            Player1AirHit = airHit;
             if (groundBounce) groundBounceTimer = 0;
         }
     }
@@ -81,6 +88,7 @@ public class CameraTargetController : MonoBehaviour
         float x = (_player0Pos.x + _player1Pos.x) / 2;
         x = Mathf.Clamp(x, -_cameraXPan, _cameraXPan);
         var yPulldown = _yPulldown + GetGroundBouncePulldown();
+        if (Player1AirHit || Player0AirHit) yPulldown += _hitBonusYPulldown;
         float y = Mathf.Clamp((Mathf.Max(_player0Pos.y - yPulldown, _player1Pos.y - yPulldown)), 0f, 1000f);
 
         float deltaX = Mathf.Abs(_player0Pos.x - _player1Pos.x);
