@@ -53,6 +53,9 @@ namespace Quantum
             
             OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Teleport] =
                 (12, PriestessSetplayTrigger.Teleport);
+            
+            OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.AirTeleport] =
+                (12, PriestessSetplayTrigger.Teleport);
         }
         
 

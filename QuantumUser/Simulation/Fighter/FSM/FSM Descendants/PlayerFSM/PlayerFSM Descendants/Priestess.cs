@@ -35,6 +35,10 @@ namespace Quantum
             public static int Return;
             public static int Teleport;
             public static int Fireball;
+            
+            public static int AirReturn;
+            public static int AirTeleport;
+            public static int AirFireball;
         }
 
         public Hit _5HHit;
@@ -1385,6 +1389,80 @@ namespace Quantum
             
             {
                 int startup = 16;
+                string path = "Teleport";
+                int state = PriestessState.AirTeleport;
+                
+                var animation = new FighterAnimation()
+                {
+                    Path = path,
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                var hitboxes = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new(startup, null),
+                        new(1, new Hit()
+                        {
+                            HitboxCollections = null // ghost hit
+                        }),
+                        new (20, null)
+                    }
+                };
+
+                var hurtType = new SectionGroup<HurtType>()
+                {
+                    Sections = new List<Tuple<int, HurtType>>()
+                    {
+                        new(startup, HurtType.Counter),
+                        new(20, HurtType.Punish)
+                    }
+                };
+                
+                var smear = new SectionGroup<int>()
+                {
+                    Sections = new List<Tuple<int, int>>()
+                    {
+                        new(2, 7),
+                        new(2, 8),
+                        new(2, 9),
+                        new(1, 10),
+                        new(1, 11),
+                        new(8, 12),
+                        new(5, 13),
+                        new(5, 14),
+                        new(5, -1),
+                    }
+                };
+
+                var trajectory = new SectionGroup<Trajectory>()
+                {
+                    Sections = new List<Tuple<int, Trajectory>>()
+                    {
+                        new(1, new Trajectory()
+                        {
+                            TimeToTrajectoryHeight = startup + 10,
+                            TrajectoryHeight = 1,
+                            TrajectoryXVelocity = 0
+                        })
+                    }
+                };
+                
+                Util.AutoSetupFromAnimationPath(animation, this);
+                StateMapConfig.FighterAnimation.Dictionary[state] = animation;
+                StateMapConfig.Duration.Dictionary[state] = animation.SectionGroup.Duration() - 1;
+                StateMapConfig.HitSectionGroup.Dictionary[state] = hitboxes;
+                StateMapConfig.HurtTypeSectionGroup.Dictionary[state] = hurtType;
+                StateMapConfig.SmearFrame.Dictionary[state] = smear;
+                StateMapConfig.TrajectorySectionGroup.Dictionary[state] = trajectory;
+            }
+            
+            {
+                int startup = 16;
                 string path = "Summon";
                 int state = PriestessState.Fireball;
                 
@@ -2043,7 +2121,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 3,
-                            TrajectoryHeight = 3,333
+                            TrajectoryHeight = 3,
                             TrajectoryXVelocity = 7,
                             BlockPushback = FP.FromString("2.5"),
                             HitPushback = FP.FromString("1.5"),
@@ -2439,6 +2517,30 @@ namespace Quantum
             };
             
             ConfigureAction(this, Teleport);
+            
+            ActionConfig AirTeleport = new ActionConfig()
+            {
+                Aerial = true,
+                AirOk = true,
+                CommandDirection = 6,
+                Crouching = false,
+                DashCancellable = false,
+                GroundOk = false,
+                InputType = InputSystem.InputType.S,
+                JumpCancellable = false,
+                InputWeight = 3,
+                RawOk = true,
+                IsSpecial = true,
+                State = PriestessState.AirTeleport,
+                
+                BonusClause = CanActivateTeleport,
+                
+                Name = "Standing heavy",
+                Description = "A powerful swing that carries you forward and sends aerial opponents flying.",
+                AnimationDisplayFrameIndex = 13
+            };
+            
+            ConfigureAction(this, AirTeleport);
         }
         
         private bool CanActivateReturn(TriggerParams? triggerParams)
