@@ -51,6 +51,9 @@ namespace Quantum
             OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Return] =
                 (12, PriestessSetplayTrigger.OwnerCallUsed);
             
+            OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.AirReturn] =
+                (12, PriestessSetplayTrigger.OwnerCallUsed);
+            
             OwnerActivationMaxFrameTriggers[PriestessFSM.PriestessState.Teleport] =
                 (12, PriestessSetplayTrigger.Teleport);
             
@@ -64,7 +67,7 @@ namespace Quantum
         {
             base.SetupStateMaps();
 
-            const int lifeSpan = 145;
+            const int lifeSpan = 165;
             
             StateMapConfig.HitSectionGroup.Dictionary[PriestessSetplayState.Active] = new SectionGroup<Hit>()
             {

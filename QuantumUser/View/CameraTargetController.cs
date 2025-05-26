@@ -35,7 +35,7 @@ public class CameraTargetController : MonoBehaviour
     
     private float _baseYPos;
     private float _yPulldown = 3f;
-    private float _hitBonusYPulldown = 2.25f;
+    private float _hitBonusYPulldown = 2f;
     private float groundBounceTimer;
 
     private void Awake()
