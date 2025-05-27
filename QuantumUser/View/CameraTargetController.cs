@@ -27,6 +27,9 @@ public class CameraTargetController : MonoBehaviour
     public bool Player0Dramatic = false;
     public bool Player1Dramatic = false;
     
+    public bool Player0InAir = false;
+    public bool Player1InAir = false;
+    
     public bool Player0AirHit = false;
     public bool Player1AirHit = false;
     
@@ -37,6 +40,10 @@ public class CameraTargetController : MonoBehaviour
     private float _yPulldown = 3f;
     private float _hitBonusYPulldown = 2f;
     private float groundBounceTimer;
+    
+    
+    public Frame Player0Frame;
+    public Frame Player1Frame;
 
     private void Awake()
     {
@@ -55,7 +62,7 @@ public class CameraTargetController : MonoBehaviour
 
     }
 
-    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, int darkRemaining, bool groundBounce, bool airHit)
+    public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, int darkRemaining, bool groundBounce, bool airHit, Frame frame)
     {
         if (playerId == 0)
         {
@@ -64,6 +71,8 @@ public class CameraTargetController : MonoBehaviour
             Player0Dark = darkRemaining > 0;
             Player0AirHit = airHit;
             if (groundBounce) groundBounceTimer = 0;
+            Player0Frame = frame;
+            Player0InAir = (FsmLoader.FSMs[Util.GetPlayer(frame, playerId)].Fsm.IsInState(PlayerFSM.PlayerState.Air));
         }
         else
         {
@@ -72,6 +81,8 @@ public class CameraTargetController : MonoBehaviour
             Player1Dark = darkRemaining > 0;
             Player1AirHit = airHit;
             if (groundBounce) groundBounceTimer = 0;
+            Player1Frame = frame;
+            Player1InAir = (FsmLoader.FSMs[Util.GetPlayer(frame, playerId)].Fsm.IsInState(PlayerFSM.PlayerState.Air));
         }
     }
 
@@ -88,7 +99,10 @@ public class CameraTargetController : MonoBehaviour
         float x = (_player0Pos.x + _player1Pos.x) / 2;
         x = Mathf.Clamp(x, -_cameraXPan, _cameraXPan);
         var yPulldown = _yPulldown + GetGroundBouncePulldown();
-        if (Player1AirHit || Player0AirHit) yPulldown += _hitBonusYPulldown;
+        
+        if ((Player1AirHit && !Player0InAir) || (Player0AirHit && !Player1InAir)) yPulldown += _hitBonusYPulldown;
+        
+        
         float y = Mathf.Clamp((Mathf.Max(_player0Pos.y - yPulldown, _player1Pos.y - yPulldown)), 0f, 1000f);
 
         float deltaX = Mathf.Abs(_player0Pos.x - _player1Pos.x);
