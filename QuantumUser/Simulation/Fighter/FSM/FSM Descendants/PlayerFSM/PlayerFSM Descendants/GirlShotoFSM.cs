@@ -359,9 +359,18 @@ namespace Quantum
                 }
             };
             
-            var airHitAnimation = new FighterAnimation()
+            var airHitHighAnimation = new FighterAnimation()
             {
                 Path = "AirHit",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
+            var airHitLowAnimation = new FighterAnimation()
+            {
+                Path = "AirHitLow",
                 SectionGroup = new SectionGroup<int>()
                 {
                     AutoFromAnimationPath = true
@@ -553,9 +562,12 @@ namespace Quantum
             Util.AutoSetupFromAnimationPath(crouchHitAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.CrouchHit] = crouchHitAnimation;
             
-            Util.AutoSetupFromAnimationPath(airHitAnimation, this);
-            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHit] = airHitAnimation;
-            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitAnimation;
+            Util.AutoSetupFromAnimationPath(airHitHighAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitHigh] = airHitHighAnimation;
+            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitHighAnimation;
+            
+            Util.AutoSetupFromAnimationPath(airHitLowAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitLow] = airHitLowAnimation;
             
             Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostWallBounce] = wallBounceAnimation;
