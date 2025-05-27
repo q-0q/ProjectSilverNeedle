@@ -250,6 +250,8 @@ namespace Quantum
             else if (trajectoryHeight < 10) roughLog = trajectoryHeight * FP.FromString("0.6");
             else roughLog = trajectoryHeight * FP.FromString("0.4");
 
+            roughLog *= FP.FromString("0.865");
+
             return (roughLog / (UniversalJuggleLaunchSpeed * Util.FrameLengthInSeconds)).AsInt;
         }
 
