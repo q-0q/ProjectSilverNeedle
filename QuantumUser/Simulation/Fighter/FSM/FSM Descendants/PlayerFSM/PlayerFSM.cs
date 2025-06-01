@@ -59,6 +59,7 @@ namespace Quantum
             public static int AirHit;
             public static int AirHitHigh;
             public static int AirHitLow;
+            public static int AirHitLaunch;
             public static int AirBlock;
             public static int AirHitPostGroundBounce;
             public static int AirHitPostWallBounce;
@@ -152,7 +153,7 @@ namespace Quantum
             // Ground
             machine.Configure(PlayerState.Ground)
                 .OnEntryFrom(PlayerTrigger.Land, OnLand)
-                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitHigh, IsCollisionHitParamLauncher, 1)
+                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitLaunch, IsCollisionHitParamLauncher, 1)
                 .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHitLow, IsCollisionHitParamLauncher, 1)
                 .PermitIf(PlayerTrigger.Die, PlayerState.DeadFromGround, PlayerIsDead, 3)
                 .SubstateOf(PlayerState.Any);
@@ -457,7 +458,7 @@ namespace Quantum
                 .SubstateOf(PlayerState.Air)
                 .OnEntryFrom(PlayerTrigger.HitHigh, StartNewJuggle)
                 .OnEntryFrom(PlayerTrigger.HitLow, StartNewJuggle)
-                .OnEntryFrom(PlayerTrigger.Finish, StartNewJuggle)
+                // .OnEntryFrom(PlayerTrigger.Finish, StartNewJuggle) ????
                 .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitHigh, _ => true, -2)
                 .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHitLow, _ => true, -2)
                 .PermitIf(PlayerTrigger.Land, PlayerState.AirHitPostGroundBounce, IsInGroundBounce, 4)
@@ -477,6 +478,10 @@ namespace Quantum
                 .SubstateOf(PlayerState.AirHit);
             
             machine.Configure(PlayerState.AirHitLow)
+                .SubstateOf(PlayerState.AirHit);
+            
+            machine.Configure(PlayerState.AirHitLaunch)
+                .Permit(Trigger.Finish, PlayerState.AirHitHigh)
                 .SubstateOf(PlayerState.AirHit);
 
             machine.Configure(PlayerState.AirHitPostGroundBounce)
@@ -545,6 +550,7 @@ namespace Quantum
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Jumpsquat] = JumpsquatDuration;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.EmptyLandsquat] = 8;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.FullLandsquat] = 7;
+            StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.AirHitLaunch] = 7;
             
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.Break] = 20;
             StateMapConfig.Duration.Dictionary[PlayerFSM.PlayerState.RedBreak] = 15;

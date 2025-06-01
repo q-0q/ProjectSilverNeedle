@@ -11,8 +11,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: 270965b004462ae41bd125bc783c0fa6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _SNOWONOFF_ON
+  m_ValidKeywords: []
   m_InvalidKeywords:
   - _CUSTOMWIND1_ON
   - _WINDTRUNKMASKONOFF_ON
@@ -109,7 +108,7 @@ Material:
     - _QueueControl: -1
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _SNOWONOFF: 1
+    - _SNOWONOFF: 0
     - _Smoothness: 0.261
     - _SmoothnessTextureChannel: 0
     - _SnowAmount: 1
