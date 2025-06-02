@@ -85,6 +85,7 @@ namespace Quantum
                         TrajectoryHeight = FP.FromString("0.5"),
                         TrajectoryXVelocity = 13,
                         GravityProration = FP.FromString("1.7"),
+                        VisualHitLarge = true,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()
@@ -125,6 +126,8 @@ namespace Quantum
                         HitPushback = -2,
                         BlockPushback = -4,
                         GravityProration = FP.FromString("1.7"),
+                        VisualHitLarge = true,
+                        VisualAngle = 180,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()

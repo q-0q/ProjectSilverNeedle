@@ -379,6 +379,7 @@ namespace Quantum
             machine.Configure(PlayerState.Air)
                 .PermitIf(PlayerTrigger.Land, PlayerState.EmptyLandsquat, IsTrajectoryEmpty)
                 .PermitIf(PlayerTrigger.Land, PlayerState.FullLandsquat, x => !IsTrajectoryEmpty(x))
+                .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitLaunch, IsCollisionHitParamLauncher, 1)
                 .PermitIf(PlayerTrigger.HitHigh, PlayerState.AirHitHigh, _ => true, -1)
                 .PermitIf(PlayerTrigger.HitLow, PlayerState.AirHitLow, _ => true, -1)
                 .SubstateOf(PlayerState.Any);

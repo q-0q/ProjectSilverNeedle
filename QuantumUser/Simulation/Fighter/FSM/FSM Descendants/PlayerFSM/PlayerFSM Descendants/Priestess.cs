@@ -732,7 +732,7 @@ namespace Quantum
                         new(active, new Hit()
                         {
                             Level = 3,
-                            TrajectoryHeight = 2,
+                            TrajectoryHeight = FP.FromString("1.5"),
                             TrajectoryXVelocity = 10,
                             BlockPushback = FP.FromString("2.5"),
                             HitPushback = FP.FromString("1.5"),
@@ -1652,6 +1652,7 @@ namespace Quantum
                     GroundBounce = true,
                     VisualHitPositionOffset = new FPVector2(7, 5),
                     VisualAngle = 70,
+                    VisualHitLarge = true,
                     Damage = 20,
                     ProxBlockDistance = 9,
                     // Launches = true,
@@ -1795,6 +1796,7 @@ namespace Quantum
                     GravityProration = FP.FromString("3"),
                     VisualHitPositionOffset = new FPVector2(5, 5),
                     VisualAngle = -70,
+                    VisualHitLarge = true,
                     Damage = 20,
                     ProxBlockDistance = 9,
                     Launches = true,
@@ -2193,6 +2195,7 @@ namespace Quantum
                             GroundBounce = true,
                             VisualHitPositionOffset = new FPVector2(5, 0),
                             VisualAngle = 70,
+                            VisualHitLarge = true,
                             Damage = 20,
                             HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                             {

@@ -238,14 +238,13 @@ namespace Quantum
                 opponentHealthData->nextHitEmpowered = false;
             }
 
-            if (!empowered)
-            {
-                var animationEntityEnum = hurtType is HurtType.Counter
-                    ? AnimationEntities.AnimationEntityEnum.Counter
-                    : AnimationEntities.AnimationEntityEnum.Hit;
-                AnimationEntitySystem.Create(f, animationEntityEnum, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle,
-                    !IsFacingRight(f, hitboxData.source));
-            }
+
+            var animationEntityEnum = hitboxData.visualHitLarge
+                ? AnimationEntities.AnimationEntityEnum.Hit
+                : AnimationEntities.AnimationEntityEnum.HitSmall;
+            AnimationEntitySystem.Create(f, animationEntityEnum, GetVisualCollisionPosition(f, hitboxData.visualHitPos, EntityRef, hitboxData.source), hitboxData.visualHitAngle,
+                !IsFacingRight(f, hitboxData.source));
+            
             
             f.Events.PlayerHit(location, hitboxData.visualHitAngle);
 

@@ -8,6 +8,7 @@ namespace Quantum.Types
         {
             Block,
             Hit,
+            HitSmall,
             Counter,
             Tech,
             Countdown,
@@ -27,6 +28,7 @@ namespace Quantum.Types
         {
             { AnimationEntityEnum.Block, new BlockAnimationEntity() },
             { AnimationEntityEnum.Hit, new HitAnimationEntity() },
+            { AnimationEntityEnum.HitSmall, new HitSmallAnimationEntity() },
             { AnimationEntityEnum.Tech, new TechAnimationEntity() },
             { AnimationEntityEnum.Counter, new CounterHitAnimationEntity() },
             { AnimationEntityEnum.Countdown , new CountdownAnimationEntity() },
