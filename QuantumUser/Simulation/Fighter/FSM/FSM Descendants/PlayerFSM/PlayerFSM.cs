@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Photon.Deterministic;
+using Quantum.QuantumUser.Simulation.Fighter.Types;
 using Quantum.Types;
 using Quantum.Types.Collision;
 using UnityEngine;
@@ -130,6 +131,9 @@ namespace Quantum
         public static readonly int ThrowStartupDuration = 4;
 
 
+        public SummonPool JumpGameFXSummonPool;
+
+
         public PlayerFSM()
         {
             int currentState = PlayerState.StandActionable;
@@ -140,7 +144,13 @@ namespace Quantum
             SpecialMoveList = new List<ActionConfig>();
             SuperMoveList = new List<ActionConfig>();
             ActionStartupReduction = new Dictionary<int, int>();
-            Debug.Log("Dict cleared for entity: " + EntityRef);
+
+
+            JumpGameFXSummonPool = new SummonPool()
+            {
+                Size = 1,
+                SummonFSMType = typeof(JumpGameFXSummonFSM)
+            };
         }
 
 
@@ -673,6 +683,18 @@ namespace Quantum
             StateMapConfig.UnpoolSummonSectionGroup.DefaultValue = null;
 
             StateMapConfig.SmearFrame.DefaultValue = null;
+
+
+            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[PlayerState.AirActionable] =
+                new SectionGroup<SummonPool>()
+                {
+                    Sections = new List<Tuple<int, SummonPool>>()
+                    {
+                        new(1, JumpGameFXSummonPool)
+                    }
+                };
+            
+            
             return;
 
 

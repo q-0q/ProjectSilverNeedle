@@ -160,7 +160,7 @@ namespace Quantum
                 {
                     new(15, FP.FromString("6")),
                     new(15, FP.FromString("3")),
-                    new(15, FP.FromString("1.5")),
+                    new(15, FP.FromString("2.25")),
                     new(10, FP.FromString("0"))
                 }
             };

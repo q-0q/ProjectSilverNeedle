@@ -47,8 +47,8 @@ namespace Quantum
             }
             
             // Setup summons
-            InitializeSummonPools(f, p0, 0);
-            InitializeSummonPools(f, p1, 1);
+            InitializePlayerSummonPools(f, p0, 0);
+            InitializePlayerSummonPools(f, p1, 1);
             
             // Fill in HitTable
             HitTable = new List<Hit>();
@@ -93,31 +93,38 @@ namespace Quantum
             return entity;
         }
 
-        private static void InitializeSummonPools(Frame f, FSM ownerFsm, int ownerPlayerId)
+        private static void InitializePlayerSummonPools(Frame f, PlayerFSM ownerFsm, int ownerPlayerId)
         {
+            
+            InitializeSummonPool(f, ownerPlayerId, ownerFsm.JumpGameFXSummonPool);
             var summonPools = ownerFsm.SummonPools;
             if (summonPools is null) return;
 
             foreach (var summonPool in summonPools)
             {
-                summonPool.EntityRefs = new List<EntityRef>();
-                for (int i = 0; i < summonPool.Size; i++)
-                {
-                    var summonEntity = CreateSummonEntity(f, ownerPlayerId, i);
-                    if (Activator.CreateInstance(summonPool.SummonFSMType) is not SummonFSM summonFsm)
-                    {
-                        Debug.LogError("You tried to instantiate a SummonFSM pool on a type that is not a SummonFSM");
-                        return;
-                    }
+                InitializeSummonPool(f, ownerPlayerId, summonPool);
+            }
+        }
 
-                    summonFsm.playerOwnerEntity = Util.GetPlayer(f, ownerPlayerId);
-                    summonFsm.EntityRef = summonEntity;
-                    summonFsm.SetupStateMaps();
-                    summonFsm.SetupMachine();
-                    FSMs[summonEntity] = summonFsm;
-                    summonPool.EntityRefs.Add(summonEntity);
-                    // Debug.Log("Successfully instantiated player " + ownerPlayerId + " " + summonPool.SummonFSMType + " [" + i + "]");
+        private static void InitializeSummonPool(Frame f, int ownerPlayerId, SummonPool summonPool)
+        {
+            summonPool.EntityRefs = new List<EntityRef>();
+            for (int i = 0; i < summonPool.Size; i++)
+            {
+                var summonEntity = CreateSummonEntity(f, ownerPlayerId, i);
+                if (Activator.CreateInstance(summonPool.SummonFSMType) is not SummonFSM summonFsm)
+                {
+                    Debug.LogError("You tried to instantiate a SummonFSM pool on a type that is not a SummonFSM");
+                    return;
                 }
+
+                summonFsm.playerOwnerEntity = Util.GetPlayer(f, ownerPlayerId);
+                summonFsm.EntityRef = summonEntity;
+                summonFsm.SetupStateMaps();
+                summonFsm.SetupMachine();
+                FSMs[summonEntity] = summonFsm;
+                summonPool.EntityRefs.Add(summonEntity);
+                // Debug.Log("Successfully instantiated player " + ownerPlayerId + " " + summonPool.SummonFSMType + " [" + i + "]");
             }
         }
 

@@ -105,6 +105,9 @@ namespace Quantum
             
             // set pos
             if (!DisableUnpoolOwnerSnap) SnapToOwnerPosWithOffset(f);
+            
+            // force update sprite
+            Animation(f);
 
             // clear hit entities
             f.Unsafe.TryGetPointer<HitEntitiesTracker>(EntityRef, out var hitEntitiesTracker);

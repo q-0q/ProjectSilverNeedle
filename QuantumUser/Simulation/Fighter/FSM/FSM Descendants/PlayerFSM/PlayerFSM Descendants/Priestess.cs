@@ -1524,7 +1524,7 @@ namespace Quantum
             
             {
                 int startup = 16;
-                string path = "Summon";
+                string path = "Fireball";
                 int state = PriestessState.Fireball;
                 
                 var animation = new FighterAnimation()

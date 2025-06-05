@@ -54,8 +54,9 @@ namespace Quantum
                         Level = 1,
                         Projectile = true,
                         // GroundBounce = true,
-                        TrajectoryHeight = 2,
+                        TrajectoryHeight = 6,
                         TrajectoryXVelocity = 8,
+                        VisualHitLarge = true,
                         HitboxCollections = new SectionGroup<CollisionBoxCollection>()
                         {
                             Sections = new List<Tuple<int, CollisionBoxCollection>>()

@@ -59,6 +59,11 @@ public class FSMSprite : QuantumEntityViewComponent
             _shadowCasterRenderer.flipX = flip;
         }
 
+        // if (fsm is SummonFSM summonFsm)
+        // {
+        //     _renderer.color = fsm.Fsm.IsInState(SummonFSM.SummonState.Pooled) ? Color.clear : Color.white;
+        // }
+
         
         // offense / defense sorting
         if (fsm is null) return;
