@@ -1,6 +1,7 @@
 using System;
 using JetBrains.Annotations;
 using Photon.Deterministic;
+using Quantum.QuantumUser.Simulation.Fighter.Types;
 using Quantum.Types;
 using UnityEngine;
 using Wasp;
@@ -9,7 +10,7 @@ namespace Quantum
 {
     public unsafe partial class FSM
     {
-        public void UnpoolSummon(Frame f)
+        public void UnpoolSummons(Frame f)
         {
             var unpoolSummonSectionGroup = StateMapConfig.UnpoolSummonSectionGroup.Get(this);
             if (unpoolSummonSectionGroup is null) return;
@@ -17,6 +18,11 @@ namespace Quantum
             var summonPool = unpoolSummonSectionGroup.GetCurrentItem(f, this);
             if (summonPool is null) return;
             
+            UnpoolSummon(f, summonPool);
+        }
+
+        public static void UnpoolSummon(Frame f, SummonPool summonPool)
+        {
             EntityRef summonToUnpool = EntityRef.None;
             foreach (var summonEntity in summonPool.EntityRefs)
             {

@@ -35,7 +35,7 @@ namespace Quantum
             if (!fsm.IsTimeStopped(f))
             {
                 // unpool summons
-                fsm.UnpoolSummon(f);
+                fsm.UnpoolSummons(f);
                 
                 // Clock
                 FP virtualTimeIncrement = Util.FrameLengthInSeconds * fsm.GetSlowdownMod(f, filter.Entity);

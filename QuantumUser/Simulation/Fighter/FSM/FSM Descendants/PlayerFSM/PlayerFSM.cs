@@ -132,6 +132,7 @@ namespace Quantum
 
 
         public SummonPool JumpGameFXSummonPool;
+        public SummonPool LandGameFXSummonPool;
 
 
         public PlayerFSM()
@@ -150,6 +151,12 @@ namespace Quantum
             {
                 Size = 1,
                 SummonFSMType = typeof(JumpGameFXSummonFSM)
+            };
+            
+            LandGameFXSummonPool = new SummonPool()
+            {
+                Size = 1,
+                SummonFSMType = typeof(LandGameFXSummonFSM)
             };
         }
 
@@ -337,6 +344,7 @@ namespace Quantum
 
             machine.Configure(PlayerState.Landsquat)
                 .Permit(PlayerTrigger.Finish, PlayerState.StandActionable)
+                .OnEntry(OnLandsquat)
                 .SubstateOf(PlayerState.Crouch)
                 .SubstateOf(PlayerState.Ground);
 
@@ -510,6 +518,7 @@ namespace Quantum
                 .OnEntryFrom(PlayerTrigger.Jump, StartNewJump)
                 .OnEntryFrom(PlayerTrigger.JumpCancel, StartNewJump)
                 .OnEntry(MakeTrajectoryEmpty)
+                .OnExitFrom(PlayerTrigger.Finish, OnJumpsquatFinished)
                 .Permit(Trigger.Finish, PlayerState.AirActionable);
 
             // General
@@ -684,16 +693,6 @@ namespace Quantum
 
             StateMapConfig.SmearFrame.DefaultValue = null;
 
-
-            StateMapConfig.UnpoolSummonSectionGroup.Dictionary[PlayerState.AirActionable] =
-                new SectionGroup<SummonPool>()
-                {
-                    Sections = new List<Tuple<int, SummonPool>>()
-                    {
-                        new(1, JumpGameFXSummonPool)
-                    }
-                };
-            
             
             return;
 
@@ -1286,6 +1285,18 @@ namespace Quantum
         {
             if (triggerParams is not FrameParam frameParam) return false;
             return FramesInCurrentState(frameParam.f) > MinimumDashDuration;
+        }
+        
+        private void OnJumpsquatFinished(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam frameParam) return;
+            UnpoolSummon(frameParam.f, JumpGameFXSummonPool);
+        }
+        
+        private void OnLandsquat(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam frameParam) return;
+            UnpoolSummon(frameParam.f, LandGameFXSummonPool);
         }
         
     }

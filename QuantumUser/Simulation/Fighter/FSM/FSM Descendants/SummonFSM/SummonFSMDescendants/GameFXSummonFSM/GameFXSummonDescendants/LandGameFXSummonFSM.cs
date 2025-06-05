@@ -12,13 +12,13 @@ using Wasp;
 
 namespace Quantum
 {
-    public unsafe partial class JumpGameFXSummonFSM : GameFXSummonFSM
+    public unsafe partial class LandGameFXSummonFSM : GameFXSummonFSM
     {
         
-        public JumpGameFXSummonFSM()
+        public LandGameFXSummonFSM()
         {
             SummonPositionOffset = new FPVector2(0, 0);
-            Name = "GameFXJump";
+            Name = "GameFXLand";
         }
         
         public override void SetupMachine()
@@ -33,7 +33,7 @@ namespace Quantum
 
             var animation = new FighterAnimation()
             {
-                Path = "Jump",
+                Path = "Land",
                 SectionGroup = new SectionGroup<int>()
                 {
                     LengthScalar = 5,

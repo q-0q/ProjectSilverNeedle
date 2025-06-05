@@ -110,7 +110,7 @@ namespace Quantum
                 PosX = 0,
                 PosY = 0,
                 Height = 8,
-                Width = FP.FromString("3.5"),
+                Width = FP.FromString("4"),
             };
 
             CollisionBox crouchHurtbox = new()
@@ -2188,7 +2188,7 @@ namespace Quantum
                 };
                 var hit1 = new Hit()
                 {
-                    Level = 3,
+                    Level = 2,
                     GravityScaling = FP.FromString("1"),
                     GravityProration = FP.FromString("1"),
                     TrajectoryHeight = FP.FromString("4.25"),
@@ -2199,7 +2199,6 @@ namespace Quantum
                     VisualHitPositionOffset = new FPVector2(2, 7),
                     Launches = true,
                     HardKnockdown = false,
-                    BonusHitstop = 5,
                     // GroundBounce = true,
                     Damage = 25,
                     HitboxCollections = hitboxCollections

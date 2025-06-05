@@ -97,6 +97,8 @@ namespace Quantum
         {
             
             InitializeSummonPool(f, ownerPlayerId, ownerFsm.JumpGameFXSummonPool);
+            InitializeSummonPool(f, ownerPlayerId, ownerFsm.LandGameFXSummonPool);
+            
             var summonPools = ownerFsm.SummonPools;
             if (summonPools is null) return;
 
