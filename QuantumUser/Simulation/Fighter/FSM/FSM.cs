@@ -43,6 +43,7 @@ namespace Quantum
         public Dictionary<int, Cutscene> Cutscenes;
         public List<SummonPool> SummonPools;
         public bool sendToBack = false;
+        public bool IgnoreHitstop = false;
         public FP SpriteScale = 1;
 
         
@@ -108,7 +109,7 @@ namespace Quantum
 
         public virtual bool IsTimeStopped(Frame f)
         {
-            return HitstopSystem.IsHitstopActive(f);
+            return HitstopSystem.IsHitstopActive(f) && !IgnoreHitstop;
         }
         
         public int RealtimeFramesInCurrentState(Frame f)

@@ -120,7 +120,7 @@ namespace Quantum
             frameParam.f.Events.EntityVibrate(EntityRef, FP.FromString("0.4"), FP.FromString("0.4"), 40);
             HitstopSystem.EnqueueHitstop(frameParam.f, 9);
             
-            // AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.GroundBounce, transform3D->Position.XY, 0, false);
+            UnpoolSummon(frameParam.f, GroundBounceGameFXSummonPool);
             
             
             // multiply height by (4/5) == 0.8 to make the popup time off a ground bounce slightly faster than a normal launch would

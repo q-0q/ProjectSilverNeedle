@@ -133,6 +133,8 @@ namespace Quantum
 
         public SummonPool JumpGameFXSummonPool;
         public SummonPool LandGameFXSummonPool;
+        public SummonPool DashGameFXSummonPool;
+        public SummonPool GroundBounceGameFXSummonPool;
 
 
         public PlayerFSM()
@@ -157,6 +159,18 @@ namespace Quantum
             {
                 Size = 1,
                 SummonFSMType = typeof(LandGameFXSummonFSM)
+            };
+            
+            DashGameFXSummonPool = new SummonPool()
+            {
+                Size = 1,
+                SummonFSMType = typeof(DashGameFXSummonFSM)
+            };
+            
+            GroundBounceGameFXSummonPool = new SummonPool()
+            {
+                Size = 1,
+                SummonFSMType = typeof(GroundBounceGameFXSummonFSM)
             };
         }
 
@@ -209,6 +223,9 @@ namespace Quantum
                 .Permit(Trigger.Backdash, PlayerState.Backdash)
                 .Permit(Trigger.Jump, PlayerState.Jumpsquat)
                 .SubstateOf(PlayerState.GroundActionable);
+
+            machine.Configure(PlayerState.Dash)
+                .OnEntry(OnDash);
 
             machine.Configure(PlayerState.StandActionable)
                 .SubstateOf(PlayerState.GroundMoveable)
@@ -1297,6 +1314,12 @@ namespace Quantum
         {
             if (triggerParams is not FrameParam frameParam) return;
             UnpoolSummon(frameParam.f, LandGameFXSummonPool);
+        }
+        
+        private void OnDash(TriggerParams? triggerParams)
+        {
+            if (triggerParams is not FrameParam frameParam) return;
+            UnpoolSummon(frameParam.f, DashGameFXSummonPool);
         }
         
     }
