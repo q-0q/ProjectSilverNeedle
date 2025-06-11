@@ -2257,7 +2257,77 @@ namespace Quantum
                 StateMapConfig.SmearFrame.Dictionary[state] = smear;
                 StateMapConfig.CancellableAfter.Dictionary[state] = startup + 2;
             }
-            
+
+            {
+                Cutscene cutscene = new Cutscene()
+                {
+                    InitiatorState = PriestessState.ForwardThrowCutscene,
+                    ReactorDuration = 24,
+                    Techable = true,
+                    ReactorPositionSectionGroup = new SectionGroup<FPVector2>()
+                    {
+                        Sections = new List<Tuple<int, FPVector2>>()
+                        {
+                            new(8, new FPVector2(FP.FromString("3.5"), FP.FromString("7.5"))),
+                            new(12, new FPVector2(FP.FromString("3.5"), 8)),
+                            new(10, new FPVector2(FP.FromString("6"), FP.FromString("8"))),
+                        }
+                    }
+                };
+                Cutscenes[PlayerFSM.CutsceneIndexes.ForwardThrow] = cutscene;
+                
+                var frontThrowCutsceneHits = new SectionGroup<Hit>()
+                {
+                    Sections = new List<Tuple<int, Hit>>()
+                    {
+                        new Tuple<int, Hit>(23, null),
+                        new Tuple<int, Hit>(2, new Hit()
+                        {
+                            Level = 0,
+                            Type = Hit.HitType.Mid,
+                            HardKnockdown = true,
+                            VisualHitPositionOffset = new FPVector2(2, 7),
+                            HitboxCollections = new SectionGroup<CollisionBoxCollection>()
+                            {
+                                Sections = new List<Tuple<int, CollisionBoxCollection>>()
+                                {
+                                    new Tuple<int, CollisionBoxCollection>(8, new CollisionBoxCollection()
+                                    {
+                                        CollisionBoxes = new List<CollisionBox>()
+                                        {
+                                            new CollisionBox()
+                                            {
+                                                GrowHeight = false,
+                                                GrowWidth = true,
+                                                Width = 6,
+                                                Height = 2,
+                                                PosX = 0,
+                                                PosY = 6
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }),
+                        new Tuple<int, Hit>(20, null)
+                    }
+                };
+                
+                var frontThrowCutsceneAnimation = new FighterAnimation()
+                {
+                    Path = "FrontThrow",
+                    SectionGroup = new SectionGroup<int>()
+                    {
+                        AutoFromAnimationPath = true
+                    }
+                };
+                
+                Util.AutoSetupFromAnimationPath(frontThrowCutsceneAnimation, this);
+                StateMapConfig.FighterAnimation.Dictionary[PriestessState.ForwardThrowCutscene] = frontThrowCutsceneAnimation;
+                StateMapConfig.HitSectionGroup.Dictionary[PriestessState.ForwardThrowCutscene] = frontThrowCutsceneHits;
+                StateMapConfig.Duration.Dictionary[PriestessState.ForwardThrowCutscene] = 50;
+            }
+
             
         }
         
@@ -2645,6 +2715,17 @@ namespace Quantum
             };
             
             ConfigureAction(this, AirTeleport);
+            
+            ActionConfig frontThrow = new ActionConfig()
+            {
+                Aerial = false,
+                State = PriestessState.ForwardThrowCutscene,
+                IsCutscene = true,
+                
+                Name = "Forward throw"
+            };
+            
+            ConfigureAction(this, frontThrow);
         }
         
         private bool CanActivateReturn(TriggerParams? triggerParams)

@@ -26,7 +26,7 @@ public class ApplyImportSettingsFromReference : EditorWindow
         // Directory to scan for PNG files
 
         // string directoryPath = "Assets/Resources/Sprites/Characters/PriestessHorizontalFireball";
-        string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/FrameGroups/Summon";
+        string directoryPath = "Assets/Resources/Sprites/Characters/Priestess/FrameGroups/FrontThrow";
         // string directoryPath = "Assets/Resources/Sprites/Characters/GameFXWallBounce";
         // string directoryPath = "Assets/Resources/Sprites/AnimationEntities";
         
