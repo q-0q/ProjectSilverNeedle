@@ -732,20 +732,23 @@ namespace Quantum {
   }
   [StructLayout(LayoutKind.Explicit)]
   public unsafe partial struct ComboData : Quantum.IComponent {
-    public const Int32 SIZE = 24;
+    public const Int32 SIZE = 32;
     public const Int32 ALIGNMENT = 8;
     [FieldOffset(0)]
     public Int32 length;
     [FieldOffset(4)]
-    public QDictionaryPtr<Int32, Int32> hitCounts;
-    [FieldOffset(16)]
-    public FP gravityScaling;
+    public Int32 numInteractions;
     [FieldOffset(8)]
+    public QDictionaryPtr<Int32, Int32> hitCounts;
+    [FieldOffset(24)]
+    public FP gravityScaling;
+    [FieldOffset(16)]
     public FP damageScaling;
     public override Int32 GetHashCode() {
       unchecked { 
         var hash = 13171;
         hash = hash * 31 + length.GetHashCode();
+        hash = hash * 31 + numInteractions.GetHashCode();
         hash = hash * 31 + hitCounts.GetHashCode();
         hash = hash * 31 + gravityScaling.GetHashCode();
         hash = hash * 31 + damageScaling.GetHashCode();
@@ -762,6 +765,7 @@ namespace Quantum {
     public static void Serialize(void* ptr, FrameSerializer serializer) {
         var p = (ComboData*)ptr;
         serializer.Stream.Serialize(&p->length);
+        serializer.Stream.Serialize(&p->numInteractions);
         QDictionary.Serialize(&p->hitCounts, serializer, Statics.SerializeInt32, Statics.SerializeInt32);
         FP.Serialize(&p->damageScaling, serializer);
         FP.Serialize(&p->gravityScaling, serializer);

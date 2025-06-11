@@ -135,6 +135,7 @@ namespace Quantum
         public SummonPool LandGameFXSummonPool;
         public SummonPool DashGameFXSummonPool;
         public SummonPool GroundBounceGameFXSummonPool;
+        public SummonPool WallBounceGameFXSummonPool;
 
 
         public PlayerFSM()
@@ -171,6 +172,12 @@ namespace Quantum
             {
                 Size = 1,
                 SummonFSMType = typeof(GroundBounceGameFXSummonFSM)
+            };
+            
+            WallBounceGameFXSummonPool = new SummonPool()
+            {
+                Size = 1,
+                SummonFSMType = typeof(WallBounceGameFXSummonFSM)
             };
         }
 
@@ -802,6 +809,7 @@ namespace Quantum
 
             f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
             comboData->length = 0;
+            comboData->numInteractions = 0;
             comboData->gravityScaling = 1;
             comboData->damageScaling = 1;
             f.ResolveDictionary(comboData->hitCounts).Clear();
@@ -853,7 +861,8 @@ namespace Quantum
             if (triggerParams is null) return false;
             var frameParam = (FrameParam)triggerParams;
             frameParam.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
-            return trajectoryData->hardKnockdown;
+            frameParam.f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
+            return trajectoryData->hardKnockdown || comboData->numInteractions >= 2;
         }
 
         private bool PlayerIsDead(TriggerParams? triggerParams)

@@ -152,6 +152,7 @@ namespace Quantum.Prototypes {
   [Quantum.Prototypes.Prototype(typeof(Quantum.ComboData))]
   public unsafe partial class ComboDataPrototype : ComponentPrototype<Quantum.ComboData> {
     public Int32 length;
+    public Int32 numInteractions;
     [DictionaryAttribute()]
     [DynamicCollectionAttribute()]
     public DictionaryEntry_Int32_Int32[] hitCounts = {};
@@ -165,6 +166,7 @@ namespace Quantum.Prototypes {
     }
     public void Materialize(Frame frame, ref Quantum.ComboData result, in PrototypeMaterializationContext context = default) {
         result.length = this.length;
+        result.numInteractions = this.numInteractions;
         if (this.hitCounts.Length == 0) {
           result.hitCounts = default;
         } else {

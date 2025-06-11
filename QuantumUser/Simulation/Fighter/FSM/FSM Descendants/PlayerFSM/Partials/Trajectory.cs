@@ -116,6 +116,7 @@ namespace Quantum
             frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
             frameParam.f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
             comboData->gravityScaling *= GroundBounceGravityScaling;
+            comboData->numInteractions++;
             
             frameParam.f.Events.EntityVibrate(EntityRef, FP.FromString("0.4"), FP.FromString("0.4"), 40);
             HitstopSystem.EnqueueHitstop(frameParam.f, 9);
@@ -135,7 +136,7 @@ namespace Quantum
             FrameParam frameParam = (FrameParam)triggerParams;
             frameParam.f.Unsafe.TryGetPointer<TrajectoryData>(EntityRef, out var trajectoryData);
             frameParam.f.Unsafe.TryGetPointer<ComboData>(EntityRef, out var comboData);
-            frameParam.f.Unsafe.TryGetPointer<Transform3D>(EntityRef, out var transform3D);
+            comboData->numInteractions++;
 
             trajectoryData->wallBounce = false;
             
@@ -144,8 +145,7 @@ namespace Quantum
             HitstopSystem.EnqueueHitstop(frameParam.f, 12);
             
             
-            // var angle = transform3D->Position.X < 0 ? 90 : -90;
-            // AnimationEntitySystem.Create(frameParam.f, AnimationEntities.AnimationEntityEnum.GroundBounce, transform3D->Position.XY, angle, false);
+            UnpoolSummon(frameParam.f, WallBounceGameFXSummonPool);
             
             StartTrajectoryWithGravityScaling(frameParam.f, trajectoryData->xVelocity * -1 * FP.FromString("0.5"),
                 1, false, false);

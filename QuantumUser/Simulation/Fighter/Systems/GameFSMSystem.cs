@@ -268,6 +268,7 @@ namespace Quantum
             
             f.Unsafe.TryGetPointer<ComboData>(entityRef, out var comboData);
             comboData->length = 0;
+            comboData->numInteractions = 0;
             comboData->damageScaling = 1;
             comboData->gravityScaling = 1;
             f.ResolveDictionary(comboData->hitCounts).Clear();
