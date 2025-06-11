@@ -379,6 +379,15 @@ namespace Quantum
                 }
             };
             
+            var airHitLaunchAnimation = new FighterAnimation()
+            {
+                Path = "AirHitLaunch",
+                SectionGroup = new SectionGroup<int>()
+                {
+                    AutoFromAnimationPath = true
+                }
+            };
+            
             var wallBounceAnimation = new FighterAnimation()
             {
                 Path = "WallBounce",
@@ -561,6 +570,9 @@ namespace Quantum
             
             Util.AutoSetupFromAnimationPath(airHitLowAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitLow] = airHitLowAnimation;
+            
+            Util.AutoSetupFromAnimationPath(airHitLaunchAnimation, this);
+            StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitLaunch] = airHitLaunchAnimation;
             //
             Util.AutoSetupFromAnimationPath(wallBounceAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitPostWallBounce] = wallBounceAnimation;
@@ -1788,7 +1800,7 @@ namespace Quantum
                 var hit = new Hit()
                 {
                     Level = 3,
-                    TrajectoryHeight = FP.FromString("7.2"),
+                    TrajectoryHeight = FP.FromString("7.8"),
                     TrajectoryXVelocity = 4,
                     BlockPushback = FP.FromString("2.5"),
                     HitPushback = FP.FromString("1.5"),
