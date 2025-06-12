@@ -210,7 +210,7 @@ namespace Quantum
             {
                 Sections = new List<Tuple<int, FP>>()
                 {
-                    new(10, FP.FromString("2.25"))
+                    new(10, FP.FromString("2.75"))
                 }
             };
 

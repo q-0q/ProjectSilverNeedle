@@ -566,7 +566,7 @@ namespace Quantum
             //
             Util.AutoSetupFromAnimationPath(airHitHighAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitHigh] = airHitHighAnimation;
-            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitHighAnimation;
+            StateMapConfig.FighterAnimation.SuperDictionary[PlayerFSM.PlayerState.CutsceneReactor] = airHitLaunchAnimation;
             
             Util.AutoSetupFromAnimationPath(airHitLowAnimation, this);
             StateMapConfig.FighterAnimation.Dictionary[PlayerFSM.PlayerState.AirHitLow] = airHitLowAnimation;
@@ -2268,9 +2268,9 @@ namespace Quantum
                     {
                         Sections = new List<Tuple<int, FPVector2>>()
                         {
-                            new(8, new FPVector2(FP.FromString("3.5"), FP.FromString("7.5"))),
-                            new(12, new FPVector2(FP.FromString("3.5"), 8)),
-                            new(10, new FPVector2(FP.FromString("6"), FP.FromString("8"))),
+                            new(8, new FPVector2(FP.FromString("2.5"), FP.FromString("5"))),
+                            new(12, new FPVector2(FP.FromString("2.5"), FP.FromString("4.5"))),
+                            new(10, new FPVector2(FP.FromString("5"), FP.FromString("4"))),
                         }
                     }
                 };

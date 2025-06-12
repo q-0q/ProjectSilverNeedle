@@ -25,12 +25,28 @@ namespace Quantum
             //         StateType) + " has duration " + duration);
             // }
             
+
+            
             if (FramesInCurrentState(f) >= duration)
             {
                 var param = new CollisionHitParams() { f = f, EntityRef = EntityRef };
                 
-                Fsm.Fire(PlayerFSM.PlayerTrigger.Finish, param);
+                Fsm.Fire(PlayerFSM.Trigger.Finish, param);
             }
+            
+            ForceCutsceneReactorFinish(f);
+            
+
+        }
+
+        private void ForceCutsceneReactorFinish(Frame f)
+        {
+            if (!Fsm.IsInState(PlayerFSM.PlayerState.CutsceneReactor)) return;
+            f.Unsafe.TryGetPointer<CutsceneData>(EntityRef, out var cutsceneData);
+            if (FsmLoader.FSMs[cutsceneData->initiator].Fsm.IsInState(PlayerFSM.PlayerState.Cutscene)) return;
+            var param = new CollisionHitParams() { f = f, EntityRef = EntityRef };
+                
+            Fsm.Fire(PlayerFSM.Trigger.Finish, param);
         }
     }
 }

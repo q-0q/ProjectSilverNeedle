@@ -64,6 +64,8 @@ public class CameraTargetController : MonoBehaviour
 
     public void UpdatePlayerPos(Vector3 pos, int playerId, int dramaticRemaining, int darkRemaining, bool groundBounce, bool airHit, Frame frame)
     {
+        if (HitstopSystem.IsHitstopActive(frame)) return;
+            
         if (playerId == 0)
         {
             _player0Pos = pos;
@@ -95,6 +97,7 @@ public class CameraTargetController : MonoBehaviour
 
     private void Update()
     {
+        
         groundBounceTimer += Time.deltaTime;
         float x = (_player0Pos.x + _player1Pos.x) / 2;
         x = Mathf.Clamp(x, -_cameraXPan, _cameraXPan);

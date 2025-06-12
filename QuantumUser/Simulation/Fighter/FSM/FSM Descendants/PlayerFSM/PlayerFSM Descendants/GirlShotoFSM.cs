@@ -814,9 +814,9 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FPVector2>>()
                     {
-                        new (8, new FPVector2(FP.FromString("2.5"), FP.FromString("7.5"))),
-                        new (12, new FPVector2(FP.FromString("2.5"), 8)),
-                        new (10, new FPVector2(FP.FromString("2.5"), FP.FromString("7"))),
+                        new (8, new FPVector2(FP.FromString("2.5"), FP.FromString("5.5"))),
+                        new (12, new FPVector2(FP.FromString("2.5"), 5)),
+                        new (10, new FPVector2(FP.FromString("2.5"), FP.FromString("4.5"))),
                         new (15, new FPVector2(3, 0)),
                     }
                 }
@@ -833,9 +833,9 @@ namespace Quantum
                 {
                     Sections = new List<Tuple<int, FPVector2>>()
                     {
-                        new (8, new FPVector2(FP.FromString("2.5"), FP.FromString("7.5"))),
-                        new (20, new FPVector2(FP.FromString("2.5"), 8)),
-                        new (15, new FPVector2(FP.FromString("0.1"), FP.FromString("7.5"))),
+                        new (8, new FPVector2(FP.FromString("2.5"), FP.FromString("5.5"))),
+                        new (12, new FPVector2(FP.FromString("2.5"), 5)),
+                        new (10, new FPVector2(FP.FromString("2.5"), FP.FromString("4.5"))),
                         new (15, new FPVector2(-4, 0)),
                     }
                 }

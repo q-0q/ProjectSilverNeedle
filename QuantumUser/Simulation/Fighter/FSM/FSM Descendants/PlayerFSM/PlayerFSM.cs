@@ -559,6 +559,7 @@ namespace Quantum
             
             machine.Configure(PlayerState.CutsceneReactor)
                 .SubstateOf(PlayerState.DirectionLocked)
+                .OnExitFrom(PlayerTrigger.Finish, StartNewFallFromApex)
                 .Permit(PlayerTrigger.Finish, PlayerState.AirHitHigh);
                 
             machine.Configure(PlayerState.TechableCutsceneReactor)
@@ -573,7 +574,7 @@ namespace Quantum
             
             machine.Assume(PlayerState.StandActionable);
         }
-
+        
 
 
         public override void SetupStateMaps()
@@ -1330,6 +1331,5 @@ namespace Quantum
             if (triggerParams is not FrameParam frameParam) return;
             UnpoolSummon(frameParam.f, DashGameFXSummonPool);
         }
-        
     }
 }
